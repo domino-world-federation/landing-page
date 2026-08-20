@@ -1,0 +1,69 @@
+@import "tailwindcss";
+
+/*
+ * Design token DWF — sumber: docs/DESIGN-TOKENS.md
+ * Tailwind v4 memakai konfigurasi CSS-first; tidak ada tailwind.config.ts.
+ * Menambah token = menambah baris di @theme, bukan mengedit file JS.
+ */
+@theme {
+  /* Font — menjembatani variabel dari next/font.
+     next/font memakai --font-bebas / --font-inter supaya tidak menabrak
+     namespace --font-* milik @theme (variabel merujuk dirinya sendiri). */
+  --font-display: var(--font-bebas), sans-serif;
+  --font-sans: var(--font-inter), sans-serif;
+
+  /* Warna dasar */
+  --color-bg: #0e0e0e;
+  --color-surface-light: #ffffff;
+  --color-muted: #616161;
+  --color-dim: #818181;
+  --color-border-light: #e0e0e0;
+  --color-divider: #dadada;
+
+  /* Emas — identitas brand */
+  --color-gold: #e1b762;
+  --color-gold-light: #ffe0a1;
+  --color-gold-dark: #ba8d30;
+  --color-gold-btn-light: #f1c977;
+  --color-gold-btn-dark: #a57f40;
+  --color-gold-logo: #ad8752;
+
+  /* Radius */
+  --radius-btn: 8px;
+  --radius-glass: 12px;
+  --radius-item: 16px;
+  --radius-card: 20px;
+  --radius-countdown: 24px;
+  --radius-pill: 48px;
+
+  /* Bayangan */
+  --shadow-card: 0 4px 4px rgb(0 0 0 / 0.25);
+  --shadow-glow: 0 0 24px #e1b762, 0 0 6px #e1b762;
+
+  /* Ukuran display — clamp() karena desain hanya tersedia di 1920px.
+     Angka final ditentukan per section saat slicing. */
+  --text-display-lg: clamp(2.5rem, 8vw, 9.75rem);
+  --text-display-md: clamp(2.25rem, 6.5vw, 7.875rem);
+  --text-display-sm: clamp(2rem, 4vw, 4.75rem);
+  --text-display-xs: clamp(1.75rem, 3.3vw, 4rem);
+  --text-display-btn: clamp(1.5rem, 2vw, 2rem);
+}
+
+body {
+  background-color: var(--color-bg);
+  color: #ffffff;
+  font-family: var(--font-sans);
+}
+
+/* Parallax dimatikan penuh, bukan diperlambat (RULES §11).
+   Gerakan terkait scroll adalah pemicu utama motion sickness. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
