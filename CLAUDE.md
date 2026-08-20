@@ -28,14 +28,14 @@ Next.js 16.3 (App Router) · TypeScript strict · Tailwind · `motion`
   diletakkan sedalam mungkin.
 - **Parallax:** aset dipisah per layer secara sengaja. Hanya animasikan
   `transform`/`opacity`; `prefers-reduced-motion` mematikan parallax **penuh**.
-  Aturan lengkap di RULES §11.
+  Aturan lengkap di RULES §12.
 - **Paket animasi bernama `motion`**, bukan `framer-motion` (berganti nama sejak
   rebrand 2025). Import dari `motion/react`.
 - Aset: `public/assets/global/` (lintas halaman) vs `public/assets/home/`
   (khusus landing).
 - **Commit tanpa atribusi AI.** Tanpa trailer `Co-Authored-By: Claude`, tanpa
   `Generated with`, tanpa emoji bot — di pesan commit maupun deskripsi PR.
-  RULES §13.
+  RULES §14.
 - **`bun run build` gagal di runtime Bun** (R6). Build pakai `bunx next build`;
   `bun run dev` dengan `--bun` tetap normal.
 

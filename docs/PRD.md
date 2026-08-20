@@ -17,7 +17,7 @@ migrasi framework di tengah jalan.
 
 Landing page bergaya **parallax**: aset dipisah per layer agar tiap elemen
 bergerak dengan kecepatan berbeda saat scroll. Ini menentukan cara aset disusun
-dan cara section dibangun — lihat RULES §11.
+dan cara section dibangun — lihat RULES §12.
 
 ### Catatan nama
 
@@ -120,7 +120,7 @@ Bahn Hoft · LXVR
 | Glassmorphism | `rgba(0,0,0,0.4)` + `backdrop-blur(10px)`, radius 12px |
 | Kartu countdown | gradient putih 12%→0%, stroke gradient, `backdrop-blur(4px)`, radius 24px |
 
-> Warna emas di RULES §5 (`#E1B762`, `#AD8752`) berasal dari logo. Desain memakai
+> Warna emas di RULES §6 (`#E1B762`, `#AD8752`) berasal dari logo. Desain memakai
 > rentang lebih luas — token final disusun saat scaffold Tailwind.
 
 Tabel di atas hanya ringkasan. Spesifikasi lengkap — seluruh ukuran font,
@@ -176,7 +176,7 @@ Belum dikerjakan; dicatat agar keputusan arsitektur fase 1 tetap sejalan.
 | D7 | Landing page bergaya parallax | Arahan desain; aset memang sudah dipisah per layer | 2026-08-20 |
 | D8 | Pakai paket `motion`, bukan `framer-motion` | Pustaka sama, nama paket berganti sejak rebrand 2025. Import dari `motion/react` | 2026-08-20 |
 | D9 | `build` & `start` di runtime **Node**, `dev` tetap `--bun` | `bun --bun next build` gagal: `Failed to load external module … app-page-turbo.runtime.prod.js: Expected CommonJS module to have a function wrapper`. Turbopack memuat runtime CJS lewat jalur yang belum didukung Bun. `dev` diuji terpisah dan normal (HTTP 200). Bun tetap dipakai untuk install & dev — D6 tidak dibatalkan, hanya dipersempit | 2026-08-20 |
-| D10 | Commit tanpa atribusi AI | Riwayat git adalah catatan tanggung jawab; yang menekan commit bertanggung jawab atas isinya. Aturan di RULES §13 | 2026-08-20 |
+| D10 | Commit tanpa atribusi AI | Riwayat git adalah catatan tanggung jawab; yang menekan commit bertanggung jawab atas isinya. Aturan di RULES §14 | 2026-08-20 |
 
 ---
 

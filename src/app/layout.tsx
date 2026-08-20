@@ -3,8 +3,9 @@ import { Bebas_Neue, Inter } from "next/font/google"
 
 import "./globals.css"
 
-// Variabel sengaja --font-bebas / --font-inter, bukan --font-display /
-// --font-sans: nama itu milik namespace @theme Tailwind v4. Lihat globals.css.
+// The variables are deliberately --font-bebas / --font-inter rather than
+// --font-display / --font-sans: those names belong to Tailwind v4's @theme
+// namespace. See globals.css.
 const bebasNeue = Bebas_Neue({
   subsets: ["latin"],
   weight: "400",

@@ -1,10 +1,10 @@
 /**
- * Satu-satunya pintu akses data (RULES §7).
+ * The single gateway for data access (RULES §8).
  *
- * Komponen memanggil fungsi di file ini, tidak pernah `fetch` langsung. Saat
- * API nyata siap, hanya isi file ini yang berubah — komponen tidak tersentuh.
+ * Components call the functions in this file and never `fetch` directly. When
+ * the real API lands, only this file changes — components stay untouched.
  *
- * Status: seluruh fungsi masih mengembalikan mock (blocker B2).
+ * Status: every function still returns mock data (blocker B2).
  */
 
 import {
@@ -25,17 +25,17 @@ import type {
 const USE_MOCK = !process.env.NEXT_PUBLIC_API_BASE_URL
 
 /**
- * Wrapper fetch untuk dipakai begitu base URL tersedia.
+ * Fetch wrapper, ready for the moment a base URL exists.
  *
- * Sengaja belum dipanggil dari mana pun — ditulis lebih dulu supaya bentuk
- * penanganan error sudah disepakati sebelum API datang.
+ * Deliberately unreachable for now — written up front so the shape of error
+ * handling is agreed on before the API arrives.
  */
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL
 
   if (!baseUrl) {
     throw new Error(
-      "NEXT_PUBLIC_API_BASE_URL belum diset — masih memakai mock data.",
+      "NEXT_PUBLIC_API_BASE_URL is not set — still serving mock data.",
     )
   }
 
@@ -47,7 +47,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 
   if (!response.ok) {
     throw new ApiError(
-      `Permintaan ke ${path} gagal: ${response.status} ${response.statusText}`,
+      `Request to ${path} failed: ${response.status} ${response.statusText}`,
       response.status,
     )
   }

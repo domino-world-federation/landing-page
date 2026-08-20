@@ -1,18 +1,18 @@
 @import "tailwindcss";
 
 /*
- * Design token DWF — sumber: docs/DESIGN-TOKENS.md
- * Tailwind v4 memakai konfigurasi CSS-first; tidak ada tailwind.config.ts.
- * Menambah token = menambah baris di @theme, bukan mengedit file JS.
+ * DWF design tokens — source: docs/DESIGN-TOKENS.md
+ * Tailwind v4 is configured CSS-first; there is no tailwind.config.ts.
+ * Adding a token means adding a line to @theme, not editing a JS file.
  */
 @theme {
-  /* Font — menjembatani variabel dari next/font.
-     next/font memakai --font-bebas / --font-inter supaya tidak menabrak
-     namespace --font-* milik @theme (variabel merujuk dirinya sendiri). */
+  /* Fonts — bridges the variables coming from next/font.
+     next/font uses --font-bebas / --font-inter so it does not collide with
+     @theme's own --font-* namespace (the variable would reference itself). */
   --font-display: var(--font-bebas), sans-serif;
   --font-sans: var(--font-inter), sans-serif;
 
-  /* Warna dasar */
+  /* Base colours */
   --color-bg: #0e0e0e;
   --color-surface-light: #ffffff;
   --color-muted: #616161;
@@ -20,7 +20,7 @@
   --color-border-light: #e0e0e0;
   --color-divider: #dadada;
 
-  /* Emas — identitas brand */
+  /* Gold — the brand identity */
   --color-gold: #e1b762;
   --color-gold-light: #ffe0a1;
   --color-gold-dark: #ba8d30;
@@ -28,7 +28,7 @@
   --color-gold-btn-dark: #a57f40;
   --color-gold-logo: #ad8752;
 
-  /* Radius */
+  /* Radii */
   --radius-btn: 8px;
   --radius-glass: 12px;
   --radius-item: 16px;
@@ -36,12 +36,12 @@
   --radius-countdown: 24px;
   --radius-pill: 48px;
 
-  /* Bayangan */
+  /* Shadows */
   --shadow-card: 0 4px 4px rgb(0 0 0 / 0.25);
   --shadow-glow: 0 0 24px #e1b762, 0 0 6px #e1b762;
 
-  /* Ukuran display — clamp() karena desain hanya tersedia di 1920px.
-     Angka final ditentukan per section saat slicing. */
+  /* Display sizes — clamp() because the design only exists at 1920px.
+     Final numbers get settled per section during slicing. */
   --text-display-lg: clamp(2.5rem, 8vw, 9.75rem);
   --text-display-md: clamp(2.25rem, 6.5vw, 7.875rem);
   --text-display-sm: clamp(2rem, 4vw, 4.75rem);
@@ -55,8 +55,8 @@ body {
   font-family: var(--font-sans);
 }
 
-/* Parallax dimatikan penuh, bukan diperlambat (RULES §11).
-   Gerakan terkait scroll adalah pemicu utama motion sickness. */
+/* Parallax is disabled entirely, not slowed down (RULES §12).
+   Scroll-linked movement is a primary trigger for motion sickness. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

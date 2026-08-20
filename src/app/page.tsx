@@ -1,10 +1,10 @@
-// Placeholder fase 1. Section asli (S1–S14) menyusul satu per satu —
-// lihat docs/PROGRESS.md fase 2.
+// Phase 1 placeholder. The real sections (S1–S14) land one at a time —
+// see docs/PROGRESS.md, phase 2.
 
 const COPY = {
   tagline: "Domino World Federation",
   headline: "Dominoes Without Borders",
-  status: "Scaffold selesai — slicing section dimulai dari S1 Navbar.",
+  status: "Scaffold complete — section slicing starts with S1 Navbar.",
 } as const
 
 export default function HomePage() {

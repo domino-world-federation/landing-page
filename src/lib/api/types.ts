@@ -1,13 +1,13 @@
 /**
- * Kontrak data sementara — backend belum tersedia (PRD §8, blocker B2).
+ * Provisional data contract — no backend yet (PRD §8, blocker B2).
  *
- * Bentuk di sini adalah tebakan terdidik, bukan hasil kesepakatan dengan tim
- * backend. Saat response asli tiba, perbaiki file ini lebih dulu; TypeScript
- * akan menunjuk seluruh lokasi yang perlu menyesuaikan.
+ * These shapes are educated guesses, not something agreed with a backend team.
+ * When the real responses arrive, fix this file first; TypeScript will then
+ * point at every place that has to follow.
  */
 
-/** ISO 8601, mis. "2026-11-14T09:00:00Z". Disimpan sebagai string supaya
- *  aman melewati batas Server/Client Component. */
+/** ISO 8601, e.g. "2026-11-14T09:00:00Z". Kept as a string so it crosses the
+ *  Server/Client Component boundary safely. */
 export type IsoDateString = string
 
 export type NewsArticle = {
@@ -18,7 +18,7 @@ export type NewsArticle = {
   category: string
   publishedAt: IsoDateString
   thumbnailUrl: string
-  /** Belum tentu ada di response daftar; baru terisi di halaman detail. */
+  /** Not guaranteed in list responses; only filled in on the detail page. */
   body?: string
 }
 
@@ -39,7 +39,7 @@ export type Player = {
   avatarUrl?: string
 }
 
-/** ISO 3166-1 alpha-3, mis. "IDN". */
+/** ISO 3166-1 alpha-3, e.g. "IDN". */
 export type CountryCode = string
 
 export type TournamentStatus = "upcoming" | "live" | "completed"
@@ -59,7 +59,7 @@ export type RankingEntry = {
   position: number
   player: Player
   points: number
-  /** Selisih posisi dari periode sebelumnya; negatif = turun. */
+  /** Change in position since the previous period; negative means a drop. */
   movement?: number
 }
 
@@ -78,7 +78,7 @@ export type ResourceDocument = {
   fileSize?: string
 }
 
-/** Countdown pada S3 menunjuk satu event tertentu. */
+/** The S3 countdown points at one specific event. */
 export type FeaturedEvent = {
   id: string
   name: string

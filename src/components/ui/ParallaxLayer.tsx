@@ -13,13 +13,13 @@ import { cn } from "@/lib/utils/cn"
 type ParallaxLayerProps = {
   children: ReactNode
   /**
-   * Besar pergeseran relatif terhadap tinggi layer, dalam persen.
-   * Nilai kecil = terasa jauh (bergerak lambat), besar = terasa dekat.
-   * Negatif membalik arah — layer naik saat halaman turun.
+   * Travel distance as a percentage of the layer's own height.
+   * Small values read as distant (slow), large ones as close by.
+   * Negative flips the direction — the layer rises as the page scrolls down.
    */
   speed?: number
   className?: string
-  /** Layer dekoratif: sembunyikan dari screen reader (RULES §11). */
+  /** Decorative layer: hide it from screen readers (RULES §12). */
   decorative?: boolean
 }
 
@@ -32,8 +32,8 @@ export function ParallaxLayer({
   const ref = useRef<HTMLDivElement>(null)
   const prefersReducedMotion = useReducedMotion()
 
-  // target dibatasi ke elemen ini — tanpa itu seluruh halaman ikut terhitung
-  // dan efeknya meleset (RULES §11).
+  // Scope the target to this element — without it the whole page counts
+  // towards the progress and the effect lands off-mark (RULES §12).
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"],
@@ -41,9 +41,9 @@ export function ParallaxLayer({
 
   const y = useTransform(scrollYProgress, [0, 1], ["0%", `${speed}%`])
 
-  // Hook tetap dipanggil tanpa syarat; yang berubah hanya nilai yang dipakai.
-  // prefers-reduced-motion mematikan parallax PENUH, bukan memperlambat —
-  // layer berhenti di posisi diamnya.
+  // The hooks stay unconditional; only the value we apply changes.
+  // prefers-reduced-motion kills parallax ENTIRELY rather than slowing it —
+  // the layer rests at its static position.
   return (
     <div
       ref={ref}

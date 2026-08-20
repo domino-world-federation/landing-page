@@ -1,9 +1,9 @@
 /**
- * Data dummy fase 1. Bentuknya wajib menyerupai response asli, termasuk field
- * opsional yang sengaja dikosongkan — supaya penukaran ke API nyata tidak
- * memunculkan kejutan (RULES §7).
+ * Phase 1 dummy data. The shape must mirror the real response, including
+ * optional fields left deliberately empty — so swapping in the real API holds
+ * no surprises (RULES §8).
  *
- * Isi teks & angka diambil dari desain Figma agar hasil slicing langsung cocok.
+ * Text and numbers come from the Figma design so the slice matches on sight.
  */
 
 import type {
@@ -52,7 +52,7 @@ export const MOCK_PARTNERS: Partner[] = [
   { id: "lxvr", name: "LXVR", logoUrl: "/assets/global/partners/logo-lxvr.svg" },
 ]
 
-/** Carousel S8 berisi 5 item — satu thumbnail memang tidak terpakai di desain. */
+/** The S8 carousel holds 5 items — one thumbnail is unused in the design. */
 export const MOCK_NEWS: NewsArticle[] = [
   {
     id: "n1",
@@ -146,8 +146,8 @@ export const MOCK_RESOURCES: ResourceDocument[] = [
 ]
 
 /**
- * Tanggal target countdown (S3) masih karangan — desain tidak mencantumkannya.
- * Ganti begitu jadwal resmi tersedia.
+ * The countdown target date (S3) is invented — the design never states one.
+ * Replace it once the official schedule exists.
  */
 export const MOCK_FEATURED_EVENT: FeaturedEvent = {
   id: "wc-2026",

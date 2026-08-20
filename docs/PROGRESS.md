@@ -90,7 +90,7 @@ RULES §2 menyebut `styles/`; folder itu dipakai nanti bila ada CSS di luar toke
 ## Fase 2 — Slicing landing page `[ ]` — 0/14
 
 Dikerjakan **per section**, berurutan sesuai posisi Y. Tiap section dianggap
-selesai bila lolos checklist RULES §14.
+selesai bila lolos checklist RULES §15.
 
 | # | Section | Node | Status | Catatan |
 |---|---|---|---|---|
@@ -154,9 +154,10 @@ Keputusan arsitektur dicatat di **PRD §7**. Ubah di sana, bukan di sini.
 | 2026-08-20 | Aset dirapikan & dipisah global/home |
 | 2026-08-20 | Stack diputuskan: Next.js 16.3 + TS + Tailwind + `motion` |
 | 2026-08-20 | Bun ditetapkan sebagai package manager & runtime (D6) |
-| 2026-08-20 | Gaya parallax dikonfirmasi; aturan layer ditulis di RULES §11 (D7, D8) |
+| 2026-08-20 | Gaya parallax dikonfirmasi; aturan layer ditulis di RULES §12 (D7, D8) |
 | 2026-08-20 | MCP Figma tersambung; 14 section terverifikasi (PRD §4) |
 | 2026-08-20 | Design token diekstrak dari Figma → `docs/DESIGN-TOKENS.md` |
 | 2026-08-20 | Fase 1 selesai: scaffold Next 16.3.1 + Tailwind v4 + Bun, commit awal |
 | 2026-08-20 | R6 terbukti: `build` gagal di runtime Bun → pindah ke Node (D9) |
-| 2026-08-20 | Commit dilarang mencantumkan atribusi AI (D10, RULES §13) |
+| 2026-08-20 | Commit dilarang mencantumkan atribusi AI (D10, RULES §14) |
+| 2026-08-20 | Komentar kode wajib bahasa Inggris (RULES §4); seluruh `src/` diterjemahkan |

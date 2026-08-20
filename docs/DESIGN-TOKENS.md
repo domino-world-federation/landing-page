@@ -6,7 +6,7 @@ Spesifikasi font, tipografi, dan warna hasil ekstraksi langsung dari Figma
 Seluruh nilai di sini **terbaca dari desain**, bukan perkiraan. Bagian yang belum
 diverifikasi ditandai eksplisit.
 
-Aturan pemakaiannya ada di [RULES.md](RULES.md) §5 — dilarang menulis nilai
+Aturan pemakaiannya ada di [RULES.md](RULES.md) §6 — dilarang menulis nilai
 warna secara hardcode; selalu lewat token.
 
 ---
@@ -130,7 +130,7 @@ dinormalkan.
 | `gold-glow` | `#E1B762` | Warna bayangan/glow |
 | `gold-logo-dark` | `#AD8752` | Emas tua pada logo |
 
-Dua nilai terakhir cocok dengan warna yang sudah tercatat di RULES §5 —
+Dua nilai terakhir cocok dengan warna yang sudah tercatat di RULES §6 —
 keduanya berasal dari file logo.
 
 ### Opacity yang berulang
@@ -380,7 +380,7 @@ titik 1920px, sisanya keputusan kita (lihat §9 no. 1–2).
 
 3. **Kontras belum diuji.** Emas `#E1B762` di atas `#0E0E0E` kemungkinan lolos
    4.5:1, tetapi `#BA8D30` (ujung gradient) lebih gelap dan berisiko. Wajib
-   diuji sebelum dinyatakan selesai (RULES §9).
+   diuji sebelum dinyatakan selesai (RULES §10).
 
 4. **Stroke gradient tidak bisa ditiru persis di CSS.** Kartu countdown dan
    tombol primer memakai stroke bergradient bertumpuk. Perlu pendekatan
@@ -388,4 +388,4 @@ titik 1920px, sisanya keputusan kita (lihat §9 no. 1–2).
 
 5. **Teks jawaban FAQ mengandung penekanan inline** (`**bold**` di tengah
    kalimat). Simpan sebagai konstanta terstruktur, bukan satu string panjang —
-   lihat RULES §8.
+   lihat RULES §9.

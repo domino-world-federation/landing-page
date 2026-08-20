@@ -75,7 +75,45 @@ terkait).
 
 ---
 
-## 4. Komponen
+## 4. Komentar
+
+**Seluruh komentar di dalam kode ditulis dalam bahasa Inggris.** Berlaku untuk
+komentar baris, blok, JSDoc, nama variabel, dan pesan `@ts-expect-error`.
+
+Dokumentasi di `docs/` tetap bahasa Indonesia — batasnya jelas: apa pun yang
+ada di dalam `src/` berbahasa Inggris, apa pun di `docs/` berbahasa Indonesia.
+
+```ts
+// ✅
+// Bound useScroll to this element; without a target the whole page counts.
+
+// ❌
+// Batasi useScroll ke elemen ini; tanpa target seluruh halaman ikut terhitung.
+```
+
+Alasannya: kode memakai identifier dan istilah teknis berbahasa Inggris, jadi
+komentar sebahasa membuat kalimatnya utuh. Ini juga menjaga repo tetap terbaca
+bila ada kontributor non-Indonesia di fase portal.
+
+Isi komentarnya: **jelaskan alasan, bukan mekanisme.** Kode sudah menyatakan
+apa yang terjadi; komentar dipakai untuk hal yang tidak terbaca dari kode —
+kenapa sebuah nilai dipilih, kenapa jalur yang jelas justru dihindari.
+
+```ts
+// ✅ menerangkan sebab
+// Figma names this --font-display, but that collides with Tailwind's
+// @theme namespace and silently resolves to itself.
+
+// ❌ mengulang kode
+// Set the font variable
+```
+
+Rujukan ke dokumen boleh tetap memakai nomornya (`RULES §11`, `PRD D9`) —
+itu penunjuk lokasi, bukan kalimat.
+
+---
+
+## 5. Komponen
 
 - **Server Component sebagai default.** Tambahkan `"use client"` hanya bila
   memang perlu (state, effect, event handler, animasi/parallax).
@@ -90,13 +128,13 @@ Urutan isi file:
 ```tsx
 // 1. import
 // 2. type
-// 3. konstanta (teks, config)
-// 4. komponen
+// 3. constants (copy, config)
+// 4. component
 ```
 
 ---
 
-## 5. Styling
+## 6. Styling
 
 - Tailwind untuk semua styling. CSS kustom hanya bila Tailwind tidak mampu.
 - **Dilarang nilai warna hardcode.** Pakai token dari blok `@theme` di
@@ -112,7 +150,7 @@ Urutan isi file:
 
 ---
 
-## 6. Gambar
+## 7. Gambar
 
 - **Selalu `next/image`**, jangan `<img>`.
 - `alt` wajib deskriptif. Gambar murni dekoratif: `alt=""`.
@@ -123,7 +161,7 @@ Urutan isi file:
 
 ---
 
-## 7. Data & API
+## 8. Data & API
 
 **Aturan utama:** seluruh akses data melewati `lib/api/client.ts`.
 Dilarang memanggil `fetch` langsung dari komponen.
@@ -140,7 +178,7 @@ berubah — komponen tidak tersentuh.
 
 ---
 
-## 8. Teks & i18n
+## 9. Teks & i18n
 
 Situs saat ini English-only tanpa route `[locale]` (PRD D4).
 
@@ -163,7 +201,7 @@ const COPY = {
 
 ---
 
-## 9. Aksesibilitas
+## 10. Aksesibilitas
 
 - HTML semantik: `<header>`, `<nav>`, `<main>`, `<section>`, `<footer>`.
 - Satu `<h1>` per halaman; hierarki heading tidak melompat.
@@ -174,7 +212,7 @@ const COPY = {
 
 ---
 
-## 10. Animasi
+## 11. Animasi
 
 Pustaka: **`motion`** — nama baru `framer-motion` sejak rebrand 2025.
 Install `bun add motion`, import dari `motion/react`. Jangan pasang paket
@@ -193,7 +231,7 @@ import { motion, useScroll, useTransform } from "motion/react"
 
 ---
 
-## 11. Parallax
+## 12. Parallax
 
 Situs ini bergaya **parallax**. Aset sengaja dipisah per layer supaya tiap
 elemen bisa bergerak dengan kecepatan berbeda.
@@ -260,7 +298,7 @@ seluruh halaman ikut terhitung dan efeknya meleset.
 
 ---
 
-## 12. Package manager — Bun
+## 13. Package manager — Bun
 
 **Selalu Bun.** Jangan `npm`, `yarn`, atau `pnpm`.
 
@@ -306,7 +344,7 @@ Seluruh perintah di dokumentasi dan contoh kode ditulis dengan Bun.
 
 ---
 
-## 13. Git
+## 14. Git
 
 Format commit: `<type>: <deskripsi>`
 
@@ -345,7 +383,7 @@ bertanggung jawab atas isinya, terlepas dari alat bantu yang dipakai.
 
 ---
 
-## 14. Sebelum menandai selesai
+## 15. Sebelum menandai selesai
 
 - [ ] `bun run build` lolos tanpa error
 - [ ] Tanpa error TypeScript
@@ -359,7 +397,7 @@ bertanggung jawab atas isinya, terlepas dari alat bantu yang dipakai.
 
 ---
 
-## 15. Pemeliharaan dokumen
+## 16. Pemeliharaan dokumen
 
 | Dokumen | Isi | Kapan diperbarui |
 |---|---|---|
