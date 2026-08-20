@@ -11,8 +11,8 @@ Legenda: `[ ]` belum · `[~]` berjalan · `[x]` selesai · `[!]` terblokir
 | Fase | Status | Keterangan |
 |---|---|---|
 | 0 — Persiapan aset | `[x]` | Selesai |
-| 1 — Scaffold project | `[ ]` | Siap dimulai |
-| 2 — Slicing landing page | `[ ]` | 0/14 section — desain sudah terverifikasi |
+| 1 — Scaffold project | `[x]` | Selesai — build, lint, typecheck lolos |
+| 2 — Slicing landing page | `[ ]` | 0/14 section — siap dimulai dari S1 |
 | 3 — Integrasi API | `[ ]` | Menunggu backend |
 | 4 — Portal | `[ ]` | Fase berikutnya |
 
@@ -51,24 +51,39 @@ Selesai: ~~B1 MCP Figma 403~~ — tersambung 2026-08-20.
 
 ---
 
-## Fase 1 — Scaffold project `[ ]`
+## Fase 1 — Scaffold project `[x]`
 
-- [ ] `bunx create-next-app@latest --use-bun` — TypeScript, Tailwind, App Router
-- [ ] Script `package.json` pakai `bun --bun next <cmd>`
-- [ ] Inisialisasi git + `.gitignore` (abaikan `package-lock.json`, `yarn.lock`)
-- [ ] Struktur folder sesuai `RULES.md`
-- [ ] Pindahkan `assets/` → `public/assets/`
-- [ ] `bun add motion` (nama baru `framer-motion`)
-- [ ] Font: **Bebas Neue** + **Inter** via `next/font` — variabel `--font-bebas`
+- [x] `bunx create-next-app@latest --use-bun` — TypeScript, Tailwind, App Router
+- [x] Script `package.json` — `dev` pakai `--bun`; `build`/`start` di Node (D9)
+- [x] Inisialisasi git + `.gitignore` (abaikan `package-lock.json`, `yarn.lock`,
+      `pnpm-lock.yaml`)
+- [x] Struktur folder sesuai `RULES.md`
+- [x] Pindahkan `assets/` → `public/assets/` (25 file)
+- [x] `bun add motion` — terpasang 13.1.1
+- [x] Font: **Bebas Neue** + **Inter** via `next/font` — variabel `--font-bebas`
       / `--font-inter` (jangan `--font-display`/`--font-sans`, bentrok namespace
       `@theme`)
-- [ ] Token di `@theme` (`src/styles/globals.css`) — Tailwind v4 CSS-first,
+- [x] Token di `@theme` (`src/app/globals.css`) — Tailwind v4 CSS-first,
       **tanpa** `tailwind.config.ts`. Isi sesuai `DESIGN-TOKENS.md` §8
-- [ ] Komponen `ParallaxLayer` reusable
-- [ ] ESLint + Prettier
-- [ ] Path alias `@/`
-- [ ] `lib/api/types.ts` — kontrak sementara
-- [ ] `lib/api/client.ts` — wrapper + mock
+- [x] Komponen `ParallaxLayer` reusable
+- [x] Path alias `@/`
+- [x] `lib/api/types.ts` — kontrak sementara
+- [x] `lib/api/client.ts` — wrapper + mock
+- [x] `lib/utils/cn.ts` — `clsx` + `tailwind-merge`
+- [ ] Prettier — ESLint sudah jalan, formatter belum dipasang
+
+### Hasil verifikasi
+
+| Perintah | Hasil |
+|---|---|
+| `bunx next build` | ✅ lolos, 2 route statis |
+| `bun run typecheck` | ✅ bersih |
+| `bun run lint` | ✅ bersih |
+| `bun run dev` (`--bun`) | ✅ HTTP 200, kedua font ter-load |
+
+**Catatan:** `globals.css` ada di `src/app/`, bukan `src/styles/` — mengikuti
+letak bawaan `create-next-app` supaya import relatifnya tetap sederhana.
+RULES §2 menyebut `styles/`; folder itu dipakai nanti bila ada CSS di luar token.
 
 ---
 
@@ -142,3 +157,6 @@ Keputusan arsitektur dicatat di **PRD §7**. Ubah di sana, bukan di sini.
 | 2026-08-20 | Gaya parallax dikonfirmasi; aturan layer ditulis di RULES §11 (D7, D8) |
 | 2026-08-20 | MCP Figma tersambung; 14 section terverifikasi (PRD §4) |
 | 2026-08-20 | Design token diekstrak dari Figma → `docs/DESIGN-TOKENS.md` |
+| 2026-08-20 | Fase 1 selesai: scaffold Next 16.3.1 + Tailwind v4 + Bun, commit awal |
+| 2026-08-20 | R6 terbukti: `build` gagal di runtime Bun → pindah ke Node (D9) |
+| 2026-08-20 | Commit dilarang mencantumkan atribusi AI (D10, RULES §13) |

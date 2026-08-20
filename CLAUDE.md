@@ -33,6 +33,11 @@ Next.js 16.3 (App Router) · TypeScript strict · Tailwind · `motion`
   rebrand 2025). Import dari `motion/react`.
 - Aset: `public/assets/global/` (lintas halaman) vs `public/assets/home/`
   (khusus landing).
+- **Commit tanpa atribusi AI.** Tanpa trailer `Co-Authored-By: Claude`, tanpa
+  `Generated with`, tanpa emoji bot — di pesan commit maupun deskripsi PR.
+  RULES §13.
+- **`bun run build` gagal di runtime Bun** (R6). Build pakai `bunx next build`;
+  `bun run dev` dengan `--bun` tetap normal.
 
 ## Alur kerja
 

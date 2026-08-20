@@ -272,20 +272,28 @@ seluruh halaman ikut terhitung dan efeknya meleset.
 | Eksekusi paket sekali pakai | `bunx <pkg>` (bukan `npx`) |
 | Scaffold project | `bunx create-next-app@latest --use-bun` |
 
-Next.js dijalankan di atas runtime Bun lewat flag `--bun`:
+Next.js dijalankan di atas runtime Bun lewat flag `--bun` — **kecuali `build`
+dan `start`**:
 
 ```json
 {
   "scripts": {
     "dev": "bun --bun next dev",
-    "build": "bun --bun next build",
-    "start": "bun --bun next start"
+    "build": "next build",
+    "start": "next start"
   }
 }
 ```
 
 Tanpa `--bun`, Bun hanya bertindak sebagai package manager sementara Next tetap
 berjalan di Node.
+
+> **Kenapa `build` tidak pakai `--bun`.** Diuji 2026-08-20 dan gagal:
+> `Failed to load external module … app-page-turbo.runtime.prod.js:
+> Expected CommonJS module to have a function wrapper`. Turbopack memuat runtime
+> CJS lewat jalur yang belum didukung Bun. `dev` diuji terpisah dan normal.
+> Coba lagi setelah Bun naik versi; kalau sudah lolos, kembalikan `--bun`.
+> Detail: PRD D9.
 
 Aturan lockfile: commit `bun.lock`. Jangan pernah commit `package-lock.json`
 atau `yarn.lock` — kalau muncul, hapus.
@@ -315,6 +323,25 @@ chore: optimize hq building image
 - Jangan commit `.DS_Store`, `.env*`, `node_modules/`, `package-lock.json`,
   `yarn.lock`.
 - Jangan commit rahasia. Figma API key ada di `~/.claude.json`, **bukan** di repo.
+
+### Penulis commit
+
+Commit ditulis atas nama pemilik repo saja. **Dilarang mencantumkan AI sebagai
+penulis atau co-author** — tanpa trailer `Co-Authored-By: Claude`, tanpa
+`Generated with`, tanpa emoji bot di pesan commit maupun deskripsi PR.
+
+```
+# ✅
+feat: add hero section
+
+# ❌
+feat: add hero section
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+```
+
+Alasannya: riwayat git adalah catatan tanggung jawab. Yang menekan commit
+bertanggung jawab atas isinya, terlepas dari alat bantu yang dipakai.
 
 ---
 

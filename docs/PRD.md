@@ -175,6 +175,8 @@ Belum dikerjakan; dicatat agar keputusan arsitektur fase 1 tetap sejalan.
 | D6 | Bun sebagai package manager & runtime | Standar kerja yang berlaku. Next dijalankan via `bun --bun next` | 2026-08-20 |
 | D7 | Landing page bergaya parallax | Arahan desain; aset memang sudah dipisah per layer | 2026-08-20 |
 | D8 | Pakai paket `motion`, bukan `framer-motion` | Pustaka sama, nama paket berganti sejak rebrand 2025. Import dari `motion/react` | 2026-08-20 |
+| D9 | `build` & `start` di runtime **Node**, `dev` tetap `--bun` | `bun --bun next build` gagal: `Failed to load external module … app-page-turbo.runtime.prod.js: Expected CommonJS module to have a function wrapper`. Turbopack memuat runtime CJS lewat jalur yang belum didukung Bun. `dev` diuji terpisah dan normal (HTTP 200). Bun tetap dipakai untuk install & dev — D6 tidak dibatalkan, hanya dipersempit | 2026-08-20 |
+| D10 | Commit tanpa atribusi AI | Riwayat git adalah catatan tanggung jawab; yang menekan commit bertanggung jawab atas isinya. Aturan di RULES §13 | 2026-08-20 |
 
 ---
 
@@ -201,7 +203,7 @@ Entitas yang diantisipasi: `NewsArticle`, `Partner`, `Player`, `Tournament`, `Ra
 | R4 | Kontrak API meleset dari response asli | Rework di fase 2 | Isolasi di `lib/api/`; minta contoh response ke tim backend sedini mungkin |
 | R5 | Penempatan `decor-light-beam.png` & `partners/` (global vs home) belum pasti | Refactor path kecil | `shine` terkonfirmasi hanya dipakai sekali di landing (Y 6826) → tetap di `home/`. Status `partners/` menunggu keputusan halaman lain (pertanyaan terbuka #2) |
 | R9 | Aset di Figma belum dipetakan ke file lokal — `imageRef` desain belum dicocokkan dengan file di `assets/` | Salah pasang gambar saat slicing | Cocokkan per section saat pengerjaan; unduh via MCP bila ada yang belum tersedia |
-| R6 | Runtime Bun di Vercel masih public beta | Deploy produksi bisa terhambat | Aktifkan via `"bunVersion": "1.x"` di `vercel.json`. Bila bermasalah, Bun tetap dipakai untuk install & build, runtime jatuh ke Node — tanpa perubahan kode |
+| ~~R6~~ | ~~Runtime Bun di Vercel masih public beta~~ | — | **Terbukti 2026-08-20, lihat D9.** `bun --bun next build` gagal (`Expected CommonJS module to have a function wrapper`). Build & start dipindah ke Node; `dev` tetap `--bun` |
 | R7 | Parallax berat merusak target performa (G4/G6), terutama di ponsel kelas bawah | Skor Lighthouse turun, scroll patah-patah | Batasi 3–4 layer per viewport; kompres aset lebih dulu; kurangi/nonaktifkan layer di mobile; uji di perangkat nyata |
 | R8 | Parallax memicu motion sickness | Masalah aksesibilitas | `prefers-reduced-motion` mematikan parallax **penuh**, bukan memperlambat |
 
