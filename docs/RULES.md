@@ -138,7 +138,7 @@ Urutan isi file:
 
 - Tailwind untuk semua styling. CSS kustom hanya bila Tailwind tidak mampu.
 - **Dilarang nilai warna hardcode.** Pakai token dari blok `@theme` di
-  `src/styles/globals.css`. Daftar lengkap warna, tipografi, gradient, dan
+  `src/app/globals.css`. Daftar lengkap warna, tipografi, gradient, dan
   spacing — [DESIGN-TOKENS.md](DESIGN-TOKENS.md). Warna brand: emas `#E1B762`,
   emas tua `#AD8752`.
 - Tailwind v4 memakai konfigurasi **CSS-first**. Tidak ada `tailwind.config.ts`;

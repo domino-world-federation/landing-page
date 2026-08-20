@@ -12,7 +12,7 @@ Legenda: `[ ]` belum · `[~]` berjalan · `[x]` selesai · `[!]` terblokir
 |---|---|---|
 | 0 — Persiapan aset | `[x]` | Selesai |
 | 1 — Scaffold project | `[x]` | Selesai — build, lint, typecheck lolos |
-| 2 — Slicing landing page | `[ ]` | 0/14 section — siap dimulai dari S1 |
+| 2 — Slicing landing page | `[ ]` | 1/14 section — S1 Navbar selesai, lanjut S2 |
 | 3 — Integrasi API | `[ ]` | Menunggu backend |
 | 4 — Portal | `[ ]` | Fase berikutnya |
 
@@ -87,14 +87,14 @@ RULES §2 menyebut `styles/`; folder itu dipakai nanti bila ada CSS di luar toke
 
 ---
 
-## Fase 2 — Slicing landing page `[ ]` — 0/14
+## Fase 2 — Slicing landing page `[ ]` — 1/14
 
 Dikerjakan **per section**, berurutan sesuai posisi Y. Tiap section dianggap
 selesai bila lolos checklist RULES §15.
 
 | # | Section | Node | Status | Catatan |
 |---|---|---|---|---|
-| S1 | Navbar | `42:2143` | `[ ]` | Overlay glassmorphism, sticky |
+| S1 | Navbar | `42:2143` | `[x]` | Overlay glassmorphism; **tidak** sticky — lihat catatan di bawah |
 | S2 | Hero | `22:789` | `[ ]` | 3 layer blur — parallax utama |
 | S3 | Countdown | `24:1025` | `[ ]` | Butuh timer client + tanggal target |
 | S4 | Feature HQ | `31:1085` | `[ ]` | Aset 9.2 MB — kompres dulu |
@@ -108,6 +108,19 @@ selesai bila lolos checklist RULES §15.
 | S12 | Overlay shine | `56:4970` | `[ ]` | Dekoratif, layer parallax |
 | S13 | CTA akhir | `56:4698` | `[ ]` | — |
 | S14 | Footer | `56:5159` | `[ ]` | Glassmorphism |
+
+**Catatan S1.** Di Figma navbar berada di `y:0` menimpa hero, bukan menempati
+band sendiri — jadi `absolute`, bukan `sticky`/`fixed`. Sengaja tidak dibuat
+sticky: teksnya putih, sedangkan S4 dan seterusnya berlatar putih; navbar
+melayang akan hilang di sana. Kalau nanti diminta sticky, perlu varian gelap.
+
+Sembilan menu pada 18px tidak muat di bawah ~1536px, jadi pill diringkas jadi
+panel disclosure di bawah `xl`. Ukuran teks turun ke 15px di `xl`, kembali 18px
+sesuai desain di `2xl`.
+
+Terverifikasi 360/768/1440/1920: tanpa scroll horizontal, panel mobile berisi
+9 item dan tetap di dalam viewport. **Sisa dicek:** ikon burger saat terbuka
+tampak satu garis, belum jelas bug transform atau artefak screenshot.
 
 ### Per section wajib
 
@@ -161,3 +174,4 @@ Keputusan arsitektur dicatat di **PRD §7**. Ubah di sana, bukan di sini.
 | 2026-08-20 | R6 terbukti: `build` gagal di runtime Bun → pindah ke Node (D9) |
 | 2026-08-20 | Commit dilarang mencantumkan atribusi AI (D10, RULES §14) |
 | 2026-08-20 | Komentar kode wajib bahasa Inggris (RULES §4); seluruh `src/` diterjemahkan |
+| 2026-08-20 | S1 Navbar selesai — overlay, bukan sticky (alasan di Fase 2) |
