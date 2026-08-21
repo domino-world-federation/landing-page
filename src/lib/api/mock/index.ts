@@ -146,14 +146,18 @@ export const MOCK_RESOURCES: ResourceDocument[] = [
 ]
 
 /**
- * The countdown target date (S3) is invented — the design never states one.
- * Replace it once the official schedule exists.
+ * The countdown target (S3). The design shows "Mexico City · Sun, Aug 17,
+ * 2026", but that date is both in the past and not actually a Sunday — so the
+ * place is kept and the date is not. November keeps the card counting down
+ * instead of showing zeroes. Replace once the official schedule exists.
  */
 export const MOCK_FEATURED_EVENT: FeaturedEvent = {
   id: "wc-2026",
   name: "World Championship 2026",
   startsAt: "2026-11-14T09:00:00Z",
-  location: "Jakarta, Indonesia",
+  location: "Mexico City",
+  country: "MEX",
+  flagUrl: "/assets/global/flags/flag-mex.png",
 }
 
 export const MOCK_TOURNAMENTS: Tournament[] = [

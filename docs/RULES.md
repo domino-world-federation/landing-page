@@ -281,6 +281,32 @@ seluruh halaman ikut terhitung dan efeknya meleset.
 - **`prefers-reduced-motion`: parallax dimatikan penuh**, bukan sekadar
   diperlambat. Gerakan terkait scroll adalah pemicu utama motion sickness.
   Layer tetap tampil di posisi diamnya.
+- **Matikan lewat nilai animasi, jangan lewat cabang markup.**
+  `useReducedMotion()` mengembalikan `null` di server dan `true`/`false` di
+  client, jadi `if (prefersReducedMotion) return <A/>` atau
+  `{!prefersReducedMotion && <span/>}` membuat HTML server dan client berbeda —
+  React melempar *hydration failed* dan **membuang seluruh subtree** lalu
+  merender ulang di client. Terbukti di S2: satu cabang di `SofteningImage`
+  membatalkan seluruh hero.
+
+  Render pohon yang sama di kedua sisi; yang berubah hanya transisi dan
+  rentang gerak:
+
+  ```tsx
+  // ❌ beda markup server vs client
+  if (prefersReducedMotion) return <div style={{ filter: blur }}>{img}</div>
+  {!prefersReducedMotion && <motion.span … />}
+
+  // ✅ markup identik, gerak yang dinolkan
+  const y = useTransform(p, [0, 1], ["0%", reduce ? "0%" : `${speed}%`])
+  <motion.span animate={reduce ? { x: 0 } : { x: ["0%", "400%"] }}
+               transition={reduce ? { duration: 0 } : { duration: 1.1 }} />
+  ```
+
+  `duration: 0` tetap mendaratkan layer di posisi diamnya — `motion` memulai
+  animasi di layout effect, jadi nilainya sudah final sebelum browser paint.
+  Aturan yang sama berlaku untuk tiap hook yang hanya ada di client
+  (`matchMedia`, `window`, ukuran layar).
 - **Mobile:** kurangi jumlah layer atau nonaktifkan. Parallax berat menguras
   baterai dan sering patah-patah di perangkat kelas bawah.
 - Layar tidak boleh melompat/bergeser saat layer masuk — kunci tinggi

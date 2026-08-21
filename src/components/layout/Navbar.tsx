@@ -4,19 +4,20 @@ import Link from "next/link"
 import { NAV_COPY } from "@/content/navigation"
 
 import { NavMenu } from "./NavMenu"
+import { NavShell } from "./NavShell"
 
 /**
  * S1 — Figma node `42:2143`.
  *
- * The navbar sits at y:0 on top of the hero, so it overlays rather than
- * occupies its own band. It is deliberately NOT fixed: the text is white and
- * later sections (S4 onward) sit on white backgrounds.
+ * The navbar sits at y:0 on top of the hero, so at rest it overlays rather than
+ * occupying a band of its own. It travels with the page: `NavShell` holds it
+ * fixed and gives it a backdrop once the hero is no longer behind it.
  *
- * Server Component; only the menu itself needs the client (RULES §5).
+ * Server Component; only the shell and the menu reach for the client (RULES §5).
  */
 export function Navbar() {
   return (
-    <header className="absolute inset-x-0 top-0 z-50 flex items-center justify-between px-5 pt-6 pb-4 md:px-10 lg:px-20 lg:pt-9">
+    <NavShell>
       <Link
         href="/"
         className="focus-visible:ring-gold rounded-sm focus-visible:ring-2 focus-visible:outline-none"
@@ -34,6 +35,6 @@ export function Navbar() {
       </Link>
 
       <NavMenu />
-    </header>
+    </NavShell>
   )
 }

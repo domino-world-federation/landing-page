@@ -177,6 +177,8 @@ Belum dikerjakan; dicatat agar keputusan arsitektur fase 1 tetap sejalan.
 | D8 | Pakai paket `motion`, bukan `framer-motion` | Pustaka sama, nama paket berganti sejak rebrand 2025. Import dari `motion/react` | 2026-08-20 |
 | D9 | `build` & `start` di runtime **Node**, `dev` tetap `--bun` | `bun --bun next build` gagal: `Failed to load external module … app-page-turbo.runtime.prod.js: Expected CommonJS module to have a function wrapper`. Turbopack memuat runtime CJS lewat jalur yang belum didukung Bun. `dev` diuji terpisah dan normal (HTTP 200). Bun tetap dipakai untuk install & dev — D6 tidak dibatalkan, hanya dipersempit | 2026-08-20 |
 | D10 | Commit tanpa atribusi AI | Riwayat git adalah catatan tanggung jawab; yang menekan commit bertanggung jawab atas isinya. Aturan di RULES §14 | 2026-08-20 |
+| D11 | Token gerak dipusatkan di `lib/utils/motion.ts`; kurva halaman `[0.25, 0.6, 0.35, 1]` | "Samakan rasanya" harus jadi satu perubahan berkas, bukan sisir per-section. Kurvanya dipilih dari pengukuran, bukan selera: expo-out `[0.22, 1, 0.36, 1]` menempuh 40% perjalanan dalam 10% pertama durasi dan 96% di tengah (puncak 4.5× rata-rata), jadi memanjangkan `duration` hanya menambah waktu mati — kurva terpilih puncaknya 2.46×, yang paling rata dari tujuh kandidat, dan tetap ease-*out* supaya tidak terbaca lag pada gerakan yang dipicu scroll | 2026-08-21 |
+| D12 | Navbar `fixed` dan **transparan sampai bawah** | `absolute` mengikat bar ke `y:0` dokumen sehingga ikut tergulung — terukur hilang seluruhnya pada scroll 150px. `fixed` mempertahankan tampilan istirahat yang sama persis. Tetap transparan karena glass sudah ada di pill menu & burger (`bg-black/40` + blur sendiri); panel kedua di belakangnya menggandakan efek dan mencetak pita keras melintasi artwork. Konsekuensi baik: `NavShell` tidak butuh scroll listener, tetap Server Component | 2026-08-21 |
 
 ---
 
@@ -199,10 +201,27 @@ Entitas yang diantisipasi: `NewsArticle`, `Partner`, `Player`, `Tournament`, `Ra
 |---|---|---|---|
 | ~~R1~~ | ~~MCP Figma `403 Token expired`~~ | — | **Selesai 2026-08-20.** MCP tersambung, node `1:2` terbaca, §4 sudah diverifikasi |
 | R2 | SVG partner bukan vektor — hanya PNG base64 dalam wrapper `<svg>` (0 `<path>`); `logo-lxvr.svg` 120 KB untuk 218×125 | Tidak scalable, ukuran boros | Export ulang dari Figma dengan outline text, atau pakai PNG langsung |
-| R3 | `feature-hq-building.png` 9.2 MB (4096×2458) | Merusak target G4 | Resize + WebP via `next/image`; pertimbangkan pre-compress |
+| ~~R3~~ | ~~`feature-hq-building.png` 9.2 MB (4096×2458)~~ | — | **Selesai 2026-08-21.** File dihapus dari repo; S4 memakai `hq.png` 1920×1080 (1.1 MB) dari desainer, yang sekaligus sudah membakar ketiga wash section-nya |
 | R4 | Kontrak API meleset dari response asli | Rework di fase 2 | Isolasi di `lib/api/`; minta contoh response ke tim backend sedini mungkin |
 | R5 | Penempatan `decor-light-beam.png` & `partners/` (global vs home) belum pasti | Refactor path kecil | `shine` terkonfirmasi hanya dipakai sekali di landing (Y 6826) → tetap di `home/`. Status `partners/` menunggu keputusan halaman lain (pertanyaan terbuka #2) |
-| R9 | Aset di Figma belum dipetakan ke file lokal — `imageRef` desain belum dicocokkan dengan file di `assets/` | Salah pasang gambar saat slicing | Cocokkan per section saat pengerjaan; unduh via MCP bila ada yang belum tersedia |
+| R9 | Aset di Figma belum dipetakan ke file lokal — `imageRef` desain belum dicocokkan dengan file di `assets/` | Salah pasang gambar saat slicing | Cocokkan per section saat pengerjaan; unduh via MCP bila ada yang belum tersedia. **S2 & S4 selesai dipetakan** (lihat tabel di bawah) |
+
+Pemetaan `imageRef` → file lokal, diisi per section:
+
+| Section | Node | `imageRef` (8 char) | File lokal | Dimensi |
+|---|---|---|---|---|
+| S2 | `24:929` | `e3f63834` | `global/decor-rock-top.png` | 888×361 |
+| S2 | `24:930` | `f621e13a` | `global/decor-rock-bottom.png` | 970×403 |
+| S2 | `24:933` | `19ebcbf4` | `home/hero-domino-tile.png` | 1882×2267 |
+| S4 | `31:1086` | `1008bddc` | `home/hq.png` | 1920×1080 |
+
+Aset batu dipakai lintas halaman, jadi berada di `global/`; ukurannya kira-kira
+1× ukuran tampil sedangkan referensi Figma diekspor 2×.
+
+`hq.png` **bukan** ekspor mentah `imageRef` itu: file dari desainer sudah
+komposit satu frame penuh — foto plus vignette `31:1089`, penggelapan `31:1103`,
+dan fade `37:1848` — sedangkan `imageRef`-nya hanya lapisan fotonya (2226×1335.6,
+digeser ke `-153,-164`). Karena itu S4 tidak menggambar wash apa pun di CSS.
 | ~~R6~~ | ~~Runtime Bun di Vercel masih public beta~~ | — | **Terbukti 2026-08-20, lihat D9.** `bun --bun next build` gagal (`Expected CommonJS module to have a function wrapper`). Build & start dipindah ke Node; `dev` tetap `--bun` |
 | R7 | Parallax berat merusak target performa (G4/G6), terutama di ponsel kelas bawah | Skor Lighthouse turun, scroll patah-patah | Batasi 3–4 layer per viewport; kompres aset lebih dulu; kurangi/nonaktifkan layer di mobile; uji di perangkat nyata |
 | R8 | Parallax memicu motion sickness | Masalah aksesibilitas | `prefers-reduced-motion` mematikan parallax **penuh**, bukan memperlambat |

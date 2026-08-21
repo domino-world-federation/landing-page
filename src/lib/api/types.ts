@@ -84,5 +84,9 @@ export type FeaturedEvent = {
   name: string
   startsAt: IsoDateString
   location: string
+  country?: CountryCode
+  /** Flag shown beside the location. Absent means the card renders without
+   *  one, so a country the API has no artwork for still works. */
+  flagUrl?: string
   ctaUrl?: string
 }

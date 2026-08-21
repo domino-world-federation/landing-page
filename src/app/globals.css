@@ -20,6 +20,14 @@
   --color-border-light: #e0e0e0;
   --color-divider: #dadada;
 
+  /* Hero backdrop gradient (S2, node `22:789`) */
+  --color-hero-top: #353535;
+  --color-hero-bottom: #8c8c8c;
+  /* Mid-stop of the silver text gradient. */
+  --color-silver-mid: #999999;
+  /* Vignette start; alpha 0 there, so it only shapes the falloff. */
+  --color-vignette: #525252;
+
   /* Gold — the brand identity */
   --color-gold: #e1b762;
   --color-gold-light: #ffe0a1;
@@ -27,6 +35,19 @@
   --color-gold-btn-light: #f1c977;
   --color-gold-btn-dark: #a57f40;
   --color-gold-logo: #ad8752;
+  /* Label on the gold button — the two stops of its text gradient. */
+  --color-gold-ink: #1a1307;
+  --color-gold-ink-deep: #523e1d;
+
+  /* Nine nav items are a fixed, unshrinkable load, so the width at which the
+     pill can appear is a measured number rather than a stock breakpoint: at
+     15px the row is 1058px wide and the header first affords that at 1400.
+     (`xl`/1280 is 26px short — enough to wrap "About Us".) */
+  --breakpoint-menu: 1400px;
+  /* The design's own 18px item widens the same row to 1283px, which needs
+     1600. Stepping up at `2xl`/1536 as before re-wrapped the row *after* it
+     had already started fitting — widening the window made it worse. */
+  --breakpoint-menu-lg: 1600px;
 
   /* Radii */
   --radius-btn: 8px;
@@ -38,7 +59,11 @@
 
   /* Shadows */
   --shadow-card: 0 4px 4px rgb(0 0 0 / 0.25);
-  --shadow-glow: 0 0 24px #e1b762, 0 0 6px #e1b762;
+  /* Figma pairs the outer glow with an inset white bloom on the primary
+     button — DESIGN-TOKENS §4. Both live in one token because the inset half
+     is not optional: without it the fill reads flat. */
+  --shadow-glow:
+    0 0 24px #e1b762, 0 0 6px #e1b762, inset 0 0 16px rgb(255 255 255 / 0.8);
 
   /* Display sizes — clamp() because the design only exists at 1920px.
      Final numbers get settled per section during slicing. */
@@ -46,7 +71,137 @@
   --text-display-md: clamp(2.25rem, 6.5vw, 7.875rem);
   --text-display-sm: clamp(2rem, 4vw, 4.75rem);
   --text-display-xs: clamp(1.75rem, 3.3vw, 4rem);
+  --text-display-2xs: clamp(1.25rem, 2.1vw, 2.5rem);
   --text-display-btn: clamp(1.5rem, 2vw, 2rem);
+  /* The hero's primary CTA is set larger than the other buttons: node
+     `31:1118` is Bebas 36/44, where DESIGN-TOKENS §2 `display-btn` is 32/40.
+     The floor is 1.375rem rather than the design's 36px: on a phone the pill
+     is capped at 280px, and 26px of Bebas left the label almost touching the
+     capsule ends. 2.25vw still reaches the full 36px by 1600. */
+  --text-display-cta: clamp(1.375rem, 2.25vw, 2.25rem);
+  /* S4's headline is Bebas 95/95 (node `31:1094`) — between `display-sm` (76)
+     and `display-md` (126), so it gets its own step rather than being rounded
+     to a neighbour. 4.95vw is 95/1920, so the design width renders 95px exactly.
+     The 2rem floor is set by the line break: the headline is two fixed lines,
+     and above ~34px the longer one stops fitting a 360px screen. */
+  --text-display-feature: clamp(2rem, 4.95vw, 5.9375rem);
+}
+
+/*
+ * Kept out of @theme: these are gradients, and @theme has no namespace that
+ * would turn them into utilities — they would only ever be read through var().
+ */
+:root {
+  --gradient-countdown-stroke: linear-gradient(
+    161deg,
+    rgb(255 255 255 / 0.6) 4%,
+    rgb(255 255 255 / 0) 20%,
+    rgb(255 255 255 / 0.5) 41%,
+    rgb(255 255 255 / 0) 61%
+  );
+  --gradient-countdown-fill: linear-gradient(
+    180deg,
+    rgb(255 255 255 / 0.12) 0%,
+    rgb(153 153 153 / 0) 100%
+  );
+  /* Secondary button — DESIGN-TOKENS §4. */
+  --gradient-silver-btn: linear-gradient(
+    90deg,
+    #ffffff 0%,
+    #999999 29%,
+    #ededed 64%,
+    #cbcbcb 100%
+  );
+  /* Primary CTA fill — Figma node `31:1117`.
+     `ellipse farthest-side`, NOT a circle: Figma fits a radial gradient to the
+     layer's bounding box, so on a 340 × 72 pill it is squashed hard. A circle
+     would take its radius from the long side and leave the vertical falloff
+     nearly flat. Measured against the Figma export at 30%/50% of the box:
+     ellipse gives 211,171,97 where Figma renders 210,171,97; a circle gives
+     ~231,196,125 — visibly brighter down the middle. */
+  --gradient-gold-cta-fill: radial-gradient(
+    ellipse farthest-side at 50% 50%,
+    var(--color-gold-btn-light) 0%,
+    var(--color-gold-btn-dark) 100%
+  );
+  /* Primary CTA stroke — Figma node `31:1117`. A conic sweep, opaque where it
+     starts on the right and fading to nothing as it comes back around. */
+  --gradient-gold-cta-stroke: conic-gradient(
+    from 90deg at 50% 50%,
+    rgb(255 255 255 / 1) 0%,
+    rgb(255 255 255 / 0) 100%
+  );
+  /* Its label — DESIGN-TOKENS §4, a vertical fall from near-black to brown. */
+  --gradient-gold-cta-ink: linear-gradient(
+    180deg,
+    var(--color-gold-ink) 0%,
+    var(--color-gold-ink-deep) 100%
+  );
+  /* Countdown divider: white only across the middle fifth, fading to nothing
+     at both ends. */
+  --gradient-divider: linear-gradient(
+    90deg,
+    transparent 0%,
+    #ffffff 40%,
+    #ffffff 60%,
+    transparent 100%
+  );
+}
+
+/*
+ * The countdown card's 3px stroke (S3, node `24:1025`).
+ *
+ * Painting the gradient on a wrapper and insetting the fill does NOT work
+ * here: the fill is semi-transparent, so the stroke shows straight through it
+ * and washes diagonal streaks across the whole card. The gradient has to be
+ * clipped to the border box itself.
+ *
+ * `mask-composite: exclude` subtracts the padding box from the border box,
+ * leaving only the 3px ring — the approach DESIGN-TOKENS §5 records as the
+ * closest CSS gets to Figma's two stacked stroke gradients.
+ */
+.countdown-stroke::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 3px;
+  background: var(--gradient-countdown-stroke);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/*
+ * The primary CTA's 3px stroke (S2, node `31:1117`).
+ *
+ * Same problem and same fix as `.countdown-stroke`: the stroke is a gradient,
+ * and `border-color` takes a colour. `border-image` would draw it, but it is
+ * ignored once `border-radius` rounds the box — so the ring is a masked
+ * pseudo-element instead, clipped to the border box by `mask-composite`.
+ */
+.gold-cta-stroke::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 3px;
+  background: var(--gradient-gold-cta-stroke);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
 }
 
 body {

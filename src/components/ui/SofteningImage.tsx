@@ -1,0 +1,116 @@
+"use client"
+
+import { motion, useReducedMotion } from "motion/react"
+import Image from "next/image"
+
+/**
+ * An image that cross-fades between two blur levels.
+ *
+ * Blur is NOT animated — `filter` repaints the layer every frame, which
+ * RULES §12 rules out. Instead two copies are stacked, each with a static
+ * blur, and only their `opacity` cross-fades. The eye reads it as the image
+ * going soft (or coming into focus); the compositor only ever sees an
+ * opacity change.
+ *
+ * Runs in both directions: rocks go sharp → soft as they retreat, the tile
+ * goes soft → its resting blur as it arrives.
+ */
+
+type SofteningImageProps = {
+  src: string
+  /** Empty for a decorative layer, whose wrapper carries `aria-hidden`. */
+  alt: string
+  /** Starting blur, e.g. `"0px"`. */
+  from: string
+  /** The resting blur from the design, e.g. `"4px"`. */
+  to: string
+  /** Seconds, matched to the enclosing layer so both land together. */
+  duration: number
+  delay?: number
+  /**
+   * Fill the positioned parent instead of flowing at intrinsic size. Requires
+   * `sizes`; `width`/`height` are then unused.
+   */
+  fill?: boolean
+  sizes?: string
+  width?: number
+  height?: number
+  priority?: boolean
+  quality?: number
+  /** Applied to each copy — `object-contain` and the like. */
+  imageClassName?: string
+}
+
+export function SofteningImage({
+  src,
+  alt,
+  from,
+  to,
+  duration,
+  delay = 0,
+  fill = false,
+  sizes,
+  width,
+  height,
+  priority = false,
+  quality,
+  imageClassName = "h-auto w-full",
+}: SofteningImageProps) {
+  const prefersReducedMotion = useReducedMotion()
+
+  const image = (
+    <Image
+      src={src}
+      alt={alt}
+      {...(fill
+        ? { fill: true as const, sizes }
+        : { width: width!, height: height! })}
+      priority={priority}
+      quality={quality}
+      className={imageClassName}
+    />
+  )
+
+  // Reduced motion skips the cross-fade and shows the design's resting state
+  // immediately — but BOTH copies still render. Dropping one of them was the
+  // obvious version and it broke hydration: `useReducedMotion` is `null` on
+  // the server and `true` on a reducing client, so the server sent two copies
+  // and the client wanted one. React cannot patch a difference in the tree
+  // itself, so it discarded the hero and re-rendered it from scratch.
+  //
+  // Keeping the markup identical and collapsing only the duration costs one
+  // extra decoded copy of an image the browser has already downloaded once —
+  // `next/image` serves both from the same URL, so it is a cache hit.
+  // No `ease` here on purpose: each copy sets its own below, and a cross-fade
+  // wants the pair rather than the page's transform curve — see the note there.
+  const transition = prefersReducedMotion
+    ? { duration: 0 }
+    : { duration, delay }
+
+  return (
+    <>
+      {/* Starting copy. When not filling, this one is in flow and alone gives
+          the wrapper its height. */}
+      <motion.div
+        className={fill ? "absolute inset-0" : undefined}
+        initial={{ opacity: 1 }}
+        animate={{ opacity: 0 }}
+        transition={{ ...transition, ease: "easeIn" }}
+        style={{ filter: `blur(${from})`, willChange: "opacity" }}
+      >
+        {image}
+      </motion.div>
+
+      {/* Resting copy, overlaid so the two register exactly. */}
+      <motion.div
+        className="absolute inset-0"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ ...transition, ease: "easeOut" }}
+        style={{ filter: `blur(${to})`, willChange: "opacity" }}
+      >
+        {image}
+      </motion.div>
+    </>
+  )
+}

@@ -14,11 +14,19 @@ import { cn } from "@/lib/utils/cn"
  */
 
 /**
- * Nine items at the design's 18px no longer fit below ~1536px, so the pill
- * collapses into a disclosure panel under `xl`.
+ * Nine items are a fixed load that cannot shrink, so both size steps are keyed
+ * to measured widths rather than stock breakpoints (`--breakpoint-menu`,
+ * `--breakpoint-menu-lg`): 1058px of row needs 1400, and the design's own 18px
+ * widens it to 1283px, which needs 1600. Below the first, the pill collapses
+ * into a disclosure panel.
+ *
+ * `whitespace-nowrap` is the backstop. The breakpoints decide *whether* the row
+ * fits; this guarantees that when it does not — a longer label, another item, a
+ * user font scale — it overflows visibly instead of quietly wrapping "About Us"
+ * onto two lines and pushing the header 20px taller.
  */
 const MENU_ITEM_CLASS =
-  "flex items-center rounded-btn px-4 py-2.5 text-[15px] leading-[26px] font-medium tracking-[0.04em] text-white uppercase transition-opacity 2xl:px-5 2xl:py-3 2xl:text-lg"
+  "flex items-center whitespace-nowrap rounded-btn px-4 py-2.5 text-[15px] leading-[26px] font-medium tracking-[0.04em] text-white uppercase transition-opacity menu-lg:px-5 menu-lg:py-3 menu-lg:text-lg"
 
 /** Placeholder hrefs; only real routes can ever be active. */
 function isActive(href: string, pathname: string): boolean {
@@ -44,7 +52,7 @@ export function NavMenu() {
   return (
     <nav aria-label={NAV_COPY.menuLabel} className="relative">
       {/* Desktop: the glass pill from the design. */}
-      <ul className="rounded-glass hidden items-center bg-black/40 p-1 backdrop-blur-[10px] xl:flex">
+      <ul className="rounded-glass hidden items-center bg-black/40 p-1 backdrop-blur-[10px] menu:flex">
         {NAV_ITEMS.map((item) => {
           const active = isActive(item.href, pathname)
 
@@ -73,7 +81,7 @@ export function NavMenu() {
         aria-expanded={isOpen}
         aria-controls="nav-panel"
         aria-label={isOpen ? NAV_COPY.closeMenu : NAV_COPY.openMenu}
-        className="rounded-glass focus-visible:ring-gold flex h-11 w-11 items-center justify-center bg-black/40 backdrop-blur-[10px] focus-visible:ring-2 focus-visible:outline-none xl:hidden"
+        className="rounded-glass focus-visible:ring-gold flex h-11 w-11 items-center justify-center bg-black/40 backdrop-blur-[10px] focus-visible:ring-2 focus-visible:outline-none menu:hidden"
       >
         <span aria-hidden="true" className="relative block h-4 w-5">
           <span
@@ -100,7 +108,14 @@ export function NavMenu() {
       {isOpen && (
         <ul
           id="nav-panel"
-          className="rounded-glass absolute top-full right-0 z-10 mt-2 flex w-56 flex-col bg-black/40 p-1 backdrop-blur-[10px] xl:hidden"
+          // `bg-black/95`, not the pill's `/40`: the panel opens directly over
+          // the hero's gold CTA, and the button is bright enough that
+          // `backdrop-blur` alone cannot hide it — at 40% its label ghosts
+          // straight through the menu items. Measured on the overlap, the
+          // gold cast falls from rgb(27,22,13) at 85% to rgb(6,5,3) here,
+          // against rgb(3,3,3) where the panel covers plain backdrop. Still
+          // translucent, so the glass treatment survives.
+          className="rounded-glass absolute top-full right-0 z-10 mt-2 flex w-56 flex-col bg-black/95 p-1 backdrop-blur-[10px] menu:hidden"
         >
           {NAV_ITEMS.map((item) => {
             const active = isActive(item.href, pathname)

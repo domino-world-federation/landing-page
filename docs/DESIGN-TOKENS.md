@@ -304,11 +304,11 @@ tablet dan ponsel belum ada — lihat §9.
 `tailwind.config.ts`.** File JS lama masih bisa dimuat lewat `@config`, tetapi
 itu jalur migrasi — untuk project baru, tulis langsung di CSS.
 
-Token didefinisikan di `src/styles/globals.css`. Tiap variabel `@theme`
+Token didefinisikan di `src/app/globals.css`. Tiap variabel `@theme`
 otomatis menghasilkan utility class-nya sendiri:
 
 ```css
-/* src/styles/globals.css */
+/* src/app/globals.css */
 @import "tailwindcss";
 
 @theme {
