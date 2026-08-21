@@ -4,16 +4,7 @@ import { motion, useReducedMotion } from "motion/react"
 import type { ReactNode } from "react"
 
 import { cn } from "@/lib/utils/cn"
-import { DURATION, EASE } from "@/lib/utils/motion"
-
-/**
- * How long the element takes to return to its starting state once it has left
- * the viewport. Short, and with no delay of its own: this is a reset, not an
- * exit animation. The entrance is the thing worth watching; rewinding it at the
- * same pace would mean the reader watches the copy leave as well as arrive, and
- * the stagger would replay backwards on the way out.
- */
-const RESET_DURATION = 0.3
+import { DURATION, EASE, RESET_DURATION } from "@/lib/utils/motion"
 
 type RevealProps = {
   children: ReactNode

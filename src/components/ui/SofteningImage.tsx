@@ -3,6 +3,9 @@
 import { motion, useReducedMotion } from "motion/react"
 import Image from "next/image"
 
+import { useEntrance } from "@/components/ui/EntranceGroup"
+import { RESET_DURATION } from "@/lib/utils/motion"
+
 /**
  * An image that cross-fades between two blur levels.
  *
@@ -58,6 +61,11 @@ export function SofteningImage({
 }: SofteningImageProps) {
   const prefersReducedMotion = useReducedMotion()
 
+  // The cross-fade has to rearm along with the scale it accompanies. They are
+  // one move: a rock that retreats without going soft again has already spent
+  // its focus change on the first visit, so the replay would show half of it.
+  const entered = useEntrance()
+
   const image = (
     <Image
       src={src}
@@ -87,6 +95,12 @@ export function SofteningImage({
     ? { duration: 0 }
     : { duration, delay }
 
+  // Winding back is quick and unstaggered, matching `ParallaxLayer`'s reset —
+  // the pair leaves together because they arrived together.
+  const reset = prefersReducedMotion
+    ? { duration: 0 }
+    : { duration: RESET_DURATION }
+
   return (
     <>
       {/* Starting copy. When not filling, this one is in flow and alone gives
@@ -94,8 +108,11 @@ export function SofteningImage({
       <motion.div
         className={fill ? "absolute inset-0" : undefined}
         initial={{ opacity: 1 }}
-        animate={{ opacity: 0 }}
-        transition={{ ...transition, ease: "easeIn" }}
+        animate={
+          entered
+            ? { opacity: 0, transition: { ...transition, ease: "easeIn" } }
+            : { opacity: 1, transition: reset }
+        }
         style={{ filter: `blur(${from})`, willChange: "opacity" }}
       >
         {image}
@@ -105,8 +122,11 @@ export function SofteningImage({
       <motion.div
         className="absolute inset-0"
         initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ ...transition, ease: "easeOut" }}
+        animate={
+          entered
+            ? { opacity: 1, transition: { ...transition, ease: "easeOut" } }
+            : { opacity: 0, transition: reset }
+        }
         style={{ filter: `blur(${to})`, willChange: "opacity" }}
       >
         {image}

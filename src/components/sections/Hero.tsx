@@ -1,4 +1,5 @@
 import { HERO_ALT, HERO_COPY } from "@/content/hero"
+import { EntranceGroup } from "@/components/ui/EntranceGroup"
 import { SofteningImage } from "@/components/ui/SofteningImage"
 import { GoldCta } from "@/components/ui/GoldCta"
 import { ParallaxLayer } from "@/components/ui/ParallaxLayer"
@@ -39,15 +40,21 @@ const TILE_DELAY = HERO_RETREAT / 3
  * Depth comes from the blur baked into the design (DESIGN-TOKENS §5): the more
  * blurred a layer, the further away it reads, and the slower it travels.
  *
- * On load the composition assembles itself. Both rocks start at full size and
- * sharp, then shrink towards the corner they are anchored to — top-right for
- * the upper one, bottom-left for the lower — so their outer edge stays pinned
- * and they retreat inwards rather than drifting away from the frame, going
- * soft as they go. The tile arrives while that retreat is still under way, out
- * of focus at first and then settling into the design's own slight blur.
+ * The composition assembles itself. Both rocks start at full size and sharp,
+ * then shrink towards the corner they are anchored to — top-right for the upper
+ * one, bottom-left for the lower — so their outer edge stays pinned and they
+ * retreat inwards rather than drifting away from the frame, going soft as they
+ * go. The tile arrives while that retreat is still under way, out of focus at
+ * first and then settling into the design's own slight blur.
  *
- * `SofteningImage` does the focus changes without animating `filter`. The
- * entrance is a one-off; scroll parallax takes over afterwards.
+ * It plays on load and again on every return: scroll down to S4 and back up,
+ * and the rocks retreat and the tile arrives once more. `EntranceGroup` drives
+ * all three from a single viewport trigger so they keep the design's order
+ * whichever direction the reader arrives from — see the note there for why
+ * per-layer triggers assemble the hero backwards on the way up.
+ *
+ * `SofteningImage` does the focus changes without animating `filter`. Scroll
+ * parallax runs alongside, on `y`, which the entrance never touches.
  *
  * Three moving layers, which is the per-viewport ceiling (RULES §12).
  */
@@ -104,7 +111,21 @@ export function Hero() {
           It pairs with `isolate` on the section: that keeps these indices —
           and the CTA block's `z-60` — a private scale, so nothing here can
           outrank the navbar's `z-50` in the page's root context. */}
-      <div className="absolute inset-0 z-10">
+      {/* One trigger for all three layers, which is the point of the group:
+          they are three parts of one move spread across the section's full
+          height. Left to arm themselves, the lower rock — nearest the reader
+          coming back up from S3 — would cross its own threshold first and
+          start retreating while the tile above was still off screen, so the
+          composition would assemble bottom-up on the way back and top-down on
+          load. One boolean keeps the design's order at both.
+
+          `amount` is 0.4 rather than the copy default of 0.25: the trigger has
+          to sit low enough that the section is genuinely being looked at, but
+          leave room to rearm. Coming up from S3 the hero enters from the top
+          of the viewport, so it is already 40% on screen well before it
+          settles — the retreat plays into a filling frame rather than after
+          it. */}
+      <EntranceGroup amount={0.4} className="absolute inset-0 z-10">
         {/* Rocks are the heaviest layers, and were once dropped below md to
             spare low-end phones the compositing. They are kept now because
             without them the phone layout is not the same design — three
@@ -236,7 +257,7 @@ export function Hero() {
           aria-hidden="true"
           className="absolute inset-x-0 bottom-0 z-40 hidden h-[36%] bg-[radial-gradient(ellipse_130%_100%_at_51%_0%,transparent_47%,var(--color-bg)_100%)] lg:block"
         />
-      </div>
+      </EntranceGroup>
 
       {/* `mt-auto` here and on the CTA block below splits the leftover height
           between them, which lands the tagline/headline pair near the middle
@@ -249,15 +270,15 @@ export function Hero() {
           centre the tagline right under the logo — the two then print on top
           of each other. The padding is part of the flex item, so it is counted
           before the leftover space is split. */}
-      {/* The copy is deliberately still. The hero's entrance is the artwork
-          assembling itself on load, and that is the whole of it — the words are
-          what the moving pieces resolve into, so they are already in place when
-          the rocks start to retreat.
+      {/* The copy is deliberately still, and stays outside `EntranceGroup` so
+          it keeps that way on the replay too. The hero's entrance is the
+          artwork assembling itself — the words are what the moving pieces
+          resolve into, so they are already in place when the rocks retreat.
 
-          A scroll-triggered `Reveal` was tried here and taken back out: this
-          section is on screen at load, so a scroll entrance either fires
-          immediately (adding a second, competing entrance to the one the layers
-          already play) or waits for a scroll that has nothing left to reveal. */}
+          A `Reveal` was tried here and taken back out. Text that re-animates
+          on every return is the part a reader notices as an effect rather than
+          as the page arriving, and it competes with the three layers moving
+          behind it for the same moment. */}
       <p className="font-sans relative z-50 mt-auto pt-28 bg-linear-to-r from-white via-[var(--color-silver-mid)] to-white bg-clip-text px-5 text-center text-base font-semibold tracking-[0.24em] text-transparent uppercase lg:absolute lg:inset-x-0 lg:top-[36%] lg:mt-0 lg:pt-0 lg:text-2xl">
         {HERO_COPY.tagline}
       </p>

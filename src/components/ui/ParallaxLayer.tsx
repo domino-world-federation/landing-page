@@ -4,7 +4,8 @@ import { motion, useReducedMotion, useScroll, useTransform } from "motion/react"
 import { useRef, type ReactNode } from "react"
 
 import { cn } from "@/lib/utils/cn"
-import { EASE } from "@/lib/utils/motion"
+import { useEntrance } from "@/components/ui/EntranceGroup"
+import { EASE, RESET_DURATION } from "@/lib/utils/motion"
 
 const ORIGINS = {
   top: "origin-top",
@@ -32,9 +33,10 @@ const ANCHORS: Record<"cross" | "top", ScrollOffset> = {
 }
 
 /**
- * A one-off entrance, played on mount and never again. Separate from the
- * scroll parallax: `y` rides a MotionValue in `style`, while these ride
- * `animate`, so the two never contend for the same property.
+ * An entrance played when the layer's `EntranceGroup` comes into view — or on
+ * mount, if there is no group above it. Separate from the scroll parallax: `y`
+ * rides a MotionValue in `style`, while these ride `animate`, so the two never
+ * contend for the same property.
  */
 type EnterProps = {
   /** `[from, to]` scale. Shrinking towards `origin` reads as receding. */
@@ -77,6 +79,10 @@ export function ParallaxLayer({
   const ref = useRef<HTMLDivElement>(null)
   const prefersReducedMotion = useReducedMotion()
 
+  // Whether the enclosing `EntranceGroup` is on screen. `true` when there is no
+  // group, which is what keeps a standalone layer playing on mount as before.
+  const entered = useEntrance()
+
   // Scope the target to this element — without it the whole page counts
   // towards the progress and the effect lands off-mark (RULES §12).
   const { scrollYProgress } = useScroll({
@@ -107,25 +113,49 @@ export function ParallaxLayer({
   // the design puts it. `duration: 0` is how it gets there: motion starts
   // animations in a layout effect, so the values are already at rest before
   // the browser paints, and there is no movement to see.
+  //
+  // `animate` is driven by `entered`, so a layer inside a rearming group winds
+  // back to its starting values when the group leaves and plays again when it
+  // returns. The two directions carry their own transitions: arriving uses the
+  // design's timing, leaving uses the short reset — the entrance is what the
+  // reader is meant to watch, and rewinding it at the same pace would show them
+  // the move twice, backwards the second time.
+  const from = !enter
+    ? {}
+    : {
+        ...(enter.scale ? { scale: enter.scale[0] } : {}),
+        ...(enter.opacity ? { opacity: enter.opacity[0] } : {}),
+        ...(enter.rotate ? { rotate: enter.rotate[0] } : {}),
+      }
+
+  const to = !enter
+    ? {}
+    : {
+        ...(enter.scale ? { scale: enter.scale[1] } : {}),
+        ...(enter.opacity ? { opacity: enter.opacity[1] } : {}),
+        ...(enter.rotate ? { rotate: enter.rotate[1] } : {}),
+      }
+
   const motionProps = !enter
     ? {}
     : {
-        initial: {
-          ...(enter.scale ? { scale: enter.scale[0] } : {}),
-          ...(enter.opacity ? { opacity: enter.opacity[0] } : {}),
-          ...(enter.rotate ? { rotate: enter.rotate[0] } : {}),
-        },
-        animate: {
-          ...(enter.scale ? { scale: enter.scale[1] } : {}),
-          ...(enter.opacity ? { opacity: enter.opacity[1] } : {}),
-          ...(enter.rotate ? { rotate: enter.rotate[1] } : {}),
-        },
-        transition: prefersReducedMotion
-          ? { duration: 0 }
+        initial: from,
+        animate: entered
+          ? {
+              ...to,
+              transition: prefersReducedMotion
+                ? { duration: 0 }
+                : {
+                    duration: enter.duration ?? 1.2,
+                    delay: enter.delay ?? 0,
+                    ease: EASE,
+                  },
+            }
           : {
-              duration: enter.duration ?? 1.2,
-              delay: enter.delay ?? 0,
-              ease: EASE,
+              ...from,
+              transition: prefersReducedMotion
+                ? { duration: 0 }
+                : { duration: RESET_DURATION, ease: "easeOut" as const },
             },
       }
 

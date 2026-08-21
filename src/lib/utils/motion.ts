@@ -32,3 +32,15 @@ export const DURATION = 1.4
 
 /** Seconds. The step between staggered siblings, e.g. headline → body → button. */
 export const STAGGER = 0.16
+
+/**
+ * Seconds. How long a rearming entrance takes to return to its starting state
+ * once it has left the viewport. Short, and with no delay of its own: this is a
+ * reset, not an exit animation. The entrance is the thing worth watching;
+ * rewinding it at the same pace would mean the reader watches the move leave as
+ * well as arrive, and any stagger would replay backwards on the way out.
+ *
+ * Paired with `easeOut` rather than `EASE` wherever it is used — the page's
+ * curve is shaped for a move that is meant to be followed, and this one is not.
+ */
+export const RESET_DURATION = 0.3

@@ -231,9 +231,11 @@ identik di kedua mode, dan console bersih. Konvensinya ditulis di RULES §12.
 
 Parallax berbasis scroll tidak berguna di sini — hero satu-satunya
 section saat itu, tidak ada ruang scroll (terukur: `y` tetap 0 di tiap fraksi),
-jadi dipakai animasi entrance sekali jalan. Blur **tidak** dianimasikan
-(RULES §12): `SofteningImage` menumpuk dua salinan ber-blur statis dan hanya
-menyilangkan `opacity`.
+jadi dipakai animasi entrance. Setelah S3 dan S4 ada, ruang scroll itu muncul:
+parallax-nya aktif (terukur travel rock-top 31,9px, rock-bottom 17,7px, tile
+123,4px) dan entrance-nya diberi pemicu viewport supaya mengulang — lihat catatan
+animasi di bawah. Blur **tidak** dianimasikan (RULES §12): `SofteningImage`
+menumpuk dua salinan ber-blur statis dan hanya menyilangkan `opacity`.
 
 `hero-domino-tile.svg` **tidak dipakai** — isinya PNG 1882 × 2267 yang sama
 persis dalam base64, jadi tidak menambah ketajaman, ukurannya 1.4 MB, dan
@@ -309,10 +311,12 @@ elemen dalam memiliki `scale` sekali jalan, jadi keduanya tidak pernah menulis k
 properti transform yang sama. Skalanya tidak pernah turun di bawah `1` supaya
 tepi fade bawaan gambar tidak pernah tertarik masuk ke frame di tengah animasi.
 
-Teks naik dari bawah sambil menajam, dikerjakan komponen baru `Reveal` —
-`whileInView`, bukan animasi saat mount seperti hero. Section di bawah lipatan
-yang mulai saat mount sudah selesai bergerak sebelum ada yang melihatnya;
-`whileInView` membelanjakan entrance-nya saat section dibaca.
+Teks naik dari bawah sambil menajam, dikerjakan komponen baru `Reveal`, yang
+memakai `whileInView`. Section di bawah lipatan yang mulai bergerak saat mount
+sudah selesai sebelum ada yang melihatnya; `whileInView` membelanjakan
+entrance-nya saat section dibaca. Hero memakai jalur berbeda untuk kebutuhan yang
+sama (`EntranceGroup`) karena layer-nya harus berangkat serentak, bukan
+sendiri-sendiri — alasannya di catatan animasi.
 
 Entrance-nya **mengulang**: `once` default `false`, jadi scroll melewati section
 lalu kembali memutar animasinya lagi. Section ini satu viewport penuh gambar
@@ -362,13 +366,43 @@ ease-*out*, bukan in-out: varian in-out menganggur di seperempat pertama (baru
 5% perjalanan pada 25% durasi) dan itu terbaca sebagai lag untuk gerakan yang
 dipicu scroll pembaca sendiri.
 
-Copy S2 **sengaja diam**. Entrance hero adalah artwork yang merakit dirinya saat
-load, dan itu saja — kata-katanya adalah hasil yang dituju layer bergerak, jadi
-sudah di tempatnya sebelum batu mulai mundur. `Reveal` sempat dipasang di
-tagline/headline/CTA dan dicabut kembali: section ini ada di layar saat load,
-jadi entrance berbasis scroll entah langsung menyala (menambah entrance kedua
-yang bersaing dengan entrance layer) atau menunggu scroll yang sudah tidak
-menyisakan apa pun untuk diungkap.
+Copy S2 **sengaja diam**. Entrance hero adalah artwork yang merakit dirinya —
+kata-katanya adalah hasil yang dituju layer bergerak, jadi sudah di tempatnya
+sebelum batu mulai mundur. `Reveal` sempat dipasang di tagline/headline/CTA dan
+dicabut kembali: teks yang ikut beranimasi tiap kali pembaca kembali justru
+terbaca sebagai efek, bukan sebagai halaman yang sedang datang, dan ia berebut
+momen dengan tiga layer yang bergerak di belakangnya.
+
+**Entrance hero mengulang** (`EntranceGroup`). Turun ke S4 lalu naik lagi, batu
+mundur dan tile datang sekali lagi. Yang penting di sini: pemicunya **satu untuk
+seluruh panggung**, bukan satu per layer. Tiap layer yang mengamati dirinya
+sendiri terlihat masuk akal sampai dicoba dari bawah — batu bawah paling dekat
+dengan pembaca yang naik dari S3, jadi ia melewati ambangnya lebih dulu dan mulai
+mundur saat tile di atasnya masih di luar layar. Komposisinya merakit diri
+bottom-up saat naik dan top-down saat load: tiga animasi yang sama dalam urutan
+berbeda, dan itu terbaca sebagai desain yang berbeda. Satu `useInView`, satu
+boolean lewat context, jadi semua berangkat serentak dan jeda relatif dari desain
+tetap utuh.
+
+`amount` 0.4, bukan 0.25 seperti copy: ambangnya harus cukup rendah supaya
+section benar-benar sedang dilihat, tapi masih menyisakan ruang untuk rearm. Naik
+dari S3 hero masuk dari tepi atas viewport, jadi 40% tercapai jauh sebelum ia
+berhenti — mundurnya batu bermain ke dalam frame yang sedang terisi, bukan
+setelahnya.
+
+Blur cross-fade ikut mundur bersama scale-nya. Keduanya satu gerakan: batu yang
+mundur tanpa melembut lagi berarti perubahan fokusnya sudah habis terpakai di
+kunjungan pertama, dan replay hanya menampilkan separuhnya. Reset dipakai
+bersama lewat `RESET_DURATION` di `lib/utils/motion.ts` — dulu privat di
+`Reveal`, sekarang dipakai `ParallaxLayer` dan `SofteningImage` juga.
+
+Terverifikasi 360/768/1440/1920, dua putaran penuh: settle `scale 0.82` / tile
+`opacity 1, rot −6°` → di S4 balik ke `scale 1` / tile `opacity 0, rot −16°` →
+400ms setelah naik `scale 0.925` (sedang bergerak) → settle lagi di angka semula.
+Salinan blur batu atas ikut bertukar `[0,1] → [1,0] → [0,1]`. Reduced-motion
+mendarat langsung di posisi diam pada load **dan** pada replay (`0.82`/`−6°`
+sejak 250ms), tanpa hydration failure — `useInView` `false` di server dan di
+render pertama client, jadi kedua sisi melukis keadaan awal yang sama.
 
 ### Per section wajib
 
@@ -437,3 +471,4 @@ Keputusan arsitektur dicatat di **PRD §7**. Ubah di sana, bukan di sini.
 | 2026-08-21 | `Reveal` mengulang saat scroll balik (`once` default `false`), arah reset diberi timing sendiri |
 | 2026-08-21 | Token gerak dipusatkan di `lib/utils/motion.ts`; kurva diganti `[0.25, 0.6, 0.35, 1]` setelah expo-out diukur front-loaded (D11) |
 | 2026-08-21 | Navbar jadi `fixed` — `absolute` terbukti ikut tergulung dan hilang di 150px — dan tetap transparan sampai bawah (D12) |
+| 2026-08-21 | Entrance hero mengulang saat pembaca naik lagi ke S1; `EntranceGroup` memicu ketiga layer serentak, bukan per-layer (D13) |
