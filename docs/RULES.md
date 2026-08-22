@@ -224,6 +224,11 @@ import { motion, useScroll, useTransform } from "motion/react"
 
 - Animasikan `transform` dan `opacity` saja — hindari properti yang memicu
   layout reflow.
+  Pengecualian hanya bila **keempatnya** terpenuhi: satu elemen, dipicu aksi
+  eksplisit pembaca (bukan scroll), di bawah ~300ms, dan tidak ada gerak lain
+  berjalan bersamanya. Panel accordion S11 satu-satunya sejauh ini — alasan dan
+  alternatif yang diukur ada di PRD D23. Bagian yang tetap berbagi hot path
+  dengan halaman (ikon toggle-nya) tetap di `transform`/`opacity`.
 - Durasi 200–400ms untuk interaksi mikro.
 - Komponen beranimasi butuh `"use client"` — letakkan sedalam mungkin agar
   tidak menyeret seluruh section ke client.
@@ -275,6 +280,16 @@ export function ParallaxLayer({ speed = 0.5, children }: Props) {
 
 Selalu batasi `useScroll` dengan `target` ke section terkait — tanpa itu,
 seluruh halaman ikut terhitung dan efeknya meleset.
+
+**Periksa juga bahwa rentang scroll-nya benar-benar ada.** `offset` bawaan
+`["start end", "end start"]` baru mencapai progress 1 saat kepala section
+melewati atas viewport — dan section **terakhir** halaman tidak pernah sampai ke
+sana, karena dokumennya habis lebih dulu. Layer-nya mandek di tengah rentang dan
+diam-diam hanya menyampaikan sebagian travel; S7 terukur berhenti di f≈0,5 dan
+memberi 27px dari 58px, yang terbaca sebagai "animasinya tidak ada". Pakai
+`anchor="foot"` (`["start end", "end end"]`) di sana — rentangnya berakhir saat
+kaki section bertemu kaki viewport, yang selalu tersedia. Ukur `y` di scroll
+maksimum, jangan berhenti pada asumsi bahwa nilainya tercapai (D16).
 
 ### Wajib
 

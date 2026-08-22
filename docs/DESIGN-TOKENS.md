@@ -357,14 +357,19 @@ bekerja di semua lebar:
 
 ```css
 @theme {
-  --text-display-lg: clamp(2.5rem, 8vw, 9.75rem);  /* 40px → 156px */
-  --text-display-sm: clamp(2rem, 4vw, 4.75rem);    /* 32px → 76px  */
-  --text-display-btn: clamp(1.5rem, 2vw, 2rem);    /* 24px → 32px  */
+  --text-display-lg: clamp(2.5rem, 8.125vw, 9.75rem); /* 156/1920 */
+  --text-display-sm: clamp(2rem, 3.9583vw, 4.75rem);  /* 76/1920  */
+  --text-display-btn: clamp(1.5rem, 1.6667vw, 2rem);  /* 32/1920  */
 }
 ```
 
-Angka pastinya ditentukan saat slicing per section — desain hanya menyediakan
-titik 1920px, sisanya keputusan kita (lihat §9 no. 1–2).
+**Slope-nya selalu `cap / 1920`, dihitung bukan dikira** (PRD D25). Suku tengah
+`clamp()` adalah yang benar-benar dirender di lebar desain, jadi slope yang
+kurang dari cap berarti token itu tidak pernah mencapai maksimumnya sendiri di
+1920 — dan tidak ada yang memperingatkan. Angka bulat yang enak dilihat (`8vw`,
+`4vw`, `2vw`) justru yang paling sering meleset: 8vw hanya 153,6px dari 156 yang
+diminta. Lantainya (suku pertama) tetap keputusan kita — desain hanya
+menyediakan titik 1920px (lihat §9 no. 1–2).
 
 ---
 
