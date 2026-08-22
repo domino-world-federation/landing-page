@@ -1,5 +1,5 @@
-import { EventShowcase } from "@/components/ui/EventShowcase"
-import { FEATURED_EVENT_COPY } from "@/content/featured-event"
+import { EventShowcase } from "@/components/home/EventShowcase"
+import { FEATURED_EVENT_COPY } from "@/content/home/featured-event"
 import { getShowcaseEvents } from "@/lib/api/client"
 
 /**

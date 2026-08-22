@@ -1,7 +1,7 @@
-import { NEWS_COPY } from "@/content/news"
+import { NEWS_COPY } from "@/content/home/news"
 import { getLatestNews } from "@/lib/api/client"
 import { Marquee } from "@/components/ui/Marquee"
-import { NewsCard } from "@/components/ui/NewsCard"
+import { NewsCard } from "@/components/home/NewsCard"
 
 /**
  * Seconds for the strip to travel its own length once.

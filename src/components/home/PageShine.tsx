@@ -1,6 +1,6 @@
 import Image from "next/image"
 
-import { ParallaxLayer } from "@/components/ui/ParallaxLayer"
+import { ParallaxLayer } from "@/components/motion/ParallaxLayer"
 
 /**
  * S12 — Figma node `56:4970`. The gold shine over the page's last third.

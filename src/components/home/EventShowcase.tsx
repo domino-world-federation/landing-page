@@ -2,8 +2,8 @@
 
 import { useState } from "react"
 
-import { EventCard } from "@/components/ui/EventCard"
-import { FEATURED_EVENT_COPY } from "@/content/featured-event"
+import { EventCard } from "@/components/home/EventCard"
+import { FEATURED_EVENT_COPY } from "@/content/home/featured-event"
 import { cn } from "@/lib/utils/cn"
 import type { ShowcaseEvent } from "@/lib/api/types"
 
@@ -311,7 +311,7 @@ function PagerButton({
       {/* eslint-disable-next-line @next/next/no-img-element -- an inline SVG
           sized in CSS; next/image would add a layout wrapper for no gain. */}
       <img
-        src="/assets/home/icon-arrow.svg"
+        src="/assets/global/icon-arrow-left.svg"
         alt=""
         width={32}
         height={32}

@@ -1,7 +1,7 @@
-import { RESOURCES_COPY } from "@/content/resources"
+import { RESOURCES_COPY } from "@/content/home/resources"
 import { getResources } from "@/lib/api/client"
-import { Reveal } from "@/components/ui/Reveal"
-import { ResourceCard } from "@/components/ui/ResourceCard"
+import { Reveal } from "@/components/motion/Reveal"
+import { ResourceCard } from "@/components/home/ResourceCard"
 
 /**
  * S10 — Figma node `56:4554`. The resource library.

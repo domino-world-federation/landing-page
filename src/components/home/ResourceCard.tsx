@@ -1,4 +1,4 @@
-import { RESOURCES_COPY } from "@/content/resources"
+import { RESOURCES_COPY } from "@/content/home/resources"
 import type { ResourceDocument } from "@/lib/api/types"
 
 /**
@@ -82,7 +82,7 @@ export function ResourceCard({ doc }: { doc: ResourceDocument }) {
               gain. Drawn in `#1A1C1D` for use on the card's white ground, so
               unlike S8's arrow it needs no `invert`. */}
           <img
-            src="/assets/home/icon-download.svg"
+            src="/assets/global/icon-download.svg"
             alt=""
             width={16}
             height={16}

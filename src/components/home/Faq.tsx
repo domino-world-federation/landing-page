@@ -1,6 +1,6 @@
-import { FAQ_COPY, FAQ_DEFAULT_OPEN, FAQ_ITEMS } from "@/content/faq"
-import { FaqAccordion } from "@/components/ui/FaqAccordion"
-import { Reveal } from "@/components/ui/Reveal"
+import { FAQ_COPY, FAQ_DEFAULT_OPEN, FAQ_ITEMS } from "@/content/home/faq"
+import { FaqAccordion } from "@/components/home/FaqAccordion"
+import { Reveal } from "@/components/motion/Reveal"
 
 /**
  * S11 — Figma node `81:690`. The FAQ.

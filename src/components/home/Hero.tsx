@@ -1,8 +1,8 @@
-import { HERO_ALT, HERO_COPY } from "@/content/hero"
-import { EntranceGroup } from "@/components/ui/EntranceGroup"
-import { SofteningImage } from "@/components/ui/SofteningImage"
+import { HERO_ALT, HERO_COPY } from "@/content/home/hero"
+import { EntranceGroup } from "@/components/motion/EntranceGroup"
+import { SofteningImage } from "@/components/motion/SofteningImage"
 import { GoldCta } from "@/components/ui/GoldCta"
-import { ParallaxLayer } from "@/components/ui/ParallaxLayer"
+import { ParallaxLayer } from "@/components/motion/ParallaxLayer"
 import { DURATION } from "@/lib/utils/motion"
 
 /**

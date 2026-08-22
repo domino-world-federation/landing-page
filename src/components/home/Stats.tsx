@@ -1,5 +1,5 @@
-import { StatsWheel } from "@/components/ui/StatsWheel"
-import { STATS_COPY } from "@/content/stats"
+import { StatsWheel } from "@/components/home/StatsWheel"
+import { STATS_COPY } from "@/content/home/stats"
 import { getFederationStats } from "@/lib/api/client"
 
 /**

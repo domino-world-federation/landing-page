@@ -3,7 +3,7 @@
 import { motion, useReducedMotion } from "motion/react"
 import { useState } from "react"
 
-import type { FaqItem } from "@/content/faq"
+import type { FaqItem } from "@/content/home/faq"
 import { EASE } from "@/lib/utils/motion"
 
 /**

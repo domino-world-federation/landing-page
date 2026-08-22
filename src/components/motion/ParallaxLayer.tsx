@@ -4,7 +4,7 @@ import { motion, useReducedMotion, useScroll, useTransform } from "motion/react"
 import { useRef, type ReactNode } from "react"
 
 import { cn } from "@/lib/utils/cn"
-import { useEntrance } from "@/components/ui/EntranceGroup"
+import { useEntrance } from "@/components/motion/EntranceGroup"
 import { EASE, RESET_DURATION } from "@/lib/utils/motion"
 
 const ORIGINS = {

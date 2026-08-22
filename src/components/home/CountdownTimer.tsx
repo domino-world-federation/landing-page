@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 
-import { COUNTDOWN_COPY } from "@/content/countdown"
+import { COUNTDOWN_COPY } from "@/content/home/countdown"
 import type { IsoDateString } from "@/lib/api/types"
 import { getRemaining, padUnit, type Remaining } from "@/lib/utils/date"
 

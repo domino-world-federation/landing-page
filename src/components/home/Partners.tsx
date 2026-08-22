@@ -1,6 +1,6 @@
 import Image from "next/image"
 
-import { PARTNERS_COPY } from "@/content/partners"
+import { PARTNERS_COPY } from "@/content/home/partners"
 import { getPartners } from "@/lib/api/client"
 import { Marquee } from "@/components/ui/Marquee"
 

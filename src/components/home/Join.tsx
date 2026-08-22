@@ -1,5 +1,5 @@
-import { JOIN_COPY } from "@/content/join"
-import { Reveal } from "@/components/ui/Reveal"
+import { JOIN_COPY } from "@/content/home/join"
+import { Reveal } from "@/components/motion/Reveal"
 import { SilverCta } from "@/components/ui/SilverCta"
 import { STAGGER } from "@/lib/utils/motion"
 

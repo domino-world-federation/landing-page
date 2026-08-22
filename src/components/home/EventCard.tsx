@@ -3,7 +3,7 @@
 import Image from "next/image"
 import { motion, useReducedMotion } from "motion/react"
 
-import { FEATURED_EVENT_COPY } from "@/content/featured-event"
+import { FEATURED_EVENT_COPY } from "@/content/home/featured-event"
 import { cn } from "@/lib/utils/cn"
 import type { ShowcaseEvent } from "@/lib/api/types"
 
@@ -182,7 +182,7 @@ export function EventCard({ event, className }: EventCardProps) {
           offsets that make the streaks overhang the card — the same geometry
           in two elements instead of one, for no optimization gained. */}
       <img
-        src="/assets/home/card-shade.svg"
+        src="/assets/home/decor-card-streaks.svg"
         alt=""
         aria-hidden="true"
         width={946}

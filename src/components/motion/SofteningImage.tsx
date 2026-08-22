@@ -3,7 +3,7 @@
 import { motion, useReducedMotion } from "motion/react"
 import Image from "next/image"
 
-import { useEntrance } from "@/components/ui/EntranceGroup"
+import { useEntrance } from "@/components/motion/EntranceGroup"
 import { RESET_DURATION } from "@/lib/utils/motion"
 
 /**

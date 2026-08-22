@@ -221,7 +221,7 @@ export const MOCK_SHOWCASE_EVENTS: ShowcaseEvent[] = [
     location: "Montego Bay, Jamaica",
     summary:
       "The premier regional tournament returns to Montego Bay, bringing together elite domino pairings from across the Caribbean for several days of high-level competition.",
-    imageUrl: "/assets/home/hero-trophy-hand.png",
+    imageUrl: "/assets/home/event-trophy-hand.png",
     imageAlt:
       "A raised gold trophy topped with two domino tiles, held aloft by the winner",
   },
@@ -233,7 +233,7 @@ export const MOCK_SHOWCASE_EVENTS: ShowcaseEvent[] = [
     location: "Mexico City, Mexico",
     summary:
       "Continental qualifying reaches its final stage, with the twelve highest-placed pairs earning direct entry to next season's world championship draw.",
-    imageUrl: "/assets/home/hero-trophy-hand.png",
+    imageUrl: "/assets/home/event-trophy-hand.png",
     imageAlt:
       "A raised gold trophy topped with two domino tiles, held aloft by the winner",
   },
@@ -245,7 +245,7 @@ export const MOCK_SHOWCASE_EVENTS: ShowcaseEvent[] = [
     location: "Valencia, Spain",
     summary:
       "Sixteen national champions meet in a round-robin format, played under the revised timing protocol introduced in this year's rulebook.",
-    imageUrl: "/assets/home/hero-trophy-hand.png",
+    imageUrl: "/assets/home/event-trophy-hand.png",
     imageAlt:
       "A raised gold trophy topped with two domino tiles, held aloft by the winner",
   },
@@ -257,7 +257,7 @@ export const MOCK_SHOWCASE_EVENTS: ShowcaseEvent[] = [
     location: "Jakarta, Indonesia",
     summary:
       "The region's largest open draw, with more than four hundred pairs expected across the main and amateur brackets.",
-    imageUrl: "/assets/home/hero-trophy-hand.png",
+    imageUrl: "/assets/home/event-trophy-hand.png",
     imageAlt:
       "A raised gold trophy topped with two domino tiles, held aloft by the winner",
   },
@@ -269,7 +269,7 @@ export const MOCK_SHOWCASE_EVENTS: ShowcaseEvent[] = [
     location: "Accra, Ghana",
     summary:
       "A first continental title on the calendar, staged jointly by six member federations and open to every affiliated national association.",
-    imageUrl: "/assets/home/hero-trophy-hand.png",
+    imageUrl: "/assets/home/event-trophy-hand.png",
     imageAlt:
       "A raised gold trophy topped with two domino tiles, held aloft by the winner",
   },
@@ -281,7 +281,7 @@ export const MOCK_SHOWCASE_EVENTS: ShowcaseEvent[] = [
     location: "Santo Domingo, Dominican Republic",
     summary:
       "The federation's flagship event, where the season's qualified pairs play for the world title over seven days of competition.",
-    imageUrl: "/assets/home/hero-trophy-hand.png",
+    imageUrl: "/assets/home/event-trophy-hand.png",
     imageAlt:
       "A raised gold trophy topped with two domino tiles, held aloft by the winner",
   },

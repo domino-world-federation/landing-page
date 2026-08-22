@@ -1,8 +1,8 @@
 import Image from "next/image"
 
-import { CountdownTimer } from "@/components/ui/CountdownTimer"
+import { CountdownTimer } from "@/components/home/CountdownTimer"
 import { SilverCta } from "@/components/ui/SilverCta"
-import { COUNTDOWN_COPY } from "@/content/countdown"
+import { COUNTDOWN_COPY } from "@/content/home/countdown"
 import { getFeaturedEvent } from "@/lib/api/client"
 import { formatEventDate } from "@/lib/utils/date"
 

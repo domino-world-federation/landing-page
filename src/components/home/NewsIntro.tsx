@@ -1,8 +1,8 @@
 import Image from "next/image"
 
-import { NEWS_INTRO_ALT, NEWS_INTRO_COPY } from "@/content/news-intro"
-import { ParallaxLayer } from "@/components/ui/ParallaxLayer"
-import { Reveal } from "@/components/ui/Reveal"
+import { NEWS_INTRO_ALT, NEWS_INTRO_COPY } from "@/content/home/news-intro"
+import { ParallaxLayer } from "@/components/motion/ParallaxLayer"
+import { Reveal } from "@/components/motion/Reveal"
 import { DURATION } from "@/lib/utils/motion"
 
 /**
@@ -53,7 +53,7 @@ const ENTER_SCALE = 0.86
  * the 1920×960 frame. Measured, the bottom rows read 14,14,14 — exactly
  * `--color-bg` — and the top rows still carry full picture detail (peak luma
  * 246), so the wash is baked in and re-drawing it here would darken the foot
- * twice, the same trap S4 hit with `hq.png`.
+ * twice, the same trap S4 hit with `feature-hq-composite.png`.
  *
  * That bake is also what makes the parallax safe. The picture rides UP, so its
  * bottom edge lifts off the section's foot and leaves a strip of page

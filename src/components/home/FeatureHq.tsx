@@ -1,8 +1,8 @@
 import Image from "next/image"
 
-import { FEATURE_HQ_ALT, FEATURE_HQ_COPY } from "@/content/feature-hq"
-import { ParallaxLayer } from "@/components/ui/ParallaxLayer"
-import { Reveal } from "@/components/ui/Reveal"
+import { FEATURE_HQ_ALT, FEATURE_HQ_COPY } from "@/content/home/feature-hq"
+import { ParallaxLayer } from "@/components/motion/ParallaxLayer"
+import { Reveal } from "@/components/motion/Reveal"
 import { DURATION, STAGGER } from "@/lib/utils/motion"
 
 /**
@@ -15,13 +15,13 @@ const SETTLE = DURATION * 1.5
 /**
  * S4 — Figma node `31:1085`. The headquarters feature.
  *
- * `hq.png` is the design's own composite: the photograph with the section's
- * three washes already baked in — the vignette along the top (`31:1089`), the
- * downward darkening that carries the text (`31:1103`), and the fade to page
- * background at the foot (`37:1848`). Measured, its top and bottom rows are
- * exactly `#0e0e0e`, so it meets `--color-bg` with no seam and needs no overlay
- * of its own. Reproducing those washes in CSS on top of it would darken the
- * picture twice.
+ * `feature-hq-composite.png` is the design's own composite: the photograph
+ * with the section's three washes already baked in — the vignette along the
+ * top (`31:1089`), the downward darkening that carries the text (`31:1103`),
+ * and the fade to page background at the foot (`37:1848`). Measured, its top
+ * and bottom rows are exactly `#0e0e0e`, so it meets `--color-bg` with no seam
+ * and needs no overlay of its own. Reproducing those washes in CSS on top of
+ * it would darken the picture twice.
  *
  * That bake is also why the image is NOT `object-cover` at an arbitrary crop:
  * the fades are painted at fixed positions, so cropping them off the top or
@@ -66,7 +66,7 @@ export function FeatureHq() {
           {/* `sizes="100vw"`: the image always spans the viewport, so the
               browser picks a candidate from the width alone. */}
           <Image
-            src="/assets/home/hq.png"
+            src="/assets/home/feature-hq-composite.png"
             alt={FEATURE_HQ_ALT.building}
             fill
             sizes="100vw"

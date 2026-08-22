@@ -1,7 +1,7 @@
 import Image from "next/image"
 
 import { FOOTER_COPY, FOOTER_GROUPS, FOOTER_SOCIALS } from "@/content/footer"
-import { NewsletterField } from "@/components/ui/NewsletterField"
+import { NewsletterField } from "@/components/layout/NewsletterField"
 
 /**
  * S14 — Figma node `56:5159`. The site footer.

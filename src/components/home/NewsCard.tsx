@@ -1,6 +1,6 @@
 import Image from "next/image"
 
-import { NEWS_COPY } from "@/content/news"
+import { NEWS_COPY } from "@/content/home/news"
 import { cn } from "@/lib/utils/cn"
 import type { NewsArticle } from "@/lib/api/types"
 
@@ -156,7 +156,7 @@ export function NewsCard({
         {/* eslint-disable-next-line @next/next/no-img-element -- an inline SVG
             sized in CSS; next/image would add a layout wrapper for no gain. */}
         <img
-          src="/assets/home/icon-arrow.svg"
+          src="/assets/global/icon-arrow-left.svg"
           alt=""
           width={24}
           height={24}
