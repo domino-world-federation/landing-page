@@ -8,6 +8,7 @@
  */
 
 import {
+  MOCK_SHOWCASE_EVENTS,
   MOCK_FEATURED_EVENT,
   MOCK_NEWS,
   MOCK_PARTNERS,
@@ -15,6 +16,7 @@ import {
   MOCK_STATS,
 } from "./mock"
 import type {
+  ShowcaseEvent,
   FeaturedEvent,
   FederationStat,
   NewsArticle,
@@ -75,7 +77,13 @@ export async function getPartners(): Promise<Partner[]> {
   return request<Partner[]>("/partners")
 }
 
-export async function getLatestNews(limit = 5): Promise<NewsArticle[]> {
+/**
+ * The default is 7 because that is what S8's mosaic draws (`54:3157`): five
+ * full-height cards, one half-height, and two squares. A smaller default would
+ * leave the composition short a tile without erroring — the slot simply would
+ * not render — so the number lives here rather than at the call site.
+ */
+export async function getLatestNews(limit = 7): Promise<NewsArticle[]> {
   if (USE_MOCK) return MOCK_NEWS.slice(0, limit)
   return request<NewsArticle[]>(`/news?limit=${limit}`)
 }
@@ -83,6 +91,12 @@ export async function getLatestNews(limit = 5): Promise<NewsArticle[]> {
 export async function getResources(): Promise<ResourceDocument[]> {
   if (USE_MOCK) return MOCK_RESOURCES
   return request<ResourceDocument[]>("/resources")
+}
+
+/** The S6 showcase — the set the card's pager steps through. */
+export async function getShowcaseEvents(): Promise<ShowcaseEvent[]> {
+  if (USE_MOCK) return MOCK_SHOWCASE_EVENTS
+  return request<ShowcaseEvent[]>("/events/showcase")
 }
 
 export async function getFeaturedEvent(): Promise<FeaturedEvent> {

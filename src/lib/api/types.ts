@@ -72,10 +72,43 @@ export type FederationStat = {
 export type ResourceDocument = {
   id: string
   title: string
-  description: string
+  /**
+   * The small grey line above the title on the card (`56:4550`) — what area of
+   * the federation's business the document belongs to, not a file category.
+   */
+  category: string
+  /**
+   * Not shown on the S10 card, which carries only the category and the title.
+   * Kept for the eventual detail/listing page and left optional so a response
+   * without it is still valid.
+   */
+  description?: string
   fileUrl: string
   fileType: "pdf" | "doc"
+  /** Already formatted for display, e.g. "2.4 MB" — the API owns the units. */
   fileSize?: string
+}
+
+/**
+ * A tournament as S6 presents it — the same event a `Tournament` describes,
+ * plus the things only the showcase needs: the prose, the artwork, and the two
+ * buttons. Kept separate from `Tournament` because that type is the portal's
+ * (phase 2) list shape, where a card has no room for a paragraph.
+ */
+export type ShowcaseEvent = {
+  id: string
+  slug: string
+  name: string
+  /** Already formatted as a span, e.g. "Oct 12 - Oct 15, 2026". The API owns
+   *  the range; the page has no second date to reason about. */
+  dateLabel: string
+  location: string
+  summary: string
+  /** The portrait behind the card's watermark. */
+  imageUrl: string
+  imageAlt: string
+  detailsUrl?: string
+  registerUrl?: string
 }
 
 /** The S3 countdown points at one specific event. */

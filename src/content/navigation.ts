@@ -30,4 +30,3 @@ export const NAV_COPY = {
   closeMenu: "Close menu",
   menuLabel: "Main",
 } as const
-

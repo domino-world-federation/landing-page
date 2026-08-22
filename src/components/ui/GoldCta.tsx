@@ -75,7 +75,6 @@ export function GoldCta({ children, href, className }: GoldCtaProps) {
       <span className="relative bg-[image:var(--gradient-gold-cta-ink)] bg-clip-text text-transparent">
         {children}
       </span>
-
     </a>
   )
 }

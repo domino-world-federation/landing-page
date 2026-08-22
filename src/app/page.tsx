@@ -1,9 +1,17 @@
-// Sections S5–S14 still to come — see docs/PROGRESS.md, phase 2.
-
+import { Footer } from "@/components/layout/Footer"
 import { Navbar } from "@/components/layout/Navbar"
 import { Countdown } from "@/components/sections/Countdown"
+import { Faq } from "@/components/sections/Faq"
 import { FeatureHq } from "@/components/sections/FeatureHq"
+import { FeaturedEvent } from "@/components/sections/FeaturedEvent"
 import { Hero } from "@/components/sections/Hero"
+import { Join } from "@/components/sections/Join"
+import { News } from "@/components/sections/News"
+import { NewsIntro } from "@/components/sections/NewsIntro"
+import { Partners } from "@/components/sections/Partners"
+import { Resources } from "@/components/sections/Resources"
+import { Stats } from "@/components/sections/Stats"
+import { PageShine } from "@/components/ui/PageShine"
 
 export default function HomePage() {
   return (
@@ -11,7 +19,15 @@ export default function HomePage() {
     <div className="relative">
       <Navbar />
 
-      <main>
+      {/* `relative z-10` so the page's content sits above the shine below it.
+          The shine's own `-z-10` only orders it inside its wrapper — `isolate`
+          seals that context shut, so from the outside the wrapper is one
+          opaque-ordered unit and, being a LATER sibling, it painted over
+          everything here. The layer reaches ~500px up into the FAQ (S12), and
+          without this its dark wash fell across the white card. Figma has the
+          same overlap and the same answer: the card is opaque and the beams
+          run behind it. */}
+      <main className="relative z-10">
         <Hero />
 
         {/* S3 overlaps the hero in Figma (`y:785` of a 1040-tall frame) and
@@ -41,7 +57,31 @@ export default function HomePage() {
         </div>
 
         <FeatureHq />
+        <Stats />
+        <FeaturedEvent />
+        <NewsIntro />
+        <News />
+        <Partners />
+        <Resources />
+        <Faq />
+
+        {/* S12 and S13 share one stacking context, and it has to be here
+            rather than on either of them: the shine is a full-bleed layer that
+            spans the FAQ's foot, the CTA and the whole footer, so it cannot
+            live inside any one of the three. `isolate` keeps its `-z-10` from
+            escaping into the page's root context and sliding behind the page
+            background itself — the same guard S4 and S7 need for their own
+            backdrops.
+
+            The footer is inside the wrapper but outside `<main>`: it is a
+            landmark of its own, and the shine has to reach it. */}
       </main>
+
+      <div className="relative isolate">
+        <PageShine />
+        <Join />
+        <Footer />
+      </div>
     </div>
   )
 }

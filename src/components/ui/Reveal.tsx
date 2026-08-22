@@ -121,7 +121,10 @@ export function Reveal({
             className="pointer-events-none absolute inset-0"
             initial={{ opacity: 1 }}
             animate={{ opacity: 1, transition: reset }}
-            whileInView={{ opacity: 0, transition: { ...enter, ease: "easeIn" } }}
+            whileInView={{
+              opacity: 0,
+              transition: { ...enter, ease: "easeIn" },
+            }}
             viewport={viewport}
             style={{ filter: `blur(${blurFrom})`, willChange: "opacity" }}
           >

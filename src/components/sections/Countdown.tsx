@@ -1,6 +1,7 @@
 import Image from "next/image"
 
 import { CountdownTimer } from "@/components/ui/CountdownTimer"
+import { SilverCta } from "@/components/ui/SilverCta"
 import { COUNTDOWN_COPY } from "@/content/countdown"
 import { getFeaturedEvent } from "@/lib/api/client"
 import { formatEventDate } from "@/lib/utils/date"
@@ -68,12 +69,12 @@ export async function Countdown() {
         className="mt-6 h-0.5 bg-[image:var(--gradient-divider)] opacity-20"
       />
 
-      <a
-        href={event.ctaUrl ?? "#"}
-        className="rounded-btn font-display focus-visible:ring-gold mt-6 flex h-16 items-center justify-center bg-[image:var(--gradient-silver-btn)] px-5 text-[length:var(--text-display-btn)] leading-10 text-black focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:outline-none"
-      >
+      {/* The same silver pill S13 ends the page on — extracted to `SilverCta`
+          when the second one appeared. Here it fills the card's width; there
+          it hugs its label. */}
+      <SilverCta href={event.ctaUrl ?? "#"} className="mt-6">
         {COUNTDOWN_COPY.cta}
-      </a>
+      </SilverCta>
     </section>
   )
 }

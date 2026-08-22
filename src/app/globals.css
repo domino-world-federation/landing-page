@@ -19,6 +19,12 @@
   --color-dim: #818181;
   --color-border-light: #e0e0e0;
   --color-divider: #dadada;
+  /* S6's own two greys (node `52:3027`), both a shade off the ones above and
+     both deliberate: the field labels are lighter than FAQ body copy, and the
+     section's buttons and arrow borders are a touch darker than `divider`.
+     Folding either into a neighbour would shift the band away from Figma. */
+  --color-label-muted: #999999;
+  --color-surface-grey: #d6d6d6;
 
   /* Hero backdrop gradient (S2, node `22:789`) */
   --color-hero-top: #353535;
@@ -39,15 +45,24 @@
   --color-gold-ink: #1a1307;
   --color-gold-ink-deep: #523e1d;
 
-  /* Nine nav items are a fixed, unshrinkable load, so the width at which the
+  /* Both are written in `rem`, and that is load-bearing rather than a style
+     preference. Tailwind emits one `@media` block per breakpoint and orders
+     them by declared value, but it cannot compare a `px` against a `rem` — so
+     a `px` breakpoint is sorted ahead of EVERY rem one, `sm` included. Declared
+     as `1600px`, `menu-lg:grid-cols-[…]` landed above `md:grid-cols-2` in the
+     sheet; both match at 1600, specificity ties, and the later rule wins, so
+     the footer stayed two columns at every width. In `rem` they interleave
+     where they belong: sm · md · lg · xl · menu(87.5) · 2xl · menu-lg(100).
+
+     Nine nav items are a fixed, unshrinkable load, so the width at which the
      pill can appear is a measured number rather than a stock breakpoint: at
-     15px the row is 1058px wide and the header first affords that at 1400.
+     15px the row is 1058px wide and the header first affords that at 1400px.
      (`xl`/1280 is 26px short — enough to wrap "About Us".) */
-  --breakpoint-menu: 1400px;
+  --breakpoint-menu: 87.5rem; /* 1400px */
   /* The design's own 18px item widens the same row to 1283px, which needs
-     1600. Stepping up at `2xl`/1536 as before re-wrapped the row *after* it
+     1600px. Stepping up at `2xl`/1536 as before re-wrapped the row *after* it
      had already started fitting — widening the window made it worse. */
-  --breakpoint-menu-lg: 1600px;
+  --breakpoint-menu-lg: 100rem; /* 1600px */
 
   /* Radii */
   --radius-btn: 8px;
@@ -66,13 +81,23 @@
     0 0 24px #e1b762, 0 0 6px #e1b762, inset 0 0 16px rgb(255 255 255 / 0.8);
 
   /* Display sizes — clamp() because the design only exists at 1920px.
-     Final numbers get settled per section during slicing. */
-  --text-display-lg: clamp(2.5rem, 8vw, 9.75rem);
-  --text-display-md: clamp(2.25rem, 6.5vw, 7.875rem);
-  --text-display-sm: clamp(2rem, 4vw, 4.75rem);
-  --text-display-xs: clamp(1.75rem, 3.3vw, 4rem);
-  --text-display-2xs: clamp(1.25rem, 2.1vw, 2.5rem);
-  --text-display-btn: clamp(1.5rem, 2vw, 2rem);
+     Final numbers get settled per section during slicing.
+
+     Every `vw` slope here is `cap / 1920` to four figures, and that is a rule
+     rather than a nicety: the middle term is what renders AT the design width,
+     so a slope short of the cap means the token never reaches its own maximum
+     on the very screen the design was drawn for. Four of these were short and
+     under-rendered silently — `display-lg` at 153.6 against 156, `display-md`
+     at 124.8 against 126, `display-xs` at 63.36 against 64, `news-intro` at
+     63.94 against 64. Nothing warns; the number is simply wrong by a couple of
+     pixels everywhere it is used. When adding a step, divide — do not eyeball
+     the slope. */
+  --text-display-lg: clamp(2.5rem, 8.125vw, 9.75rem); /* 156/1920 */
+  --text-display-md: clamp(2.25rem, 6.5625vw, 7.875rem); /* 126/1920 */
+  --text-display-sm: clamp(2rem, 3.9583vw, 4.75rem); /* 76/1920 */
+  --text-display-xs: clamp(1.75rem, 3.3333vw, 4rem); /* 64/1920 */
+  --text-display-2xs: clamp(1.25rem, 2.0833vw, 2.5rem); /* 40/1920 */
+  --text-display-btn: clamp(1.5rem, 1.6667vw, 2rem); /* 32/1920 */
   /* The hero's primary CTA is set larger than the other buttons: node
      `31:1118` is Bebas 36/44, where DESIGN-TOKENS §2 `display-btn` is 32/40.
      The floor is 1.375rem rather than the design's 36px: on a phone the pill
@@ -85,6 +110,66 @@
      The 2rem floor is set by the line break: the headline is two fixed lines,
      and above ~34px the longer one stops fitting a 360px screen. */
   --text-display-feature: clamp(2rem, 4.95vw, 5.9375rem);
+  /* S5's stat figures are Bebas 200 (node `37:1866`) — larger than
+     `display-lg` (156), so they get their own step at the top of the scale.
+     10.42vw is 200/1920, so the design width renders 200px exactly.
+     The 3rem floor is set by the widest figure: "563K" in Bebas at 48px is
+     ~137px, which still leaves room for the label beside it at 360px. */
+  --text-display-stat: clamp(3rem, 10.42vw, 12.5rem);
+  /* S7's sentence is Inter Medium 64 (node `55:3224`) — the only place on the
+     page a body face is set that large, so it gets its own step rather than
+     borrowing a display one; the section is set in Inter, not Bebas. 3.33vw is
+     64/1920. The 1.5rem floor is set by the wrap: at 1008px the line breaks in
+     two, and below ~24px a 360px screen takes it to four lines and the block
+     starts crowding the picture's foot. */
+  --text-news-intro: clamp(1.5rem, 3.3333vw, 4rem); /* 64/1920 */
+  /* S8's card headlines are Inter Medium 24/36 (node `55:3218`). 1.25vw is
+     24/1920. The 1rem floor is what keeps a two-line title from becoming a
+     five-line block once the card is down to its 260px minimum width. */
+  --text-news-card: clamp(1rem, 1.25vw, 1.5rem);
+  /* The 258px squares carry the same 24px title in Figma, which at less than
+     half the width runs to four or five lines and fills the tile. 18px holds
+     the design's two-line shape; 0.9375vw is 18/1920. */
+  --text-news-card-sm: clamp(0.8125rem, 0.9375vw, 1.125rem);
+  /* The "NEWS" eyebrow above each headline — Inter Regular 20/28 (`55:3217`),
+     drawn at 70% opacity. 1.04vw is 20/1920. */
+  --text-news-eyebrow: clamp(0.75rem, 1.04vw, 1.25rem);
+  /* S9's section heading — Inter SemiBold 32/40 at 0.25em tracking (`55:3316`),
+     drawn at 80% opacity. 1.67vw is 32/1920. The 1rem floor is set by the
+     tracking: a quarter-em of extra space per character makes "OFFICIAL
+     PARTNERS" ~1.4× its natural width, and below 16px the phrase stops fitting
+     a 360px screen on one line. */
+  --text-partners-heading: clamp(1rem, 1.67vw, 2rem);
+  /* S10's card titles are Bebas 36/44 (`56:4551`). 1.875vw is 36/1920; the
+     1.25rem floor keeps the longest title ("Membership Application
+     Guidelines") to two lines once the card is at its narrowest. */
+  --text-resource-title: clamp(1.25rem, 1.875vw, 2.25rem);
+  /* S11's questions are Inter SemiBold 36/48 (`81:694`). 1.875vw is 36/1920 —
+     the same number S10's titles carry, but that token is a Bebas size and
+     these are Inter, so the two are kept apart rather than shared. The
+     1.125rem floor is set by the longest question ("Where can I find the
+     tournament rules?"), which holds to two lines at 360px beside its toggle. */
+  --text-faq-question: clamp(1.125rem, 1.875vw, 2.25rem);
+  /* Its answers are Inter Regular 32/48 (`81:701`). 1.6667vw is 32/1920. The
+     0.9375rem floor keeps the answer visibly smaller than the question it
+     belongs to once both have bottomed out — at equal size the pair stops
+     reading as question-and-answer. */
+  --text-faq-answer: clamp(0.9375rem, 1.6667vw, 2rem);
+  /* S14's footer links are Inter Medium 24/32 (`56:4945`). 1.25vw is 24/1920.
+     The 1rem floor is a tap target, not a wrap: below it the 32px line box
+     stops giving the rows enough separation to hit one cleanly on a phone. */
+  --text-footer-link: clamp(1rem, 1.25vw, 1.5rem);
+  /* S5's labels are Inter Medium 40/48 (node `37:1864`). 2.08vw is 40/1920.
+     The 0.875rem floor keeps "Member Federation" on one line at 360px beside
+     a 48px figure. */
+  --text-stat-label: clamp(0.875rem, 2.0833vw, 2.5rem);
+
+  /* One step of the stats wheel — the pitch from a figure to the next, not the
+     height of a figure. Figma stacks the three rows at a 280px pitch (labels
+     48 tall on a 228 gap); 14.58vw is 280/1920, so it tracks
+     `--text-display-stat` exactly and the wheel keeps its proportions at every
+     width instead of crowding as the figures shrink. */
+  --stat-slot: clamp(5.5rem, 14.58vw, 17.5rem);
 }
 
 /*

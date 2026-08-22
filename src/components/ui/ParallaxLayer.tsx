@@ -21,7 +21,7 @@ const ORIGINS = {
  */
 type ScrollOffset = NonNullable<Parameters<typeof useScroll>[0]>["offset"]
 
-const ANCHORS: Record<"cross" | "top", ScrollOffset> = {
+const ANCHORS: Record<"cross" | "top" | "foot", ScrollOffset> = {
   /** Default: the layer animates while it crosses the viewport. */
   cross: ["start end", "end start"],
   /**
@@ -30,6 +30,24 @@ const ANCHORS: Record<"cross" | "top", ScrollOffset> = {
    * pre-shifted — a top-anchored layer visibly detaches from the top edge.
    */
   top: ["start start", "end start"],
+  /**
+   * Finishes when the section's FOOT reaches the viewport's foot, rather than
+   * when its head leaves the top.
+   *
+   * `cross` needs the section to exit upwards to reach progress 1, and the last
+   * section on a page never does — the document simply runs out. Measured on
+   * S7 while it was last: the page ended at 5100 and the section's own crossing
+   * wanted 2040px of scroll, of which only 960 existed, so the layer stalled at
+   * f≈0.5 and delivered half its travel with no way to reach the rest.
+   *
+   * This range spans exactly the scroll that always exists — the section
+   * arriving and coming to rest fully in view — so the whole move is reachable
+   * whether or not anything follows. When something does follow, the layer
+   * settles while the section is still fully on screen and then rides out
+   * static, which suits a full-bleed backdrop: the motion belongs to the
+   * arrival, not to the exit.
+   */
+  foot: ["start end", "end end"],
 }
 
 /**
