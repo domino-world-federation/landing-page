@@ -11,27 +11,15 @@
  * written here are placeholders in the federation's voice and need approval
  * before launch — see PROGRESS, blocker B2. The answer on item 2 is verbatim
  * from `81:701`, bold runs included.
- */
-
-/**
- * A run of answer text. Figma bolds phrases inside the paragraph rather than
- * linking them, so the emphasis is typographic and belongs in the copy.
  *
- * Segments rather than a markdown string: a translator moving `**` markers
- * around by hand is a parsing bug waiting to happen, and this way the shape is
- * checked by the compiler.
+ * `FaqItem`/`FaqSegment` are the accordion's own types, imported from it rather
+ * than declared here. This file was where they used to live, which worked while
+ * the FAQ existed on one page only; the Domino page's list would otherwise have
+ * had to reach into `content/home/` for its shape — exactly the cross-page
+ * dependency D32 exists to prevent (D43).
  */
-export type FaqSegment = {
-  text: string
-  /** Rendered as `<strong>`. */
-  strong?: boolean
-}
 
-export type FaqItem = {
-  id: string
-  question: string
-  answer: readonly FaqSegment[]
-}
+import type { FaqItem } from "@/components/ui/FaqAccordion"
 
 export const FAQ_COPY = {
   heading: "Frequently Asked Questions",

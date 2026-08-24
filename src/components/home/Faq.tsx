@@ -1,5 +1,5 @@
 import { FAQ_COPY, FAQ_DEFAULT_OPEN, FAQ_ITEMS } from "@/content/home/faq"
-import { FaqAccordion } from "@/components/home/FaqAccordion"
+import { FaqAccordion } from "@/components/ui/FaqAccordion"
 import { Reveal } from "@/components/motion/Reveal"
 
 /**

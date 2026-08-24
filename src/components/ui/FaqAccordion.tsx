@@ -3,8 +3,33 @@
 import { motion, useReducedMotion } from "motion/react"
 import { useState } from "react"
 
-import type { FaqItem } from "@/content/home/faq"
 import { EASE } from "@/lib/utils/motion"
+
+/**
+ * A run of answer text. The designs bold phrases inside a paragraph rather than
+ * linking them, so the emphasis is typographic and belongs in the copy.
+ *
+ * Segments rather than a markdown string: a translator moving `**` markers
+ * around by hand is a parsing bug waiting to happen, and this way the shape is
+ * checked by the compiler.
+ */
+export type FaqSegment = {
+  text: string
+  /** Rendered as `<strong>`. */
+  strong?: boolean
+  /**
+   * Rendered as `<em>`. Used for a cited document title — the Domino wireframe
+   * draws one underlined and in a link colour, but there is nowhere for it to
+   * lead, so it is emphasis rather than a control.
+   */
+  em?: boolean
+}
+
+export type FaqItem = {
+  id: string
+  question: string
+  answer: readonly FaqSegment[]
+}
 
 /**
  * Seconds for a panel to open or close.
@@ -138,18 +163,19 @@ export function FaqAccordion({ items, defaultOpenId }: FaqAccordionProps) {
                   box's height including the offset, so a closed panel is still
                   exactly zero. */}
               <p className="font-sans -mt-3.5 pb-8 text-[length:var(--text-faq-answer)] leading-[1.5] text-[var(--color-muted)]">
-                {item.answer.map((segment, s) =>
-                  segment.strong ? (
-                    // Figma bolds these phrases without linking them
-                    // (`81:701`), so the emphasis is the content's, not a
-                    // control's — `<strong>`, not a styled span.
-                    <strong key={s} className="font-bold">
-                      {segment.text}
-                    </strong>
-                  ) : (
-                    <span key={s}>{segment.text}</span>
-                  ),
-                )}
+                {item.answer.map((segment, s) => {
+                  // Figma bolds these phrases without linking them (`81:701`),
+                  // so the emphasis is the content's, not a control's —
+                  // `<strong>`/`<em>`, not styled spans.
+                  if (segment.strong)
+                    return (
+                      <strong key={s} className="font-bold">
+                        {segment.text}
+                      </strong>
+                    )
+                  if (segment.em) return <em key={s}>{segment.text}</em>
+                  return <span key={s}>{segment.text}</span>
+                })}
               </p>
             </motion.div>
           </li>
