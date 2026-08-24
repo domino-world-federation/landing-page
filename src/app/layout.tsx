@@ -1,6 +1,8 @@
 import type { Metadata } from "next"
 import { Bebas_Neue, Inter } from "next/font/google"
 
+import { RouteProgress } from "@/components/layout/RouteProgress"
+
 import "./globals.css"
 
 // The variables are deliberately --font-bebas / --font-inter rather than
@@ -32,7 +34,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${bebasNeue.variable} ${inter.variable} h-full antialiased`}
     >
-      <body className="bg-bg flex min-h-full flex-col">{children}</body>
+      <body className="bg-bg flex min-h-full flex-col">
+        {/* Renders nothing. It watches for the page that was asked for
+            arriving, and takes the progress bar down when it does. */}
+        <RouteProgress />
+        {children}
+      </body>
     </html>
   )
 }

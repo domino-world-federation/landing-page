@@ -53,8 +53,11 @@ export function FaqCategoryTabs({
   return (
     // No heading above the list: the design gives this column none, unlike the
     // legal contents with its "Table of Contents" line.
+    // `scroll={false}` on every row: the reader is already looking at the
+    // questions when they narrow them, and jumping to the top of the document
+    // to swap a list in place is what reads as a reload.
     <SideTabList label={FAQ_PAGE_COPY.filterLabel}>
-      <SideTab href={href()} active={active === undefined}>
+      <SideTab href={href()} active={active === undefined} scroll={false}>
         {FAQ_PAGE_COPY.allTab}
       </SideTab>
 
@@ -65,6 +68,7 @@ export function FaqCategoryTabs({
           key={category.id}
           href={href(category.id)}
           active={active === category.id}
+          scroll={false}
         >
           {category.label}
         </SideTab>

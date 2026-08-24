@@ -157,6 +157,11 @@ function Tab({
         href={href}
         aria-current={active ? "page" : undefined}
         scroll={false}
+        // The whole destination, not just the shared shell: `/news` renders
+        // dynamically, so Next's default prefetch leaves the click waiting on
+        // a server render and the strip reads as loading. Six pills, all on
+        // screen — see `SideTab`, which makes the same call.
+        prefetch
         className={`rounded-btn font-sans focus-visible:ring-gold block px-5 py-3 text-[length:var(--text-label-sm)] leading-relaxed font-medium tracking-[0.04em] whitespace-nowrap text-white uppercase transition-opacity focus-visible:ring-2 focus-visible:outline-none ${
           active ? "bg-white/12" : "opacity-50 hover:opacity-80"
         }`}

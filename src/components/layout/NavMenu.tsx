@@ -1,6 +1,8 @@
 "use client"
 
 import Link from "next/link"
+
+import { startRouteProgress } from "@/components/layout/RouteProgress"
 import { usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
 
@@ -61,6 +63,13 @@ export function NavMenu() {
               <Link
                 href={item.href}
                 aria-current={active ? "page" : undefined}
+                // Puts the progress bar up. Skipped for the page already open
+                // and for the placeholders, neither of which navigates — a bar
+                // that came up for a click that goes nowhere would never be
+                // taken down by the watcher.
+                onClick={
+                  active || item.href === "#" ? undefined : startRouteProgress
+                }
                 className={cn(
                   MENU_ITEM_CLASS,
                   "focus-visible:ring-gold focus-visible:ring-2 focus-visible:outline-none",
@@ -127,7 +136,10 @@ export function NavMenu() {
                   aria-current={active ? "page" : undefined}
                   // Closing on navigation belongs on the event, not in an
                   // effect — a route change would otherwise cascade a render.
-                  onClick={() => setIsOpen(false)}
+                  onClick={() => {
+                    setIsOpen(false)
+                    if (!active && item.href !== "#") startRouteProgress()
+                  }}
                   className={cn(
                     MENU_ITEM_CLASS,
                     "focus-visible:ring-gold w-full focus-visible:ring-2 focus-visible:outline-none",

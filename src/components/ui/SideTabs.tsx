@@ -55,12 +55,23 @@ export function SideTab({
    *  it marks a position within the current page, as the terms contents do. */
   current = "page",
   scroll,
+  prefetch = true,
   children,
 }: {
   href: string
   active: boolean
   current?: "page" | "true"
   scroll?: boolean
+  /**
+   * Fetch the whole destination up front, not just the layout it shares.
+   *
+   * On by default, and the default matters: every page that uses these rows
+   * renders dynamically, and Next's own default only prefetches the shared
+   * shell for a dynamic route — so the click still waited on a server render
+   * and the tab read as loading. A column holds five or six of these and they
+   * are all on screen at once, which is exactly the case full prefetch is for.
+   */
+  prefetch?: boolean
   children: ReactNode
 }) {
   return (
@@ -73,6 +84,7 @@ export function SideTab({
         href={href}
         aria-current={active ? current : undefined}
         scroll={scroll}
+        prefetch={prefetch}
         className={`font-display focus-visible:ring-gold flex items-center gap-3 py-6 text-[length:var(--text-display-caption)] leading-[1.25] transition-colors focus-visible:ring-2 focus-visible:outline-none ${
           active ? "text-gold" : "text-muted hover:text-white/80 pl-4"
         }`}
