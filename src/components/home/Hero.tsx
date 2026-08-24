@@ -227,7 +227,18 @@ export function Hero() {
               1882 × 2267 raster wrapped in base64, so it buys no sharpness —
               it only costs 1.4 MB and, being an SVG, skips the optimiser
               entirely. `quality` is raised because the tile is the one image
-              the eye actually lands on, and the default flattens its gold. */}
+              the eye actually lands on, and the default flattens its gold.
+
+              **It rests sharp, where Figma rests it at `blur(2px)`**
+              (`24:933`). Reported by the repo owner as the tile not looking
+              HD, and it was two things at once: 2px is genuinely soft at the
+              ~550px this renders at, and the `filter` carrying it put the
+              layer through a filter pass, which rasterises it into its own
+              texture and drops the extra pixels a high-DPI screen would
+              otherwise get. The entrance still softens — it arrives from 10px
+              — so the move the design draws is intact; only the state it
+              lands in changed. The two rocks keep their 4px and 6.5px: those
+              are depth, and the tile is the subject. */}
           <SofteningImage
             src="/assets/home/hero-domino-tile.png"
             alt={HERO_ALT.dominoTile}
@@ -236,7 +247,7 @@ export function Hero() {
             priority
             quality={90}
             from="10px"
-            to="2px"
+            to="0px"
             duration={DURATION}
             delay={TILE_DELAY}
             imageClassName="object-contain"

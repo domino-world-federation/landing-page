@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
      */
     qualities: [75, 90],
   },
+  allowedDevOrigins: ['*.loca.lt'],
 };
 
 export default nextConfig;

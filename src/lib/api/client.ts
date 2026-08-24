@@ -9,25 +9,35 @@
 
 import {
   MOCK_BOARD_MEMBERS,
+  MOCK_CHAMPIONS,
   MOCK_SHOWCASE_EVENTS,
   MOCK_FEATURED_EVENT,
+  MOCK_GALLERY,
+  MOCK_GALLERY_ALBUMS,
   MOCK_HERITAGE_MILESTONES,
   MOCK_NEWS,
+  MOCK_OLYMPIC_RESULTS,
   MOCK_PARTNERS,
   MOCK_RESOURCES,
   MOCK_STATS,
   MOCK_SUB_COMMITTEES,
+  MOCK_TOURNAMENTS,
 } from "./mock"
 import type {
   BoardMember,
+  Champion,
   ShowcaseEvent,
   FeaturedEvent,
   FederationStat,
+  GalleryAlbum,
+  GalleryItem,
   HeritageMilestone,
   NewsArticle,
+  OlympicResult,
   Partner,
   ResourceDocument,
   SubCommittee,
+  Tournament,
 } from "./types"
 
 const USE_MOCK = !process.env.NEXT_PUBLIC_API_BASE_URL
@@ -184,4 +194,134 @@ export async function getSubCommittees(): Promise<SubCommittee[]> {
 export async function getFeaturedEvent(): Promise<FeaturedEvent> {
   if (USE_MOCK) return MOCK_FEATURED_EVENT
   return request<FeaturedEvent>("/events/featured")
+}
+
+/**
+ * The stories the news page's featured band steps through (`156:7584`).
+ *
+ * Its own call rather than `getLatestNews` with a flag read at the call site,
+ * for the reason RULES §8 gives everywhere else: the real endpoint filters
+ * server-side, and a component sifting the feed itself would download every
+ * article the federation has ever filed to show the six it leads with.
+ *
+ * `isFeatured` rather than "the newest few" — see the field's own note. The
+ * band's counter reads its total from what comes back, so the shelf can hold
+ * however many the federation has flagged without the page being edited.
+ */
+export async function getFeaturedNews(limit = 6): Promise<NewsArticle[]> {
+  if (USE_MOCK) return MOCK_NEWS.filter((a) => a.isFeatured).slice(0, limit)
+  return request<NewsArticle[]>(`/news?featured=true&limit=${limit}`)
+}
+
+/**
+ * The media collage (`168:8688`), in the picture desk's own order.
+ *
+ * Ordering is the API's business rather than the collage's, exactly as it is
+ * for the timeline and the board: the page alternates tall video columns with
+ * pairs of photographs, and it can only do that by trusting the sequence it is
+ * handed — sorting here would mean the page deciding which pictures are worth
+ * the tall slot, which is an editorial call it has no basis for.
+ */
+export async function getGalleryItems(limit?: number): Promise<GalleryItem[]> {
+  if (USE_MOCK) {
+    return limit === undefined ? MOCK_GALLERY : MOCK_GALLERY.slice(0, limit)
+  }
+  const query = limit === undefined ? "" : `?limit=${limit}`
+  return request<GalleryItem[]>(`/gallery${query}`)
+}
+
+/**
+ * The categories the news archive can filter by, in the order the tabs print
+ * them.
+ *
+ * Derived from the feed rather than written into the page. Figma names five
+ * tabs — All, DWF, Tournaments, Members, Development (`166:8377`) — and the
+ * feed's categories are a different vocabulary, so hard-coding the design's
+ * list would print tabs that filter to nothing and hide categories that have
+ * articles in them. A tab that leads to an empty grid is worse than a tab the
+ * designer did not draw.
+ *
+ * Order is first-seen in the feed, which is newest-first: the categories being
+ * written about now sort to the front on their own, without the page ranking
+ * them.
+ */
+export async function getNewsCategories(): Promise<string[]> {
+  if (USE_MOCK) return [...new Set(MOCK_NEWS.map((a) => a.category))]
+  return request<string[]>("/news/categories")
+}
+
+/**
+ * The gallery archive grouped by event, newest first (`156:7234`).
+ *
+ * Separate from `getGalleryItems`, which the news page's strip reads, because
+ * they are different questions rather than two views of one answer: the strip
+ * asks "what has the picture desk published lately" and gets a flat run in the
+ * order the collage alternates, while this asks "what did we photograph, and
+ * at which event".
+ *
+ * `slug` filters to one album, and the filtering happens here for the reason
+ * RULES §8 gives everywhere else: the real endpoint takes `?event=`, whereas a
+ * page sifting the archive itself would download every photograph the
+ * federation has ever filed in order to show one tournament's. Matched on the
+ * slug rather than the title — the title is display copy and carries an em
+ * dash, which is not something to put through a query string.
+ */
+export async function getGalleryAlbums(slug?: string): Promise<GalleryAlbum[]> {
+  if (USE_MOCK) {
+    if (!slug) return MOCK_GALLERY_ALBUMS
+    return MOCK_GALLERY_ALBUMS.filter((album) => album.slug === slug)
+  }
+  const query = slug ? `?event=${encodeURIComponent(slug)}` : ""
+  return request<GalleryAlbum[]>(`/gallery/albums${query}`)
+}
+
+
+/**
+ * The tournament rail (`373:17423`), in the federation's own order.
+ *
+ * Ordering is the API's business rather than the rail's, like the board and the
+ * timeline: the page has no way to know whether the federation leads with the
+ * nearest date, the biggest event, or the one it is selling tickets to.
+ */
+export async function getTournaments(): Promise<Tournament[]> {
+  if (USE_MOCK) return MOCK_TOURNAMENTS
+  return request<Tournament[]>("/tournaments")
+}
+
+/**
+ * The one tournament the page opens with (`372:17314`).
+ *
+ * A `ShowcaseEvent` rather than a `Tournament`, because that is what the block
+ * needs and already exists: the prose, the artwork and the two buttons are what
+ * separate the showcase shape from the rail's card, and the design draws the
+ * landing page's S6 band again here with a different eyebrow over it.
+ *
+ * Its own call rather than `getShowcaseEvents()[0]` at the call site: the order
+ * of an array is not a contract, and the page would break silently the first
+ * time the showcase is reordered. The mock answers with the first because
+ * "highlighted" is what the federation puts at the front of that list today.
+ */
+export async function getHighlightedTournament(): Promise<
+  ShowcaseEvent | undefined
+> {
+  if (USE_MOCK) return MOCK_SHOWCASE_EVENTS[0]
+  return request<ShowcaseEvent>("/tournaments/highlighted")
+}
+
+/**
+ * Champions Hall (`381:17639`), most recent first.
+ *
+ * Every record currently comes back without a portrait — see `Champion` and
+ * R16. The card is built to render either way, so the day real photographs are
+ * filed nothing here changes.
+ */
+export async function getChampions(): Promise<Champion[]> {
+  if (USE_MOCK) return MOCK_CHAMPIONS
+  return request<Champion[]>("/champions")
+}
+
+/** The Olympic results table (`385:17838`). */
+export async function getOlympicResults(): Promise<OlympicResult[]> {
+  if (USE_MOCK) return MOCK_OLYMPIC_RESULTS
+  return request<OlympicResult[]>("/olympic-results")
 }

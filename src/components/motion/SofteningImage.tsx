@@ -16,7 +16,11 @@ import { RESET_DURATION } from "@/lib/utils/motion"
  * opacity change.
  *
  * Runs in both directions: rocks go sharp → soft as they retreat, the tile
- * goes soft → its resting blur as it arrives.
+ * comes soft → sharp as it arrives.
+ *
+ * A `to` of `"0px"` means the resting copy carries no `filter` property at all
+ * — see `filterFor` below, and the hero tile, which is the layer that needed
+ * it.
  */
 
 type SofteningImageProps = {
@@ -66,6 +70,17 @@ export function SofteningImage({
   // its focus change on the first visit, so the replay would show half of it.
   const entered = useEntrance()
 
+  // A zero blur is written as NO filter at all, not as `blur(0px)`.
+  //
+  // The two are the same picture and not the same layer: any `filter` value
+  // puts the element through a filter pass, which promotes it and has the
+  // compositor rasterise the subtree into a texture of its own. On a high-DPI
+  // screen that texture is where the extra pixels go missing — the image lands
+  // visibly softer than the same image with no filter on it, which is what a
+  // resting `blur(0px)` would have cost the hero tile for nothing.
+  const filterFor = (blur: string) =>
+    Number.parseFloat(blur) === 0 ? undefined : `blur(${blur})`
+
   const image = (
     <Image
       src={src}
@@ -113,7 +128,7 @@ export function SofteningImage({
             ? { opacity: 0, transition: { ...transition, ease: "easeIn" } }
             : { opacity: 1, transition: reset }
         }
-        style={{ filter: `blur(${from})`, willChange: "opacity" }}
+        style={{ filter: filterFor(from), willChange: "opacity" }}
       >
         {image}
       </motion.div>
@@ -127,7 +142,7 @@ export function SofteningImage({
             ? { opacity: 1, transition: { ...transition, ease: "easeOut" } }
             : { opacity: 0, transition: reset }
         }
-        style={{ filter: `blur(${to})`, willChange: "opacity" }}
+        style={{ filter: filterFor(to), willChange: "opacity" }}
       >
         {image}
       </motion.div>

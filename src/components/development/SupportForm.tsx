@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react"
 
+import { FormField } from "@/components/ui/FormField"
 import { SUPPORT_COPY } from "@/content/development/support"
 
 /**
@@ -26,6 +27,9 @@ import { SUPPORT_COPY } from "@/content/development/support"
  * Client because the fields carry state and a submit handler — and it is a
  * component of its own rather than markup inside `SupportPrograms` so the
  * section's heading, copy and entrances stay on the server (RULES §5).
+ *
+ * The field itself moved to `ui/FormField` when `/contact` needed the same one
+ * (D32/D43). Nothing about it changed in the move.
  */
 export function SupportForm() {
   const [federation, setFederation] = useState("")
@@ -51,7 +55,7 @@ export function SupportForm() {
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-8 lg:gap-12">
-        <Field
+        <FormField
           id="support-federation"
           label={SUPPORT_COPY.federationLabel}
           placeholder={SUPPORT_COPY.federationPlaceholder}
@@ -61,7 +65,7 @@ export function SupportForm() {
           autoComplete="organization"
         />
 
-        <Field
+        <FormField
           id="support-email"
           label={SUPPORT_COPY.emailLabel}
           placeholder={SUPPORT_COPY.emailPlaceholder}
@@ -93,69 +97,6 @@ export function SupportForm() {
           </p>
         </div>
       </form>
-    </div>
-  )
-}
-
-/**
- * One field — Figma's `textfield-big` (`207:15161`).
- *
- * A label, then the value set at 36/48 over a 2px `--color-divider` rule. The
- * rule is a `border-b` on the input rather than a `<rect>` of its own, as
- * Figma has it: a line whose only job is to underline the field it belongs to
- * cannot be announced, and as a border it moves with the field at every width.
- *
- * The label is rendered, not implied by the placeholder. Figma sets the
- * placeholder at 40% black and gives no label above the rule for the email
- * field's own row — but a placeholder disappears the moment there is text in
- * the field, so a screen reader arriving mid-entry would have nothing to
- * announce. The same fix the newsletter field carries, except that here the
- * design already draws the label, so it stays visible.
- */
-function Field({
-  id,
-  label,
-  placeholder,
-  value,
-  onChange,
-  type,
-  autoComplete,
-}: {
-  id: string
-  label: string
-  placeholder: string
-  value: string
-  onChange: (next: string) => void
-  type: "text" | "email"
-  autoComplete: string
-}) {
-  return (
-    <div className="flex flex-col gap-4 lg:gap-6">
-      <label
-        htmlFor={id}
-        className="font-sans text-[length:var(--text-body-sm)] leading-8 font-semibold text-black"
-      >
-        {label}
-      </label>
-      <input
-        id={id}
-        type={type}
-        required
-        autoComplete={autoComplete}
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        placeholder={placeholder}
-        // `w-full` and no intrinsic width: a text input carries a default
-        // `size` of about 20 characters, which is a WIDTH rather than a
-        // minimum, and it would set the card's min-content instead of the card
-        // setting the field's — the trap the footer's newsletter input
-        // documents in full.
-        //
-        // The placeholder is drawn at 40% black; the typed value is full
-        // black, or the reader cannot see what they wrote against what they
-        // have not.
-        className="font-sans w-full border-b-2 border-[var(--color-divider)] bg-transparent pb-4 text-[length:var(--text-body-lg)] leading-[1.33] font-semibold text-black transition-colors placeholder:text-black/40 focus:border-black focus:outline-none lg:pb-[0.94vw]"
-      />
     </div>
   )
 }

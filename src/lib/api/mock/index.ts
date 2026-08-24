@@ -8,11 +8,15 @@
 
 import type {
   BoardMember,
+  Champion,
   ShowcaseEvent,
   FeaturedEvent,
   FederationStat,
+  GalleryAlbum,
+  GalleryItem,
   HeritageMilestone,
   NewsArticle,
+  OlympicResult,
   Partner,
   ResourceDocument,
   SubCommittee,
@@ -113,6 +117,10 @@ export const MOCK_NEWS: NewsArticle[] = [
     category: "Tournament",
     publishedAt: "2026-08-12T10:00:00Z",
     thumbnailUrl: "/assets/home/news-thumb-01.png",
+    isFeatured: true,
+    heroImageUrl: "/assets/news/featured-giant-tiles.png",
+    heroImageAlt:
+      "A player crouches between six oversized black domino tiles, their pips picked out in gold.",
   },
   {
     id: "n2",
@@ -153,6 +161,10 @@ export const MOCK_NEWS: NewsArticle[] = [
     category: "Development",
     publishedAt: "2026-07-21T08:00:00Z",
     thumbnailUrl: "/assets/home/news-thumb-04.png",
+    isFeatured: true,
+    heroImageUrl: "/assets/news/news-tile-run-player.png",
+    heroImageAlt:
+      "A young player lies level with a table, setting the last tile into a standing run of dominoes.",
   },
   {
     id: "n5",
@@ -163,6 +175,10 @@ export const MOCK_NEWS: NewsArticle[] = [
     category: "Federation",
     publishedAt: "2026-07-10T11:45:00Z",
     thumbnailUrl: "/assets/home/news-thumb-05.png",
+    isFeatured: true,
+    heroImageUrl: "/assets/news/news-panel-discussion.png",
+    heroImageAlt:
+      "Three delegates on a panel, one speaking into a handheld microphone.",
   },
   {
     id: "n6",
@@ -173,6 +189,10 @@ export const MOCK_NEWS: NewsArticle[] = [
     category: "Ranking",
     publishedAt: "2026-06-28T13:20:00Z",
     thumbnailUrl: "/assets/home/news-thumb-06.png",
+    isFeatured: true,
+    heroImageUrl: "/assets/news/news-podium-ceremony.png",
+    heroImageAlt:
+      "Teams lined up on a tiered podium, holding national flags for the closing ceremony.",
   },
   {
     id: "n7",
@@ -183,6 +203,10 @@ export const MOCK_NEWS: NewsArticle[] = [
     category: "Officiating",
     publishedAt: "2026-06-15T07:00:00Z",
     thumbnailUrl: "/assets/home/news-thumb-01.png",
+    isFeatured: true,
+    heroImageUrl: "/assets/news/news-match-handshake.png",
+    heroImageAlt:
+      "Two competitors shake hands across the table before the start of a match.",
   },
   {
     id: "n10",
@@ -193,6 +217,10 @@ export const MOCK_NEWS: NewsArticle[] = [
     category: "Development",
     publishedAt: "2026-03-06T08:00:00Z",
     thumbnailUrl: "/assets/development/news-oceania-schools.png",
+    isFeatured: true,
+    heroImageUrl: "/assets/news/news-medal-flag-bearer.png",
+    heroImageAlt:
+      "A national team member stands draped in their flag with a medal at their chest.",
   },
   {
     id: "n9",
@@ -203,6 +231,12 @@ export const MOCK_NEWS: NewsArticle[] = [
     category: "Development",
     publishedAt: "2025-03-14T10:30:00Z",
     thumbnailUrl: "/assets/development/news-equipment-standards.png",
+    // Photographed for the band but not flagged for it: the shelf is an
+    // editorial choice and the band shows six. Left with a hero so the
+    // federation can promote it without going looking for a picture.
+    heroImageUrl: "/assets/news/news-player-at-table.png",
+    heroImageAlt:
+      "A competitor sits back from the table mid-match, looking across the playing hall.",
   },
   {
     id: "n11",
@@ -347,6 +381,185 @@ export const MOCK_RESOURCES: ResourceDocument[] = [
     fileType: "pdf",
     fileSize: "2.1 MB",
   },
+  // The news page's press shelf (`168:8479`). Filed here rather than in a list
+  // of their own: a press release IS a document with a date, a type and a size,
+  // which is exactly what `getResources` already serves — a second endpoint
+  // would differ only in the word on its category.
+  //
+  // Figma prints "May 12, 2023" on all four cards. That is the unreplaced
+  // template rather than four documents published the same day, and unlike a
+  // duplicated *title* (D44) it cannot be shipped as drawn: four rows sharing
+  // one date read as a listing that failed to load. Dates are data here as they
+  // are everywhere else in this file, so they are spread across the site's own
+  // present instead.
+  {
+    id: "r12",
+    category: "Press Release",
+    title: "DWF Announces Partnership with Global Sports",
+    publishedAt: "2026-07-30T09:00:00Z",
+    fileUrl: "#",
+    fileType: "pdf",
+    fileSize: "5.2 MB",
+  },
+  {
+    id: "r13",
+    category: "Press Release",
+    title: "Annual Integrity Report 2023 Published",
+    publishedAt: "2026-06-18T09:00:00Z",
+    fileUrl: "#",
+    fileType: "pdf",
+    fileSize: "2.2 MB",
+  },
+  {
+    // Figma writes "026 world cup" (`168:8567`). A year missing its leading
+    // digit is a certain typo, not a fact in dispute, so it is corrected the
+    // way "Sub-Commitees" was (D40).
+    id: "r14",
+    category: "Press Release",
+    title: "Candidate Cities for 2026 World Cup Shortlisted",
+    publishedAt: "2026-05-12T09:00:00Z",
+    fileUrl: "#",
+    fileType: "pdf",
+    fileSize: "3.5 MB",
+  },
+  {
+    id: "r15",
+    category: "Press Release",
+    title: "New Statutes Regarding Player Eligibility Approved",
+    publishedAt: "2026-04-09T09:00:00Z",
+    fileUrl: "#",
+    fileType: "pdf",
+    fileSize: "3.1 MB",
+  },
+  // The publications shelf (`168:8590`) — the same entity with a cover.
+  {
+    // "Dqf quarter 1 review" in Figma (`168:8594`). `Dqf` is the brand
+    // mistyped, and the brand is a word that is spelled the same everywhere
+    // else in the file; corrected under D40.
+    id: "r16",
+    category: "Publication",
+    title: "DWF Quarter 1 Review",
+    publishedAt: "2026-04-21T09:00:00Z",
+    fileUrl: "#",
+    fileType: "pdf",
+    fileSize: "5.2 MB",
+    coverImageUrl: "/assets/news/publication-cover-quarter-review.png",
+  },
+  {
+    // TODO(design): Figma draws two publication cards with byte-identical
+    // contents (`168:8591` and `183:12333`) — the second is a paste that was
+    // never filled in. A shelf that prints the same document twice is worse
+    // than one that prints a sequel, so the quarter is stepped on; the words
+    // are the design's own, only the number moves. The cover is shared because
+    // the design shares it: both cards carry the same `imageRef`.
+    id: "r17",
+    category: "Publication",
+    title: "DWF Quarter 2 Review",
+    publishedAt: "2026-07-21T09:00:00Z",
+    fileUrl: "#",
+    fileType: "pdf",
+    fileSize: "4.8 MB",
+    coverImageUrl: "/assets/news/publication-cover-quarter-review.png",
+  },
+  // The tournament page's regulations shelf (`381:17593`) — three documents,
+  // verbatim from the design, dates and sizes included. Their own category
+  // rather than "Regulations", which the Domino page asks for by name: these
+  // three are what a competitor needs before travelling, not the rules the
+  // game is played under.
+  {
+    id: "r18",
+    category: "Tournament Regulations",
+    title: "Ethics & Fair Play Code",
+    publishedAt: "2025-05-12T09:00:00Z",
+    fileUrl: "#",
+    fileType: "pdf",
+    fileSize: "5.2 MB",
+  },
+  {
+    id: "r19",
+    category: "Tournament Regulations",
+    title: "Official Scrutineering Guide",
+    publishedAt: "2025-03-22T09:00:00Z",
+    fileUrl: "#",
+    fileType: "pdf",
+    fileSize: "2.2 MB",
+  },
+  {
+    id: "r20",
+    category: "Tournament Regulations",
+    title: "Visa Support Document",
+    publishedAt: "2026-08-23T09:00:00Z",
+    fileUrl: "#",
+    fileType: "pdf",
+    fileSize: "2.1 MB",
+  },
+]
+
+/**
+ * The news page's media collage (`168:8688`).
+ *
+ * Order is the design's, and it is load-bearing: the collage alternates a tall
+ * video column with a pair of stacked photographs, so a `photo` arriving where
+ * a `video` is expected changes the shape of the row rather than just its
+ * contents. The page pairs them off in source order.
+ */
+export const MOCK_GALLERY: GalleryItem[] = [
+  {
+    id: "g1",
+    title: "Inside the playing hall",
+    imageUrl: "/assets/global/gallery-playing-hall.png",
+    imageAlt:
+      "Competitors seated at rows of tables in a playing hall, a red tournament backdrop behind them.",
+    kind: "video",
+  },
+  {
+    id: "g2",
+    title: "Round nine, board one",
+    imageUrl: "/assets/global/gallery-match-broadcast.png",
+    imageAlt:
+      "Two players face each other across a table while a camera operator films from behind.",
+    kind: "photo",
+  },
+  {
+    id: "g3",
+    title: "Trophy presentation",
+    imageUrl: "/assets/global/gallery-trophy-presentation.png",
+    imageAlt:
+      "An official shakes hands with a competitor on stage beside a trophy on a plinth.",
+    kind: "photo",
+  },
+  {
+    id: "g4",
+    title: "Team delegation arrives",
+    imageUrl: "/assets/global/gallery-team-delegation.png",
+    imageAlt:
+      "A national team in matching tracksuits gathers at the edge of the playing area.",
+    kind: "video",
+  },
+  {
+    id: "g5",
+    title: "Homecoming",
+    imageUrl: "/assets/global/gallery-airport-welcome.png",
+    imageAlt:
+      "A medallist in traditional dress is welcomed at an airport with a bouquet of white flowers.",
+    kind: "photo",
+  },
+  {
+    id: "g6",
+    title: "Team portrait",
+    imageUrl: "/assets/global/gallery-team-portrait.png",
+    imageAlt:
+      "Three team members in blue blazers stand together in the venue between rounds.",
+    kind: "photo",
+  },
+  {
+    id: "g7",
+    title: "Exhibition match",
+    imageUrl: "/assets/global/gallery-exhibition-match.png",
+    imageAlt:
+      "Officials and spectators crowd around a table during an exhibition match.",
+    kind: "video",
+  },
 ]
 
 /**
@@ -372,9 +585,15 @@ export const MOCK_FEATURED_EVENT: FeaturedEvent = {
  */
 export const MOCK_SHOWCASE_EVENTS: ShowcaseEvent[] = [
   {
+    // Figma calls this event "CARIBBEAN DOMINO OPEN 2024" in S6 (`52:3030`)
+    // and "Caribbean Domino Open 2026" in the tournament hero (`370:17251`),
+    // with October 2026 dates under both. An event named for 2024 and held in
+    // 2026 contradicts itself on the page, and the dates carry the deciding
+    // vote — so the year follows them. Same class of fix as the Tokyo album's
+    // pasted heading and the four identically-dated press releases.
     id: "e1",
-    slug: "caribbean-domino-open-2024",
-    name: "Caribbean Domino Open 2024",
+    slug: "caribbean-domino-open-2026",
+    name: "Caribbean Domino Open 2026",
     dateLabel: "Oct 12 - Oct 15, 2026",
     location: "Montego Bay, Jamaica",
     summary:
@@ -581,15 +800,417 @@ export const MOCK_SUB_COMMITTEES: SubCommittee[] = [
   { id: "c6", name: "Athletes Commission" },
 ]
 
+/**
+ * The rail on `/tournaments` (`373:17423`).
+ *
+ * Three names, three categories and three registration states are the design's.
+ * Two things are not, and both are the kind of mock artefact that reads as a
+ * broken page rather than as art awaiting replacement:
+ *
+ *  - **The cities were shuffled.** Figma files "London Open" under Stockholm and
+ *    "Dubai Masters" under Mexico City (`373:17428`, `381:17470`). Where the
+ *    name states a city, the name wins; Mexico City goes to the one tournament
+ *    whose name states none.
+ *  - **The fourth card was a copy of the third**, down to its title and pill.
+ *    A rail whose last two cards are identical looks like a render bug, the same
+ *    call the four identically-dated press releases got. It becomes the
+ *    tournament that inherits Stockholm.
+ *
+ * `world-championship-2026` predates the page — it was the contract sketch for
+ * phase 2 — and is kept, now carrying the fields the card needs.
+ */
 export const MOCK_TOURNAMENTS: Tournament[] = [
   {
     id: "t1",
+    slug: "london-open-2026",
+    name: "London Open",
+    category: "Inter-continental",
+    status: "upcoming",
+    registration: "open",
+    location: "London, United Kingdom",
+    imageUrl: "/assets/tournaments/poster-card-slate.png",
+    imageAlt:
+      "Tournament poster: a gold trophy topped with two domino tiles against a slate ground, lettered DWF2026.",
+    startsAt: "2026-09-18T09:00:00Z",
+    endsAt: "2026-09-21T18:00:00Z",
+    country: "GBR",
+  },
+  {
+    id: "t2",
+    slug: "dubai-masters-2026",
+    name: "Dubai Masters",
+    category: "Championship",
+    status: "upcoming",
+    registration: "closed",
+    location: "Dubai, UAE",
+    imageUrl: "/assets/tournaments/poster-card-gold.png",
+    imageAlt:
+      "Tournament poster: a gold trophy topped with two domino tiles against a warm gold ground, lettered DWF2026.",
+    startsAt: "2026-10-02T09:00:00Z",
+    endsAt: "2026-10-06T18:00:00Z",
+    country: "ARE",
+  },
+  {
+    id: "t3",
+    slug: "winter-finals-championship-2026",
+    name: "Winter Finals Championship",
+    category: "Regional qualifier",
+    status: "live",
+    registration: "ongoing",
+    location: "Mexico City, MX",
+    imageUrl: "/assets/tournaments/poster-card-magenta.png",
+    imageAlt:
+      "Tournament poster: a gold trophy topped with two domino tiles against a magenta ground, lettered DWF2026.",
+    startsAt: "2026-08-20T09:00:00Z",
+    endsAt: "2026-08-26T18:00:00Z",
+    country: "MEX",
+  },
+  {
+    id: "t4",
+    slug: "stockholm-invitational-2026",
+    name: "Stockholm Invitational",
+    category: "Regional qualifier",
+    status: "upcoming",
+    registration: "open",
+    location: "Stockholm, SE",
+    imageUrl: "/assets/tournaments/poster-card-slate.png",
+    imageAlt:
+      "Tournament poster: a gold trophy topped with two domino tiles against a slate ground, lettered DWF2026.",
+    startsAt: "2026-11-05T09:00:00Z",
+    endsAt: "2026-11-08T18:00:00Z",
+    country: "SWE",
+  },
+  {
+    id: "t5",
     slug: "world-championship-2026",
     name: "World Championship 2026",
+    category: "Championship",
     status: "upcoming",
+    registration: "open",
+    location: "Jakarta, Indonesia",
+    imageUrl: "/assets/tournaments/poster-card-gold.png",
+    imageAlt:
+      "Tournament poster: a gold trophy topped with two domino tiles against a warm gold ground, lettered DWF2026.",
     startsAt: "2026-11-14T09:00:00Z",
     endsAt: "2026-11-22T18:00:00Z",
     venue: "Jakarta Convention Center",
     country: "IDN",
+  },
+]
+
+/**
+ * Champions Hall (`381:17639`).
+ *
+ * **The design's photographs, with placeholder names over them.** Figma fills
+ * all four cards with pictures of real, identifiable public figures — a chess
+ * world champion and a retired footballer among them — and types their real
+ * names underneath as champions of this federation (`381:17649`, `381:17644`).
+ *
+ * The pictures go in **on the repo owner's decision, 2026-08-24**, taken after
+ * the risk was put to them: this is a prototype, and the design's assets go in
+ * as drawn. The names do **not**: every card here is an identity claim, and a
+ * real name under a real face states that a particular living person won a
+ * title that does not exist. Placeholder names keep the block honest about the
+ * one thing it would otherwise assert. Recorded as R16, to be resolved before
+ * publication.
+ *
+ * The `portraitAlt` strings describe what is visible **without naming a person,
+ * a country or an event** — the same practice R13 established for the news
+ * photographs. The files were downscaled to 1400px on their long edge on the
+ * way in; the originals run to 14MB for a card that renders at 540.
+ *
+ * The names below are the register the design's own results table uses — two
+ * of them, Marcus Johnson and Alicia Brown, are the design's (`381:17806`,
+ * `385:17853`), and the other two are written to match. The events are the
+ * design's, verbatim.
+ *
+ * The cards carry the federation's own commemorative poster artwork instead of
+ * a face. An empty portrait slot fell back to a bare gradient panel, which read
+ * as an image that failed to load rather than as one awaiting art — reported by
+ * the repo owner. A poster is the one picture the federation can put on a
+ * champion's card while owing nobody a likeness. TODO(design): real champions,
+ * with portraits the federation has the right to publish.
+ */
+export const MOCK_CHAMPIONS: Champion[] = [
+  {
+    id: "ch1",
+    event: "2024 World Championship",
+    name: "Marcus\nJohnson",
+    portraitUrl: "/assets/tournaments/champion-portrait-01.png",
+    portraitAlt:
+      "A player in a pale shirt sits at the board, one hand resting against their forehead mid-game.",
+  },
+  {
+    id: "ch2",
+    event: "2023 World Championship",
+    name: "Alicia\nBrown",
+    portraitUrl: "/assets/tournaments/champion-portrait-02.png",
+    portraitAlt:
+      "A person in a dark suit and headset microphone, smiling under stage lighting.",
+  },
+  {
+    id: "ch3",
+    event: "2024 European",
+    name: "Devon\nClarke",
+    portraitUrl: "/assets/tournaments/champion-portrait-03.png",
+    portraitAlt:
+      "A player in a checked jacket sits behind the board with their hands clasped in front of them.",
+  },
+  {
+    id: "ch4",
+    event: "2024 Asian",
+    name: "Priya\nRaman",
+    portraitUrl: "/assets/tournaments/champion-portrait-04.png",
+    portraitAlt:
+      "A player in a blue patterned shirt sits at the board with their palms pressed together.",
+  },
+]
+
+/**
+ * The results table (`385:17838`), verbatim from the design bar one correction.
+ *
+ * Figma files the doubles pair under "Espanyol", which is a football club and
+ * not a federation (`385:17836`). Read as a country column it can only mean
+ * Spain, so it says Spain — the same call D40 made on "Sub-Commitees": fix the
+ * spelling of a thing that is unambiguous, invent nothing that is not.
+ */
+export const MOCK_OLYMPIC_RESULTS: OlympicResult[] = [
+  {
+    id: "or1",
+    year: "2025",
+    event: "Men\u2019s Single Domino",
+    category: "Singles",
+    winners: "Marcus Johnson",
+    federation: "Jamaica",
+  },
+  {
+    id: "or2",
+    year: "2025",
+    event: "Doubles Domino",
+    category: "Doubles",
+    winners: "Daniel Rodr\u00edguez & Carlos Mart\u00ednez",
+    federation: "Spain",
+  },
+  {
+    id: "or3",
+    year: "2025",
+    event: "Women\u2019s Singles Domino",
+    category: "Singles",
+    winners: "Alicia Brown",
+    federation: "United Kingdom",
+  },
+]
+
+/**
+ * The gallery archive, newest event first (`156:7234`).
+ *
+ * **The three tournament albums carry byte-identical picture sets.** That is
+ * the design's (`156:7243`, `156:7276` and `156:7303` reference the same six
+ * `imageRef`s), and it is reproduced rather than papered over: the file has six
+ * photographs and four albums, so there is nothing else to hand them. Same call
+ * the news page's imagery got — the design's assets go in as drawn, and the
+ * substitution is the designer's to make. TODO(design).
+ *
+ * Two things are NOT reproduced, because unlike a repeated picture they read as
+ * a page that failed rather than a page awaiting art:
+ *
+ *  - The Tokyo album's heading. Figma's section title says "world championship
+ *    - tokyo 2026" while its own sidebar tab says "asian masters - tokyo 2026"
+ *    (`156:7272` against `156:7226`). One string feeds both here, so one has to
+ *    win: the tab does. The section heading is a paste from London — its date
+ *    is London's too, to the day — and three of four albums called "World
+ *    Championship" would make the index useless.
+ *  - That duplicated date. Tokyo is given its own, earlier than London so the
+ *    descending order the design lays out still holds. Same reasoning as the
+ *    four press releases stamped "May 12, 2023".
+ */
+export const MOCK_GALLERY_ALBUMS: GalleryAlbum[] = [
+  {
+    id: "ga1",
+    slug: "world-championship-london-2026",
+    title: "World Championship — London 2026",
+    heldOn: "2026-06-26T00:00:00Z",
+    items: [
+      {
+        id: "gl-1",
+        title: "Inside the playing hall",
+        imageUrl: "/assets/global/gallery-playing-hall.png",
+        imageAlt:
+          "Competitors seated at rows of tables in a playing hall, a red tournament backdrop behind them.",
+        kind: "video",
+      },
+      {
+        id: "gl-2",
+        title: "Round nine, board one",
+        imageUrl: "/assets/global/gallery-match-broadcast.png",
+        imageAlt:
+          "Two players face each other across a table while a camera operator films from behind.",
+        kind: "photo",
+      },
+      {
+        id: "gl-3",
+        title: "Team delegation arrives",
+        imageUrl: "/assets/global/gallery-team-delegation.png",
+        imageAlt:
+          "A national team in matching tracksuits gathers at the edge of the playing area.",
+        kind: "video",
+      },
+      {
+        id: "gl-4",
+        title: "Homecoming",
+        imageUrl: "/assets/global/gallery-airport-welcome.png",
+        imageAlt:
+          "A medallist in traditional dress is welcomed at an airport with a bouquet of white flowers.",
+        kind: "photo",
+      },
+      {
+        id: "gl-5",
+        title: "Trophy presentation",
+        imageUrl: "/assets/global/gallery-trophy-presentation.png",
+        imageAlt:
+          "An official shakes hands with a competitor on stage beside a trophy on a plinth.",
+        kind: "photo",
+      },
+      {
+        id: "gl-6",
+        title: "Team portrait",
+        imageUrl: "/assets/global/gallery-team-portrait.png",
+        imageAlt:
+          "Three team members in blue blazers stand together in the venue between rounds.",
+        kind: "photo",
+      },
+    ],
+  },
+  {
+    // TODO(design): heading taken from the sidebar tab, date moved off
+    // London's — see the note above.
+    id: "ga2",
+    slug: "asian-masters-tokyo-2026",
+    title: "Asian Masters — Tokyo 2026",
+    heldOn: "2026-04-18T00:00:00Z",
+    items: [
+      {
+        id: "gt-1",
+        title: "Inside the playing hall",
+        imageUrl: "/assets/global/gallery-playing-hall.png",
+        imageAlt:
+          "Competitors seated at rows of tables in a playing hall, a red tournament backdrop behind them.",
+        kind: "video",
+      },
+      {
+        id: "gt-2",
+        title: "Round nine, board one",
+        imageUrl: "/assets/global/gallery-match-broadcast.png",
+        imageAlt:
+          "Two players face each other across a table while a camera operator films from behind.",
+        kind: "photo",
+      },
+      {
+        id: "gt-3",
+        title: "Team delegation arrives",
+        imageUrl: "/assets/global/gallery-team-delegation.png",
+        imageAlt:
+          "A national team in matching tracksuits gathers at the edge of the playing area.",
+        kind: "video",
+      },
+      {
+        id: "gt-4",
+        title: "Homecoming",
+        imageUrl: "/assets/global/gallery-airport-welcome.png",
+        imageAlt:
+          "A medallist in traditional dress is welcomed at an airport with a bouquet of white flowers.",
+        kind: "photo",
+      },
+      {
+        id: "gt-5",
+        title: "Trophy presentation",
+        imageUrl: "/assets/global/gallery-trophy-presentation.png",
+        imageAlt:
+          "An official shakes hands with a competitor on stage beside a trophy on a plinth.",
+        kind: "photo",
+      },
+      {
+        id: "gt-6",
+        title: "Team portrait",
+        imageUrl: "/assets/global/gallery-team-portrait.png",
+        imageAlt:
+          "Three team members in blue blazers stand together in the venue between rounds.",
+        kind: "photo",
+      },
+    ],
+  },
+  {
+    id: "ga3",
+    slug: "world-championship-havana-2025",
+    title: "World Championship — Havana 2025",
+    heldOn: "2025-10-28T00:00:00Z",
+    items: [
+      {
+        id: "gh-1",
+        title: "Inside the playing hall",
+        imageUrl: "/assets/global/gallery-playing-hall.png",
+        imageAlt:
+          "Competitors seated at rows of tables in a playing hall, a red tournament backdrop behind them.",
+        kind: "video",
+      },
+      {
+        id: "gh-2",
+        title: "Round nine, board one",
+        imageUrl: "/assets/global/gallery-match-broadcast.png",
+        imageAlt:
+          "Two players face each other across a table while a camera operator films from behind.",
+        kind: "photo",
+      },
+      {
+        id: "gh-3",
+        title: "Team delegation arrives",
+        imageUrl: "/assets/global/gallery-team-delegation.png",
+        imageAlt:
+          "A national team in matching tracksuits gathers at the edge of the playing area.",
+        kind: "video",
+      },
+      {
+        id: "gh-4",
+        title: "Homecoming",
+        imageUrl: "/assets/global/gallery-airport-welcome.png",
+        imageAlt:
+          "A medallist in traditional dress is welcomed at an airport with a bouquet of white flowers.",
+        kind: "photo",
+      },
+      {
+        id: "gh-5",
+        title: "Trophy presentation",
+        imageUrl: "/assets/global/gallery-trophy-presentation.png",
+        imageAlt:
+          "An official shakes hands with a competitor on stage beside a trophy on a plinth.",
+        kind: "photo",
+      },
+      {
+        id: "gh-6",
+        title: "Team portrait",
+        imageUrl: "/assets/global/gallery-team-portrait.png",
+        imageAlt:
+          "Three team members in blue blazers stand together in the venue between rounds.",
+        kind: "photo",
+      },
+    ],
+  },
+  {
+    // One picture, so the page draws it full width instead of as a collage
+    // (`156:7330`) — the shape follows from the count, not from a field.
+    id: "ga4",
+    slug: "the-silent-war",
+    title: "The Silent War: Inside the Mind of a Grandmaster 2025",
+    heldOn: "2025-09-10T00:00:00Z",
+    items: [
+      {
+        id: "gs-1",
+        title: "The Silent War",
+        imageUrl: "/assets/gallery/film-global-final-arena.png",
+        imageAlt:
+          "A packed arena in black and white, players at a lit table in the round, the boards reading Domino Global Final.",
+        kind: "video",
+      },
+    ],
   },
 ]

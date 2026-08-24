@@ -226,6 +226,20 @@
      near-duplicate token; the leading is what distinguishes them (28 for a
      label, 32 for prose). */
   --text-eyebrow: clamp(0.875rem, 1.0417vw, 1.25rem); /* 20/1920 */
+  /* Inter Medium 18/26, tracked and set in capitals — a tab, a chip, a filter
+     pill. The news archive's category strip is the first thing to need it
+     (`166:8379`). Numerically the same slope as `news-card-sm`, and kept apart
+     for the reason D34 gives: that token is named for S8's mosaic, and a
+     landing-page section's name borrowed onto another page makes it lie. The
+     0.8125rem floor keeps the longest label ("Development") inside its pill
+     without the strip wrapping at 360px. */
+  --text-label-sm: clamp(0.8125rem, 0.9375vw, 1.125rem); /* 18/1920 */
+  /* Inter Medium 16/24 in capitals — the smallest label the site sets, used on
+     the file pill inside a document card ("PDF (5.2 MB)"). Deliberately a
+     token rather than a flat `text-base`: 16px is the clamp's cap, so the two
+     agree at 1920 and only this one keeps its proportion on a 2560 monitor
+     where the card around it has grown. */
+  --text-label-xs: clamp(0.75rem, 0.8333vw, 1rem); /* 16/1920 */
   /* Inter Regular 24/36 — About's mission-card bodies. The 0.9375rem floor is
      what keeps a card body visibly subordinate to its 36px title once both
      have bottomed out. */
@@ -237,6 +251,12 @@
      the reason recorded there: those are a Bebas size and a question, and a
      shared token would tie three unrelated things to one number. */
   --text-body-lg: clamp(1.125rem, 1.875vw, 2.25rem); /* 36/1920 */
+  /* Inter SemiBold 28/36 — a headline sized for a card in a grid rather than
+     for the page. The news archive's tiles are the first to want it
+     (`163:8231`): 36 is the paragraph step and reads as body beside a
+     photograph, 40 is `heading-card`'s Bebas number and too loud three
+     abreast. */
+  --text-heading-tile: clamp(1.125rem, 1.4583vw, 1.75rem); /* 28/1920 */
   /* A page's own `<h1>` where it is set in Inter rather than Bebas — About's
      header is Inter Medium 84. The 2rem floor is set by the sentence: at 360px
      "The global authority for dominoes." already runs to three lines, and
@@ -298,6 +318,13 @@
      four lines at 360px; larger and it takes five and pushes the figure behind
      it out of frame. */
   --text-display-statement: clamp(2.25rem, 5.2083vw, 6.25rem); /* 100/1920 */
+  /* Inter SemiBold 64/72 — an event's name in a page hero (`370:17251`).
+     Numerically the same slope as `body-2xl`, and kept apart for the reason
+     recorded throughout this block: that one is a figure quoted inside prose,
+     and a heading borrowing its name would make the name lie. The 1.75rem
+     floor keeps "Caribbean Domino Open 2026" to three lines at 360px, above
+     the meta line it sits under. */
+  --text-heading-hero: clamp(1.75rem, 3.3333vw, 4rem); /* 64/1920 */
 
   /* One step of the stats wheel — the pitch from a figure to the next, not the
      height of a figure. Figma stacks the three rows at a 280px pitch (labels

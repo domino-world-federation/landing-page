@@ -18,11 +18,11 @@ export const metadata: Metadata = {
  * `/domino` — Figma screen `119:4737`, plus the wireframe `119:4474` for the
  * two blocks the hi-fi never drew.
  *
- * **Five sections, not six.** The wireframe specifies an "Official Game Rules"
- * block with a tabbed interface between them; it is not built (D42, risk R12).
- * Its hi-fi was never drawn, and five of its seven wireframe tabs are labelled
- * "SCORING" — so building it would mean inventing both a component and the copy
- * to put in it.
+ * **Five sections, not eight.** The hi-fi now draws "The Rulebook" (`277:15676`,
+ * tabbed) between FormatSplit and Regulations, plus hi-fi for the two blocks
+ * below it that were built from the greyscale wireframe. None of that existed
+ * when this page was written — it arrived with the `(NEW)` Figma file (D59), so
+ * the missing block and the two extrapolated ones are still open as risk R12.
  *
  * Same shell as About, deliberately: two pages of one site that open differently
  * for no reason a reader could name is a defect, not a variation.

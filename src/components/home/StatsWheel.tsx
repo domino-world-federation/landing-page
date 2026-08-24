@@ -4,13 +4,65 @@ import { motion, useInView, useReducedMotion } from "motion/react"
 import { useEffect, useRef, useState } from "react"
 
 import type { FederationStat } from "@/lib/api/types"
-import { EASE } from "@/lib/utils/motion"
 
-/** Seconds a stat holds the focused slot before the wheel turns again. */
-const HOLD = 2.6
+/**
+ * Seconds a stat holds the focused slot before the wheel turns again.
+ *
+ * Was 2.6, which is roughly how long a figure needs to be *read* — and that is
+ * the wrong thing to time a detent against. At that hold the three notches are
+ * too far apart to land as a rhythm: each click reads as its own event rather
+ * than one of a series, which is most of what `SNAP` was put in to convey.
+ * Shortened until the ticks belong to the same beat.
+ *
+ * The floor is that the wheel repeats forever, so a figure missed on this lap
+ * comes back on the next, and the accessible copy of the list (`Stats`) is not
+ * on a timer at all.
+ */
+const HOLD = 1.2
 
-/** Seconds the turn itself takes. */
-const TURN = 0.9
+/**
+ * Seconds set aside for one turn.
+ *
+ * Not the length of the turn — `SNAP` is a spring and a spring has no fixed
+ * end. This is the budget the wheel schedules against, and it has to outlast
+ * the spring's settle rather than its arrival: the interval must not fire while
+ * the track is still moving, and the lap rewind below must land on a track that
+ * has already stopped. `SNAP` arrives in 0.18s and is at rest well inside this.
+ */
+const TURN = 0.5
+
+/**
+ * The turn itself — a detent, not a glide.
+ *
+ * The wheel used to cross its slot on the page's easing curve, which is shaped
+ * to be *followed*: it leaves at once and lands softly, so the eye reads one
+ * continuous move. That is the opposite of a picker wheel, where the point is
+ * that the track is caught and held at every notch.
+ *
+ * A spring is what makes the catch. `visualDuration` is when the track
+ * arrives; `bounce` is what happens after. At 0.18s the travel is over almost
+ * before it registers as travel, and the bounce puts a single overshoot of
+ * roughly 5% of a slot on the end — the track goes a hair past the notch and is
+ * pulled back into it. That recoil is the whole effect; without it the move is
+ * merely fast, and fast alone still reads as sliding.
+ *
+ * Written as `visualDuration`/`bounce` rather than `stiffness`/`damping`
+ * because those two say nothing about how long the move takes, and this timing
+ * has to be reasoned about against `TURN` and `HOLD`.
+ */
+const SNAP = { type: "spring", visualDuration: 0.18, bounce: 0.3 } as const
+
+/**
+ * The cross-fade between a stat's focused and idle copies.
+ *
+ * Left a plain tween, and deliberately not `SNAP`. A spring overshoots, and
+ * these are `opacity` and `scale`: an opacity that overshoots is clipped at 1
+ * and reads as a flicker, and a figure that springs its own scale wobbles
+ * independently of the track carrying it. Shorter than the snap, so the gold
+ * has already handed over by the time the track settles — the colour change is
+ * what tells you which notch you are on, and it should not trail the notch.
+ */
+const FADE = { duration: 0.16, ease: "easeOut" } as const
 
 /**
  * The slot a stat occupies, relative to the focused one. Anything further out
@@ -109,11 +161,13 @@ export function StatsWheel({ stats }: StatsWheelProps) {
     return () => clearTimeout(timer)
   }, [pos.index, lap])
 
-  const transition = prefersReducedMotion
-    ? { duration: 0 }
-    : pos.instant
-      ? { duration: 0 }
-      : { duration: TURN, ease: EASE }
+  // The seam rewind and a reader who prefers reduced motion both want the
+  // track to arrive having visibly travelled nothing. Same tree either way,
+  // only the transition is zeroed (RULES §12).
+  const still = prefersReducedMotion || pos.instant
+
+  const trackTransition = still ? { duration: 0 } : SNAP
+  const fadeTransition = still ? { duration: 0 } : FADE
 
   return (
     <div
@@ -129,7 +183,7 @@ export function StatsWheel({ stats }: StatsWheelProps) {
         // of the three slots, so the track sits one slot lower than a plain
         // top-aligned offset would put it.
         animate={{ y: `${((1 - pos.index) * 100) / cells.length}%` }}
-        transition={transition}
+        transition={trackTransition}
         style={{ willChange: "transform" }}
       >
         {cells.map((stat, i) => {
@@ -152,14 +206,14 @@ export function StatsWheel({ stats }: StatsWheelProps) {
                 stat={stat}
                 visible={focused ? 1 : 0}
                 scale={1}
-                transition={transition}
+                transition={fadeTransition}
                 tone="focus"
               />
               <StatRow
                 stat={stat}
                 visible={near ? DIM : 0}
                 scale={NEIGHBOUR_SCALE}
-                transition={transition}
+                transition={fadeTransition}
                 tone="idle"
               />
             </div>

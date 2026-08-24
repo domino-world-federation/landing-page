@@ -18,6 +18,36 @@ export type NewsArticle = {
   category: string
   publishedAt: IsoDateString
   thumbnailUrl: string
+  /**
+   * The landscape photograph the news page's featured band prints a story over
+   * (`163:7627` — 1920 × 850, full bleed).
+   *
+   * Separate from `thumbnailUrl` rather than replacing it, because they are
+   * different pictures at different sizes: a 572 × 322 card thumbnail blown up
+   * to a full-bleed band is visibly soft, and the crop that reads as a square
+   * beside a headline is rarely the crop that reads under one.
+   *
+   * Optional, and the band falls back to `thumbnailUrl` when it is missing —
+   * Figma draws one featured photograph for a carousel that steps through
+   * several, so a feed where only some stories have been given one is the
+   * normal case rather than an error.
+   */
+  heroImageUrl?: string
+  /**
+   * Alt text for `heroImageUrl`. Written by whoever files the story, not
+   * derived from the headline: the band prints the headline beside the picture
+   * already, so repeating it would tell a screen reader the same thing twice
+   * and describe nothing.
+   */
+  heroImageAlt?: string
+  /**
+   * Whether the story belongs in the news page's featured band.
+   *
+   * A flag rather than "the newest few". The band is an editorial choice — the
+   * federation decides what leads — and tying it to recency would mean the
+   * lead story changes by itself every time anything at all is filed.
+   */
+  isFeatured?: boolean
   /** Not guaranteed in list responses; only filled in on the detail page. */
   body?: string
 }
@@ -44,15 +74,83 @@ export type CountryCode = string
 
 export type TournamentStatus = "upcoming" | "live" | "completed"
 
+/**
+ * Whether entries are being taken — the coloured pill on the tournament card
+ * (`373:17445`), which is a different question from `status`. A tournament can
+ * be `upcoming` with registration already `closed`, and `live` while its
+ * registration reads `ongoing`.
+ *
+ * A closed union rather than a string: the card colours the pill from this
+ * value, so an unexpected member would print an unstyled word instead of
+ * failing at the type level.
+ */
+export type TournamentRegistration = "open" | "closed" | "ongoing"
+
+/**
+ * A tournament as the `/tournaments` rail lists it — Figma card `373:17424`.
+ *
+ * `location` is a display string like `ShowcaseEvent`'s, not `venue` +
+ * `country`: the card prints one line and the API owns how it reads. The
+ * structured pair stays alongside it for the portal (phase 2), which will sort
+ * and filter on them.
+ */
 export type Tournament = {
   id: string
   slug: string
   name: string
+  /** The grey line above the name, e.g. "Inter-continental" (`373:17426`). */
+  category: string
   status: TournamentStatus
+  registration: TournamentRegistration
+  /** Already formatted for display, e.g. "London, United Kingdom". */
+  location: string
+  imageUrl: string
+  imageAlt: string
   startsAt: IsoDateString
   endsAt?: IsoDateString
   venue?: string
   country?: CountryCode
+  /** The tournament's own page. Unset until the portal exists (B2). */
+  href?: string
+}
+
+/**
+ * A past winner on the Champions Hall rail (`381:17645`).
+ *
+ * `portraitUrl` is **optional and currently unset everywhere**, which is the
+ * point: the design fills these cards with photographs of real, identifiable
+ * public figures and labels them champions of this federation (R16). A card
+ * without a portrait falls back to the design's own gradient panel, so the
+ * block is complete without asserting that a particular person won anything.
+ */
+export type Champion = {
+  id: string
+  /** The small line above the name, e.g. "2024 World Championship". */
+  event: string
+  /** Rendered as two lines when it contains a newline, like `BoardMember`. */
+  name: string
+  portraitUrl?: string
+  portraitAlt?: string
+}
+
+/**
+ * One row of the Olympic results table (`381:17802`).
+ *
+ * `winners` is a single string rather than an array of players: a doubles row
+ * names a pair as a pair ("Daniel Rodríguez & Carlos Martínez"), and splitting
+ * it would invent a decision about how the two are joined that the table then
+ * has to reverse. When the portal has real player records this becomes a
+ * relation; today it is what the table prints.
+ */
+export type OlympicResult = {
+  id: string
+  /** A label, not something the table does arithmetic on. */
+  year: string
+  event: string
+  category: string
+  winners: string
+  /** The right-hand column — a country or a national federation. */
+  federation: string
 }
 
 export type RankingEntry = {
@@ -106,6 +204,13 @@ export type ResourceDocument = {
   fileType: "pdf" | "doc" | "zip"
   /** Already formatted for display, e.g. "2.4 MB" — the API owns the units. */
   fileSize?: string
+  /**
+   * The document's cover, printed behind the news page's publication card
+   * (`168:8636`). Only that shelf draws one: every other list in the site shows
+   * documents as a title and a download pill, so requiring a cover would
+   * invalidate every document already filed without one.
+   */
+  coverImageUrl?: string
 }
 
 /**
@@ -193,4 +298,47 @@ export type FeaturedEvent = {
    *  one, so a country the API has no artwork for still works. */
   flagUrl?: string
   ctaUrl?: string
+}
+
+/**
+ * One tile in the news page's media collage (`168:8688`).
+ *
+ * Its own entity rather than a field on `NewsArticle`: the collage is a
+ * picture desk, not a headline list — a tile carries no date, no category and
+ * no body, and the same photograph can illustrate several stories or none.
+ *
+ * `kind` drives the tile's shape as well as its badge, which is why it is a
+ * closed union rather than a boolean. Figma draws videos as a full 400 × 600
+ * column with a play button over the middle, and photographs at 400 × 292
+ * stacked in pairs to fill the same height — one field decides both, so a tile
+ * cannot end up tall without its badge or badged without the room for one.
+ */
+export type GalleryItem = {
+  id: string
+  /** Describes the tile in the accessible listing; not printed on the collage,
+   *  which is pictures only. */
+  title: string
+  imageUrl: string
+  imageAlt: string
+  kind: "photo" | "video"
+}
+
+/**
+ * A gallery album — one event's pictures, as `/gallery` groups them
+ * (`156:7235` and its three siblings).
+ *
+ * The page draws two different shapes from this one type and neither is a
+ * field: an album with several pictures is a collage, and an album with exactly
+ * one is that picture at full width. Derived from `items.length` rather than
+ * stored, because a layout name in the data would be the API deciding how a
+ * page looks — and the same album has to render differently on a phone anyway.
+ */
+export type GalleryAlbum = {
+  id: string
+  /** Addresses the album in `?event=`. */
+  slug: string
+  title: string
+  /** When the event took place — not when the pictures were filed. */
+  heldOn: IsoDateString
+  items: GalleryItem[]
 }

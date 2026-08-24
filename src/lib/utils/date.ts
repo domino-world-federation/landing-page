@@ -41,6 +41,33 @@ export function formatLongDate(iso: IsoDateString): string {
   return LONG_DATE_FORMAT.format(new Date(iso))
 }
 
+/**
+ * The abbreviated form — the news page's own.
+ *
+ * A third formatter rather than a parameter, for the reason the second one
+ * exists: the choice is editorial, not a setting. The news page prints dates in
+ * Bebas, an all-capitals face, where "SEPTEMBER" is nearly half the width of a
+ * card's caption line and the month stops being something the eye skips over.
+ * The federation's document shelves print theirs in Inter beside a title and
+ * want the same brevity for a different reason — the date is the smallest thing
+ * on the card and should read as a stamp.
+ *
+ * Pinned to UTC like the other two, and for the same reason: an unpinned
+ * formatter reads the server's zone during SSR and the visitor's on hydration,
+ * and React throws on the difference.
+ */
+const SHORT_DATE_FORMAT = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+  timeZone: "UTC",
+})
+
+/** e.g. "Aug 12, 2026". */
+export function formatShortDate(iso: IsoDateString): string {
+  return SHORT_DATE_FORMAT.format(new Date(iso))
+}
+
 export type Remaining = {
   days: number
   hours: number
