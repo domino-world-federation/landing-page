@@ -1,9 +1,13 @@
 /**
  * S14 copy, kept out of JSX for i18n (RULES §9).
  *
- * Wording is from Figma node `56:5159`. Every `href` is still `#` for the same
- * reason the navbar's are (blocker B2): the pages do not exist. The one
- * exception is FAQ, which points at S11 on this page and so gets a real target.
+ * Wording is from Figma node `56:5159`. Most `href`s are still `#` for the same
+ * reason the navbar's are (blocker B2): the pages do not exist. Two are real —
+ * About Us, and FAQ, which points at S11.
+ *
+ * The FAQ target is `/#faq` rather than `#faq`: the footer renders on every
+ * page now, and a bare fragment would look for the section on whichever page
+ * the reader is standing on and find nothing.
  */
 
 export type FooterLink = {
@@ -21,10 +25,10 @@ export const FOOTER_GROUPS: readonly FooterGroup[] = [
   {
     title: "Quick Links",
     links: [
-      { label: "About Us", href: "#" },
+      { label: "About Us", href: "/about" },
       { label: "Tournaments", href: "#" },
       { label: "News", href: "#" },
-      { label: "FAQ", href: "#faq" },
+      { label: "FAQ", href: "/#faq" },
       { label: "Gallery", href: "#" },
     ],
   },

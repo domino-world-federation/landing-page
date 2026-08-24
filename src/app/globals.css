@@ -25,6 +25,35 @@
      Folding either into a neighbour would shift the band away from Figma. */
   --color-label-muted: #999999;
   --color-surface-grey: #d6d6d6;
+  /* Body copy on a white band. Written literally as `#3f3f3f` in two places on
+     the landing page before About needed it twice more; four call sites is the
+     point at which a literal stops being a one-off (RULES §6). */
+  --color-ink-body: #3f3f3f;
+  /* The label inside an outlined pill on a white card — S10's file type, and on
+     the Development page the curriculum button and the four library pills. A
+     shade darker than `label-muted` and used only inside a `border-light`
+     outline, which is what keeps the pill readable as one object rather than as
+     a border with text near it. Written literally in S10 while it was a
+     one-off; three call sites is the point RULES §6 names. */
+  --color-ink-pill: #8f8f8f;
+  /* The dark grey the About page washes between — the foot of Heritage's
+     gradient and the head of Vision's, so the two bands meet without a seam. */
+  --color-surface-dark: #262626;
+  /* Heritage's cards, drawn at 50% over that wash. */
+  --color-surface-card: #444444;
+  /* The sentence inside the Structural Frameworks placeholder (`113:3663`).
+     Legible against `surface-dark` but deliberately dim — it describes a
+     diagram that is not there yet, and reads as a note rather than as copy. */
+  --color-ink-placeholder: #6c6c6c;
+  /* The dashed rules behind Heritage's timeline (`88:1169`). A shade lighter
+     than the band they stand on and nothing else uses it — the strip is meant
+     to be felt rather than read. */
+  --color-timeline-rule: #323232;
+  /* Foot of the silver panel gradient on the Domino format split (`131:4834`),
+     which runs white → this. Distinct from `surface-grey`, which is S6's flat
+     fill two shades darker — using that one instead would shorten the gradient
+     and flatten the panel the split relies on for its silver-vs-gold read. */
+  --color-surface-silver: #d2d2d2;
 
   /* Hero backdrop gradient (S2, node `22:789`) */
   --color-hero-top: #353535;
@@ -70,6 +99,15 @@
   --radius-item: 16px;
   --radius-card: 20px;
   --radius-countdown: 24px;
+  /* The Development page's certification rows (`192:14573`). The same 24 as
+     `radius-countdown` and kept apart for the reason the type steps are: that
+     token is named for S3's card, and borrowing a section's name onto another
+     page makes it lie. */
+  --radius-panel: 24px;
+  /* Its grassroots cards (`192:14917`) — the largest radius on the site, and
+     the only one above `radius-card`. A 28px-padded panel wrapping a 680px
+     photograph needs a corner that reads at that size; 20 looks clipped. */
+  --radius-feature: 32px;
   --radius-pill: 48px;
 
   /* Shadows */
@@ -164,6 +202,103 @@
      a 48px figure. */
   --text-stat-label: clamp(0.875rem, 2.0833vw, 2.5rem);
 
+  /* ---- Page-agnostic steps ----------------------------------------------
+   *
+   * Everything above is named for the landing section it was measured on
+   * (`faq-answer`, `news-card`, `stat-label`), which was right while there was
+   * one page: the name says where to look when a number needs checking. About
+   * is the first page that is not the landing, and it reuses the same handful
+   * of sizes — 20, 24, 32, 36 for copy; 52, 72, 84, 100 for headings — in
+   * places that have nothing to do with news or FAQs. Borrowing those names
+   * across pages would make them lie, so the shared steps get neutral ones.
+   *
+   * New pages should reach for these first and only add a named step when a
+   * size is genuinely peculiar to one section, the way `display-feature` and
+   * `display-stat` are.
+   *
+   * Same slope rule as above: `cap / 1920` to four decimals, divided rather
+   * than eyeballed. */
+
+  /* The page's 20px Inter step. It started as the label above a heading, which
+     is where the name comes from, and the design reuses that same size for
+     small-print body all over About — a milestone summary, a board member's
+     office, a contact line. Those all read from here rather than each getting a
+     near-duplicate token; the leading is what distinguishes them (28 for a
+     label, 32 for prose). */
+  --text-eyebrow: clamp(0.875rem, 1.0417vw, 1.25rem); /* 20/1920 */
+  /* Inter Regular 24/36 — About's mission-card bodies. The 0.9375rem floor is
+     what keeps a card body visibly subordinate to its 36px title once both
+     have bottomed out. */
+  --text-body-sm: clamp(0.9375rem, 1.25vw, 1.5rem); /* 24/1920 */
+  /* Inter Regular 32/48. */
+  --text-body-md: clamp(1rem, 1.6667vw, 2rem); /* 32/1920 */
+  /* Inter Regular 36/44 — the page's standard paragraph. Numerically the same
+     slope as `resource-title` and `faq-question`, and kept apart from both for
+     the reason recorded there: those are a Bebas size and a question, and a
+     shared token would tie three unrelated things to one number. */
+  --text-body-lg: clamp(1.125rem, 1.875vw, 2.25rem); /* 36/1920 */
+  /* A page's own `<h1>` where it is set in Inter rather than Bebas — About's
+     header is Inter Medium 84. The 2rem floor is set by the sentence: at 360px
+     "The global authority for dominoes." already runs to three lines, and
+     anything larger starts breaking "authority" mid-word. */
+  --text-page-title: clamp(2rem, 4.375vw, 5.25rem); /* 84/1920 */
+  /* Bebas 36/44 — a card that is a label rather than a heading, e.g. About's
+     committee cards. The same number `resource-title` carries, and kept apart
+     for the reason recorded there: that token is named for S10's documents, and
+     borrowing a section's name onto another page makes it lie. The 1.25rem
+     floor keeps the longest ("MEDICAL & ANTI-DOPING") on one line beside its
+     arrow at 360px. */
+  --text-display-label: clamp(1.25rem, 1.875vw, 2.25rem); /* 36/1920 */
+  /* Inter Regular 48/56 — a name under a portrait. Larger than `body-lg` and
+     set in a body face rather than Bebas, so it is neither a display step nor a
+     paragraph one. The 1.5rem floor keeps a two-line name ("Jennifer /
+     Bachdzer") inside a card that has bottomed out at ~280px. */
+  --text-body-xl: clamp(1.5rem, 2.5vw, 3rem); /* 48/1920 */
+  /* Inter Regular 72 — a section heading set in the body face. About uses it
+     for the three lower sections (`112:3653`, `112:3588`, `114:3669`), where
+     the landing page would have reached for Bebas; kept apart from
+     `display-pillar` (the same 72) because that one is a Bebas size and mixing
+     the two would tie a body heading to a display step. The 1.75rem floor is
+     set by the longest of them, "Structural Frameworks", on one line at 360px. */
+  --text-heading-section: clamp(1.75rem, 3.75vw, 4.5rem); /* 72/1920 */
+  /* Bebas 52/60 — first measured on About's heritage year markers, and the same
+     step the Development page's referee grades take (`192:14578`). Kept under
+     the name it was born with rather than renamed: the token is the size, and
+     renaming a live token to widen its description edits every call site for
+     nothing. */
+  --text-display-year: clamp(1.75rem, 2.7083vw, 3.25rem); /* 52/1920 */
+  /* Bebas 32/40 as a caption rather than a button label — the Development
+     page's grassroots kickers (`192:14935`), coaching-level markers
+     (`192:14801`) and news dates (`207:15482`). The same 32 `display-btn`
+     carries, kept apart because that one is a control's label and this one is
+     never inside a box. The 1rem floor keeps a marker legible above a 36px
+     title once both have bottomed out. */
+  --text-display-caption: clamp(1rem, 1.6667vw, 2rem); /* 32/1920 */
+  /* Bebas 24/32 — a list item set in the display face, e.g. the three
+     federation-support benefits (`207:15180`). The smallest Bebas step on the
+     site; the 0.875rem floor is where its capitals stop being comfortable
+     beside a 32px tick. */
+  --text-display-item: clamp(0.875rem, 1.25vw, 1.5rem); /* 24/1920 */
+  /* Inter SemiBold 40/48 — a card's own heading, e.g. the coaching levels
+     (`192:14645`) and the support application card (`207:15158`). Numerically
+     the same slope as `display-2xs`, and kept apart for the reason recorded
+     throughout: that one is a Bebas size. */
+  --text-heading-card: clamp(1.25rem, 2.0833vw, 2.5rem); /* 40/1920 */
+  /* Inter Bold 64/72 — a figure quoted inside prose, e.g. the youth
+     programme's "45+" and "12K+" (`190:14514`). Distinct from
+     `display-stat` (S5's 200px wheel) and from `news-intro`, which is the same
+     64 set as a sentence rather than a number. The 1.75rem floor keeps the
+     figure visibly larger than the label under it at 360px. */
+  --text-body-2xl: clamp(1.75rem, 3.3333vw, 4rem); /* 64/1920 */
+  /* Bebas 72/64 — a heading inside a section rather than the section's own. */
+  --text-display-pillar: clamp(2rem, 3.75vw, 4.5rem); /* 72/1920 */
+  /* Bebas 100/108 — the largest step a section heading takes, above
+     `display-sm` (76) and below `display-md` (126). The 2.25rem floor is set by
+     the longest of them ("ELEVATING TILES TO THE WORLD STAGE"), which holds to
+     four lines at 360px; larger and it takes five and pushes the figure behind
+     it out of frame. */
+  --text-display-statement: clamp(2.25rem, 5.2083vw, 6.25rem); /* 100/1920 */
+
   /* One step of the stats wheel — the pitch from a figure to the next, not the
      height of a figure. Figma stacks the three rows at a 280px pitch (labels
      48 tall on a 228 gap); 14.58vw is 280/1920, so it tracks
@@ -221,6 +356,16 @@
     180deg,
     var(--color-gold-ink) 0%,
     var(--color-gold-ink-deep) 100%
+  );
+  /* Gold text — the fall a display heading is painted with, left to right.
+     Written inline as `bg-linear-to-r from-gold-light to-gold-dark` in three
+     places on the landing page and needed in three more on About; at six it is
+     worth one name. The two stops are the same tokens those utilities resolve
+     to, so the emitted gradient is byte-identical and nothing shifts. */
+  --gradient-gold-text: linear-gradient(
+    90deg,
+    var(--color-gold-light) 0%,
+    var(--color-gold-dark) 100%
   );
   /* Countdown divider: white only across the middle fifth, fading to nothing
      at both ends. */
@@ -287,6 +432,36 @@
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
+}
+
+/*
+ * The Pillars marquee on the About page — the column of three blocks rising
+ * through its fixed mask.
+ *
+ * It moves exactly half its track, and that is what makes the loop seamless
+ * rather than a jump: the track holds the content twice, so at -50% the second
+ * copy is standing exactly where the first one started and the restart is
+ * invisible. It only holds if half the track is one whole copy — which is why
+ * the caller puts the gap INSIDE each copy as trailing padding rather than
+ * between the two, where it would push the halves out of register.
+ *
+ * `prefers-reduced-motion` is handled by the block at the foot of this file: it
+ * collapses the duration to 0.01ms and caps the iteration count at 1, so the
+ * track lands on -50% and stays there. With the content duplicated, that end
+ * state is visually identical to the start — the marquee simply stops existing
+ * rather than showing a broken half-scrolled column.
+ *
+ * There is no `marquee-x` counterpart: Heritage's strip was one until it turned
+ * out that an automatic drift reads as decoration, and it is now dragged by the
+ * reader instead.
+ */
+@keyframes marquee-y {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(0, -50%, 0);
+  }
 }
 
 body {

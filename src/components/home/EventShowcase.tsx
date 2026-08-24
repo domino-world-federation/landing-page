@@ -242,7 +242,7 @@ function Field({
       <Reserved
         as="dd"
         all={all}
-        className="font-sans text-xl leading-7 font-medium text-[#3f3f3f]"
+        className="font-sans text-xl leading-7 font-medium text-[var(--color-ink-body)]"
       >
         <span className="col-start-1 row-start-1">{value}</span>
       </Reserved>
@@ -343,7 +343,7 @@ function EventActions({ event }: { event: ShowcaseEvent }) {
     <div className="flex flex-col justify-between gap-10 menu:h-[min(720px,37.5vw)] menu:gap-0">
       <p
         aria-live="polite"
-        className="font-sans text-xl leading-8 text-[#3f3f3f]"
+        className="font-sans text-xl leading-8 text-[var(--color-ink-body)]"
       >
         {event.summary}
       </p>

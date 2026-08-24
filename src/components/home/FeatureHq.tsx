@@ -23,6 +23,10 @@ const SETTLE = DURATION * 1.5
  * and needs no overlay of its own. Reproducing those washes in CSS on top of
  * it would darken the picture twice.
  *
+ * It lives in `global/` rather than `home/` because the About page's own
+ * headquarters section (`117:3846`) is built on the same `imageRef` — one file
+ * used by two pages (RULES §2).
+ *
  * That bake is also why the image is NOT `object-cover` at an arbitrary crop:
  * the fades are painted at fixed positions, so cropping them off the top or
  * bottom would put a hard edge back. The section carries the image's own
@@ -66,7 +70,7 @@ export function FeatureHq() {
           {/* `sizes="100vw"`: the image always spans the viewport, so the
               browser picks a candidate from the width alone. */}
           <Image
-            src="/assets/home/feature-hq-composite.png"
+            src="/assets/global/feature-hq-composite.png"
             alt={FEATURE_HQ_ALT.building}
             fill
             sizes="100vw"
@@ -88,7 +92,7 @@ export function FeatureHq() {
           different one per section. */}
       <div className="relative mx-auto flex w-full max-w-[870px] flex-col gap-8 px-5 py-16 md:px-10 lg:mx-0 lg:ml-[27.3%] lg:gap-[2.3vw] lg:px-0 lg:py-0">
         <Reveal y={48} blurFrom="12px">
-          <h2 className="font-display bg-linear-to-r from-[var(--color-gold-light)] to-[var(--color-gold-dark)] bg-clip-text text-[length:var(--text-display-feature)] leading-none text-transparent uppercase">
+          <h2 className="font-display bg-[image:var(--gradient-gold-text)] bg-clip-text text-[length:var(--text-display-feature)] leading-none text-transparent uppercase">
             {FEATURE_HQ_COPY.headline.map((line) => (
               // A block per line so the design's break survives, rather than a
               // <br> that a translation would have to carry along (RULES §9).
