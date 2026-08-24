@@ -45,3 +45,7 @@ next-env.d.ts
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
+
+# deployment
+# Config nginx untuk proto-dwf.moonthesky.com hidup di server, bukan di repo.
+/deploy/
