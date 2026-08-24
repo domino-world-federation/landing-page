@@ -11,7 +11,7 @@ import { NewsIntro } from "@/components/home/NewsIntro"
 import { Partners } from "@/components/home/Partners"
 import { Resources } from "@/components/home/Resources"
 import { Stats } from "@/components/home/Stats"
-import { PageShine } from "@/components/home/PageShine"
+import { PageShine } from "@/components/ui/PageShine"
 
 export default function HomePage() {
   return (
@@ -78,7 +78,10 @@ export default function HomePage() {
       </main>
 
       <div className="relative isolate">
-        <PageShine />
+        <PageShine
+          src="/assets/home/decor-shine.svg"
+          aspectClass="aspect-[1920/1775]"
+        />
         <Join />
         <Footer />
       </div>

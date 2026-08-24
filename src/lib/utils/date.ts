@@ -19,6 +19,28 @@ export function formatEventDate(iso: IsoDateString): string {
   return EVENT_DATE_FORMAT.format(new Date(iso))
 }
 
+/**
+ * The long form, without the weekday — a publication date rather than an
+ * appointment. Pinned for the same reason `EVENT_DATE_FORMAT` is.
+ *
+ * Kept apart from that formatter rather than parameterised: the countdown needs
+ * the weekday because the reader is being told when to turn up, and a news
+ * archive does not. Two call sites want this one — the Development page's
+ * library and its update strip, whose Figma text is typed four different ways
+ * (`207:15482` against `207:15495`), so one of them has to win here.
+ */
+const LONG_DATE_FORMAT = new Intl.DateTimeFormat("en-US", {
+  month: "long",
+  day: "numeric",
+  year: "numeric",
+  timeZone: "UTC",
+})
+
+/** e.g. "March 14, 2025". */
+export function formatLongDate(iso: IsoDateString): string {
+  return LONG_DATE_FORMAT.format(new Date(iso))
+}
+
 export type Remaining = {
   days: number
   hours: number

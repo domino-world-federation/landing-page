@@ -1,7 +1,7 @@
 import { RESOURCES_COPY } from "@/content/home/resources"
 import { getResources } from "@/lib/api/client"
 import { Reveal } from "@/components/motion/Reveal"
-import { ResourceCard } from "@/components/home/ResourceCard"
+import { ResourceCard } from "@/components/ui/ResourceCard"
 
 /**
  * S10 — Figma node `56:4554`. The resource library.
@@ -25,10 +25,18 @@ import { ResourceCard } from "@/components/home/ResourceCard"
  * back to `2,2,1,2`, which is what the design draws. Below that they stack,
  * one per row, where every title fits on a single line.
  *
+ * **Four documents, asked for as four.** The library holds more than this
+ * section draws — the Domino page files three shelves of its own and the
+ * Development page four more — and this grid is a fixed 2×2 rather than a feed,
+ * so the count belongs in the request. Without it the grid quietly grew to
+ * seven cards the first time another page filed a document. Not sliced from a
+ * full fetch: the real endpoint takes `?limit=`, and slicing here would keep
+ * downloading the whole library to show four of it (RULES §8).
+ *
  * Server Component. The cards are plain markup; only the entrance is client.
  */
 export async function Resources() {
-  const documents = await getResources()
+  const documents = await getResources(undefined, 4)
 
   return (
     <section
@@ -51,7 +59,7 @@ export async function Resources() {
               as a block rather than as two sentences. */}
           <h2
             id="resources-heading"
-            className="font-display bg-linear-to-r from-[var(--color-gold-light)] to-[var(--color-gold-dark)] bg-clip-text text-[length:var(--text-display-sm)] leading-[0.95] text-transparent uppercase"
+            className="font-display bg-[image:var(--gradient-gold-text)] bg-clip-text text-[length:var(--text-display-sm)] leading-[0.95] text-transparent uppercase"
           >
             {RESOURCES_COPY.heading}
           </h2>
@@ -89,7 +97,14 @@ export async function Resources() {
                 delay={i * 0.08}
                 className="h-full [&>*]:h-full"
               >
-                <ResourceCard doc={doc} />
+                {/* The meta line is the document's category here; the
+                    Development page's copy of this card prints a date in the
+                    same slot, which is why it is a prop. */}
+                <ResourceCard
+                  doc={doc}
+                  meta={doc.category}
+                  downloadLabel={RESOURCES_COPY.downloadLabel}
+                />
               </Reveal>
             ))}
           </div>

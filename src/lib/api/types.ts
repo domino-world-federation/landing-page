@@ -83,8 +83,27 @@ export type ResourceDocument = {
    * without it is still valid.
    */
   description?: string
+  /**
+   * When the document was published. Optional because most cards do not show
+   * one: S10 prints the category in that slot, and only the Development page's
+   * library (`192:14833`) prints a date. Making it required would invalidate
+   * every document the federation has already filed without one.
+   *
+   * Stored ISO rather than formatted, unlike `fileSize` — a size has no units
+   * to choose between once the API has picked one, but a date does, and the
+   * two pages that show one would then be stuck with whichever the backend
+   * happened to write.
+   */
+  publishedAt?: IsoDateString
   fileUrl: string
-  fileType: "pdf" | "doc"
+  /**
+   * `"zip"` is here because the Development library ships a tournament toolkit
+   * as an archive (`192:14833`) — a bundle of templates rather than one
+   * document. The union stays closed rather than becoming `string`: the pill
+   * prints this value directly, so an unexpected member would put an unstyled
+   * word on the card instead of failing at the type level.
+   */
+  fileType: "pdf" | "doc" | "zip"
   /** Already formatted for display, e.g. "2.4 MB" — the API owns the units. */
   fileSize?: string
 }
@@ -109,6 +128,58 @@ export type ShowcaseEvent = {
   imageAlt: string
   detailsUrl?: string
   registerUrl?: string
+}
+
+/**
+ * One dated step on the About page's heritage timeline (`88:1163`).
+ *
+ * Data rather than copy, and the distinction matters for where it lives: the
+ * federation will keep adding milestones, each is an entity with its own
+ * photograph, and the timeline draws however many it is handed. That is the
+ * same shape `NewsArticle` and `ResourceDocument` have, so it goes through the
+ * client like they do (RULES §8) instead of sitting in `content/`.
+ */
+export type HeritageMilestone = {
+  id: string
+  /** The marker on the axis, e.g. "1974". A string because it is a label, not
+   *  something the page ever does arithmetic on. */
+  year: string
+  title: string
+  summary: string
+  imageUrl: string
+  imageAlt: string
+}
+
+/**
+ * A member of the federation's executive board (`112:3590`).
+ *
+ * Data, not copy, for the same reason `HeritageMilestone` is: these are people
+ * who take office and leave it, each with a portrait of their own, and the
+ * carousel draws however many it is handed. `role` is the line above the name —
+ * the office rather than a job title, which is why it is stored uppercase-free
+ * and cased by CSS.
+ */
+export type BoardMember = {
+  id: string
+  /** Rendered as two lines when it contains a newline — see `BoardCard`. */
+  name: string
+  role: string
+  portraitUrl: string
+  portraitAlt: string
+}
+
+/**
+ * One of the federation's specialised committees (`114:3667`).
+ *
+ * A name and a destination, and that is deliberately all: the design's card is
+ * a label and an arrow. `href` is optional because the pages it will point at
+ * do not exist yet (blocker B2), so the mock leaves it unset rather than
+ * inventing a URL — the same choice `ShowcaseEvent` makes for its two buttons.
+ */
+export type SubCommittee = {
+  id: string
+  name: string
+  href?: string
 }
 
 /** The S3 countdown points at one specific event. */
