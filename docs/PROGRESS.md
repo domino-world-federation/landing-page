@@ -14,7 +14,7 @@ Legenda: `[ ]` belum · `[~]` berjalan · `[x]` selesai · `[!]` terblokir
 | 1 — Scaffold project | `[x]` | Selesai — build, lint, typecheck lolos |
 | 2 — Slicing landing page | `[~]` | 14/14 section selesai; audit penamaan & struktur beres; sisa checklist "setelah semua section" |
 | 3 — Integrasi API | `[ ]` | Menunggu backend |
-| 4 — Portal | `[~]` | About selesai penuh (11 blok, dua tahap); Domino 5/6 blok (satu ditunda, R12); Development selesai penuh (9 blok); portal belum |
+| 4 — Portal | `[~]` | Sembilan halaman selesai: About (11 blok), Domino (5/6, R12), Development (9), News (6, R13), Terms, Contact (tanpa desain, R14), Gallery, Privacy, All News. Portal sendiri belum |
 
 ---
 
@@ -362,7 +362,19 @@ mock. Spasinya dikembalikan.
 mengapit satu slot fokus, angka di dalamnya emas, ukuran penuh dan tajam,
 sedangkan yang di atas dan di bawah redup, mengecil, dan buram. Jadi yang diam
 adalah bingkainya, yang bergerak isinya — tiap stat naik melewati slot fokus
-bergantian, berputar sendiri tiap 2,6 detik, bukan mengikuti scroll.
+bergantian, berputar sendiri tiap 1,7 detik, bukan mengikuti scroll.
+
+Putarannya **spring, bukan `EASE`** (D49). Kurva halaman dibentuk untuk gerak
+yang diikuti mata — berangkat segera, mendarat lembut — dan di roda pemilih itu
+terbaca menggeser, padahal intinya track ditangkap dan ditahan di tiap notch.
+`visualDuration: 0.18` dengan `bounce: 0.3` mendaratkannya hampir sebelum
+terbaca sebagai perjalanan, lalu menaruh satu overshoot ~5% satu slot: track
+lewat sedikit dari notch dan ditarik kembali masuk. Recoil itu keseluruhan
+efeknya. Karena spring tidak punya ujung tetap, `TURN` berhenti berarti "lama
+transisi" dan jadi **anggaran** yang harus melampaui *settle*-nya (0,5s) — kalau
+tidak, interval menyala dan rewind sambungan mendarat saat track masih bergerak.
+Cross-fade emas↔redup tetap tween 0,16s: `opacity` yang overshoot terpotong di 1
+dan terbaca sebagai kedip.
 
 Daftarnya **dirender dua kali** karena roda tidak punya ujung. Setelah satu lap
 penuh, track menampilkan sel yang *isinya* identik dengan titik berangkat, jadi
@@ -922,9 +934,14 @@ Terblokir B2. Section bergantung API: S3, S5, S6, S8, S10.
 
 ## Fase 4 — Portal `[~]`
 
-Cakupan di PRD §5. Portal sendiri belum dimulai — yang berjalan baru tiga
-halaman statis: About (didahulukan karena statis seluruhnya kecuali satu
-daftar), Domino, dan Development.
+Cakupan di PRD §5. Portal sendiri belum dimulai — yang berjalan sembilan
+halaman: About (didahulukan karena statis seluruhnya kecuali satu daftar),
+Domino, Development, News, Terms & Conditions, Contact, Gallery, Privacy
+Policy, dan All News. Statis semua kecuali News, Gallery dan All News, yang
+membaca `searchParams`.
+
+Tersisa satu layar yang sudah digambar dan belum dibangun: **FAQ**
+(`173:9459`), di atas cangkang side-tab yang sama — jadi tinggal isinya.
 
 ### Halaman About — tahap 1 `[x]` — 7/7 blok
 
@@ -1197,6 +1214,298 @@ promosi komponen.
 
 ---
 
+### Halaman News `[x]` — 6/6 blok
+
+Halaman kelima, node `156:7512` (PRD §5). Item nav "News" kini rute sungguhan
+(`/news`), jadi pill-nya menyala sendiri — tersisa empat placeholder `#`
+(Tournaments, Members, Governance, Integrity).
+
+**Node-nya digali dari kanvas, bukan dari URL** (D33). Ada empat frame `screen`
+tak bernama di file ini dan yang membedakannya hanya teks header: `156:7154`
+ternyata **Gallery** ("Search Event"), `176:11563` ternyata **FAQ**. Yang benar
+menulis "Federation News" dan "Search News".
+
+**Wireframe menyebut tujuh section, hi-fi menggambar enam.** Yang absen adalah
+"Newsletter Subscription", dan itu **tidak** ditunda seperti D42 — footer situs
+sudah memuatnya sejak S14, jadi membangunnya lagi berarti menggandakan kontrol.
+
+| Blok | Node | Status | Catatan |
+|---|---|---|---|
+| Header | `156:7513` | `[x]` | Cermin `DevelopmentHeader`; slot kanan diisi search, bukan paragraf intro — itu desainnya |
+| Featured band | `156:7584` | `[x]` | Carousel 1920×850, **tidak** berjalan sendiri; cross-fade `opacity` saja, hanya cerita aktif yang di-mount |
+| Arsip | `163:8233` | `[x]` | Tab = tautan `?category=`, difilter di server; label tab dari feed, bukan dari desain (D50) |
+| Press Releases | `168:8475` | `[x]` | `getResources("Press Release")` — `ResourceDocument` dipakai ulang (D51) |
+| Publications | `168:8582` | `[x]` | Kartu 560×488 bersampul; `coverImageUrl` satu-satunya field baru |
+| Media Gallery | `168:8680` | `[x]` | Collage 5 kolom yang sengaja meluber ke kanan; badge play **dekorasi**, bukan kontrol (B2) |
+
+**Catatan featured band.** Ia **tidak berpindah sendiri**, dan itu keputusan
+sadar yang berlawanan dengan roda stats dua halaman sebelumnya. Desain hanya
+menggambar tombol prev/next dan sebuah penghitung — tidak ada isyarat auto-play
+— tapi alasan sebenarnya lebih dalam: sebuah angka adalah lirikan dan boleh
+bergantian, sedangkan sebuah headline adalah kalimat, dan copy yang menggeser
+di tengah bacaan adalah copy yang tak pernah selesai dibaca. Gambarnya
+cross-fade, bukan menggeser: hanya `opacity` yang dianimasikan (RULES §12), dan
+hanya cerita aktif yang di-mount — enam foto selebar 1920 yang ditumpuk lalu
+di-fade berarti mengunduh keenamnya untuk menampilkan satu, jadi
+`AnimatePresence` cuma menahan yang keluar selama fade. Penghitungnya membaca
+total dari feed, bukan angka enam yang ditulis desain: itu hitungan benda, dan
+hitungan yang ditulis ke dalam halaman salah pada saat federasi menandai cerita
+ketujuh.
+
+**Catatan arsip.** Filternya **tautan, bukan state** — tiap tab `<a>` ke
+`?category=`, `getLatestNews` memfilter di server, seluruh section tetap Server
+Component, dan arsip terfilter jadi tautan yang bisa dikirim ke orang lain
+(D50). Label tabnya datang dari `getNewsCategories()`, bukan dari kelima nama
+yang ditulis Figma: kosakata desain (DWF, Tournaments, Members) dan kosakata
+feed (Tournament, Governance, Federation, Ranking, Officiating) berbeda, jadi
+daftar desain akan mencetak tab yang memfilter ke nol sambil menyembunyikan
+kategori yang berisi artikel. "View more" dulu menaikkan `?show=` enam-enam;
+itu **dicabut** begitu `/news/all` dibangun, karena layar itulah tujuan yang
+dimaksud desain (D58) — sekarang blok ini menampilkan enam dan tombolnya
+membuka arsip, membawa serta filternya. Karena halaman membaca `searchParams`,
+`/news` dirender **dinamis** (`ƒ`).
+
+**Catatan galeri.** Collage-nya meluber ke kanan **sesuai desain**: section
+dipadding `80px 0 0 80px` tanpa sisi kanan, dan lima kolom 400px dengan empat
+gutter 16px berjumlah 2064 melawan 1840 yang disisakan margin kiri — jadi kolom
+terakhir sudah terpotong viewport di lebar desainnya sendiri. Diturunkan sebagai
+scroller, bukan potongan: gambar yang sama pada ukuran yang sama, dengan
+sisanya bisa dijangkau. Badge play-nya `aria-hidden` dan tile-nya `<figure>`,
+bukan tombol — belum ada yang bisa diputar (B2), dan tombol play yang tidak
+melakukan apa-apa adalah no-op diam yang justru dilarang D28.
+
+**Copy yang dibetulkan dan yang dibiarkan** (garis D40/D44). Dibetulkan: "026
+world cup" jadi "2026" dan "Dqf quarter 1 review" jadi "DWF" — keduanya kata
+yang sudah pasti. Dibiarkan: judul featured berbunyi "World Championships
+**2024**" sementara tanggalnya AUG 12 **2026**, dan empat kartu grid memuat
+headline yang sama persis — itu pertentangan dan paste yang belum diganti,
+keputusan desainer. Tanggal press release **tidak** dibiarkan: Figma mencetak
+"May 12, 2023" di keempat kartu, dan tidak seperti judul yang berulang, empat
+baris bertanggal sama terbaca sebagai daftar yang gagal dimuat — tanggal di sini
+data, seperti di seluruh `mock/`, jadi disebar ke masa kini situs.
+
+**Aset halaman ini bukan foto domino — R13.** Lima dari enam gambar grid dan
+seluruh tile galeri adalah foto pers turnamen catur sungguhan (FIDE Olympiad
+Budapest 2024 dan lainnya), dan sampul kartu publikasi adalah dokumen pindaian
+milik organisasi lain. **Dipasang apa adanya atas keputusan pengguna.** Yang
+tetap dilakukan: nama berkas menyebut isi foto yang sebenarnya, dan `alt`-nya
+menggambarkan yang terlihat tanpa menyebut nama, negara, atau ajang siapa pun.
+
+Verifikasi: `bunx tsc --noEmit` bersih, `bunx eslint src` bersih, `bunx next
+build` lolos. `/news`, `/news?category=...` dan `/news?show=12` ketiganya HTTP
+200; terhitung di HTML: 6 kartu grid, 7 tile galeri, 7 tab dengan 1 aktif.
+
+- [ ] Sapuan visual 360/768/1440/1920 — termasuk luberan collage dan bungkus
+      kartu dokumen di 1440 (belum dijalankan)
+- [ ] Reload `/news` dengan `prefers-reduced-motion` aktif — pastikan tidak ada
+      *hydration failed* (belum dijalankan)
+- [ ] Search menolak dengan terang, `fileUrl` masih `#`, tile galeri belum bisa
+      diputar — B2
+- [ ] Aset foto menunggu keputusan pra-publikasi — R13
+
+### Halaman Terms & Conditions `[x]` — 3/3 blok
+
+Halaman keenam, node `174:11162` (PRD §5). **Node-nya ada di dalam SECTION**
+`185:13581`, bukan di level kanvas seperti lima halaman sebelumnya — jadi ia
+tidak muncul saat menelusuri kanvas dan harus dicari ke dalam section.
+
+| Blok | Node | Status | Catatan |
+|---|---|---|---|
+| Header | `174:11163` | `[x]` | Pola band yang sama + dua tambahan khas layar legal: tautan "Back" dan tanggal dokumen di baseline judul |
+| Table of Contents | `174:11225` | `[x]` | Sticky; penanda aktif mengikuti scroll lewat `IntersectionObserver` (D53). Kartu "Need Support?" di kakinya |
+| Isi dokumen | `174:11257` | `[x]` | Kartu putih radius 20, sembilan klausa dipisah rule 4px |
+
+**Catatan penanda daftar isi.** Figma hanya bisa menggambar satu state, jadi ia
+mengecat klausa pertama sebagai aktif — dan menurunkannya apa adanya memberi
+halaman penanda yang tidak pernah bergerak, yang lebih buruk daripada tanpa
+penanda: ia menyatakan "Anda di klausa 1" sepanjang dokumen 3553px. Dilacak
+`IntersectionObserver`, bukan handler scroll, dengan pita sempit di puncak
+viewport. Bila pita sesaat tidak memuat klausa mana pun, penandanya **menahan
+jawaban terakhir** alih-alih padam (D53).
+
+**Catatan penomoran.** Figma mengetik kesembilan judul sebagai "1." — di badan
+maupun di daftar isi. Itu artefak daftar bernomor, bukan sembilan klausa yang
+semuanya klausa satu, dan sekelas dengan empat press release bertanggal sama di
+halaman News. Nomornya diambil dari posisi di array, jadi badan dan daftar isi
+tak mungkin berselisih.
+
+Klausanya disimpan sebagai **copy, bukan data** (`content/terms/sections.ts`) —
+dokumen hukum bukan feed. Email penutupnya `contact@dwf-domino.org` **well
+formed**, tidak seperti `community@dwf-org` milik footer, jadi ia dirender
+sebagai `mailto:` — persis syarat yang disebut catatan footer sendiri.
+
+Komponennya **tetap di `components/terms/`**, belum dipromosikan: D32 minta
+komponen pindah saat halaman kedua benar-benar memakainya, dan Privacy belum
+dibangun.
+
+### Halaman Contact `[x]` — tanpa desain, R14
+
+Halaman ketujuh, dan **satu-satunya yang tidak punya layar Figma**. Desain
+menggambar sepuluh layar dan contact bukan salah satunya; yang ada cuma tombol
+CONTACT US dan satu kalimat di kartu "Need Support?" sidebar Terms
+(`174:11252`).
+
+Yang **punya sumber** dan tidak dikarang:
+
+| Bagian | Sumber |
+|---|---|
+| Intro header | Verbatim `174:11254` |
+| Lima topik form | Lima jenis pertanyaan yang disebut kalimat itu, urutannya |
+| Email | Klausa penutup Terms (`174:11543`) |
+| Alamat pos | Footer, lewat `content/federation.ts` |
+| Chrome form | `SupportForm` halaman Development |
+
+Yang **dikarang**: susunan halaman, judul tiap blok, dan label field —
+ditandai `TODO(design)`, dicatat R14. Ini D48 pada skala jauh lebih besar: di
+sana yang diekstrapolasi sebuah tombol, di sini seluruh halaman.
+
+Dua promosi menyusul aturan D32/D43, **pemakai kedua bukan tebakan**:
+`SupportForm.Field` → `ui/FormField` (tanpa perubahan, plus varian `multiline`),
+dan alamat pos → `content/federation.ts`. Email **tidak** ikut: desain memberi
+dua alamat berbeda dan menyatukannya berarti memutuskan mana yang dipakai
+federasi. Pemilih topik memakai `<select>` bawaan, bukan listbox buatan —
+mengarang chrome satu hal, mengarang perilaku keyboard hal lain.
+
+Form-nya **menolak dengan terang** dan menunjuk ke alamat email (D28, B2) —
+ketiga kalinya situs ini mengambil keputusan itu, setelah newsletter footer dan
+form bantuan Development.
+
+Verifikasi keduanya: `bunx tsc --noEmit` bersih, `bunx eslint src` bersih,
+`bunx next build` lolos — `/terms` dan `/contact` keduanya prerender statis.
+Keduanya HTTP 200; terhitung di HTML `/terms`: 9 anchor klausa unik, 9 tautan
+daftar isi, penomoran 1–9 benar. `/contact`: kelima topik ada, `mailto:` ada.
+Footer ikut diperbarui — "Terms" kini `/terms` dan "News" kini `/news` (yang
+kedua terlewat saat halaman News mendarat).
+
+- [ ] Sapuan visual 360/768/1440/1920 untuk kedua halaman (belum dijalankan)
+- [ ] Uji penanda daftar isi saat di-scroll dan dengan `prefers-reduced-motion`
+      (belum dijalankan)
+- [ ] Layar contact perlu ditinjau desainer sebelum publikasi — R14
+- [ ] Privacy Policy (`174:10759`) dan FAQ (`173:9459`) sudah digambar, belum
+      dibangun
+
+### Halaman Gallery `[x]` — 3/3 blok
+
+Halaman kedelapan, node `156:7154` (PRD §5). Halaman **kedua** yang memakai
+cangkang side-tab milik layar legal.
+
+| Blok | Node | Status | Catatan |
+|---|---|---|---|
+| Header | `156:7155` | `[x]` | Satu-satunya header di file yang membawa **keduanya** — tanggal di baseline judul (pola legal) dan field search (pola News) |
+| Kolom event | `156:7217` | `[x]` | Lima tab = tautan `?event=`, difilter di server (pola D50). Kartu Need Support di kakinya |
+| Album | `156:7235` dst | `[x]` | Tiga collage 4×2 + satu still film lebar; bentuknya diturunkan dari jumlah isi, bukan field (D56) |
+
+**Dua promosi, dan yang penting adalah apa yang TIDAK ikut.** Kartu "Need
+Support?" Gallery sama kata per kata dengan milik Terms, dan baris side-tab-nya
+sama piksel per piksel — keduanya naik ke `ui/SupportCard` dan `ui/SideTabs`
+(D55). Yang tidak ikut naik adalah artinya: kolom Terms daftar isi yang
+menandai posisi pembaca lewat `IntersectionObserver`, kolom Gallery filter yang
+menulis ulang halaman lewat URL. Jadi yang dibagi rupanya saja; `SideTab`
+bahkan menerima `current` (`"page"` lawan `"true"`) karena keduanya menjawab
+pertanyaan `aria-current` yang berbeda. `ui/SideTabs` sengaja **tanpa**
+`"use client"` supaya kolom client dan kolom server sama-sama bisa memakainya.
+
+**Catatan collage.** Empat kolom, dua baris, tile video `row-span-2` — lalu
+auto-placement CSS menjatuhkan sisa fotonya persis ke sel yang digambar Figma,
+jadi tidak ada satu sel pun yang diposisikan tangan. Satu hal desain yang tidak
+ditiru: collage-nya 1648 lebar melawan 1452 yang disediakan kolomnya, jadi di
+1920 ia meluber ke kanan. Meluberkan **grid** membuat kolom keempatnya separuh
+tersembunyi selamanya — beda dari strip halaman News yang bisa didorong — jadi
+grid-nya dipaskan ke kolom. Komposisi, gutter dan tinggi baris tetap milik
+desain; hanya lebar kolomnya yang lentur.
+
+**Copy yang dibetulkan dan yang dibiarkan.** Dibiarkan: ketiga album turnamen
+membawa set foto yang **sama persis** — itu desainnya, dan file-nya cuma punya
+enam foto untuk empat album, jadi tidak ada yang lain untuk diberikan
+(TODO(design), R13). Dibetulkan: judul album Tokyo. Judul section-nya berbunyi
+"world championship - tokyo 2026" sementara tab sidebar-nya sendiri berbunyi
+"asian masters - tokyo 2026", dan tanggalnya sama persis dengan London sampai
+ke harinya — kedua-duanya paste dari section pertama. Satu string memberi makan
+tab dan judul di sini, jadi salah satu harus menang: tab yang menang, karena
+tiga dari empat album bernama "World Championship" membuat indeksnya tak
+berguna. Tanggalnya digeser lebih awal supaya urutan menurun yang disusun
+desain tetap berlaku.
+
+**Aset dipindah ke `global/`.** Ketujuh foto galeri tadinya di `assets/news/`;
+sejak halaman ini menyusunnya ulang jadi collage per event, keduanya memakai
+berkas yang sama, jadi ia pindah ke `assets/global/` — pola D43, dan `news/`
+sebagai nama folder untuk sesuatu yang dipakai dua halaman adalah label yang
+keliru. Satu aset baru: `gallery/film-global-final-arena.png`, **satu-satunya
+foto galeri yang benar-benar domino** — tapi ia cuma 512×279 di slot 1292×726,
+jadi akan terlihat lunak.
+
+Verifikasi: `bunx tsc --noEmit` bersih, `bunx eslint src` bersih, `bunx next
+build` lolos — `/gallery` dinamis (`ƒ`) karena membaca `searchParams`, seperti
+`/news`. Terhitung di HTML: `/gallery` 4 judul album, 18 `<figure>`, 7 badge
+play sungguhan, 1 tab aktif; `?event=the-silent-war` 1 album dan **nol** tautan
+"buka album" (tidak ada yang bisa dibuka saat halaman sudah album itu);
+`?event=nope` menampilkan pesan kosong dengan daftar tab tetap utuh sebagai
+jalan keluar. Footer "Gallery" kini `/gallery`.
+
+- [ ] Sapuan visual 360/768/1440/1920 — terutama collage di 768 saat grid jatuh
+      ke dua kolom (belum dijalankan)
+- [ ] Tile video dan still film belum bisa diputar — B2
+- [ ] `film-global-final-arena.png` 512×279 di slot 1292×726 — minta aset
+      resolusi penuh ke desainer
+
+### Halaman Privacy Policy `[x]` — 3/3 blok
+
+Halaman kesembilan, node `174:10759` (PRD §5), di dalam SECTION `185:13580`.
+
+**Layar Terms dengan delapan klausa berbeda di dalamnya** — header, kolom
+daftar isi, kartu putih, rule 4px, semuanya sama persis. Itu yang membuktikan
+`LegalDocument` layak diangkat (D57): rutenya kini benar-benar copy plus satu
+komponen, dan kedua halaman tidak bisa lagi menyimpang seperti dua salinan
+buatan tangan.
+
+Penomoran dan penanda daftar isi mewarisi perlakuan Terms (D53): Figma
+mengetik kedelapan judul sebagai "1." di badan **dan** di daftar isi, dan
+nomornya diambil dari posisi array.
+
+TODO(design): klausa 8 menaruh sekretariat di "Maison du Sport International,
+Lausanne, Switzerland" sementara footer memberi alamat federasi di Evans Rd,
+Singapore. Dua kantor pusat berbeda dalam satu desain — dibiarkan (D44).
+
+### Halaman All News `[x]` — rute `/news/all`
+
+Halaman kesepuluh, node `185:13184` (PRD §5). Blok arsip halaman News dalam
+ukuran penuh: dua kolom kartu alih-alih tiga, filter kategori pindah ke kolom
+samping, tautan "Back" ke `/news`.
+
+**Kartunya tidak butuh apa pun yang baru.** Figma menggambarnya 676×380 di sini
+dan 572×322 di halaman News — dua angka berbeda, tapi rasionya sama
+(1,779 lawan 1,776), jadi `NewsGridCard` dipakai apa adanya.
+
+**Keberadaannya mencabut `?show=`** (D58). Waktu blok arsip dibangun, "View
+more" harus melakukan sesuatu dan tidak ada tujuan yang digambar, jadi ia
+menumbuhkan `?show=` enam-enam dengan plafon 60 — mekanisme karangan lengkap
+dengan validasi untuk angka yang bisa diketik orang asing. Layar ini ternyata
+**adalah** tujuan itu. Sekarang satu mekanisme, dan filternya ikut berjalan
+supaya membuka arsip dari grid terfilter tidak membuang filternya.
+
+**Copy yang dibetulkan.** Placeholder search-nya di Figma berbunyi "Search
+Event" (`185:13193`) — itu string header Gallery yang di-paste ke arsip berita.
+"Event" salah tentang isi halaman ini, jadi ia memakai "Search News" seperti
+induknya (D40). Tetap menolak dengan terang: belum ada endpoint search (B2).
+
+**Tiga cangkang diangkat** (D57), karena empat halaman kini memakai bentuk yang
+sama: `ui/PageHeader` (band header dengan tiga slot opsional — Back, tanggal,
+search), `ui/SideTabLayout` (dua kolom 468+1452, sidebar kedua di source dan
+ditarik dengan `order`), dan `components/legal/LegalDocument`. Header bergaya
+landing di About, Domino, Development, News dan Contact **tidak** ikut: bentuknya
+judul-plus-intro dan tak satu pun pernah butuh Back atau tanggal.
+
+Verifikasi keduanya: `bunx tsc --noEmit` bersih, `bunx eslint src` bersih,
+`bunx next build` lolos — `/privacy` prerender statis, `/news/all` dinamis
+karena membaca `searchParams`. Terhitung di HTML: `/privacy` 8 klausa dengan
+penomoran 1–8 benar dan satu `mailto:`; `/news/all` 11 kartu (seluruh mock) dan
+1 tab aktif, `?category=Development` menyisakan 5. `/news` sudah tidak memuat
+`?show=` sama sekali, "View more"-nya menunjuk `/news/all`, dan "See all media"
+kini menunjuk `/gallery`. Footer "Privacy" → `/privacy`.
+
+- [ ] Sapuan visual 360/768/1440/1920 untuk kedua halaman (belum dijalankan)
+- [ ] FAQ (`173:9459`) sudah digambar di cangkang yang sama, belum dibangun
+
 ## Catatan keputusan
 
 Keputusan arsitektur dicatat di **PRD §7**. Ubah di sana, bukan di sini.
@@ -1276,3 +1585,39 @@ Keputusan arsitektur dicatat di **PRD §7**. Ubah di sana, bukan di sini.
 | 2026-08-24 | Shine `/development` dipaku ke dasar halaman, bukan ke grup di kakinya — tidak ada blok konten yang keluar dari `<main>` (D47) |
 | 2026-08-24 | Tombol submit kartu aplikasi diekstrapolasi; desain hanya menggambar dua field lalu berhenti (D48) |
 | 2026-08-24 | Bug lama ditemukan: `Reveal blurFrom` merender anaknya dua kali, jadi `id` di dalamnya ganda dan `aria-labelledby` menunjuk salinan `aria-hidden`. Konvensi ditulis di RULES §11 |
+| 2026-08-24 | Putaran roda S5 ditukar dari kurva easing halaman ke spring — detent yang menangkap track di tiap notch, bukan geseran halus; `TURN` jadi anggaran settle, bukan lama transisi (D49) |
+| 2026-08-24 | Halaman News selesai 6/6 blok — node `156:7512` digali dari kanvas setelah dua screen tak bernama ternyata Gallery dan FAQ (D33). Rute `/news`, pill nav menyala |
+| 2026-08-24 | Arsip berita difilter lewat URL, bukan state client; label tab dari feed karena kosakata desain dan kosakata data berbeda (D50) |
+| 2026-08-24 | Press release & publikasi memakai ulang `ResourceDocument`; galeri media jadi tipe sendiri karena bukan daftar headline (D51) |
+| 2026-08-24 | R13 dibuka: foto halaman News adalah foto pers turnamen catur dan sampul publikasi adalah dokumen organisasi lain — dipasang apa adanya atas keputusan pengguna, harus selesai sebelum publikasi |
+| 2026-08-24 | Halaman Terms & Conditions selesai — node `174:11162` ditemukan di dalam SECTION, bukan di level kanvas. Penanda daftar isi mengikuti scroll; penomoran klausa dari posisi, bukan dari string yang semuanya "1." (D53) |
+| 2026-08-24 | Halaman Contact dibangun **tanpa layar desain**, dari satu kalimat di kartu Need Support (D54). R14 dibuka — perlu ditinjau desainer sebelum publikasi |
+| 2026-08-24 | `SupportForm.Field` dipromosikan ke `ui/FormField` dan alamat pos ke `content/federation.ts` — keduanya karena pemakai kedua muncul (D32/D43) |
+| 2026-08-24 | Footer: "Terms" → `/terms`, "News" → `/news`; yang kedua terlewat saat halaman News mendarat |
+| 2026-08-24 | Halaman Gallery selesai — empat album, filter event lewat `?event=` di server (pola D50). Bentuk album diturunkan dari jumlah isi, bukan field layout (D56) |
+| 2026-08-24 | `SupportCard` dan chrome side-tab dipromosikan ke `ui/` pada pemakai kedua; logikanya sengaja tidak ikut — daftar isi lawan filter (D55) |
+| 2026-08-24 | Tujuh foto galeri pindah `assets/news/` → `assets/global/` karena kini dipakai dua halaman (pola D43); footer "Gallery" → `/gallery` |
+| 2026-08-24 | Halaman Privacy Policy selesai — layar Terms dengan delapan klausa berbeda; `LegalDocument` diangkat sehingga kedua rute tinggal copy plus satu komponen (D57) |
+| 2026-08-24 | Halaman All News selesai (`/news/all`) — `NewsGridCard` dipakai apa adanya karena rasio kartunya sama di kedua lebar |
+| 2026-08-24 | `?show=` halaman News **dicabut**: "View more" kini membuka `/news/all`, tujuan yang memang digambar desain (D58) |
+| 2026-08-24 | Tiga cangkang diangkat ke `ui/` dan `legal/`: `PageHeader`, `SideTabLayout`, `LegalDocument` (D57). Footer "Privacy" → `/privacy`; "See all media" → `/gallery` |
+| 2026-08-24 | Sumber desain pindah ke file Figma `(NEW)` `p1W8bEWU5w3cRYROFNQwKh` — dua belas halaman kini dalam SECTION bernama; node layar yang sudah dibangun terbawa utuh, hanya All News berganti nomor (D59) |
+| 2026-08-24 | R12 turun jadi menunggu implementasi: hi-fi Domino menggambar tuntas 8 blok, termasuk "The Rulebook" (`277:15676`) yang dulu ditunda |
+| 2026-08-24 | R14 ditulis ulang: layar "Contact Us" (`176:11563`) ternyata ada — dan sudah ada di file lama tanpa nama. `/contact` yang berjalan harus dicocokkan ulang |
+| 2026-08-24 | Halaman Tournaments (`366:17181`, 11 blok) baru digambar; Members masih wireframe saja — nav "Tournaments" akhirnya punya tujuan |
+| 2026-08-24 | Halaman FAQ selesai (`/faq`, node `173:9459`) — cangkang side-tab keempat, sepuluh pertanyaan desain, filter `?category=` + search `?q=` di server (D60) |
+| 2026-08-24 | Tautan "FAQ" di footer akhirnya menunjuk halaman, bukan `/#faq` — sebelumnya setiap halaman mengirim pembaca pulang ke S11 |
+| 2026-08-24 | Search FAQ **bekerja** tanpa JavaScript (`<form method="get">`), berbeda dari kotak mati di `/news` dan `/gallery`: yang dicari copy halaman sendiri, bukan endpoint yang belum ada |
+| 2026-08-24 | `icon-search.svg` naik `assets/news/` → `assets/global/` pada pemakai ketiga, persis yang dikatakan catatannya sendiri (D32/D43) |
+| 2026-08-24 | R15 dibuka: pager 1-2-3 (`174:10695`) tidak dibangun — desain mengandaikan ~30 pertanyaan, yang ada sepuluh; sembilan jawabannya masih placeholder (B2) |
+| 2026-08-24 | Halaman Tournaments selesai 8/8 blok (`/tournaments`, node `366:17181`) — hero, highlighted, rail, regulations, Champions Hall, media gallery, tabel Olympic, FAQ. Nav & footer "Tournaments" akhirnya hidup (D61) |
+| 2026-08-24 | Kontrak data bertambah: `Champion`, `OlympicResult`, `Tournament` diperluas; empat fungsi client baru — semuanya mock (B2) |
+| 2026-08-24 | `ui/DocumentCard` + `ui/DownloadPill` diangkat dari `news/` pada pemakai kedua; `MediaGallery` dipakai dua halaman lewat satu prop warna judul (D32/D43) |
+| 2026-08-24 | Rail kartu dibangun sebagai scroller native + panah, bukan carousel transform — sentuhan, keyboard dan scrollbar tangan desain semuanya dapat perilaku yang benar |
+| 2026-08-24 | R16 dibuka: Champions Hall desain menamai empat tokoh publik nyata sebagai juara DWF. Foto tidak dipakai, nama tidak masuk repo; kartu jatuh ke panel gradien sampai ada juara asli |
+| 2026-08-24 | Acara `e1` jadi "Caribbean Domino Open 2026" — desain menamainya 2024 di S6 dan 2026 di hero dengan tanggal 2026 di keduanya; S6 ikut terkoreksi (D61) |
+| 2026-08-24 | Blur 15px pada pita bawah hero Tournaments dan shelf featured News dicabut — `backdrop-filter` bekerja penuh di seluruh kotak sementara gradiennya mulai transparan, jadi tepi atasnya jadi garis lurus memotong artwork (dilaporkan pengguna dari screenshot). Scrim-nya kini gradien saja |
+| 2026-08-24 | Kartu Champions Hall diisi artwork poster federasi — slot potret kosong terbaca sebagai gambar gagal muat, bukan sebagai menunggu aset. R16 tetap terbuka: potret juara asli belum ada |
+| 2026-08-24 | Foto Champions Hall dipasang atas keputusan pengguna ("gpp buat proto") — diperkecil ke 1400px sisi panjang (30 MB → 9,3 MB). Nama tetap placeholder: nama asli di bawah wajah asli adalah klaim identitas, bukan aset placeholder. R16 diperbarui, tetap terbuka |
+| 2026-08-24 | Tile domino hero home berhenti tajam, bukan di `blur(2px)` desain (`24:933`) — dilaporkan "kurang HD". Dua sebab: 2px memang lembut di ~550px, dan `filter` memaksa layer jadi tekstur sendiri sehingga piksel ekstra layar DPI tinggi hilang. Entrance-nya tetap melunak dari 10px; dua batu tetap 4px & 6.5px |
+| 2026-08-24 | `SofteningImage` tidak lagi menulis `filter: blur(0px)` — nol berarti tanpa properti `filter` sama sekali, supaya layer istirahatnya tidak lewat filter pass |
