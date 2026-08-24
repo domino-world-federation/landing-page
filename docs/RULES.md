@@ -15,13 +15,32 @@ Konteks produk ada di [PRD.md](PRD.md); status pengerjaan di [PROGRESS.md](PROGR
 | Hook | camelCase, awalan `use` | `useMediaQuery.ts` |
 | Utility / config | kebab-case | `format-date.ts` |
 | Type | PascalCase, kata benda tunggal | `NewsArticle`, bukan `NewsArticles` |
-| Folder | kebab-case | `components/sections/` |
+| Folder | kebab-case | `components/home/` |
 | Aset | `<kategori>-<nama>[-varian].<ext>` | `logo-dwf-horizontal.svg` |
 | Route | kebab-case | `app/tournament-schedule/` |
 
 Aturan aset: kategori di depan agar file sejenis mengelompok saat di-sort.
 Angka **selalu** dipad 2 digit (`news-thumb-01`, bukan `news-1`) supaya urutannya
 tetap benar setelah melewati 9. Tanpa spasi, tanpa PascalCase.
+
+Kategori yang dipakai: `logo-`, `icon-`, `decor-`, `flag-`, dan prefiks section
+untuk foto (`hero-`, `feature-`, `event-`, `news-`). **Tanpa pengecualian** —
+satu file tanpa prefiks langsung merusak pengelompokan seluruh folder.
+
+Nama harus menyebut apa yang benar-benar ada di dalam file, bukan di mana ia
+kebetulan dipakai pertama kali:
+
+- Arah ikut ke dalam nama bila asetnya berarah. `icon-arrow-left.svg` memang
+  menunjuk kiri; tanpa itu, dua komponen harus menjelaskan arahnya lewat
+  komentar dan tanda rotasinya pernah terbalik (D31).
+- Foto diberi prefiks section **pemakainya**, bukan section tempat ia pertama
+  diletakkan. `event-trophy-hand.png` dipakai kartu S6, bukan hero.
+- Deskripsikan isi, bukan kesan. `decor-card-streaks.svg` berisi garis cahaya
+  yang dikomposit `plus-lighter` — nama lamanya (`card-shade`) justru
+  menyiratkan bayangan gelap.
+- Komposit desain diberi akhiran `-composite`, sebagai pengingat bahwa wash-nya
+  sudah terbakar di dalam file dan tidak boleh digambar ulang di CSS
+  (`feature-hq-composite.png`, D22).
 
 ### Brand
 
@@ -38,10 +57,12 @@ src/
   app/                    # route App Router
     layout.tsx
     page.tsx
+    globals.css
   components/
-    sections/             # section landing — 1 file per section
-    ui/                   # komponen reusable (Button, Card)
-    layout/               # Header, Footer
+    home/                 # landing page — section + potongan miliknya sendiri
+    layout/               # Navbar, Footer, dan potongannya
+    motion/               # primitif gerak (ParallaxLayer, Reveal, …)
+    ui/                   # primitif UI lintas halaman (GoldCta, Marquee, …)
   lib/
     api/
       types.ts            # kontrak data
@@ -49,17 +70,36 @@ src/
       mock/               # data dummy
     utils/
   content/                # teks statis (persiapan i18n)
-  styles/
+    home/                 # dicermin dari components/home/
 public/assets/
   global/                 # dipakai lintas halaman
+    flags/
     partners/
   home/                   # khusus landing page
 docs/
 ```
 
+**Komponen dikelompokkan per halaman, bukan per tingkat abstraksi** (D32).
+Aturan penempatannya satu pertanyaan: *apakah halaman lain akan memakainya?*
+
+- Tidak → duduk bersama section-nya di folder halaman. Kartu, accordion, roda
+  angka, dan pager semuanya potongan satu section; menaruhnya di `ui/` membuat
+  folder itu tidak lagi bisa dipercaya sebagai "aman dipakai ulang".
+- Ya, dan ia soal **gerak** → `motion/`. Klaster ini saling terkait:
+  `ParallaxLayer` dan `SofteningImage` sama-sama memakai `useEntrance` dari
+  `EntranceGroup`.
+- Ya, dan ia soal **tampilan** → `ui/`.
+
+`content/` mencerminkan struktur yang sama: teks satu halaman masuk
+subfoldernya, teks lintas halaman (`navigation.ts`, `footer.ts`) di akar.
+
+Halaman fase 2 menambah folder sendiri (`components/rankings/`,
+`content/rankings/`) tanpa menyentuh yang sudah ada.
+
 Aturan penempatan aset: membawa identitas brand **atau** berulang lintas
 halaman → `global/`. Terikat pada satu section → `home/` (atau folder halaman
-terkait).
+terkait). Ikon UI generik (panah, unduh) dihitung lintas halaman meski saat ini
+baru landing yang memakainya — portal pasti membutuhkannya lagi.
 
 ---
 
@@ -155,8 +195,10 @@ Urutan isi file:
 - **Selalu `next/image`**, jangan `<img>`.
 - `alt` wajib deskriptif. Gambar murni dekoratif: `alt=""`.
 - Gambar hero (above the fold): beri `priority`.
-- Aset di atas 1 MB dioptimasi lebih dulu sebelum masuk repo.
-  `feature-hq-building.png` (9.2 MB) belum dioptimasi — lihat PRD R3.
+- Aset di atas 1 MB dioptimasi lebih dulu sebelum masuk repo. Tiga file masih
+  melewatinya — `event-trophy-hand.png` (2.4 MB), `hero-domino-tile.png` dan
+  `feature-hq-composite.png` (~1.1 MB) — ditunda sampai setelah presentasi
+  (PRD R10).
 - Sertakan `sizes` untuk gambar responsif agar srcset tidak boros.
 
 ---
@@ -229,6 +271,11 @@ import { motion, useScroll, useTransform } from "motion/react"
   berjalan bersamanya. Panel accordion S11 satu-satunya sejauh ini — alasan dan
   alternatif yang diukur ada di PRD D23. Bagian yang tetap berbagi hot path
   dengan halaman (ikon toggle-nya) tetap di `transform`/`opacity`.
+- **`Reveal blurFrom` merender anaknya dua kali.** Efek "keluar dari blur"
+  adalah cross-fade antara salinan buram dan salinan tajam, jadi apa pun di
+  dalamnya muncul dua kali di DOM. Jangan menaruh `id` di dalamnya: id-nya
+  ganda, dan `aria-labelledby` akan menunjuk salinan yang `aria-hidden`.
+  Heading yang menamai section-nya memakai `Reveal` biasa (`y` saja).
 - Durasi 200–400ms untuk interaksi mikro.
 - Komponen beranimasi butuh `"use client"` — letakkan sedalam mungkin agar
   tidak menyeret seluruh section ke client.
@@ -332,8 +379,8 @@ maksimum, jangan berhenti pada asumsi bahwa nilainya tercapai (D16).
 ### Batas performa
 
 - Maksimal **3–4 layer bergerak** per viewport.
-- Jangan pasang parallax pada gambar yang belum dioptimasi —
-  `feature-hq-building.png` (9.2 MB) wajib dikompres lebih dulu (PRD R3).
+- Jangan pasang parallax pada gambar yang belum dioptimasi — tiga aset di atas
+  1 MB wajib dikompres lebih dulu (PRD R10).
 - Target 60fps. Kalau turun, kurangi layer — jangan turunkan kualitas gambar
   sebagai jalan pintas.
 

@@ -1,6 +1,6 @@
 # Progress — DWF Website
 
-**Terakhir diperbarui:** 2026-08-22
+**Terakhir diperbarui:** 2026-08-24
 
 Legenda: `[ ]` belum · `[~]` berjalan · `[x]` selesai · `[!]` terblokir
 
@@ -12,9 +12,9 @@ Legenda: `[ ]` belum · `[~]` berjalan · `[x]` selesai · `[!]` terblokir
 |---|---|---|
 | 0 — Persiapan aset | `[x]` | Selesai |
 | 1 — Scaffold project | `[x]` | Selesai — build, lint, typecheck lolos |
-| 2 — Slicing landing page | `[~]` | 14/14 section selesai; sisa checklist "setelah semua section" |
+| 2 — Slicing landing page | `[~]` | 14/14 section selesai; audit penamaan & struktur beres; sisa checklist "setelah semua section" |
 | 3 — Integrasi API | `[ ]` | Menunggu backend |
-| 4 — Portal | `[ ]` | Fase berikutnya |
+| 4 — Portal | `[~]` | About selesai penuh (11 blok, dua tahap); Domino 5/6 blok (satu ditunda, R12); Development selesai penuh (9 blok); portal belum |
 
 ---
 
@@ -26,7 +26,9 @@ Legenda: `[ ]` belum · `[~]` berjalan · `[x]` selesai · `[!]` terblokir
 
 Selesai: ~~B1 MCP Figma 403~~ — tersambung 2026-08-20.
 ~~B3 `feature-hq-building.png` 8.8 MB~~ — beres 2026-08-21: file 9.2 MB dihapus
-dari repo, S4 memakai `hq.png` 1920×1080 dari desainer (lihat catatan S4).
+dari repo, S4 memakai `feature-hq-composite.png` 1920×1080 dari desainer (lihat
+catatan S4). File itu bernama `hq.png` sampai 2026-08-22; entri log lama menyebut
+nama tersebut (D31).
 
 ---
 
@@ -45,7 +47,8 @@ dari repo, S4 memakai `hq.png` 1920×1080 dari desainer (lihat catatan S4).
 **Temuan:**
 - Brand sebenarnya **DWF**, bukan DFW (dari signage render HQ + tagline hero)
 - SVG partner bukan vektor: PNG base64 dalam wrapper `<svg>` (PRD R2)
-- `feature-hq-building.png` 9.2 MB, perlu optimasi (PRD R3)
+- `feature-hq-building.png` 9.2 MB, perlu optimasi (PRD R3 — file kemudian
+  dihapus; tiga aset lain masih di atas 1 MB, PRD R10)
 - Section nyata **14**, bukan 7 — Countdown, Stats, Resource Library, FAQ
   terlewat karena tanpa aset gambar khusus
 - Carousel berita **5 item**, bukan 6 — satu thumbnail tidak terpakai
@@ -88,8 +91,9 @@ dari repo, S4 memakai `hq.png` 1920×1080 dari desainer (lihat catatan S4).
 | `bun run dev` (`--bun`) | ✅ HTTP 200, kedua font ter-load |
 
 **Catatan:** `globals.css` ada di `src/app/`, bukan `src/styles/` — mengikuti
-letak bawaan `create-next-app` supaya import relatifnya tetap sederhana.
-RULES §2 menyebut `styles/`; folder itu dipakai nanti bila ada CSS di luar token.
+letak bawaan `create-next-app` supaya import relatifnya tetap sederhana. RULES §2
+sempat menyebut `styles/` sebagai folder yang ada padahal tidak pernah dibuat;
+sejak 2026-08-22 pohon di RULES mencerminkan `app/globals.css` yang sebenarnya.
 
 ---
 
@@ -130,7 +134,7 @@ dan dibatalkan karena alasan itu. Konsekuensinya `NavShell` tidak butuh hook
 apa pun dan tetap Server Component: `fixed` itu class, bukan scroll listener.
 
 Kekhawatiran lama "S4 dan seterusnya berlatar putih jadi teks putih akan hilang"
-ternyata tidak berlaku untuk S4 — `hq.png` gelap. Kalau nanti ada section
+ternyata tidak berlaku untuk S4 — `feature-hq-composite.png` gelap. Kalau nanti ada section
 berlatar terang di belakang bar, yang dibutuhkan varian gelap untuk pill dan
 burger, bukan panel untuk seluruh header.
 
@@ -284,7 +288,7 @@ sengaja kosong (`--`) di render pertama karena server tidak tahu jam pengunjung;
 tingginya sudah dipesan jadi tidak ada layout shift. Timer berdetak per menit,
 diselaraskan ke pergantian menit — bukan per detik.
 
-**Catatan S4.** `hq.png` (1920×1080, dari desainer) adalah komposit desain
+**Catatan S4.** `feature-hq-composite.png` (1920×1080, dari desainer) adalah komposit desain
 sendiri: **ketiga wash sudah dibakar ke dalamnya** — vignette atas (`31:1089`),
 penggelapan yang memikul teks (`31:1103`), dan fade ke warna halaman di kaki
 (`37:1848`). Terukur, baris paling atas dan paling bawahnya persis `#0e0e0e` =
@@ -303,7 +307,7 @@ vertikal ke tinggi kotak mendorong tepi bawah ke stop `100%` yang **penuh opak**
 — wash-nya solid persis di tempat ia terpotong, jadi garis melintang selebar
 halaman. Sempat diperbaiki ke `circle farthest-corner` (spec Figma sendiri, benar
 karena kotak 1920×370 membuat radius ~1047px sehingga tepi bawah jatuh di dalam
-stop `transparent 47%`), lalu seluruh overlay dibuang begitu `hq.png` dipakai.
+stop `transparent 47%`), lalu seluruh overlay dibuang begitu komposit desainer dipakai.
 
 Ini section pertama yang punya ruang scroll di atasnya, jadi berbeda dari hero ia
 memakai **parallax scroll sungguhan** — S2 tidak, di sana belum ada yang bisa
@@ -479,7 +483,7 @@ ekspornya adalah tumpukan itu yang sudah diratakan dan dipotong ke frame
 1920×960. Terukur dengan mendekode PNG-nya: baris paling bawah terbaca
 **14,14,14** — persis `--color-bg` — sementara baris atas masih penuh detail
 (luma puncak 246). Menggambar ulang wash itu akan menggelapkan kakinya dua kali,
-jebakan yang sama dengan `hq.png` di S4.
+jebakan yang sama dengan `feature-hq-composite.png` di S4.
 
 Bake itu juga yang membuat parallax-nya aman. Gambar bergerak **naik**
 (`speed={-14}`), jadi tepi bawahnya terangkat dan meninggalkan pita latar
@@ -869,12 +873,38 @@ Tarik node → cocokkan aset → susun markup → styling → responsif
 
 ### Setelah semua section
 
+- [x] Audit penamaan aset & struktur folder (2026-08-22 — lihat di bawah)
 - [ ] Petakan kecepatan antar layer secara menyeluruh
 - [ ] `prefers-reduced-motion` mematikan parallax penuh
 - [ ] Uji parallax di perangkat nyata (60fps, cek baterai)
+- [ ] Optimasi tiga aset di atas 1 MB (PRD R10 — ditunda sampai setelah
+      presentasi atas keputusan pengguna)
 - [ ] Audit Lighthouse (target ≥ 90)
 - [ ] Metadata & OG tag
 - [ ] Sapuan akhir lintas breakpoint
+
+**Catatan audit penamaan & struktur (2026-08-22).** Dikerjakan setelah 14
+section selesai, saat pola pemakaian sudah terlihat seluruhnya — lebih awal dari
+itu tidak ada dasar untuk memutuskan mana yang benar-benar reusable.
+
+Empat aset diganti nama (D31): `hq.png` → `feature-hq-composite.png`,
+`hero-trophy-hand.png` → `event-trophy-hand.png`, `card-shade.svg` →
+`decor-card-streaks.svg`, `icon-arrow.svg` → `global/icon-arrow-left.svg`.
+`icon-download.svg` ikut ke `global/`. Dua aset mati dihapus —
+`decor-light-beam.png` (1.25 MB, kembaran raster `decor-shine.svg`) dan
+`card-dwf2026-badge.png` (334 KB, panelnya digambar CSS). PRD R5 tertutup
+karenanya.
+
+Komponen dikelompokkan ulang per halaman (D32): `sections/` + delapan potongan
+satu-pemakai dari `ui/` menjadi `components/home/`; empat primitif gerak menjadi
+`components/motion/`; `NewsletterField` ke `layout/`; `ui/` tersisa `GoldCta`,
+`SilverCta`, `Marquee`. `content/` ikut dicermin jadi `content/home/`, kecuali
+`navigation.ts` dan `footer.ts` yang memang lintas halaman.
+
+Verifikasi: `bunx tsc --noEmit` bersih, `bunx eslint src` bersih, `bunx next
+build` lolos dengan 2 route statis, dan seluruh 34 path aset yang direferensikan
+`src/` terbukti ada di disk dengan nol aset yatim tersisa. Ukuran file sengaja
+tidak disentuh — itu R10.
 
 ---
 
@@ -890,9 +920,280 @@ Terblokir B2. Section bergantung API: S3, S5, S6, S8, S10.
 
 ---
 
-## Fase 4 — Portal `[ ]`
+## Fase 4 — Portal `[~]`
 
-Belum dimulai. Cakupan di PRD §5.
+Cakupan di PRD §5. Portal sendiri belum dimulai — yang berjalan baru tiga
+halaman statis: About (didahulukan karena statis seluruhnya kecuali satu
+daftar), Domino, dan Development.
+
+### Halaman About — tahap 1 `[x]` — 7/7 blok
+
+Node `69:22` (PRD D33). Dua tahap atas keputusan pengguna; tahap 1 berhenti di
+Mission.
+
+| Blok | Node | Status | Catatan |
+|---|---|---|---|
+| Header | `119:4799` | `[x]` | Menyediakan bandnya sendiri — navbar `fixed`, dan di sini header adalah elemen pertama, bukan hero. Judulnya `SharpeningHeadline` (D37); deskripsi sengaja diam |
+| Authority band | `79:616` | `[x]` | `ParallaxLayer speed 8`; tinggi container dikunci `44.27vw` supaya layer absolut tidak merobohkannya |
+| Overview | `84:753` | `[x]` | Satu-satunya band putih. Hanya dua blok kanan yang bergerak — lihat catatan |
+| Heritage | `88:1163` | `[x]` | Strip melangkah sendiri tiap 1800ms di atas scroll native (D35); data lewat `getHeritageMilestones()` |
+| Vision | `102:2793` | `[x]` | Enam layer, lima digambar CSS; hanya tile-nya gambar, dan ia naik bersama glow-nya (D38) |
+| Pillars | `107:2847` | `[x]` | Marquee vertikal 30s naik lewat mask tetap |
+| Mission | `107:2997` | `[x]` | 4 kartu kaca, `Reveal` bertingkat |
+
+**Yang dipakai ulang tanpa disentuh.** Tidak ada primitif baru yang dibuat:
+`Reveal`, `ParallaxLayer`, `EntranceGroup`, `SofteningImage`, `Navbar`, `Footer`,
+`cn`, dan token gerak di `lib/utils/motion.ts` semuanya cukup. Itu yang
+membuktikan D32 bekerja — `components/about/` dan `content/about/` berdiri
+sendiri tanpa menyentuh apa pun milik `home/`.
+
+**Token baru** (`globals.css`): `--color-surface-dark`, `--color-surface-card`,
+`--color-ink-body`, `--color-timeline-rule`, `--gradient-gold-text`, skala
+tipografi generik delapan token (D34), dan `@keyframes marquee-y`.
+`--color-ink-body` dan `--gradient-gold-text` sekalian menggantikan literal yang
+sudah ditulis berulang di `home/`; CSS keluarannya identik. `marquee-x` sempat
+ada untuk Heritage lalu dihapus bersamanya — tidak ada pemakai lain.
+
+**Gerak, setelah beberapa putaran koreksi pengguna.** Semuanya diminta saat
+implementasi pertama sudah jadi:
+
+- **Overview** semula seluruh bandnya bergerak. Sekarang judul kiri diam dan
+  hanya STANDARDIZATION & SANCTIONING naik (`y=64`, bukan 40 seperti biasa) —
+  karena keduanya satu-satunya yang bergerak, jadi naiknya harus terbaca sendiri
+  alih-alih seperti settle. Judul adalah jangkar yang mereka naiki.
+- **Heritage** melewati tiga bentuk sebelum yang sekarang: scroller drag/snap
+  dengan tombol panah → marquee → **strip melangkah sendiri** (D35). Marquee
+  terlalu halus sehingga terbaca sebagai dekorasi; tombol panah membuatnya mati
+  sampai ada yang menekan. Sekarang `"use client"` lagi, tapi hanya untuk satu
+  `setInterval` di atas scroll native — bukan implementasi ulang scrolling.
+  Dwell sempat 3400ms dan diturunkan ke 1800ms atas permintaan pengguna: strip
+  berhenti di bawah kursor dan fokus, jadi waktu istirahat cukup untuk menangkap
+  satu kartu, bukan untuk membaca tiap katanya.
+- **Pillars** semula parallax lewat mask, sekarang marquee vertikal ke atas.
+  Mask-nya tetap — memang itu inti section-nya — tapi kini kolomnya yang jalan
+  dan jendelanya yang diam.
+- **Judul About** semula `Reveal blurFrom`, yang menjernihkan seluruh baris
+  sekaligus. Sekarang `SharpeningHeadline`: sapuan per huruf, ramp direset tiap
+  baris (D37). Deskripsi di sebelahnya sengaja **tanpa animasi** — dua benda
+  tiba berarti tidak ada yang jadi kedatangan.
+- **Tile Vision** sempat tidak terlihat bergerak sama sekali melalui dua
+  perbaikan yang dikirim tanpa diperiksa mata (tanda `speed`, lalu `anchor`).
+  Yang benar ada di D38: glow disatukan ke layer yang sama, dan posisi desain
+  diletakkan di tengah rentang, bukan di ujungnya.
+
+Rules putus-putus Heritage sengaja **di luar** scroller: ia adalah tanah yang
+dilintasi timeline, dan menggesernya bersama kartu akan membatalkan satu-satunya
+petunjuk bahwa ada yang bergerak.
+
+**Cacat copy Figma ditampilkan apa adanya**, dengan `TODO(design)` yang menyebut
+node-nya: blok Pillars kedua & ketiga (`104:2798`, `106:2821`) memakai kalimat
+yang sama persis, dan `107:2962` tertulis "on all contents". Mengarang teks
+pengganti akan lebih buruk daripada menampilkan yang ada dan menandainya.
+
+Tiga aset ternyata salah nama saat diunduh dan diperiksa isinya sebelum ditulis
+`alt`-nya (D31 berlaku juga untuk aset baru): jadi
+`authority-leadership-group.png`, `vision-globe-tile.png`, dan
+`pillars-olympic-rings.png` — yang terakhir sempat bernama
+`pillars-tiles-closeup.png` padahal isinya cincin Olimpiade di fasad gedung.
+
+Wiring navigasi: `navigation.ts` dan `footer.ts` menunjuk `/about`; FAQ footer
+jadi `/#faq` supaya tetap bekerja dari halaman selain landing.
+
+Verifikasi: `bunx tsc --noEmit` bersih, `bunx eslint src` bersih, `bunx prettier
+--check` bersih, `bunx next build` lolos dengan 3 route statis (`/`,
+`/_not-found`, `/about`).
+
+- [ ] Sapuan visual 360/768/1440/1920 + reload dengan `prefers-reduced-motion`
+      (belum dijalankan)
+
+### Halaman About — tahap 2 `[x]` — 4/4 blok
+
+Empat blok terakhir, dari Mission ke footer. Halaman kini utuh 11 blok.
+
+| Blok | Node | Status | Catatan |
+|---|---|---|---|
+| Structural Frameworks | `111:3152` | `[x]` | Placeholder desain, dirender apa adanya atas keputusan pengguna — ikon, kalimat, dan `#6c6c6c`-nya. Panel berbatas gradasi ke section berikutnya (D39) |
+| Executive Boards | `112:3590` | `[x]` | Carousel di atas `overflow-x` native; `<h2>`-nya prop, bukan dirender client (D41). Data lewat `getBoardMembers()` |
+| Sub-Committees | `114:3667` | `[x]` | Grid 3/2/1 kolom. Kartu jadi `<a>` bila punya `href`, `<div>` bila tidak — belum ada yang punya (B2). Data lewat `getSubCommittees()` |
+| HQ | `117:3846` | `[x]` | Memakai ulang `feature-hq-composite.png`; nol wash CSS (D22). Kolom teksnya identik S4 — `x525 w870 gap44` |
+
+**Aset dipakai bersama dua halaman.** `feature-hq-composite.png` pindah `home/`
+→ `global/` lewat `git mv`, karena `imageRef`-nya sama persis dengan yang dipakai
+S4 (RULES §2). Empat potret pengurus diunduh baru ke `about/`; tiga di antaranya
+lewat 1 MB dan masuk daftar tunda R10.
+
+**Token baru** (`globals.css`): `--color-ink-placeholder`,
+`--text-display-label`, `--text-body-xl`, `--text-heading-section`. Semuanya
+generik sesuai D34, dan tiap slope tetap dibagi `cap/1920` empat angka (D25).
+`--text-display-label` sengaja **tidak** menumpang `--text-resource-title` yang
+angkanya kebetulan sama — nama section S10 di halaman lain akan berbohong.
+
+**Carousel di atas scroll native, sama seperti Heritage.** Tombol panah hanya
+menggerakkan `scrollLeft`, jaraknya diukur dari DOM. Posisi diumumkan lewat satu
+paragraf `aria-live="polite"`, `snap-proximity` bukan `mandatory` (mandatory
+melawan drag), dan `prefers-reduced-motion` dibaca di dalam handler (D15).
+Panah kiri dinonaktifkan di awal — `opacity-30`, yang kebetulan persis nilai
+yang digambar Figma untuk panah kirinya.
+
+**Dua cacat Figma, dua penanganan berbeda** (D40): judul "Sub-Commitees"
+diperbaiki ejaannya; jabatan ganda "SECRETARY GENERAL" dan dua nama komite huruf
+kecil dibiarkan terlihat dengan `TODO(design)`.
+
+Verifikasi: `bunx tsc --noEmit` bersih, `bunx eslint src` bersih, `bunx prettier
+--check` bersih (`BoardCarousel.tsx` diformat ulang), `bunx next build` lolos —
+`/about` tetap prerender statis.
+
+- [ ] Sapuan visual 360/768/1440/1920 + reload dengan `prefers-reduced-motion`
+      (belum dijalankan)
+- [ ] `board-portrait-02.png` perlu diganti sebelum publikasi — R11
+
+### Halaman Domino `[~]` — 5/6 blok
+
+Halaman ketiga. Item nav "Domino" kini rute sungguhan (`/domino`), jadi pill-nya
+menyala sendiri — `isActive` sudah memakai `pathname.startsWith(href)`.
+
+**Desainnya tidak lengkap dan itu sudah diputuskan** (D42). Frame hi-fi
+`119:4737` mendeklarasikan 1920×6033 tapi anak-anaknya berhenti di y=2180 — tiga
+blok. Wireframe `119:4474` menyebut enam; dua di antaranya dibangun dari
+wireframe karena copy-nya lengkap di sana, satu ditunda sebagai R12.
+
+| Blok | Node | Status | Catatan |
+|---|---|---|---|
+| Header | `119:4809` | `[x]` | Cermin `AboutHeader`; kolom kanan bertingkat dua (subtitle + intro), bukan satu paragraf. Judul menajam per huruf lewat `SharpeningHeadline` |
+| Tile band | `131:4824` | `[x]` | Cermin `AuthorityBand`: pembungkus tinggi terkunci, layer `-inset-y-[6%]`, `priority` |
+| Format split | `207:15563` | `[x]` | Perak/emas dengan **satu figur membelah jahitannya**. Judul panel doubles dibetulkan, body dibiarkan duplikat (D44) |
+| Download & Regulations | `119:4581` (wireframe) | `[x]` | Tanpa hi-fi. Tiga dokumen lewat `getResources(category)`; empat referee guidelines tetap copy |
+| FAQ | `119:4634` (wireframe) | `[x]` | Tanpa hi-fi. Section putih penuh, bukan kartu — itu yang digambar wireframe. Dua dari tiga jawaban placeholder (B2) |
+| Official Game Rules | `119:4553` (wireframe) | `[!]` | **Tidak dibangun** — R12. Hi-fi tidak digambar dan lima dari tujuh tabnya berlabel "SCORING" duplikat |
+
+**Jahitan format split — bagian yang paling mudah salah.** Kedua panel menaruh
+`imageRef` yang **sama** (`8c88e9f6`), kiri di `x625` dan kanan di `x−255`; dalam
+koordinat section keduanya jatuh di 705. Jadi itu satu figur, masing-masing panel
+memotong bagiannya. Offsetnya dinyatakan sebagai persen **lebar panel**
+(`71.02%` vs `−28.98%`, selisih persis 100%) bukan px, supaya jahitannya tetap
+bertemu di bawah 1920 — dan kedua separuh berbagi `speed` yang sama, sehingga
+scroll tidak pernah merobeknya. Di bawah `lg` figurnya dilepas: jahitan yang jadi
+alasannya sudah tidak ada.
+
+**Tiga promosi keluar dari folder halaman** (D43) — konsekuensi RULES §2/D32 yang
+baru bisa ketahuan begitu ada halaman kedua yang memakainya:
+`SharpeningHeadline` → `components/motion/`, `FaqAccordion` → `components/ui/`,
+`about/vision-globe-tile.png` → `global/globe-tile.png`. Ikutannya tipe
+`FaqItem`/`FaqSegment` pindah dari `content/home/faq.ts` ke komponennya, karena
+`content/domino/faq.ts` kalau tidak harus mengimpor dari folder copy halaman
+lain.
+
+**Data & token.** `getResources()` diberi parameter kategori opsional — tanpa
+argumen perilakunya tidak berubah, jadi `Resources` di home tidak disentuh; tiga
+entri mock baru (satu Rulebook, dua Regulations, semua `fileUrl: "#"` sampai
+PDF-nya ada). Satu token warna baru: `--color-surface-silver` untuk stop bawah
+gradient panel perak. **Nol token tipografi baru** — skala generik yang
+ditambahkan waktu About memang untuk ini.
+
+Aset: satu berkas, `domino/band-table-match.png` 2.8 MB — terbesar di repo dan
+`priority`, masuk daftar tunda R10. Figur pembelah tidak diunduh; itu berkas yang
+sama dengan tile Vision.
+
+Verifikasi: `bunx tsc --noEmit` bersih, `bunx eslint src` bersih, `bunx prettier
+--check` bersih (`FormatPanel.tsx` dan `content/domino/regulations.ts` diformat
+ulang), `bunx next build` lolos — `/domino` prerender statis. Grep path basi
+setelah tiga pemindahan: `src/` bersih.
+
+- [ ] Sapuan visual 360/768/1440/1920, termasuk jahitan format split di 1440 &
+      1920 dan saat di-scroll (belum dijalankan)
+- [ ] Reload `/domino` dengan `prefers-reduced-motion` aktif — pastikan tidak ada
+      *hydration failed* (belum dijalankan)
+- [ ] Dua jawaban FAQ dan tiga `fileUrl` masih placeholder — B2
+- [ ] Blok Official Game Rules menunggu desain — R12
+
+### Halaman Development `[x]` — 9/9 blok
+
+Halaman keempat, node `190:13600` (PRD §5). Item nav "Development" kini rute
+sungguhan (`/development`), jadi pill-nya menyala sendiri.
+
+**Hi-fi lengkap**, tidak seperti Domino — kesembilan blok digambar, jadi tidak
+ada yang ditunda dan tidak ada yang dibangun dari wireframe.
+
+| Blok | Node | Status | Catatan |
+|---|---|---|---|
+| Header | `190:13657` | `[x]` | Cermin `AboutHeader`; judul Inter 84 menajam per huruf lewat `SharpeningHeadline` |
+| Band ruang kelas | `190:13660` | `[x]` | Cermin `AuthorityBand`: pembungkus tinggi terkunci, layer `-inset-y-[6%]`, `priority`. `opacity-80` milik Figma, bukan wash CSS |
+| Youth Development | `190:13662` | `[x]` | Satu-satunya band putih. Judul hitam, bukan gradien emas — kontras (RULES §10) |
+| Official Certifications | `190:13674` | `[x]` | Gradient `bg → surface-dark`. Tangga level menyatukan strip titik ke tiap baris — lihat catatan |
+| Educational Resources | `192:14833` | `[x]` | Memakai ulang `ResourceCard` yang dipromosikan ke `ui/` (D46); data lewat `getResources("Development")` |
+| Grassroots Initiatives | `192:14877` | `[x]` | Satu-satunya section rata tengah; 3 kartu 32px radius dengan foto 3:4 di kakinya |
+| Development News | `207:15528` | `[x]` | 4 berita lewat `getLatestNews(4, "Development")`; badge panah sama persis dengan S8 |
+| Federation Support Programs | `202:15013` | `[x]` | Daftar tick + kartu form putih. Tombol submit diekstrapolasi (D48) |
+| CTA akhir | `207:15320` | `[x]` | Bebas 126 + `SilverCta`, berdiri di atas shine |
+
+**Catatan tangga sertifikasi.** Figma menggambar ini sebagai **dua kolom yang
+kebetulan sejajar**: strip 116px berisi tiga titik dan tiga garis putus-putus,
+lalu kolom teks berisi tiga blok. Kesejajaran itu hanya bertahan selama tiap
+blok setinggi yang diberi desain — dan itu berhenti benar begitu satu body
+membungkus ke jumlah baris yang berbeda, yang di sini terjadi di tiap lebar.
+Jadi strip-nya dilipat **ke dalam** tiap baris: satu daftar, satu item per
+level, tiap item sebuah gutter dan sebuah blok. Titiknya duduk di puncak
+barisnya sendiri dan garisnya mengisi sisa tinggi lewat `flex-1`, jadi sumbunya
+dibangun dari isi, bukan diukur terhadapnya. Garisnya digambar per item, bukan
+satu garis menerus, dan itu memang desainnya: `192:14726` memudar jadi nol di
+kedua ujung sepanjang segmen 180px, jadi 52px antar blok memang dimaksudkan
+kosong. Seluruh gutter `aria-hidden` — daftarnya sudah mengumumkan tiga item
+berurutan, dan titik yang dibacakan tidak menambah apa pun.
+
+**Cacat yang ditemukan saat membangun, di kode yang sudah ada.** `Reveal`
+dengan `blurFrom` **merender anaknya dua kali** — itu memang cara cross-fade-nya
+bekerja — jadi `id` di dalamnya masuk DOM dua kali dan `aria-labelledby`
+menunjuk salinan yang `aria-hidden`. Terdeteksi dengan menghitung
+`id="*-heading"` pada HTML terender: `grassroots-heading` muncul dua kali.
+Diperbaiki dengan melepas `blurFrom` dari dua heading yang memikul `id`;
+konvensinya ditulis di RULES §11.
+
+**Perbaikan S10 yang ikut terbawa** (D45). `Resources` memanggil
+`getResources()` tanpa argumen dan menggambar apa pun yang kembali, jadi grid
+2×2-nya sudah diam-diam jadi **tujuh kartu** sejak halaman Domino menaruh tiga
+dokumen di rak yang sama — dan empat dokumen Development akan membuatnya
+sebelas. `getResources` sekarang menerima `limit` dan S10 meminta empat.
+Terverifikasi di HTML terender: hanya keempat dokumen desainnya yang muncul.
+
+**Tiga promosi/penambahan ke `ui/` dan `lib/`** (D46): `ResourceCard` dan
+`PageShine` keluar dari `components/home/`, dan `formatLongDate` ditambahkan ke
+`lib/utils/date.ts` di samping `formatEventDate` yang sudah ada — tanggal
+perpustakaan dan tanggal berita memakainya berdua. Rasio `PageShine` dikirim
+sebagai **nama class literal**, bukan angka, karena Tailwind mengekstrak utility
+dengan memindai teks sumber.
+
+**Token baru** (`globals.css`): `--radius-panel` (24), `--radius-feature` (32),
+`--text-display-caption` (Bebas 32), `--text-display-item` (Bebas 24),
+`--text-heading-card` (Inter 40), `--text-body-2xl` (Inter 64). Tiap slope tetap
+`cap/1920` empat angka (D25). `--text-display-year` dipakai ulang untuk nama
+grade dan komentarnya diperluas, bukan diganti namanya — mengganti nama token
+hidup berarti menyunting tiap call site tanpa hasil.
+
+**Cacat copy Figma ditampilkan apa adanya**, dengan `TODO(design)` yang menyebut
+node-nya (D40): kartu grassroots pertama dan ketiga berbagi kicker "Community"
+(`192:14935`/`192:14948`) padahal yang ketiga platform digital; paragraf
+Federation Support Programs (`205:15050`) adalah paragraf Public Plaza Play
+persis. Sebaliknya satu salah ketik **dibetulkan** — "Download CURRICULuM PDF"
+(`190:14529`), huruf kecil nyasar di kata yang ejaannya sudah pasti.
+
+Data: empat dokumen `Development` baru di `MOCK_RESOURCES` (satu `zip` — tipe
+itu ditambahkan ke union saat halaman ini disiapkan). Empat berita Development
+sudah ada sejak sesi sebelumnya. Aset: sembilan berkas, empat di antaranya lewat
+1 MB dan masuk daftar tunda R10; nol aset yatim.
+
+Verifikasi: `bunx tsc --noEmit` bersih, `bunx eslint src` bersih, `bunx prettier
+--check` bersih, `bunx next build` lolos — `/development` prerender statis,
+lima route seluruhnya. `/`, `/about`, `/domino` tetap HTTP 200 setelah dua
+promosi komponen.
+
+- [ ] Sapuan visual 360/768/1440/1920 (**belum dijalankan** — sesi ini tidak
+      punya alat otomasi browser; blok yang paling perlu dilihat: tangga
+      sertifikasi, baris 2×2 berita di sekitar `menu`, dan kartu form di bawah
+      `menu`)
+- [ ] Reload `/development` dengan `prefers-reduced-motion` aktif — pastikan
+      tidak ada *hydration failed* (belum dijalankan)
+- [ ] `downloadHref` kurikulum dan empat `fileUrl` masih `#` — B2
+- [ ] Tombol submit form menunggu konfirmasi desainer — D48
 
 ---
 
@@ -953,3 +1254,25 @@ Keputusan arsitektur dicatat di **PRD §7**. Ubah di sana, bukan di sini.
 | 2026-08-22 | Track footer diperbaiki ke `1fr 1fr 22.92vw 1fr 1fr` setelah dua pembacaan salah (`440fr`, lalu `auto`); emblem 763 → 960 (D27) |
 | 2026-08-22 | Email footer `whitespace-nowrap` + `w-0 min-w-full`; input newsletter `w-0 flex-1` — off-axis emblem 33px → 0 di 1600–2560 (D29) |
 | 2026-08-22 | Lebar `SilverCta` diperbaiki 169 → 264: `w-fit` pembungkus mengabaikan `min-width` anak, lantainya harus di keduanya (D30) |
+| 2026-08-22 | Empat aset diganti nama agar menyebut isinya, dua ikon generik pindah ke `global/`, dua aset mati dihapus (~1.6 MB) — PRD R5 tertutup (D31) |
+| 2026-08-22 | Komponen dikelompokkan per halaman: `home/`, `layout/`, `motion/`, `ui/`; `content/home/` mengikuti. `ui/` dari 16 file jadi 3 (D32) |
+| 2026-08-22 | Node About dicari dari isi layar setelah `node-id` pada URL terbukti tidak ada — halamannya `69:22` (D33) |
+| 2026-08-22 | Skala tipografi generik ditambahkan untuk halaman non-landing; token home tetap bernama per-section (D34) |
+| 2026-08-22 | Halaman About tahap 1 selesai — 7 blok, rute `/about`, tanpa primitif baru; navigasi navbar & footer disambungkan |
+| 2026-08-22 | Heritage & Pillars diubah jadi marquee CSS atas permintaan pengguna — keduanya kembali jadi Server Component tanpa state (D35, D36) |
+| 2026-08-22 | Overview dikurangi geraknya: judul kiri diam, hanya dua blok kanan yang naik (`y=64`) |
+| 2026-08-22 | Heritage keluar dari marquee: terlalu halus, terbaca sebagai dekorasi. Tombol panah dicoba lalu dibuang — timeline bukan panel kontrol. Jadi strip melangkah sendiri di atas scroll native, dwell 3400ms → 1800ms (D35) |
+| 2026-08-22 | Judul About jadi `SharpeningHeadline` — sapuan blur per huruf, ramp direset tiap baris; deskripsinya sengaja diam (D37) |
+| 2026-08-22 | Tile Vision: glow disatukan ke layernya dan posisi desain dipindah ke tengah rentang gerak, setelah dua perbaikan sebelumnya dikirim tanpa diperiksa mata dan keduanya meleset (D38) |
+| 2026-08-22 | Halaman About tahap 2 selesai — Structural Frameworks, Executive Boards, Sub-Committees, HQ. Halaman utuh 11 blok (D39, D40, D41) |
+| 2026-08-22 | `feature-hq-composite.png` pindah ke `global/` — `imageRef` yang sama dipakai S4 dan section HQ About |
+| 2026-08-22 | R11 dibuka: potret pengurus kedua adalah foto tokoh publik nyata, harus diganti sebelum publikasi |
+| 2026-08-22 | Halaman Domino selesai 5/6 blok — header, tile band, format split, regulations, FAQ. Rute `/domino`, pill nav menyala (D42, D44) |
+| 2026-08-22 | Tiga promosi keluar dari folder halaman: `SharpeningHeadline` → `motion/`, `FaqAccordion` → `ui/`, tile globe → `global/`; tipe FAQ ikut pindah ke komponennya (D43) |
+| 2026-08-22 | R12 dibuka: blok Official Game Rules tidak dibangun — hi-fi tidak digambar, lima dari tujuh tab wireframe berlabel duplikat |
+| 2026-08-24 | Halaman Development selesai 9/9 blok — hi-fi lengkap, tidak ada yang ditunda. Rute `/development`, pill nav menyala |
+| 2026-08-24 | S10 diperbaiki: grid 2×2-nya diam-diam sudah jadi tujuh kartu sejak dokumen Domino masuk rak yang sama. `getResources` menerima `limit`, S10 meminta empat (D45) |
+| 2026-08-24 | `ResourceCard` dan `PageShine` dipromosikan ke `ui/`; rasio shine dikirim sebagai class literal karena Tailwind memindai teks sumber (D46) |
+| 2026-08-24 | Shine `/development` dipaku ke dasar halaman, bukan ke grup di kakinya — tidak ada blok konten yang keluar dari `<main>` (D47) |
+| 2026-08-24 | Tombol submit kartu aplikasi diekstrapolasi; desain hanya menggambar dua field lalu berhenti (D48) |
+| 2026-08-24 | Bug lama ditemukan: `Reveal blurFrom` merender anaknya dua kali, jadi `id` di dalamnya ganda dan `aria-labelledby` menunjuk salinan `aria-hidden`. Konvensi ditulis di RULES §11 |
