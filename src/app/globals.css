@@ -394,6 +394,15 @@
     var(--color-gold-light) 0%,
     var(--color-gold-dark) 100%
   );
+  /* The same two golds turned 45° — the icon tile behind a membership
+     benefit's glyph (`405:28529`). Kept apart from `gold-text` rather than
+     parameterised: that one is painted through type and this one fills a box,
+     and a shared token would tie a heading's angle to a tile's. */
+  --gradient-gold-tile: linear-gradient(
+    135deg,
+    var(--color-gold-light) 0%,
+    var(--color-gold-dark) 100%
+  );
   /* Countdown divider: white only across the middle fifth, fading to nothing
      at both ends. */
   --gradient-divider: linear-gradient(

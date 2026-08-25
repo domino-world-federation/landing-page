@@ -167,6 +167,30 @@ export type FederationStat = {
   value: string
 }
 
+/**
+ * A national body in the members directory (`405:28396`).
+ *
+ * Its own entity rather than a `Partner`: a partner is a sponsor with a logo
+ * and a website, while this is a member of the federation with a country and a
+ * membership tier behind it. They would diverge the moment the directory needs
+ * a joined-on date or a tier, and both are already foreseeable.
+ */
+export type MemberFederation = {
+  id: string
+  /** The body's own name, in its own language — Figma prints "Confederação
+   *  Brasileira de Dominó" and "Federacion Mexicana de Domino" as written. */
+  name: string
+  /** Printed beside the name, in English. */
+  country: string
+  /**
+   * The flag beside the row. Optional because the federation has supplied one
+   * flag so far: Figma draws all six rows with the same grey placeholder
+   * square, so a row without a flag is the design's own normal case rather
+   * than an error, and the square is what it falls back to.
+   */
+  flagUrl?: string
+}
+
 export type ResourceDocument = {
   id: string
   title: string

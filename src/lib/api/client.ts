@@ -15,6 +15,8 @@ import {
   MOCK_GALLERY,
   MOCK_GALLERY_ALBUMS,
   MOCK_HERITAGE_MILESTONES,
+  MOCK_MEMBERSHIP_STATS,
+  MOCK_MEMBER_FEDERATIONS,
   MOCK_NEWS,
   MOCK_OLYMPIC_RESULTS,
   MOCK_PARTNERS,
@@ -32,6 +34,7 @@ import type {
   GalleryAlbum,
   GalleryItem,
   HeritageMilestone,
+  MemberFederation,
   NewsArticle,
   OlympicResult,
   Partner,
@@ -324,4 +327,34 @@ export async function getChampions(): Promise<Champion[]> {
 export async function getOlympicResults(): Promise<OlympicResult[]> {
   if (USE_MOCK) return MOCK_OLYMPIC_RESULTS
   return request<OlympicResult[]>("/olympic-results")
+}
+
+/** The four figures across the members hero (`404:19188`). */
+export async function getMembershipStats(): Promise<FederationStat[]> {
+  if (USE_MOCK) return MOCK_MEMBERSHIP_STATS
+  return request<FederationStat[]>("/membership/stats")
+}
+
+/**
+ * The members directory (`405:28396`).
+ *
+ * `limit` because the page's table is a fixed composition — two columns of
+ * three — rather than a shelf that grows, and "View all" leads somewhere else
+ * entirely. The same reason `getResources` carries one (D45): the real endpoint
+ * takes `?limit=`, and a component slicing the full list would download every
+ * member federation to show six of them.
+ *
+ * Order is the federation's own — neither alphabetical nor by country in the
+ * design — so it is not re-sorted here.
+ */
+export async function getMemberFederations(
+  limit?: number,
+): Promise<MemberFederation[]> {
+  if (USE_MOCK) {
+    return limit === undefined
+      ? MOCK_MEMBER_FEDERATIONS
+      : MOCK_MEMBER_FEDERATIONS.slice(0, limit)
+  }
+  const query = limit === undefined ? "" : `?limit=${limit}`
+  return request<MemberFederation[]>(`/members${query}`)
 }

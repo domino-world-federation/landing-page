@@ -1,11 +1,10 @@
 /**
  * Navigation copy, kept out of JSX so it can be extracted for i18n (RULES §9).
  *
- * Order and labels mirror the Figma design (node `42:2180`).
- * Home, About Us, Domino, Tournaments, Development and News are real routes;
- * the rest are
- * still `#` — those pages do not exist yet. `NavMenu`'s `isActive` only ever matches
- * a real one, so a placeholder can never light up as the current page.
+ * Order and labels mirror the Figma design (node `42:2180`). Seven of the nine
+ * are real routes now; only Governance and Integrity are still `#`, because
+ * those two pages do not exist. `NavMenu`'s `isActive` only ever matches a real
+ * one, so a placeholder can never light up as the current page.
  */
 
 export type NavItem = {
@@ -18,7 +17,7 @@ export const NAV_ITEMS: readonly NavItem[] = [
   { label: "About Us", href: "/about" },
   { label: "Domino", href: "/domino" },
   { label: "Tournaments", href: "/tournaments" },
-  { label: "Members", href: "#" },
+  { label: "Members", href: "/members" },
   { label: "Development", href: "/development" },
   { label: "Governance", href: "#" },
   { label: "Integrity", href: "#" },

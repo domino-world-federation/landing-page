@@ -13,6 +13,7 @@ import type {
   FeaturedEvent,
   FederationStat,
   GalleryAlbum,
+  MemberFederation,
   GalleryItem,
   HeritageMilestone,
   NewsArticle,
@@ -1212,5 +1213,58 @@ export const MOCK_GALLERY_ALBUMS: GalleryAlbum[] = [
         kind: "video",
       },
     ],
+  },
+]
+
+/**
+ * The hero figures on the members page (`404:19188`).
+ *
+ * Kept apart from `MOCK_STATS`, which the landing page's wheel reads: these are
+ * a different four about a different subject, and one list serving both would
+ * mean whichever page was edited last decided what the other showed.
+ *
+ * TODO(design): three of the four are odd as drawn. The intro two lines above
+ * says "140+ national federations" while the figure says 142; "1.420" uses a
+ * decimal point where every other number on the site uses none; and "Regional"
+ * and "National Federation" are labels missing their nouns. Reproduced as
+ * written — they are the designer's numbers to reconcile (D44) — except the
+ * separator, which is printed as the design has it rather than reformatted,
+ * since changing a figure is a different act from fixing a spelling.
+ */
+export const MOCK_MEMBERSHIP_STATS: FederationStat[] = [
+  { id: "ms1", label: "Continents", value: "6" },
+  { id: "ms2", label: "National Federation", value: "142" },
+  { id: "ms3", label: "Regional", value: "1.420" },
+  { id: "ms4", label: "Annual Events", value: "850+" },
+]
+
+/**
+ * The members directory (`405:28396`), in the order Figma lists it — which is
+ * neither alphabetical nor by country, so it is the federation's own and the
+ * page does not re-sort it.
+ *
+ * Only Mexico carries a flag: `flag-mex.png` is the one flag asset in the repo,
+ * and Figma draws every row with the same grey placeholder anyway. The rest
+ * fall back to that square until the federation supplies the artwork.
+ */
+export const MOCK_MEMBER_FEDERATIONS: MemberFederation[] = [
+  {
+    id: "mf1",
+    name: "ORADO - Olahraga Domino Indonesia",
+    country: "Indonesia",
+  },
+  { id: "mf2", name: "USA Domino Federation", country: "United States" },
+  { id: "mf3", name: "Jamaica Domino Board", country: "Jamaica" },
+  { id: "mf4", name: "China Domino Association", country: "China" },
+  {
+    id: "mf5",
+    name: "Federacion Mexicana de Domino",
+    country: "Mexico",
+    flagUrl: "/assets/global/flags/flag-mex.png",
+  },
+  {
+    id: "mf6",
+    name: "Confederação Brasileira de Dominó",
+    country: "Brazil",
   },
 ]
