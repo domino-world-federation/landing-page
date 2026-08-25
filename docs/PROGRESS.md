@@ -1567,14 +1567,24 @@ judul halaman di file yang tidak punya — jadi tidak ada yang perlu dijernihkan
 dan `SharpeningHeadline` tidak dipakai (D64).
 
 **Catatan peta.** Strip tier digambar sebagai pill kontrol dengan "Show All"
-terpilih, tapi kelima puluh tujuh penandanya **ter-bake di dalam satu SVG**
-dengan warna tier masing-masing — 5 continent, 34 national, 11 regional, 7 club,
-dihitung dari artwork-nya sendiri. Tidak ada data penanda untuk difilter (B2).
-Menyunting SVG dengan tangan akan pecah diam-diam saat desainer ekspor ulang,
-dan mengarang koordinat berarti mengarang geografi keanggotaan. Jadi D28
-berlaku: tier disajikan sebagai apa yang frame dalam desainnya sendiri namai —
-`legend` — dan "Show All" dibuang, karena kunci tidak punya yang bisa
-disembunyikan (D63).
+terpilih, tapi 56 dari 57 penandanya tidak bernama di mana pun dalam desain —
+tidak ada yang bisa dijadikan dasar filter (B2). Jadi D28 berlaku: tier
+disajikan sebagai apa yang frame dalam desainnya sendiri namai — `legend` — dan
+"Show All" dibuang, karena kunci tidak punya yang bisa disembunyikan (D63).
+
+**Penandanya ternyata bisa dijangkau, dan itu perlu diperiksa bukan diasumsikan.**
+Build pertama menganggap kelima puluh tujuhnya ter-bake dalam satu ekspor rata
+sehingga tak tersentuh. Bukan: `world-map-dots.svg` isinya **57 lingkaran dan
+nol daratan** — petanya ada di `decor-map-frame.svg`, satu path berisi 107
+subpath. Jadi tiap koordinat bisa dibaca dari artwork-nya dan dijadikan target
+klik (D69).
+
+**Dan penandanya geografis** — ini pun koreksi terhadap kesimpulan awal. Dibaca
+sebagai angka mentah, koordinatnya membentang hampir dari pojok ke pojok, yang
+terlihat seperti tebaran dekoratif. Dirender di atas petanya ternyata sama
+sekali bukan: ke-57-nya jatuh di daratan, dan yang paling ekstrem justru
+Amerika Utara bagian barat dan satu titik dekat Selandia Baru, bukan laut lepas.
+Pelajarannya: koordinat penanda tidak berarti apa-apa tanpa peta di bawahnya.
 
 **Catatan timeline.** Figma menggambarnya sebagai **dua baris bertumpuk** —
 satu baris titik-dan-garis, satu baris empat blok teks — yang sejajar hanya
@@ -1631,8 +1641,11 @@ keempat angka hero, kedua SVG peta, 4/4 tier di kunci warna, **0** kemunculan
 "Show All", 6/6 federasi, 3/3 kartu benefit, langkah 01–04, shine terpasang,
 dan pill nav "Members" menyala.
 
-- [ ] Sapuan visual 360/768/1440/1920 — terutama peta, yang callout-nya
-      disembunyikan di bawah `lg` (belum dijalankan)
+- [ ] Sapuan visual 360/768/1440/1920 — terutama peta dan callout penandanya
+      (belum dijalankan)
+- [ ] 56 nama penanda peta adalah **pembacaan posisi**, bukan data federasi —
+      placeholder seperti isi `mock/` lain; dua di batas (Pakistan bisa Iran,
+      Türkiye bisa Kaukasus)
 - [ ] Uji count-up dan entrance dengan `prefers-reduced-motion` aktif di
       browser sungguhan (belum dijalankan)
 - [ ] `decor-hero-glow.svg` disunting tangan (blur 50 → 25). Minta desainer
@@ -1776,3 +1789,7 @@ Keputusan arsitektur dicatat di **PRD §7**. Ubah di sana, bukan di sini.
 | 2026-08-25 | Format split Domino: figur satu ubin diganti dua siluet berbeda per panel (`272:15631`, `272:15635`), opacity 0.4. Logika jaga-jahitan dicabut karena sudah tidak ada jahitan yang dibelah |
 | 2026-08-25 | Body panel doubles akhirnya ditulis desainer — `TODO(design)` yang menunggunya sejak D44 dicabut (D68) |
 | 2026-08-25 | Siluet format split dipakukan ke dasar panel dan parallax-nya dicabut — offset parallax membuka celah di bawah kaki, padahal desain memakukannya ke lantai |
+| 2026-08-25 | Pin Jakarta dipaskan ke penandanya — posisinya diukur dari garis penunjuk Figma, yang mendarat 3px dari penanda national di (1171, 572) |
+| 2026-08-25 | Ke-57 penanda peta jadi data bernama dan bisa diklik; callout beranimasi dengan garis penunjuk tinggi ala Figma, panjangnya mengikuti penanda (D69) |
+| 2026-08-25 | **Bug offset peta**: persentase layer penanda dihitung terhadap blok 1920×1089, bukan terhadap frame 1719×941 — menggeser tiap penanda ~4% dan melempar Jakarta ke laut. Ditemukan pengguna |
+| 2026-08-25 | Koreksi: penanda peta **geografis**, bukan tebaran dekoratif — kesimpulan awal diambil dari koordinat mentah tanpa peta di bawahnya |

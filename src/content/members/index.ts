@@ -27,6 +27,8 @@ export const MEMBERS_COPY = {
   mapPinTier: "National Members",
   /** Introduces the colour key under the map. */
   mapKeyLabel: "Membership tiers",
+  /** Names the group of marker buttons on the map for assistive tech. */
+  markersLabel: "Member locations",
 
   directoryHeading: "National Federation Members",
   /** `405:28519`. Leads to the full directory, which does not exist yet (B2),
