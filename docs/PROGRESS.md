@@ -1088,19 +1088,38 @@ sudah ditandai sebagai tebakan.
 |---|---|---|---|
 | Header | `119:4809` | `[x]` | Cermin `AboutHeader`; kolom kanan bertingkat dua (subtitle + intro), bukan satu paragraf. Judul menajam per huruf lewat `SharpeningHeadline` |
 | Tile band | `131:4824` | `[x]` | Cermin `AuthorityBand`: pembungkus tinggi terkunci, layer `-inset-y-[6%]`, `priority` |
-| Format split | `207:15563` | `[x]` | Perak/emas dengan **satu figur membelah jahitannya**. Judul panel doubles dibetulkan, body dibiarkan duplikat (D44) |
+| Format split | `207:15563` | `[x]` | Perak/emas. **Dua siluet berbeda**, bukan lagi satu figur membelah jahitan; body doubles kini punya teks sendiri (D68) |
 | The Rulebook | `277:15676` | `[x]` | **Baru** — blok yang R12 tunggu. Kartu kaca + kutipan ber-rule kiri 4px. Strip tab dirender dari data: satu set aturan punya copy, jadi strip-nya belum digambar (D67) |
 | Referee Guidelines | `359:15793` | `[x]` | **Dibangun ulang dari hi-fi.** Kartu gelap 560×522 memegang rulebook + `DownloadPill` melebar; empat tugas dua-dua; dua regulasi jadi tombol kaca |
 | FAQ | `361:16085` | `[x]` | **Wadahnya berubah**: kartu putih di atas gradien, bukan section putih penuh. Dua dari tiga jawaban masih placeholder (B2) |
 
-**Jahitan format split — bagian yang paling mudah salah.** Kedua panel menaruh
-`imageRef` yang **sama** (`8c88e9f6`), kiri di `x625` dan kanan di `x−255`; dalam
-koordinat section keduanya jatuh di 705. Jadi itu satu figur, masing-masing panel
-memotong bagiannya. Offsetnya dinyatakan sebagai persen **lebar panel**
-(`71.02%` vs `−28.98%`, selisih persis 100%) bukan px, supaya jahitannya tetap
-bertemu di bawah 1920 — dan kedua separuh berbagi `speed` yang sama, sehingga
-scroll tidak pernah merobeknya. Di bawah `lg` figurnya dilepas: jahitan yang jadi
-alasannya sudah tidak ada.
+**Format split — gambarnya berganti, dan seluruh alasan lamanya gugur.** Dulu
+kedua panel menaruh `imageRef` yang **sama** (`8c88e9f6`): satu ubin bergambar
+globe membelah jahitan, masing-masing panel memotong bagiannya, dan komponen ini
+bersusah payah menjaga kedua separuhnya tidak sobek — satu `speed` parallax
+bersama, offset dinyatakan sebagai persen lebar panel supaya jaraknya tetap
+persis satu panel di tiap lebar.
+
+**Tidak satu pun dari itu masih diperlukan.** File terbaru menaruh foto
+**berbeda** di tiap panel (`272:15631` dan `272:15635`): siluet satu pemain di
+sisi singles, sepasang saling membelakangi di sisi doubles, keduanya opacity
+0.4. Tidak ada jahitan yang perlu dijaga, dan gambarnya kini **menyampaikan
+argumen section-nya** alih-alih sekadar menghias — satu lawan dua, persis yang
+dikatakan kedua panel.
+
+Keduanya tetap berbagi `speed` parallax. Bukan demi jahitan yang sudah tidak
+ada, melainkan karena dua figur yang mengapit satu pertemuan dan melayang di
+laju berbeda membuat seluruh bloknya terlihat longgar. Di bawah `lg` keduanya
+dilepas: itu latar 40% di belakang copy, dan di lebar ponsel copy-nya butuh
+seluruh panel.
+
+**Cacat body doubles ditutup desainer.** Dulu heading-nya "SINGLES FORMAT" dan
+body-nya duplikat byte-per-byte dari panel singles; heading dibetulkan di sini
+(D40) tapi body-nya **sengaja dibiarkan** dan ditandai `TODO(design)`, karena
+menggantinya berarti mengarang klaim soal cara bermain doubles. File terbaru
+menulis keduanya dengan benar, dan body barunya persis yang sudah ada di
+wireframe sejak awal. Penandanya dicabut — argumen kecil untuk membiarkan cacat
+terlihat alih-alih diam-diam ditambal.
 
 **Tiga promosi keluar dari folder halaman** (D43) — konsekuensi RULES §2/D32 yang
 baru bisa ketahuan begitu ada halaman kedua yang memakainya:
@@ -1750,3 +1769,5 @@ Keputusan arsitektur dicatat di **PRD §7**. Ubah di sana, bukan di sini.
 | 2026-08-25 | Halaman Domino dibangun ulang dari file "Updated": R12 **ditutup** — blok The Rulebook akhirnya digambar dan dibangun (D67) |
 | 2026-08-25 | Referee Guidelines dan FAQ Domino diturunkan ulang dari hi-fi; copy dari wireframe ternyata tidak perlu diubah satu kata pun |
 | 2026-08-25 | `DownloadPill` menerima `className` — pemakai ketiga menggambarnya melebar di kaki kartu 560px, bukan kotak 160px |
+| 2026-08-25 | Format split Domino: figur satu ubin diganti dua siluet berbeda per panel (`272:15631`, `272:15635`), opacity 0.4. Logika jaga-jahitan dicabut karena sudah tidak ada jahitan yang dibelah |
+| 2026-08-25 | Body panel doubles akhirnya ditulis desainer — `TODO(design)` yang menunggunya sejak D44 dicabut (D68) |

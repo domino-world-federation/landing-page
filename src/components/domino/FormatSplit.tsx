@@ -14,17 +14,24 @@ const SETTLE = DURATION * 1.4
  * Two panels butted together into one rounded rectangle: silver on the left
  * (white grading to `--color-surface-silver`), gold on the right, radii only on
  * the outer corners so the pair reads as a single object cut down the middle.
- * That cut is the section's whole argument — one game, two formats — and the
- * tile lying across it is what stops the two halves reading as separate cards.
+ * That cut is the section's whole argument — one game, two formats.
  *
- * **The halves must travel together.** Both figures sit in a `ParallaxLayer` at
- * the same speed, so they translate by the same amount on every frame and the
- * seam never opens. Giving them different speeds, or moving only one, would tear
- * the figure in half the moment the page scrolled.
+ * **The figures used to be one picture and are now two.** The old file laid a
+ * single globe-engraved tile across the seam, each panel clipping its half, and
+ * this component went to some trouble to keep those halves from tearing apart:
+ * one shared parallax speed, offsets stated as percentages of a panel so they
+ * stayed exactly one panel apart at every width. None of that is needed any
+ * more. The updated file (`272:15631` and `272:15635`) puts a different
+ * photograph in each panel — a lone silhouette against the singles copy, a pair
+ * back to back against the doubles copy — so there is no seam to keep shut, and
+ * the pictures now make the section's point instead of merely decorating it.
  *
- * Below `lg` the panels stack and the figure is dropped entirely. The seam it
- * exists to cross is gone at that point, and half a tile floating on a gold
- * block with no counterpart is worse than no tile.
+ * They still share a parallax speed. Not to protect a seam that no longer
+ * exists, but because two figures flanking a join that drift at different rates
+ * make the whole block look loose.
+ *
+ * Below `lg` the panels stack and both figures are dropped. They are 40%-opacity
+ * backdrops behind the copy; at phone widths that copy needs the whole panel.
  *
  * Server Component; the layers and entrances are the only client parts.
  */
@@ -36,13 +43,6 @@ export function FormatSplit() {
       aria-labelledby="format-singles-heading"
       className="px-5 py-10 md:px-10 lg:px-20 lg:py-[3.13vw]"
     >
-      {/* The tile is the section's one picture and carries an `alt` — but
-          `SofteningImage` renders TWO copies of its image and there are two
-          halves besides, so an `alt` on the images would be announced four
-          times. Both layers are `decorative`, which hides all of them, and this
-          line says the thing once. The same fix `Vision` uses. */}
-      <span className="sr-only">{FORMATS_ALT.tile}</span>
-
       {/* 800 tall in Figma minus its 60px of vertical padding; 35.42vw is
           680/1920. The floor keeps the panels from crushing their three
           statistics rows together on a narrow desktop — the same reason S4 and
@@ -53,13 +53,27 @@ export function FormatSplit() {
           align="start"
           headingId="format-singles-heading"
           className="rounded-t-[var(--radius-card)] bg-[linear-gradient(180deg,var(--color-surface-light)_0%,var(--color-surface-silver)_100%)] lg:flex-1 lg:rounded-tr-none lg:rounded-bl-[var(--radius-card)]"
-          figure={<Figure />}
+          figure={
+            <Figure
+              src="/assets/domino/format-singles-silhouette.png"
+              alt={FORMATS_ALT.singles}
+              // 514/880, 80/680, 376/880, 600/680.
+              className="top-[11.76%] left-[58.41%] h-[88.24%] w-[42.73%]"
+            />
+          }
         />
         <FormatPanel
           format={doubles}
           align="end"
           className="rounded-b-[var(--radius-card)] bg-[var(--color-gold)] lg:flex-1 lg:rounded-tr-[var(--radius-card)] lg:rounded-bl-none"
-          figure={<Figure mirrored />}
+          figure={
+            <Figure
+              src="/assets/domino/format-doubles-silhouette.png"
+              alt={FORMATS_ALT.doubles}
+              // −25/880, 80/680, 405/880, 600/680.
+              className="top-[11.76%] left-[-2.84%] h-[88.24%] w-[46.02%]"
+            />
+          }
         />
       </div>
     </section>
@@ -67,47 +81,56 @@ export function FormatSplit() {
 }
 
 /**
- * One panel's share of the tile.
+ * One panel's figure — `272:15631` on the silver side, `272:15635` on the gold.
  *
- * **The numbers are fractions of a panel, and that is what keeps the seam
- * shut.** The section is 1920 padded 80 each side, so the panels are 880
- * apiece. Figma places the tile at x625 inside the silver panel and at x−255
- * inside the gold one — the same point in section coordinates: 80 + 625 = 705,
- * and 960 − 255 = 705. It is ONE figure lying across the seam, each panel
- * clipping its own share, not two pictures.
+ * **The numbers are fractions of a panel.** The section is 1920 padded 80 each
+ * side, so each panel is 880 × 680. Figma puts the singles silhouette at
+ * x514 y80 sized 376 × 600, and the doubles pair at x−25 y80 sized 405 × 600 —
+ * the second hanging off its panel's left edge so the two lean toward the join
+ * from either side. Stated as percentages they hold that relationship as the
+ * panels shrink; in pixels they would drift the moment the window left 1920.
  *
- * So the two halves are displaced by exactly one panel width — 625/880 =
- * 71.02% against −255/880 = −28.98%, a difference of 100% — and stated as
- * percentages they stay one panel apart as the panels shrink. In pixels they
- * would drift the moment the window left 1920 and the tile would tear in two.
- * 510/880 is the width; 80 and 1006 against the panel's 680 of inner height
- * give the vertical pair.
+ * Figma stretches both to their boxes (`objectFit: fill`) rather than covering,
+ * and the exports match those aspect ratios to three decimals, so `object-fill`
+ * distorts nothing.
  *
- * `mirrored` is the gold half.
+ * The 40% opacity is Figma's. It is what keeps a full-height photograph behind
+ * a paragraph readable, so it belongs on the layer rather than being something
+ * the image was baked with — the asset is a clean silhouette and stays reusable.
  *
  * `max-lg:hidden` rather than a conditional render — the markup is identical on
  * both sides of the breakpoint, so nothing here can disagree between server and
  * client (RULES §12).
  */
-function Figure({ mirrored = false }: { mirrored?: boolean }) {
+function Figure({
+  src,
+  alt,
+  className,
+}: {
+  src: string
+  alt: string
+  className: string
+}) {
   return (
     <ParallaxLayer
       speed={-10}
       decorative
-      className={cn(
-        "absolute top-[11.76%] h-[147.94%] w-[57.95%] max-lg:hidden",
-        mirrored ? "left-[-28.98%]" : "left-[71.02%]",
-      )}
+      className={cn("absolute opacity-40 max-lg:hidden", className)}
     >
+      {/* `SofteningImage` renders two stacked copies of its image, so an `alt`
+          on it would be announced twice. The layer is `decorative`, which hides
+          both, and the line below says the thing once. The same fix `Vision`
+          uses. */}
+      <span className="sr-only">{alt}</span>
       <SofteningImage
-        src="/assets/global/globe-tile.png"
+        src={src}
         alt=""
         from="10px"
         to="0px"
         duration={SETTLE}
         fill
-        sizes="(min-width: 1024px) 27vw, 0px"
-        imageClassName="object-contain object-top"
+        sizes="(min-width: 1024px) 24vw, 0px"
+        imageClassName="object-fill"
       />
     </ParallaxLayer>
   )
