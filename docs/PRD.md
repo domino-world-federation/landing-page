@@ -363,9 +363,18 @@ menamai acara yang sama dengan dua tahun berbeda (D61).
 ### File desain berganti — 2026-08-25
 
 Atas permintaan pengguna, acuan desain pindah dari `1Q8Ud3Iq0dSR0KXymurySI`
-("Copy") ke **`xdogWlTYLSqwh2fBTmxPJi`** ("Updated"). **Semua node yang tercatat
-di atas mengacu ke file lama** dan tidak diverifikasi ulang — halaman Members ke
-bawah mengacu ke file baru.
+("Copy") ke file yang lebih baru. **Semua node yang tercatat di atas mengacu ke
+file lama** dan tidak diverifikasi ulang — halaman Members ke bawah mengacu ke
+file baru.
+
+**Ada dua fileKey untuk desain baru yang sama.** Pengguna memberi
+`xdogWlTYLSqwh2fBTmxPJi` ("Updated") lebih dulu, lalu
+**`oY2v2wq359rIRK4KaItmxc`** (tanpa akhiran) sebagai "ini design nya".
+Keduanya diperiksa dan **identik**: kanvas `Finalization` + `Playground` yang
+sama, dua belas section dengan node id dan dimensi yang sama persis, dan layar
+Domino yang sama sampai ke label tabnya. Jadi node yang tercatat berlaku di
+keduanya. **Yang tanpa akhiran dipakai sebagai acuan** karena itu yang terakhir
+ditunjuk pengguna; `xdogWlTYLSqwh2fBTmxPJi` adalah salinan yang sama isinya.
 
 File baru jauh lebih rapi: tiap halaman jadi SECTION bernama di kanvas
 `Finalization`, jadi tidak perlu lagi menebak `screen` tanpa nama seperti yang
