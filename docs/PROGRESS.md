@@ -14,7 +14,7 @@ Legenda: `[ ]` belum · `[~]` berjalan · `[x]` selesai · `[!]` terblokir
 | 1 — Scaffold project | `[x]` | Selesai — build, lint, typecheck lolos |
 | 2 — Slicing landing page | `[~]` | 14/14 section selesai; audit penamaan & struktur beres; sisa checklist "setelah semua section" |
 | 3 — Integrasi API | `[ ]` | Menunggu backend |
-| 4 — Portal | `[~]` | Sembilan halaman selesai: About (11 blok), Domino (5/6, R12), Development (9), News (6, R13), Terms, Contact (tanpa desain, R14), Gallery, Privacy, All News. Portal sendiri belum |
+| 4 — Portal | `[~]` | Dua belas halaman selesai: About (11 blok), Domino (5/6, R12), Development (9), News (6, R13), All News, Terms, Privacy, Contact (R14), Gallery, FAQ, Tournaments, Members (6). Portal sendiri belum |
 
 ---
 
@@ -934,14 +934,17 @@ Terblokir B2. Section bergantung API: S3, S5, S6, S8, S10.
 
 ## Fase 4 — Portal `[~]`
 
-Cakupan di PRD §5. Portal sendiri belum dimulai — yang berjalan sembilan
+Cakupan di PRD §5. Portal sendiri belum dimulai — yang berjalan dua belas
 halaman: About (didahulukan karena statis seluruhnya kecuali satu daftar),
-Domino, Development, News, Terms & Conditions, Contact, Gallery, Privacy
-Policy, dan All News. Statis semua kecuali News, Gallery dan All News, yang
-membaca `searchParams`.
+Domino, Development, News, All News, Terms & Conditions, Privacy Policy,
+Contact, Gallery, FAQ, Tournaments, dan Members. Dinamis (`ƒ`) yang membaca
+`searchParams`: News, All News, Gallery, FAQ.
 
-Tersisa satu layar yang sudah digambar dan belum dibangun: **FAQ**
-(`173:9459`), di atas cangkang side-tab yang sama — jadi tinggal isinya.
+**Acuan desain berganti 2026-08-25** ke file "Updated"
+(`xdogWlTYLSqwh2fBTmxPJi`) atas permintaan pengguna. Node yang tercatat di
+halaman-halaman di bawah **sampai Gallery mengacu file lama**; Members ke bawah
+mengacu file baru (PRD D62). File baru menata tiap halaman sebagai SECTION
+bernama, jadi penelusuran header yang dipaksa D33 tidak diperlukan lagi.
 
 ### Halaman About — tahap 1 `[x]` — 7/7 blok
 
@@ -1506,6 +1509,104 @@ kini menunjuk `/gallery`. Footer "Privacy" → `/privacy`.
 - [ ] Sapuan visual 360/768/1440/1920 untuk kedua halaman (belum dijalankan)
 - [ ] FAQ (`173:9459`) sudah digambar di cangkang yang sama, belum dibangun
 
+### Halaman Members `[x]` — 6/6 blok
+
+Halaman pertama dari file desain baru, screen `386:18480` (PRD §5). Item nav
+"Members" kini rute sungguhan — tersisa dua placeholder `#`, Governance dan
+Integrity.
+
+| Blok | Node | Status | Catatan |
+|---|---|---|---|
+| Hero | `401:19063` | `[x]` | **Bukan** header band — hero 1080px penuh (D64). `GoldCta` dipakai ulang apa adanya |
+| Peta keanggotaan | `404:28159` | `[x]` | Peta statis + callout Jakarta; strip tier jadi **legend, bukan filter** (D63) |
+| Direktori | `405:28394` | `[x]` | 6 federasi lewat `getMemberFederations(6)`; jumlahnya dinyatakan di permintaan (D45) |
+| Membership Benefits | `405:28521` | `[x]` | 3 kartu glass 360px, ikon 56px di ubin emas 72px |
+| Application process | `406:453` | `[x]` | Timeline 4 langkah; garis putus dilipat ke dalam tiap langkah, bukan baris terpisah |
+| CTA penutup | `406:479` | `[x]` | Bebas 126 + `SilverCta`, berdiri di atas shine |
+
+**Catatan hero.** Tujuh halaman dalam sebelumnya membuka dengan band yang sama
+dan konsistensi itu dijaga keras — tapi di sini desain membuka dengan hero
+1080px, dan alasannya bisa disebut: band adalah pembuka untuk halaman yang
+berupa dokumen atau arsip, sedangkan halaman ini sebuah ajakan. Yang menguatkan
+pembacaan itu, Figma **tidak** memberi judul ini `blur(7.5px)` — satu-satunya
+judul halaman di file yang tidak punya — jadi tidak ada yang perlu dijernihkan
+dan `SharpeningHeadline` tidak dipakai (D64).
+
+**Catatan peta.** Strip tier digambar sebagai pill kontrol dengan "Show All"
+terpilih, tapi kelima puluh tujuh penandanya **ter-bake di dalam satu SVG**
+dengan warna tier masing-masing — 5 continent, 34 national, 11 regional, 7 club,
+dihitung dari artwork-nya sendiri. Tidak ada data penanda untuk difilter (B2).
+Menyunting SVG dengan tangan akan pecah diam-diam saat desainer ekspor ulang,
+dan mengarang koordinat berarti mengarang geografi keanggotaan. Jadi D28
+berlaku: tier disajikan sebagai apa yang frame dalam desainnya sendiri namai —
+`legend` — dan "Show All" dibuang, karena kunci tidak punya yang bisa
+disembunyikan (D63).
+
+**Catatan timeline.** Figma menggambarnya sebagai **dua baris bertumpuk** —
+satu baris titik-dan-garis, satu baris empat blok teks — yang sejajar hanya
+selama tiap blok setinggi yang diberi desain. Itu berhenti benar di tiap lebar
+di bawah 1920. Jadi garisnya dilipat ke dalam tiap langkah: satu daftar, satu
+item per langkah, penanda di atas copy-nya sendiri, dan garis putus digambar
+sebagai latar baris penanda alih-alih elemen saudara. Koreksi yang sama persis
+yang dibutuhkan tangga sertifikasi halaman Development.
+
+**Gerak.** Tiga hal, diminta pengguna setelah blok terpasang. Statistik hero
+menghitung naik dari nol saat masuk viewport lewat primitif baru
+`motion/CountUp` — server tetap merender angka finalnya supaya hidrasi cocok
+dan pembaca tanpa JS melihat angka sungguhan, dan `prefers-reduced-motion`
+tidak pernah mereset ke nol (D66). Peta dan callout-nya masuk lewat `Reveal`
+dengan callout terlambat dua langkah, jadi ia terbaca mendarat **di atas** peta
+yang sudah ada; hanya marker callout yang terus bergerak, lewat
+`motion-safe:animate-pulse` — CSS, jadi tidak ada markup yang berbeda antara
+server dan klien. Ketiga kartu benefit masuk berurutan dengan `STAGGER` yang
+sama dipakai landing page, travel 24px saja: kartu yang terbang dari jauh
+menghabiskan entrance-nya untuk memamerkan entrance. `Reveal` diletakkan **di
+dalam** tiap `<li>`, bukan membungkusnya — ia merender `div`, dan `div` di
+antara `<ul>` dan `<li>` membuat daftarnya berhenti diumumkan sebagai "3 item".
+
+**Glow hero disunting tangan.** Setelah proporsinya benar, busurnya masih
+terbaca sebagai kabut cokelat, bukan busur emas terang seperti di kanvas.
+Penyebabnya bukan penempatan: Figma mengekspor layer blur-nya sebagai
+`stdDeviation="50"`, dan hasilnya jauh lebih kabur daripada yang digambar. Nilai
+di berkas diturunkan ke **25**, dicocokkan terhadap screenshot halaman yang
+berjalan. **Berlaku untuk aset ini saja** — blur ekspor lain di proyek ini
+(shine 215/50/55, glow ikon 4) tampil benar apa adanya, jadi ini bukan aturan
+umum. Ekspor ulang dari Figma akan membatalkannya; ada komentar XML di dalam
+SVG-nya yang menyatakan itu.
+
+**Proporsi hero diukur, bukan dialirkan** (D65). Figma menaruh keempat
+bagiannya absolut; kolom ber-gap rata menengahkan semuanya dan menaruh glow di
+belakang elemen yang salah. Jaraknya kini `vw` terhadap kanvas 1920. Yang tidak
+kelihatan sampai diukur: layer glow dilaporkan 1920×435 tapi **berkasnya keluar
+2120×635** — blur 50px meluber 100px ke tiap sisi, jadi memposisikannya dengan
+angka node berarti 100px terlalu rendah dan 200px terlalu sempit.
+
+**Font yang tidak dimuat.** Baris direktori diset DM Sans di Figma dan kartu
+Need Support diset Inter Display — keduanya tidak dimuat proyek ini
+(DESIGN-TOKENS §1). Keduanya jatuh ke Inter pada ukuran yang sama.
+
+TODO(design) di `mock/index.ts`: tiga dari empat angka hero janggal seperti
+digambar — intro menyebut "140+" sementara angkanya 142, "1.420" memakai titik
+desimal yang tidak dipakai angka lain di situs, dan "Regional" serta "National
+Federation" adalah label yang kehilangan kata bendanya. Diturunkan apa adanya
+(D44).
+
+Verifikasi: `bunx tsc --noEmit` bersih, `bunx eslint src` bersih, `bunx next
+build` lolos — `/members` prerender statis. HTTP 200; terhitung di HTML:
+keempat angka hero, kedua SVG peta, 4/4 tier di kunci warna, **0** kemunculan
+"Show All", 6/6 federasi, 3/3 kartu benefit, langkah 01–04, shine terpasang,
+dan pill nav "Members" menyala.
+
+- [ ] Sapuan visual 360/768/1440/1920 — terutama peta, yang callout-nya
+      disembunyikan di bawah `lg` (belum dijalankan)
+- [ ] Uji count-up dan entrance dengan `prefers-reduced-motion` aktif di
+      browser sungguhan (belum dijalankan)
+- [ ] `decor-hero-glow.svg` disunting tangan (blur 50 → 25). Minta desainer
+      mengekspor ulang dengan blur yang benar supaya suntingannya bisa dicabut
+- [ ] Lima bendera federasi belum ada; hanya `flag-mex.png` yang tersedia,
+      sisanya memakai kotak placeholder seperti desain
+- [ ] Tombol "View all" direktori masih `#` — B2
+
 ## Catatan keputusan
 
 Keputusan arsitektur dicatat di **PRD §7**. Ubah di sana, bukan di sini.
@@ -1627,3 +1728,11 @@ Keputusan arsitektur dicatat di **PRD §7**. Ubah di sana, bukan di sini.
 | 2026-08-24 | `useLinkStatus` dicoba lebih dulu lalu dibuang: ia hanya menyala saat tujuannya benar-benar membuat menunggu, sedangkan delapan dari tiga belas rute sudah pre-render dan sisanya prefetch — jadi pada navigasi yang justru dikeluhkan ia tidak pernah menyala. Klik adalah kejadian yang selalu ada |
 | 2026-08-24 | Konfigurasi deploy ditambahkan: `ecosystem.config.js` (PM2, dijalankan Node bukan Bun karena R6/D9, terikat loopback). Config nginx-nya **sengaja di luar repo** (`/deploy/` di-gitignore) — ia hidup di server. Aplikasi mendengar di **3035**. Diuji dengan PM2 sungguhan di port itu — tiga rute 200, dan permintaan dari IP LAN ditolak seperti seharusnya |
 | 2026-08-24 | nginx: `proxy_buffering off` supaya fallback `app/loading.tsx` benar-benar ter-stream, dan `X-Robots-Tag: noindex` selama R11/R13/R16 masih terbuka — URL publik yang terindeks sama dengan publikasi |
+| 2026-08-25 | Acuan desain pindah ke file "Updated" (`xdogWlTYLSqwh2fBTmxPJi`). Node halaman lama tetap mengacu file lama dan tidak diverifikasi ulang; batasnya dinyatakan di PRD §5 (D62) |
+| 2026-08-25 | Halaman Members selesai 6/6 blok — halaman pertama dari file baru. Nav "Members" jadi rute sungguhan |
+| 2026-08-25 | Kunci warna peta jadi legend, bukan filter: 57 penandanya ter-bake di satu SVG, jadi tidak ada yang bisa difilter (D63) |
+| 2026-08-25 | R14 diperbarui — file baru memuat section `Contact Us` (`361:16242`); `/contact` perlu dibandingkan dengannya, belum bisa ditutup |
+| 2026-08-25 | Hero Members diukur ulang ke posisi absolut desain; glow diposisikan terhadap kotak ekspor 2120×635, bukan kotak node 1920×435 (D65) |
+| 2026-08-25 | Primitif `motion/CountUp` — angka menghitung naik dari nol saat masuk viewport, server tetap merender angka final (D66). Dipakai empat statistik hero Members |
+| 2026-08-25 | Entrance `Reveal` untuk peta + callout dan stagger untuk tiga kartu benefit; marker callout berdenyut lewat `motion-safe` |
+| 2026-08-25 | Glow hero Members: blur ekspor Figma diturunkan 50 → 25 di berkas SVG setelah dibandingkan dengan screenshot halaman. Ditandai di dalam SVG dan di komponennya |
