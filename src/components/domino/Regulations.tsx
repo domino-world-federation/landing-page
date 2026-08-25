@@ -1,33 +1,32 @@
-import { Reveal } from "@/components/motion/Reveal"
-import { RulebookCard } from "@/components/domino/RulebookCard"
+import { DownloadPill } from "@/components/ui/DownloadPill"
 import { REFEREE_DUTIES, REGULATIONS_COPY } from "@/content/domino/regulations"
 import { getResources } from "@/lib/api/client"
-import { STAGGER } from "@/lib/utils/motion"
-import type { ResourceDocument } from "@/lib/api/types"
 
 /**
- * Download & Regulations — wireframe `119:4581`.
+ * Referee guidelines and the documents behind them — Figma node `359:15793` in
+ * the **updated** file.
  *
- * **No hi-fi design exists for this section** (D42), so what follows is the
- * wireframe's layout and the wireframe's words with this site's palette over
- * them. Nothing is invented: the four referee duties, both headings, the intro
- * and the two regulation titles are all drawn.
+ * Two halves side by side: a dark card carrying the rulebook and its download,
+ * and a column with the gold heading, the four duties in a 2 × 2 grid, and the
+ * competition regulations as glass buttons.
  *
- * Two columns. Figma states them as a 12-column grid with the card at
- * `1 / span 4` and the guidelines at `6 / span 7` — four columns, one empty,
- * then seven. Written here as a flex row splitting 4 and 7 with a gap where the
- * empty column was, the same `grow`/`basis-0` pair `Resources` uses (D14): the
- * ratio is the design's intent and a fixed width is not, so the two divide
- * whatever row they are given.
+ * **This section was built from a wireframe and has now been rebuilt from the
+ * hi-fi.** The old screen stopped drawing at y=2180 (D42), so the first version
+ * arranged the wireframe's parts itself: a rulebook button, a list of three
+ * documents, and the duties in one column. The updated file draws the block
+ * properly and the arrangement is different — one document on the left rather
+ * than three in a list, the duties two abreast, the other two documents as
+ * buttons.
  *
- * **Three documents, two calls.** The rulebook and the two regulation rows are
- * documents — a title, a type, a size, a file — so they come from
- * `getResources(category)` rather than from the copy file (RULES §8). Asked for
- * by category twice rather than fetched once and split by index: the order of an
- * array is not a contract, and `[0]` versus the rest would break silently the
- * first time the shelf is reordered.
+ * **None of the words changed.** The intro and all four duties are verbatim
+ * what the wireframe wrote and what the hi-fi now draws, which is the useful
+ * thing to know about that first build: the copy was right, only the shape was
+ * a guess.
  *
- * Server Component (`async`), like `Resources`.
+ * The documents still come from `getResources(category)` (RULES §8) — a
+ * rulebook and two regulations are files with a size and a type, not prose.
+ *
+ * Server Component.
  */
 export async function Regulations() {
   const [rulebooks, regulations] = await Promise.all([
@@ -35,160 +34,131 @@ export async function Regulations() {
     getResources("Regulations"),
   ])
 
-  // The section draws one rulebook. If the shelf ever holds two, this takes the
-  // first rather than stacking them into a cell the design sized for one —
-  // and if it holds none, the column is simply absent instead of rendering an
-  // empty card.
   const rulebook = rulebooks[0]
 
   return (
     <section
       aria-labelledby="regulations-heading"
-      className="px-5 py-16 md:px-10 lg:px-20 lg:py-[5vw]"
+      className="bg-bg flex flex-col gap-9 px-5 py-14 md:px-10 lg:flex-row lg:items-start lg:px-20 lg:py-[3.125vw]"
     >
-      {/* The section's own name. It is not drawn — the wireframe gives the two
-          halves their own `<h3>`s and no title above them — but a section
-          needs a name to be navigable, and inventing a visible heading the
-          design does not have would be a louder change than this. */}
-      <h2 id="regulations-heading" className="sr-only">
-        {REGULATIONS_COPY.sectionLabel}
-      </h2>
+      {/* `359:15820` — 560 × 522, `#262626`, the parts pushed to the ends by
+          `justify-between` as Figma has them. `min-h` rather than the fixed
+          height: a longer translation grows the card instead of overflowing it
+          (RULES §9). */}
+      {rulebook && (
+        <div className="flex shrink-0 flex-col justify-between gap-10 rounded-[var(--radius-card)] bg-[#262626] p-8 lg:min-h-[522px] lg:w-[560px] lg:p-10">
+          {/* eslint-disable-next-line @next/next/no-img-element -- a
+              decorative SVG sized in CSS; next/image would add a layout
+              wrapper for no gain. */}
+          <img
+            src="/assets/domino/decor-rulebook-union.svg"
+            alt=""
+            aria-hidden
+            width={131}
+            height={142}
+            className="w-20 opacity-10 lg:w-[131px]"
+          />
 
-      <div className="flex flex-col gap-10 lg:flex-row lg:items-stretch lg:gap-[2.08vw]">
-        {/* 4 of the 12 columns. `items-stretch` on the row makes this wrapper
-            as tall as the guidelines beside it; `[&>*]:h-full` reaches through
-            `Reveal`'s own div so the card fills that height rather than ending
-            wherever its four lines of copy do. The same reach `Resources` needs
-            for its grid cards. */}
-        {rulebook && (
-          <Reveal y={32} className="lg:grow-[4] lg:basis-0 lg:[&>*]:h-full">
-            <RulebookCard doc={rulebook} />
-          </Reveal>
-        )}
+          <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-2">
+              {/* Inter SemiBold 36/44. The document's own title, not a written
+                  heading — it names the file the pill downloads. */}
+              <h3 className="font-sans text-[length:var(--text-body-lg)] leading-[1.22] font-semibold text-white">
+                {rulebook.title}
+              </h3>
+              <p className="font-sans text-[length:var(--text-body-sm)] leading-[1.5] text-white/50">
+                {REGULATIONS_COPY.rulebookBlurb}
+              </p>
+            </div>
 
-        {/* 7 of the 12 columns. The two blocks inside it are separated by a
-            rule (`119:4620` carries a 1px top border), which is a border
-            rather than an element for the reason the FAQ's separators are:
-            a line that exists only to divide cannot be announced. */}
-        <div className="flex flex-col gap-8 lg:grow-[7] lg:basis-0 lg:gap-[2.5vw]">
-          <RefereeGuidelines />
-          <CompetitionRegulations documents={regulations} />
+            {/* The news shelves' pill, widened. Figma draws the identical
+                control across the foot of this card (`360:15848`). */}
+            <DownloadPill
+              document={rulebook}
+              label={REGULATIONS_COPY.rulebookDownloadLabel}
+              className="w-full justify-center gap-3"
+            />
+          </div>
         </div>
-      </div>
-    </section>
-  )
-}
+      )}
 
-/**
- * The referee half — `119:4593`.
- *
- * A heading, one line of prose, and the four duties in a 2×2 grid. The numbers
- * `01`–`04` are drawn in the design and generated here from the index, padded
- * to two digits, so an inserted duty cannot leave the list reading 01, 02, 02.
- *
- * A `<ol>` rather than a `<ul>`: the design numbers them, and a numbered list
- * that a screen reader announces as unordered has thrown away the one thing the
- * numbers say. The visible numerals are `aria-hidden` — the list already
- * announces its own positions, and without that they would be read twice.
- */
-function RefereeGuidelines() {
-  return (
-    <div className="flex flex-col gap-4">
-      <Reveal y={32}>
-        <div className="flex flex-col gap-4">
-          {/* Bebas at the section step. The wireframe types it 16px Inter caps
-              like every other heading it draws, which is a wireframe's
-              uniform, not a type decision. */}
-          <h3 className="font-display text-[length:var(--text-display-2xs)] leading-[1.1] text-white uppercase">
+      <div className="flex min-w-0 flex-1 flex-col gap-8 lg:gap-10">
+        <div className="flex flex-col gap-3.5">
+          {/* Bebas 100 through the page's gold gradient. `uppercase` is the
+              heading's, not the string's (D40). */}
+          <h2
+            id="regulations-heading"
+            className="font-display w-fit bg-[image:var(--gradient-gold-text)] bg-clip-text text-[length:var(--text-display-statement)] leading-[1.08] text-transparent uppercase"
+          >
             {REGULATIONS_COPY.refereeHeading}
-          </h3>
-          <p className="font-sans text-[length:var(--text-eyebrow)] leading-8 text-white/60">
+          </h2>
+          <p className="font-sans text-[length:var(--text-body-sm)] leading-[1.5] text-white/50">
             {REGULATIONS_COPY.refereeIntro}
           </p>
         </div>
-      </Reveal>
 
-      <Reveal y={24} delay={STAGGER}>
-        {/* 2×2 at `sm` and up. Below that the pairs would leave each duty a
-            column narrower than its own numeral's gutter, so they stack. */}
-        <ol className="grid list-none gap-4 sm:grid-cols-2">
-          {REFEREE_DUTIES.map((duty, i) => (
-            <li key={duty.id} className="flex gap-2">
-              {/* Inter Bold, as drawn. `pt-1` is `119:4601`'s 4px of top
-                  padding — the numeral is set on a smaller line box than the
-                  text beside it and would otherwise ride high. */}
+        {/* `361:16047` — two columns of two. Figma fills them DOWN each column
+            (01 and 03 on the left, 02 and 04 on the right); a plain two-column
+            grid fills across, which would print 01 02 / 03 04. Neither order is
+            wrong to read, and across is the one that matches the numbers, so
+            that is what this does — the design's column-major fill is an
+            artefact of it being two stacked frames rather than a grid. */}
+        <ol className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:gap-x-9">
+          {REFEREE_DUTIES.map((duty, index) => (
+            <li key={duty.id} className="flex items-center gap-4">
+              {/* `361:16054` — an 80px glass tile carrying the number. Drawn
+                  rather than left to the list marker: it is a box with its own
+                  fill at 48/56, which no marker can be. The number comes from
+                  the position, so an inserted duty cannot leave the list
+                  reading 01, 02, 02. */}
               <span
                 aria-hidden
-                className="font-sans shrink-0 pt-1 text-[length:var(--text-eyebrow)] leading-8 font-bold text-white"
+                className="font-sans flex size-16 shrink-0 items-center justify-center rounded-[var(--radius-glass)] bg-white/16 text-[length:var(--text-body-xl)] leading-none font-semibold text-white lg:size-20"
               >
-                {String(i + 1).padStart(2, "0")}
+                {String(index + 1).padStart(2, "0")}
               </span>
-              <span className="font-sans text-[length:var(--text-eyebrow)] leading-8 text-white/80">
+              <p className="font-sans text-[length:var(--text-body-sm)] leading-[1.33] text-white">
                 {duty.text}
-              </span>
+              </p>
             </li>
           ))}
         </ol>
-      </Reveal>
-    </div>
-  )
-}
 
-/**
- * The two regulation rows — `119:4620`.
- *
- * A heading over a pair of bordered rows, each a title at one end and a chevron
- * at the other. Unlike the rulebook these carry no description and no size: the
- * design gives them neither, and the mock leaves both unset rather than
- * inventing them.
- *
- * The whole row is the link — it is a 16px-padded strip whose only content is
- * the title, so there is nothing to stretch an anchor over and the row is
- * simply an `<a>`.
- */
-function CompetitionRegulations({
-  documents,
-}: {
-  documents: ResourceDocument[]
-}) {
-  if (documents.length === 0) return null
-
-  return (
-    // The wireframe's 1px top rule between this block and the duties above.
-    <Reveal y={24} delay={STAGGER * 2}>
-      <div className="flex flex-col gap-4 border-t border-white/12 pt-8 lg:pt-[2.08vw]">
-        <h3 className="font-display text-[length:var(--text-display-2xs)] leading-[1.1] text-white uppercase">
-          {REGULATIONS_COPY.competitionHeading}
-        </h3>
-
-        <ul className="flex list-none flex-col gap-2">
-          {documents.map((doc) => (
-            <li key={doc.id} className="flex">
-              <a
-                href={doc.fileUrl}
-                aria-label={REGULATIONS_COPY.openLabel.replace("%s", doc.title)}
-                className="focus-visible:ring-gold group flex w-full items-center justify-between gap-4 border border-white/12 p-4 transition-colors hover:bg-white/8 focus-visible:ring-2 focus-visible:outline-none"
-              >
-                <span className="font-sans text-[length:var(--text-eyebrow)] leading-7 font-medium text-white/80 uppercase">
+        {/* `361:16084` — the other two documents, as 20%-white glass buttons
+            rather than rows in a list. Each is a link to the file, so the
+            accessible name says which document rather than leaving two
+            identical "open" links. */}
+        {regulations.length > 0 && (
+          <ul className="flex flex-wrap gap-6">
+            {regulations.map((doc) => (
+              <li key={doc.id}>
+                <a
+                  href={doc.fileUrl}
+                  aria-label={REGULATIONS_COPY.openLabel.replace(
+                    "%s",
+                    doc.title,
+                  )}
+                  className="rounded-btn font-display focus-visible:ring-gold flex h-16 items-center justify-center gap-6 bg-white/20 px-5 text-[length:var(--text-display-btn)] leading-10 text-white transition-colors hover:bg-white/30 focus-visible:ring-2 focus-visible:outline-none"
+                >
                   {doc.title}
-                </span>
-                {/* eslint-disable-next-line @next/next/no-img-element -- a
-                    16px inline SVG sized in CSS; next/image would add a layout
-                    wrapper for no gain. Drawn white already, so unlike the
-                    download glyph it needs no `invert`. Empty `alt`: the
-                    chevron says "this opens", which the link already says. */}
-                <img
-                  src="/assets/global/icon-arrow-right.svg"
-                  alt=""
-                  width={16}
-                  height={16}
-                  className="size-4 shrink-0 transition-transform duration-200 group-hover:translate-x-0.5"
-                />
-              </a>
-            </li>
-          ))}
-        </ul>
+                  {/* eslint-disable-next-line @next/next/no-img-element -- a
+                      24px inline SVG sized in CSS. The shared glyph points
+                      LEFT; +135° turns it up-and-right, the "opens something"
+                      arrow. `invert` because it is drawn dark for use on
+                      white. */}
+                  <img
+                    src="/assets/global/icon-arrow-left.svg"
+                    alt=""
+                    width={24}
+                    height={24}
+                    className="size-6 rotate-135 invert"
+                  />
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
-    </Reveal>
+    </section>
   )
 }

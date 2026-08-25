@@ -2,11 +2,14 @@
  * The regulations section — Figma wireframe `119:4581`. Kept out of JSX for
  * i18n (RULES §9).
  *
- * **This section has no hi-fi design.** The Domino screen (`119:4737`) declares
- * 6033px of height but stops drawing at y=2180, so the last three blocks the
- * wireframe specifies were never rendered (D42). The layout and every word here
- * come from the wireframe, which does write them out in full; only the palette
- * is extrapolated, because the wireframe is greyscale and this site is not.
+ * **It has a hi-fi design now** (`359:15793`, updated file). It did not when
+ * this file was written: the old screen declared 6033px and stopped drawing at
+ * y=2180, so the layout and every word came from the wireframe (D42).
+ *
+ * The words survived the update unchanged — the four referee duties and the
+ * intro are verbatim what the wireframe wrote and what the hi-fi now draws, so
+ * nothing here was guessed. What the hi-fi changed is the arrangement, and that
+ * lives in the component.
  *
  * The documents themselves are NOT here — a rulebook and two regulations are
  * entities with a file, a size and a type, so they come through
@@ -15,6 +18,19 @@
  */
 
 export const REGULATIONS_COPY = {
+  /**
+   * The blurb under the rulebook's title on the dark card (`360:15836`). New in
+   * the updated file — the wireframe this section was first built from drew a
+   * download button with no prose around it.
+   */
+  rulebookBlurb:
+    "Download the comprehensive international guidelines for dominoes officiating and tournament conduct.",
+  /**
+   * The file pill's accessible name on that card. `%1` is the document title
+   * and `%2` the printed file description — the visible label says "PDF (4.2
+   * MB)" and nothing about which document it belongs to.
+   */
+  rulebookDownloadLabel: "Download %1, %2",
   /**
    * Read but never drawn. The wireframe names the frame "Download & Regulations
    * Section" and then gives its two halves their own headings with nothing

@@ -57,7 +57,7 @@ export const DOMINO_FAQ_ITEMS: readonly FaqItem[] = [
       // emphasis rather than as a link: it is a cited document with nowhere to
       // lead. The colour is the wireframe kit's default link style, not a
       // destination anybody specified.
-      { text: "The Law of Dominio – Tag Team", em: true },
+      { text: "The Law of Domino – Tag Team", em: true },
       {
         text: ". Failure to comply may result in penalties in accordance with the tournament rules.",
       },

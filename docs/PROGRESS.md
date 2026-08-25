@@ -1067,24 +1067,31 @@ Verifikasi: `bunx tsc --noEmit` bersih, `bunx eslint src` bersih, `bunx prettier
       (belum dijalankan)
 - [ ] `board-portrait-02.png` perlu diganti sebelum publikasi — R11
 
-### Halaman Domino `[~]` — 5/6 blok
+### Halaman Domino `[x]` — 6/6 blok
 
 Halaman ketiga. Item nav "Domino" kini rute sungguhan (`/domino`), jadi pill-nya
 menyala sendiri — `isActive` sudah memakai `pathname.startsWith(href)`.
 
-**Desainnya tidak lengkap dan itu sudah diputuskan** (D42). Frame hi-fi
-`119:4737` mendeklarasikan 1920×6033 tapi anak-anaknya berhenti di y=2180 — tiga
-blok. Wireframe `119:4474` menyebut enam; dua di antaranya dibangun dari
-wireframe karena copy-nya lengkap di sana, satu ditunda sebagai R12.
+**Dulu desainnya tidak lengkap** (D42): hi-fi lama `119:4737` mendeklarasikan
+1920×6033 tapi berhenti menggambar di y=2180. Dua blok dibangun dari wireframe,
+satu ditunda sebagai R12.
+
+**File "Updated" menggambar semuanya** (2026-08-25, layar sama `119:4737` kini
+1920×5223). R12 ditutup, dan dua blok yang dulu dari wireframe diturunkan ulang
+dari hi-fi (D67). Yang paling berguna diketahui: **tidak satu kata pun
+berubah** — intro dan keempat tugas wasit persis sama antara wireframe dan
+hi-fi, dan ketiga dokumen yang dibutuhkan sudah ada di mock dengan judul tepat.
+D42 terbukti aman untuk copy dan hanya berisiko untuk tata letak, yang memang
+sudah ditandai sebagai tebakan.
 
 | Blok | Node | Status | Catatan |
 |---|---|---|---|
 | Header | `119:4809` | `[x]` | Cermin `AboutHeader`; kolom kanan bertingkat dua (subtitle + intro), bukan satu paragraf. Judul menajam per huruf lewat `SharpeningHeadline` |
 | Tile band | `131:4824` | `[x]` | Cermin `AuthorityBand`: pembungkus tinggi terkunci, layer `-inset-y-[6%]`, `priority` |
 | Format split | `207:15563` | `[x]` | Perak/emas dengan **satu figur membelah jahitannya**. Judul panel doubles dibetulkan, body dibiarkan duplikat (D44) |
-| Download & Regulations | `119:4581` (wireframe) | `[x]` | Tanpa hi-fi. Tiga dokumen lewat `getResources(category)`; empat referee guidelines tetap copy |
-| FAQ | `119:4634` (wireframe) | `[x]` | Tanpa hi-fi. Section putih penuh, bukan kartu — itu yang digambar wireframe. Dua dari tiga jawaban placeholder (B2) |
-| Official Game Rules | `119:4553` (wireframe) | `[!]` | **Tidak dibangun** — R12. Hi-fi tidak digambar dan lima dari tujuh tabnya berlabel "SCORING" duplikat |
+| The Rulebook | `277:15676` | `[x]` | **Baru** — blok yang R12 tunggu. Kartu kaca + kutipan ber-rule kiri 4px. Strip tab dirender dari data: satu set aturan punya copy, jadi strip-nya belum digambar (D67) |
+| Referee Guidelines | `359:15793` | `[x]` | **Dibangun ulang dari hi-fi.** Kartu gelap 560×522 memegang rulebook + `DownloadPill` melebar; empat tugas dua-dua; dua regulasi jadi tombol kaca |
+| FAQ | `361:16085` | `[x]` | **Wadahnya berubah**: kartu putih di atas gradien, bukan section putih penuh. Dua dari tiga jawaban masih placeholder (B2) |
 
 **Jahitan format split — bagian yang paling mudah salah.** Kedua panel menaruh
 `imageRef` yang **sama** (`8c88e9f6`), kiri di `x625` dan kanan di `x−255`; dalam
@@ -1124,7 +1131,11 @@ setelah tiga pemindahan: `src/` bersih.
 - [ ] Reload `/domino` dengan `prefers-reduced-motion` aktif — pastikan tidak ada
       *hydration failed* (belum dijalankan)
 - [ ] Dua jawaban FAQ dan tiga `fileUrl` masih placeholder — B2
-- [ ] Blok Official Game Rules menunggu desain — R12
+- [ ] Lima set aturan masih ditunggu desainer — hanya "Draw rules" yang punya
+      copy, jadi The Rulebook menampilkan satu kartu tanpa strip tab
+- [ ] Desain menandai tab "block rules" aktif sementara kartunya berjudul
+      "Standar Draw Regulations" dan bercerita soal menarik dari boneyard —
+      pertentangan di file, dibiarkan (D44)
 
 ### Halaman Development `[x]` — 9/9 blok
 
@@ -1736,3 +1747,6 @@ Keputusan arsitektur dicatat di **PRD §7**. Ubah di sana, bukan di sini.
 | 2026-08-25 | Primitif `motion/CountUp` — angka menghitung naik dari nol saat masuk viewport, server tetap merender angka final (D66). Dipakai empat statistik hero Members |
 | 2026-08-25 | Entrance `Reveal` untuk peta + callout dan stagger untuk tiga kartu benefit; marker callout berdenyut lewat `motion-safe` |
 | 2026-08-25 | Glow hero Members: blur ekspor Figma diturunkan 50 → 25 di berkas SVG setelah dibandingkan dengan screenshot halaman. Ditandai di dalam SVG dan di komponennya |
+| 2026-08-25 | Halaman Domino dibangun ulang dari file "Updated": R12 **ditutup** — blok The Rulebook akhirnya digambar dan dibangun (D67) |
+| 2026-08-25 | Referee Guidelines dan FAQ Domino diturunkan ulang dari hi-fi; copy dari wireframe ternyata tidak perlu diubah satu kata pun |
+| 2026-08-25 | `DownloadPill` menerima `className` — pemakai ketiga menggambarnya melebar di kaki kartu 560px, bukan kotak 160px |

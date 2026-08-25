@@ -4,6 +4,7 @@ import { DominoFaq } from "@/components/domino/DominoFaq"
 import { DominoHeader } from "@/components/domino/DominoHeader"
 import { FormatSplit } from "@/components/domino/FormatSplit"
 import { Regulations } from "@/components/domino/Regulations"
+import { Rulebook } from "@/components/domino/Rulebook"
 import { TileBand } from "@/components/domino/TileBand"
 import { Footer } from "@/components/layout/Footer"
 import { Navbar } from "@/components/layout/Navbar"
@@ -37,6 +38,7 @@ export default function DominoPage() {
         <DominoHeader />
         <TileBand />
         <FormatSplit />
+        <Rulebook />
         <Regulations />
         <DominoFaq />
       </main>

@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils/cn"
 import type { ResourceDocument } from "@/lib/api/types"
 
 /**
@@ -18,10 +19,17 @@ import type { ResourceDocument } from "@/lib/api/types"
 export function DownloadPill({
   document,
   label,
+  className,
 }: {
   document: ResourceDocument
   /** `%1` is the document title, `%2` the printed file description. */
   label: string
+  /**
+   * Overrides the pill's 160px box. That width is the news shelves'; the Domino
+   * rulebook card draws the same pill across the foot of a 560px panel
+   * (`360:15848`), so the box is a default rather than a fact about the pill.
+   */
+  className?: string
 }) {
   // Figma writes the size with no space ("5.2MB"); the feed stores "5.2 MB",
   // which is what the rest of the site prints (S10, the Domino shelf). The
@@ -37,7 +45,10 @@ export function DownloadPill({
       // Names the document, because four identical pills in a row are four
       // identical links to a screen reader otherwise.
       aria-label={label.replace("%1", document.title).replace("%2", description)}
-      className="rounded-btn focus-visible:ring-gold border-border-light relative z-10 flex w-40 shrink-0 items-center justify-between gap-2 border bg-white p-2 transition-colors hover:bg-[#f5f5f5] focus-visible:ring-2 focus-visible:outline-none"
+      className={cn(
+        "rounded-btn focus-visible:ring-gold border-border-light relative z-10 flex w-40 shrink-0 items-center justify-between gap-2 border bg-white p-2 transition-colors hover:bg-[#f5f5f5] focus-visible:ring-2 focus-visible:outline-none",
+        className,
+      )}
     >
       <span
         aria-hidden

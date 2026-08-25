@@ -30,16 +30,22 @@ import {
  */
 export function DominoFaq() {
   return (
+    // `361:16085` in the updated file. This used to be a full white section,
+    // which is what the wireframe drew and all there was to go on (D42); the
+    // hi-fi makes it a white CARD floating on a `#0E0E0E → #1B1B1B` gradient,
+    // so the white no longer runs edge to edge.
     <section
       aria-labelledby="domino-faq-heading"
-      className="bg-white px-5 py-16 md:px-10 lg:px-20 lg:py-[5vw]"
+      className="bg-linear-to-b from-[#0e0e0e] to-[#1b1b1b] px-5 py-14 md:px-10 lg:px-20 lg:py-[4.1667vw]"
     >
-      {/* 256px of horizontal padding in the wireframe plus 40 inside it, on a
-          1920 frame — the questions sit in a 1328px column. Written as a
-          `max-w` centred in the section rather than as that padding: held as
-          padding it would still be claiming most of a tablet, leaving the
-          questions narrower than the gutters around them (D14). */}
-      <div className="mx-auto flex w-full max-w-[1328px] flex-col gap-8 lg:gap-[3.33vw]">
+      {/* The card: 60 of vertical padding and 160 of horizontal on a 1920
+          frame (`361:16086`), which puts the questions in a 1440px column. The
+          horizontal figure is held as a `max-w` centred inside the card rather
+          than as padding — as padding it would still be claiming most of a
+          tablet, leaving the questions narrower than the gutters around them
+          (D14). */}
+      <div className="rounded-[var(--radius-card)] bg-white px-5 py-10 shadow-[var(--shadow-card)] md:px-10 lg:px-[8.3333vw] lg:py-[3.125vw]">
+      <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-8 lg:gap-[3.33vw]">
         <Reveal y={32}>
           {/* Bebas 76/72 — `--text-display-sm`, the same step S11's heading and
               the format panels take. `leading-[0.95]` is Figma's 72 on a 76
@@ -62,6 +68,7 @@ export function DominoFaq() {
             defaultOpenId={DOMINO_FAQ_DEFAULT_OPEN}
           />
         </Reveal>
+      </div>
       </div>
     </section>
   )
