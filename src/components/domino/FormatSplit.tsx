@@ -1,5 +1,4 @@
 import { FormatPanel } from "@/components/domino/FormatPanel"
-import { ParallaxLayer } from "@/components/motion/ParallaxLayer"
 import { SofteningImage } from "@/components/motion/SofteningImage"
 import { FORMATS, FORMATS_ALT } from "@/content/domino/formats"
 import { cn } from "@/lib/utils/cn"
@@ -26,9 +25,12 @@ const SETTLE = DURATION * 1.4
  * back to back against the doubles copy — so there is no seam to keep shut, and
  * the pictures now make the section's point instead of merely decorating it.
  *
- * They still share a parallax speed. Not to protect a seam that no longer
- * exists, but because two figures flanking a join that drift at different rates
- * make the whole block look loose.
+ * **They no longer move at all.** The old tile rode a `ParallaxLayer`, and that
+ * carried over to the silhouettes by inertia — wrongly. These figures stand ON
+ * the panel's floor: Figma pins each one's bottom edge to the bottom of its
+ * panel, and a parallax offset lifts it off, opening a gap under the feet that
+ * grows as the page scrolls. A figure cannot both be standing on something and
+ * be floating over it, so the parallax went.
  *
  * Below `lg` the panels stack and both figures are dropped. They are 40%-opacity
  * backdrops behind the copy; at phone widths that copy needs the whole panel.
@@ -57,8 +59,10 @@ export function FormatSplit() {
             <Figure
               src="/assets/domino/format-singles-silhouette.png"
               alt={FORMATS_ALT.singles}
-              // 514/880, 80/680, 376/880, 600/680.
-              className="top-[11.76%] left-[58.41%] h-[88.24%] w-[42.73%]"
+              // 514/880 across, 376/880 wide, 600/680 tall. No `top`: the
+              // figure hangs from `bottom-0`, which is where Figma puts it
+              // (80 + 600 = 680, the panel's full inner height).
+              className="left-[58.41%] h-[88.24%] w-[42.73%]"
             />
           }
         />
@@ -70,8 +74,10 @@ export function FormatSplit() {
             <Figure
               src="/assets/domino/format-doubles-silhouette.png"
               alt={FORMATS_ALT.doubles}
-              // −25/880, 80/680, 405/880, 600/680.
-              className="top-[11.76%] left-[-2.84%] h-[88.24%] w-[46.02%]"
+              // −25/880 across — it hangs off its panel's left edge, so the
+              // pair leans into the join from the far side. 405/880 wide,
+              // 600/680 tall, hung from the floor like its counterpart.
+              className="left-[-2.84%] h-[88.24%] w-[46.02%]"
             />
           }
         />
@@ -112,15 +118,12 @@ function Figure({
   className: string
 }) {
   return (
-    <ParallaxLayer
-      speed={-10}
-      decorative
-      className={cn("absolute opacity-40 max-lg:hidden", className)}
-    >
+    <div className={cn("absolute bottom-0 opacity-40 max-lg:hidden", className)}>
       {/* `SofteningImage` renders two stacked copies of its image, so an `alt`
-          on it would be announced twice. The layer is `decorative`, which hides
-          both, and the line below says the thing once. The same fix `Vision`
-          uses. */}
+          on it would be announced twice. The line below says the thing once —
+          the same fix `Vision` uses. It cross-fades two static blurs rather than
+          animating `filter` (RULES §12), and it moves nothing, which is why it
+          can stay on a figure that has to keep its feet on the floor. */}
       <span className="sr-only">{alt}</span>
       <SofteningImage
         src={src}
@@ -132,6 +135,6 @@ function Figure({
         sizes="(min-width: 1024px) 24vw, 0px"
         imageClassName="object-fill"
       />
-    </ParallaxLayer>
+    </div>
   )
 }

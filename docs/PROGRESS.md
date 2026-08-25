@@ -1107,11 +1107,15 @@ sisi singles, sepasang saling membelakangi di sisi doubles, keduanya opacity
 argumen section-nya** alih-alih sekadar menghias — satu lawan dua, persis yang
 dikatakan kedua panel.
 
-Keduanya tetap berbagi `speed` parallax. Bukan demi jahitan yang sudah tidak
-ada, melainkan karena dua figur yang mengapit satu pertemuan dan melayang di
-laju berbeda membuat seluruh bloknya terlihat longgar. Di bawah `lg` keduanya
-dilepas: itu latar 40% di belakang copy, dan di lebar ponsel copy-nya butuh
-seluruh panel.
+**Parallax-nya juga dicabut, dan itu koreksi terpisah.** Ubin lama menunggangi
+`ParallaxLayer`, dan itu sempat terbawa ke siluetnya karena inersia — keliru.
+Figur-figur ini **berdiri di lantai panel**: Figma memakukan tepi bawah tiap
+gambar ke dasar panelnya (80 + 600 = 680, persis tinggi dalam panel), dan
+offset parallax mengangkatnya, membuka celah di bawah kaki yang melebar seiring
+scroll. Sesuatu tidak bisa sekaligus berpijak dan melayang. Sekarang keduanya
+digantung dari `bottom-0`, bukan diposisikan dengan `top`. Di bawah `lg`
+keduanya dilepas: itu latar 40% di belakang copy, dan di lebar ponsel copy-nya
+butuh seluruh panel.
 
 **Cacat body doubles ditutup desainer.** Dulu heading-nya "SINGLES FORMAT" dan
 body-nya duplikat byte-per-byte dari panel singles; heading dibetulkan di sini
@@ -1771,3 +1775,4 @@ Keputusan arsitektur dicatat di **PRD §7**. Ubah di sana, bukan di sini.
 | 2026-08-25 | `DownloadPill` menerima `className` — pemakai ketiga menggambarnya melebar di kaki kartu 560px, bukan kotak 160px |
 | 2026-08-25 | Format split Domino: figur satu ubin diganti dua siluet berbeda per panel (`272:15631`, `272:15635`), opacity 0.4. Logika jaga-jahitan dicabut karena sudah tidak ada jahitan yang dibelah |
 | 2026-08-25 | Body panel doubles akhirnya ditulis desainer — `TODO(design)` yang menunggunya sejak D44 dicabut (D68) |
+| 2026-08-25 | Siluet format split dipakukan ke dasar panel dan parallax-nya dicabut — offset parallax membuka celah di bawah kaki, padahal desain memakukannya ke lantai |
