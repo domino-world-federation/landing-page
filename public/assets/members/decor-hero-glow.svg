@@ -1,0 +1,28 @@
+<svg width="2120" height="635" viewBox="0 0 2120 635" fill="none" xmlns="http://www.w3.org/2000/svg">
+<!-- HAND-EDITED: stdDeviation was 50 as exported; it is 25 here.
+
+     Figma's export rendered visibly hazier and dimmer than the design it came
+     from — a brown smear rather than the bright gold arc on the canvas. Halving
+     the blur was checked against a screenshot of the running page and matches.
+     Verified empirically for THIS asset only: the other exported blurs in this
+     project (the shines at 215/50/55, the icon glows at 4) look right as they
+     came, so do not apply this as a rule.
+
+     Re-exporting from Figma will undo this. If the hero glow ever goes soft and
+     brown again, that is what happened. -->
+<g filter="url(#filter0_f_401_19068)">
+<path d="M1059.5 100C1405.23 100 1731.64 184.962 2020 335.664V535C1756.11 285.79 1422.39 136.967 1059.5 136.967C697.067 136.967 363.736 285.412 100 534.054V335.141C388.116 184.765 714.167 100 1059.5 100Z" fill="url(#paint0_radial_401_19068)"/>
+</g>
+<defs>
+<filter id="filter0_f_401_19068" x="0" y="0" width="2120" height="635" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="25" result="effect1_foregroundBlur_401_19068"/>
+</filter>
+<radialGradient id="paint0_radial_401_19068" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1060 100) rotate(90.0259) scale(1105.41 1077.8)">
+<stop stop-color="#FFE2A7"/>
+<stop offset="0.230648" stop-color="#E1B762"/>
+<stop offset="1" stop-color="#4D4D4D" stop-opacity="0"/>
+</radialGradient>
+</defs>
+</svg>
