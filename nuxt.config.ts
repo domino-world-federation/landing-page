@@ -77,6 +77,24 @@ export default defineNuxtConfig({
    * Override at deploy time with `NUXT_PUBLIC_API_BASE_URL`.
    */
   runtimeConfig: {
+    /**
+     * IPX's own `maxAge`, in seconds — the `cache-control` its transform
+     * endpoint sends.
+     *
+     * Its default is 60, measured on a built server, after which sharp re-runs
+     * the resize on the next request. This site's images are its weight (PRD
+     * R10 lists 25 assets over 1MB), so a minute means the box re-encodes the
+     * hero rocks all day.
+     *
+     * A day, not a year: the URL carries the modifiers and the source path but
+     * no content hash, so replacing a photograph reuses the same URL. That is
+     * the trade the nginx `/assets/` rule already makes — spare the box the
+     * re-send, and a replaced picture is live within a day without a purge.
+     */
+    ipx: {
+      maxAge: 86_400,
+    },
+
     public: {
       apiBaseUrl: "",
     },

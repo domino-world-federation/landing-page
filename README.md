@@ -43,6 +43,8 @@ app/
   types/               tipe bersama + augmentasi PageMeta
   utils/               auto-import: cn, tanggal, konstanta gerak, imageSizes
 public/assets/         110 file, disalin apa adanya
+deploy/nginx/          config nginx
+ecosystem.config.cjs   definisi proses PM2
 ```
 
 Penamaan file komponen **menanggalkan prefiks foldernya**: Nuxt merender
@@ -89,6 +91,74 @@ benar-benar dipakai.
 Nyala secara bawaan di Nuxt 4; tsconfig Next tidak memilikinya. Tetap dipakai —
 ini lebih ketat dan konvensi frameworknya. Indeks literal ke array `as const`
 ditegaskan dengan `!` di tiga file copy FAQ.
+
+## Deploy
+
+Sama bentuknya dengan project Next — PM2 di belakang nginx — dengan port sendiri
+supaya keduanya bisa hidup berdampingan selama dibandingkan.
+
+```bash
+bun install --frozen-lockfile
+bun run build                     # menulis .output/, yang gitignored
+pm2 start ecosystem.config.cjs
+pm2 save                          # bertahan setelah reboot, dengan `pm2 startup`
+```
+
+Redeploy setelah pull: `bun run build && pm2 reload dwf-nuxt`.
+
+| | Next | Nuxt |
+|---|---|---|
+| Port | 3035 | **3036** |
+| Nama proses PM2 | `proto-dwf` | `dwf-nuxt` |
+| Entry | `node_modules/next/dist/bin/next start` | `.output/server/index.mjs` |
+| Host/port diatur lewat | flag `-H` / `-p` | **env `NITRO_HOST` / `NITRO_PORT`** |
+| File config PM2 | `ecosystem.config.js` | **`ecosystem.config.cjs`** |
+
+### Kenapa `.cjs`, bukan `.js`
+
+`package.json` di sini punya `"type": "module"`, jadi file bernama
+`ecosystem.config.js` diparse sebagai ESM. Itu **tidak error** — dan di situ
+jebakannya. Diuji di Node 22.22: `require()` isi yang sama bernama `.js`
+berhasil dan mengembalikan objek dengan `apps` **undefined**; penugasan
+`module.exports` hilang begitu saja tanpa pesan apa pun. PM2 lalu tidak
+menjalankan apa-apa, dan keluhannya menunjuk isi config, bukan namanya.
+
+Project Next memakai `.js` biasa karena package.json-nya tidak mendeklarasikan
+`type`. Menyalin nama file itu ke sini adalah kekeliruan yang komentar di
+[`ecosystem.config.cjs`](ecosystem.config.cjs) ada untuk mencegah.
+
+### nginx: ya, perlu config sendiri
+
+Bukan sekadar ganti port. [`deploy/nginx/dwf-nuxt.conf`](deploy/nginx/dwf-nuxt.conf)
+adalah adaptasi dari config Next; sebagian besar isinya tidak berubah karena
+sebagian besar isinya tentang **situsnya**, bukan frameworknya — gzip,
+`X-Robots-Tag` noindex (R11/R13/R16 berlaku sama persis di port ini), header
+keamanan, dan blok `/assets/`.
+
+Empat hal yang berubah, semuanya diukur di server hasil build:
+
+1. **Upstream 3036.** Dua server block tidak bisa mengklaim satu `server_name`;
+   `server_name` di file itu masih **placeholder** dan harus diisi.
+2. **Blok `/_ipx/` baru.** Endpoint transform @nuxt/image tidak punya padanan di
+   Next. Defaultnya mengirim `cache-control: max-age=60` — semenit, lalu sharp
+   menghitung ulang. Sudah dinaikkan ke sehari di level aplikasi
+   (`runtimeConfig.ipx.maxAge`), dan nginx menambahkan `proxy_cache` di
+   depannya. **Butuh satu baris `proxy_cache_path` di `http{}`** —
+   tanpa itu `nginx -t` gagal dengan "zone dwf_ipx not found". Barisnya ada di
+   komentar file config.
+3. **`proxy_buffering off` dicabut.** Di config Next ia ada untuk satu alasan
+   spesifik: Next men-stream fallback `loading.tsx` mendahului halaman lambat.
+   Kedua paruh alasan itu tidak berlaku di sini — port ini tidak punya
+   `loading.tsx`, dan Nitro tidak streaming (halaman kembali dengan
+   `Content-Length`, terukur). Tanpa yang perlu di-stream, buffering menyala
+   lebih baik: nginx mengambil respons sekaligus dan membebaskan proses Node.
+4. **`/_nuxt/` sengaja tidak disentuh.** Nitro sudah mengirim
+   `max-age=31536000, immutable` untuk bundle-nya sendiri, sama seperti `/_next/`
+   dulu. Blok `/assets/` tetap ada karena Nitro tidak mengirim header cache apa
+   pun untuk `public/` — juga terukur.
+
+Yang **belum** diverifikasi: `nginx -t` belum dijalankan, karena nginx tidak
+terpasang di mesin tempat file ini ditulis. Jalankan sebelum reload.
 
 ## Yang belum dikerjakan
 
