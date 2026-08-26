@@ -1,176 +1,205 @@
 # DWF Website — Nuxt
 
-Port Nuxt 4 dari [`../landing-page`](../landing-page) (Next 16). Tiga belas route
-yang sama, copy yang sama, aset yang sama, keputusan desain yang sama.
+A Nuxt 4 port of [`../landing-page`](../landing-page) (Next 16). The same
+thirteen routes, the same copy, the same assets, the same design decisions.
 
-Aturan produk dan teknis tetap yang di
-[`../landing-page/docs/`](../landing-page/docs/) — PRD, RULES, DESIGN-TOKENS,
-PROGRESS. Dokumen ini hanya mencatat **apa yang berubah karena frameworknya
-berubah**, dan kenapa.
+Product and technical rules stay where they were —
+[`../landing-page/docs/`](../landing-page/docs/): PRD, RULES, DESIGN-TOKENS,
+PROGRESS. This document records only **what changed because the framework
+changed**, and why.
 
-## Menjalankan
+## Running it
 
 ```bash
 bun install
 bun run dev        # http://localhost:3000
-bun run build      # lalu: node .output/server/index.mjs
-bun run typecheck  # vue-tsc lewat nuxt typecheck
+bun run build      # then: node .output/server/index.mjs
+bun run typecheck  # vue-tsc, via nuxt typecheck
 bun run lint       # eslint (@nuxt/eslint)
 ```
 
-Selalu Bun, jangan npm/yarn/pnpm. Commit `bun.lock`.
+Bun always — never npm/yarn/pnpm. Commit `bun.lock`.
 
-## Struktur
+## Layout
 
-Nuxt 4 memakai `app/` sebagai srcDir, jadi seluruh folder yang dimiliki framework
-ada di dalamnya. `public/`, `server/` dan `shared/` tetap di akar.
+Nuxt 4 uses `app/` as its srcDir, so every directory the framework owns lives
+inside it. `public/` and `deploy/` stay at the root.
 
 ```
 app/
   app.vue              NuxtLayout > NuxtPage
-  assets/css/main.css  token @theme — pindahan langsung dari globals.css
-  components/          auto-import; nama render = <Folder><File>
-    motion/            primitif gerak (ParallaxLayer, Reveal, …)
-    layout/            Navbar, Footer, dan potongannya
-    ui/                primitif lintas halaman
-    home/ about/ …     section milik satu halaman
+  assets/css/main.css  @theme tokens — a straight move from globals.css
+  components/          auto-imported
+    motion/            motion primitives (ParallaxLayer, Reveal, …)
+    layout/            Navbar, Footer and their pieces
+    ui/                primitives used across pages
+    home/ about/ …     sections belonging to one page
   composables/         useEntrance, useDragToPan
-  content/             teks statis (persiapan i18n)
+  content/             static copy (i18n groundwork)
   layouts/             default.vue, home.vue
-  lib/api/             kontrak data, client, mock
-  pages/               13 route
+  lib/api/             data contract, client, mock
+  pages/               13 routes
   plugins/             route-progress.client.ts
-  types/               tipe bersama + augmentasi PageMeta
-  utils/               auto-import: cn, tanggal, konstanta gerak, imageSizes
-public/assets/         110 file, disalin apa adanya
-deploy/nginx/          config nginx
-ecosystem.config.cjs   definisi proses PM2
+  router.options.ts    scroll behaviour
+  types/               shared types + PageMeta augmentation
+  utils/               auto-imported: cn, dates, motion constants, imageSizes
+public/assets/         110 files, copied verbatim
+deploy/nginx/          nginx config
+ecosystem.config.cjs   PM2 process definition
 ```
 
-Penamaan file komponen **menanggalkan prefiks foldernya**: Nuxt merender
-`about/Header.vue` sebagai `<AboutHeader>`, jadi menyimpan `AboutHeader.vue` akan
-menghasilkan `<AboutAboutHeader>`. Nama yang dirender karena itu identik dengan
-nama komponen di build Next.
+**Component names are the folder plus the file**, and Nuxt drops a repeated
+segment: `about/Header.vue` and `contact/ContactDetails.vue` register as
+`AboutHeader` and `ContactDetails` — the second is *not* `ContactContactDetails`.
+Both spellings therefore land on the name the Next build used. Files here are
+written without the prefix (`about/Header.vue`) purely for consistency; it is a
+cosmetic choice, not a requirement.
 
-## Apa yang berubah, dan kenapa
+## What changed, and why
 
-| Next | Nuxt | Alasan |
+| Next | Nuxt | Why |
 |---|---|---|
-| Server / Client Component | SFC biasa | Nuxt merender semuanya di server lalu menghidrasi; tak ada batas yang perlu ditandai. Pemisahan komponen tetap dipertahankan — ia tetap benar sebagai pemisahan tanggung jawab. |
-| `async` Server Component | `useAsyncData` | Menjalankan fetch saat SSR dan menitipkan hasilnya lewat payload, jadi browser tidak meminta ulang. |
-| `searchParams` | `useRoute().query` | Filter tetap di URL, tetap dirender server, tetap bisa dikirim sebagai tautan (D50). |
+| Server / Client Component | plain SFC | Nuxt renders everything on the server and hydrates it; there is no boundary to mark. The component split is kept anyway — it is still a correct split of responsibilities. |
+| `async` Server Component | `useAsyncData` | Runs the fetch during SSR and hands the result to the client in the payload, so the browser never asks again. |
+| `searchParams` | `useRoute().query` | The filter stays in the URL, stays server-rendered, and stays something you can send as a link (D50). |
 | `metadata` | `useSeoMeta` | |
-| shell halaman ditulis ulang tiap route | `layouts/default.vue` + `home.vue` | Navbar dan footer jadi satu tempat. |
-| `next/image` | `<NuxtImg>` | Untuk raster. SVG memakai `<img>` biasa — pipeline image akan mengembalikan byte yang sama (RULES §7). |
-| `next/font` | `@nuxt/fonts` | Self-host by family name, jadi jembatan `--font-bebas`/`--font-inter` yang dulu perlu (DESIGN-TOKENS §1) tidak diperlukan lagi. |
-| `motion/react` | `motion-v` | Port Vue resmi dari organisasi Motion, di atas `framer-motion@13` yang sama. `whileTap` bernama `whilePress`; `viewport` bernama `inViewOptions`. |
-| `RouteProgress` + `onClick` per link | `plugins/route-progress.client.ts` | Nuxt punya hook `page:start`/`page:finish`; Next tidak, sehingga bar-nya dulu harus dipasang manual ke tiap link. |
-| `scroll={false}` per link | `app/router.options.ts` | Satu aturan untuk semua strip filter, dan ikut berlaku saat filter diubah lewat tombol back. |
-| `process.env.NEXT_PUBLIC_API_BASE_URL` | `runtimeConfig.public.apiBaseUrl` | Nilai runtime, bukan inline saat build. Override: `NUXT_PUBLIC_API_BASE_URL`. |
-| `next: { revalidate: 300 }` | — | Nuxt tidak punya padanan per-request, dan memang tidak seharusnya: cache itu milik Nitro. Saat API ada, lima menitnya jadi `routeRules` di `nuxt.config`. |
-| `app/loading.tsx` | tidak ada | **Bukan kelalaian.** Layar itu ada karena Next mengosongkan halaman lama saat menunggu segmen baru. Nuxt menahan halaman lama dan menaikkan indikator, jadi tidak ada momen kosong yang perlu diisi. Bar sapuannya sama persis. `content/loading.ts` disimpan untuk kalau fallback semacam itu suatu saat dibutuhkan. |
+| page shell rewritten per route | `layouts/default.vue` + `home.vue` | Navbar and footer in one place. |
+| `next/image` | `<NuxtImg>` | For raster only. SVGs use a plain `<img>` — the image pipeline would hand back the same bytes (RULES §7). |
+| `next/font` | `@nuxt/fonts` | Self-hosts by family name, so the `--font-bebas`/`--font-inter` bridge that DESIGN-TOKENS §1 needed has nothing left to solve. |
+| `motion/react` | `motion-v` | The official Vue port from the Motion org, on the same `framer-motion@13` core. `whileTap` is `whilePress`; `viewport` is `inViewOptions`. |
+| `RouteProgress` + a per-link `onClick` | `plugins/route-progress.client.ts` | Nuxt has `page:start`/`page:finish` hooks; Next has none, which is why that bar had to be wired into every link by hand. |
+| `scroll={false}` per link | `app/router.options.ts` | One rule for every filter strip, and it covers a filter changed with the back button too. |
+| `process.env.NEXT_PUBLIC_API_BASE_URL` | `runtimeConfig.public.apiBaseUrl` | Read at runtime instead of inlined at build. Override with `NUXT_PUBLIC_API_BASE_URL`. |
+| `next: { revalidate: 300 }` | — | Nuxt has no per-request equivalent, and should not: caching belongs to Nitro. When the API lands, the five minutes become `routeRules` in `nuxt.config`. |
+| `app/loading.tsx` | none | **Not an omission.** That screen exists because Next blanks the old page while it waits for a new segment. Nuxt holds the old page and raises an indicator instead, so there is no empty moment to fill. The sweeping bar is identical. |
 
-### `sizes` — beda sintaks, dan satu jebakan
+### `sizes` — different syntax, and one trap
 
-`sizes` di `@nuxt/image` bukan string media query seperti `next/image`. Kuncinya
-adalah **lebar tempat kandidat dihitung**, dan tiap kunci menghasilkan satu entri
-`srcset`.
+`sizes` in `@nuxt/image` is not a media-query string the way `next/image`'s is.
+A key names the **viewport width the candidate is computed at**, and each key
+emits one `srcset` entry.
 
-`sizes="100vw"` telanjang dibaca sebagai kunci `1px` — hasilnya `srcset` selebar
-**1w dan 2w**. Ia lolos build, lolos typecheck, dan terlihat seperti aset yang
-rusak. Ditemukan dengan merender halaman lalu membaca markup-nya.
+A bare `sizes="100vw"` is parsed as the key `1px`, producing a `srcset` of
+**1w and 2w** — a full-bleed hero served as a two-pixel image. It builds, it
+typechecks, and it looks like a broken asset. Found by rendering the page and
+reading the markup.
 
-Karena itu tidak ada `sizes` yang ditulis tangan: semuanya lewat
-`imageSizes({ xs: "60vw", lg: "28vw" })` di [`app/utils/image-sizes.ts`](app/utils/image-sizes.ts),
-yang memuai spesifikasi itu ke seluruh tangga breakpoint. Media query-nya tetap
-runtuh ke batas yang diminta, dan `srcset` dapat kandidat di tiap lebar yang
-benar-benar dipakai.
+So no `sizes` is written by hand. They all go through
+`imageSizes({ xs: "60vw", lg: "28vw" })` in
+[`app/utils/image-sizes.ts`](app/utils/image-sizes.ts), which expands the spec
+across the whole breakpoint ladder. The media queries still collapse to the
+boundaries asked for, and the `srcset` gains a candidate at every width the site
+is actually viewed at.
 
 ### `noUncheckedIndexedAccess`
 
-Nyala secara bawaan di Nuxt 4; tsconfig Next tidak memilikinya. Tetap dipakai —
-ini lebih ketat dan konvensi frameworknya. Indeks literal ke array `as const`
-ditegaskan dengan `!` di tiga file copy FAQ.
+On by default in Nuxt 4; the Next tsconfig did not have it. Kept — it is
+stricter and it is the framework's convention. Literal indexes into `as const`
+arrays are asserted with `!` in the three FAQ copy files.
 
 ## Deploy
 
-Sama bentuknya dengan project Next — PM2 di belakang nginx — dengan port sendiri
-supaya keduanya bisa hidup berdampingan selama dibandingkan.
+Same shape as the Next project — PM2 behind nginx — on its own port so the two
+can run side by side while they are compared.
 
 ```bash
 bun install --frozen-lockfile
-bun run build                     # menulis .output/, yang gitignored
+bun run build                     # writes .output/, which is gitignored
 pm2 start ecosystem.config.cjs
-pm2 save                          # bertahan setelah reboot, dengan `pm2 startup`
+pm2 save                          # survives a reboot, with `pm2 startup`
 ```
 
-Redeploy setelah pull: `bun run build && pm2 reload dwf-nuxt`.
+Redeploy after a pull: `bun run build && pm2 reload dwf-nuxt`.
 
 | | Next | Nuxt |
 |---|---|---|
 | Port | 3035 | **3036** |
-| Nama proses PM2 | `proto-dwf` | `dwf-nuxt` |
+| PM2 process name | `proto-dwf` | `dwf-nuxt` |
 | Entry | `node_modules/next/dist/bin/next start` | `.output/server/index.mjs` |
-| Host/port diatur lewat | flag `-H` / `-p` | **env `NITRO_HOST` / `NITRO_PORT`** |
-| File config PM2 | `ecosystem.config.js` | **`ecosystem.config.cjs`** |
+| Host/port set by | `-H` / `-p` flags | **env `NITRO_HOST` / `NITRO_PORT`** |
+| PM2 config file | `ecosystem.config.js` | **`ecosystem.config.cjs`** |
 
-### Kenapa `.cjs`, bukan `.js`
+### Why `.cjs` and not `.js`
 
-`package.json` di sini punya `"type": "module"`, jadi file bernama
-`ecosystem.config.js` diparse sebagai ESM. Itu **tidak error** — dan di situ
-jebakannya. Diuji di Node 22.22: `require()` isi yang sama bernama `.js`
-berhasil dan mengembalikan objek dengan `apps` **undefined**; penugasan
-`module.exports` hilang begitu saja tanpa pesan apa pun. PM2 lalu tidak
-menjalankan apa-apa, dan keluhannya menunjuk isi config, bukan namanya.
+`package.json` here declares `"type": "module"`, so a file named
+`ecosystem.config.js` is parsed as ESM. That does **not** throw, which is the
+trap. Tested on Node 22.22: `require()` of this exact content named `.js`
+succeeds and returns an object whose `apps` is **undefined** — the
+`module.exports` assignment is dropped with no error anywhere. PM2 would then
+start nothing, and complain in a way that points at the config's contents rather
+than at its name.
 
-Project Next memakai `.js` biasa karena package.json-nya tidak mendeklarasikan
-`type`. Menyalin nama file itu ke sini adalah kekeliruan yang komentar di
-[`ecosystem.config.cjs`](ecosystem.config.cjs) ada untuk mencegah.
+The Next project uses a plain `.js` because its own package.json makes no `type`
+declaration. Copying that filename across is the mistake the note in
+[`ecosystem.config.cjs`](ecosystem.config.cjs) exists to prevent.
 
-### nginx: ya, perlu config sendiri
+### nginx: yes, it needs its own config
 
-Bukan sekadar ganti port. [`deploy/nginx/dwf-nuxt.conf`](deploy/nginx/dwf-nuxt.conf)
-adalah adaptasi dari config Next; sebagian besar isinya tidak berubah karena
-sebagian besar isinya tentang **situsnya**, bukan frameworknya — gzip,
-`X-Robots-Tag` noindex (R11/R13/R16 berlaku sama persis di port ini), header
-keamanan, dan blok `/assets/`.
+Not just a different port.
+[`deploy/nginx/dwf-nuxt.conf`](deploy/nginx/dwf-nuxt.conf) is an adaptation of
+the Next one; most of it is unchanged, because most of it is about the **site**
+rather than the framework — gzip, the `X-Robots-Tag` noindex (R11/R13/R16 apply
+to this port word for word), the security headers, and the `/assets/` block.
 
-Empat hal yang berubah, semuanya diukur di server hasil build:
+Four things changed, all of them measured against a built server:
 
-1. **Upstream 3036.** Dua server block tidak bisa mengklaim satu `server_name`;
-   `server_name` di file itu masih **placeholder** dan harus diisi.
-2. **Blok `/_ipx/` baru.** Endpoint transform @nuxt/image tidak punya padanan di
-   Next. Defaultnya mengirim `cache-control: max-age=60` — semenit, lalu sharp
-   menghitung ulang. Sudah dinaikkan ke sehari di level aplikasi
-   (`runtimeConfig.ipx.maxAge`), dan nginx menambahkan `proxy_cache` di
-   depannya. **Butuh satu baris `proxy_cache_path` di `http{}`** —
-   tanpa itu `nginx -t` gagal dengan "zone dwf_ipx not found". Barisnya ada di
-   komentar file config.
-3. **`proxy_buffering off` dicabut.** Di config Next ia ada untuk satu alasan
-   spesifik: Next men-stream fallback `loading.tsx` mendahului halaman lambat.
-   Kedua paruh alasan itu tidak berlaku di sini — port ini tidak punya
-   `loading.tsx`, dan Nitro tidak streaming (halaman kembali dengan
-   `Content-Length`, terukur). Tanpa yang perlu di-stream, buffering menyala
-   lebih baik: nginx mengambil respons sekaligus dan membebaskan proses Node.
-4. **`/_nuxt/` sengaja tidak disentuh.** Nitro sudah mengirim
-   `max-age=31536000, immutable` untuk bundle-nya sendiri, sama seperti `/_next/`
-   dulu. Blok `/assets/` tetap ada karena Nitro tidak mengirim header cache apa
-   pun untuk `public/` — juga terukur.
+1. **Upstream 3036.** Two server blocks cannot claim one `server_name`; the
+   `server_name` in that file is still a **placeholder** and has to be set.
+2. **A new `/_ipx/` block.** @nuxt/image's transform endpoint has no counterpart
+   in Next. It defaults to `cache-control: max-age=60` — one minute, after which
+   sharp recomputes the resize. Raised to a day at the app layer
+   (`runtimeConfig.ipx.maxAge`), with nginx caching in front of it. **It needs
+   one `proxy_cache_path` line in `http{}`** — without it `nginx -t` fails with
+   "zone dwf_ipx not found". The line is in the config file's comments.
+3. **`proxy_buffering off` removed.** In the Next config it was there for one
+   specific reason: Next streams the `loading.tsx` fallback ahead of a slow page,
+   and a buffering proxy holds the whole response. Neither half applies here —
+   this port has no `loading.tsx`, and Nitro does not stream (a rendered page
+   comes back with a `Content-Length`, measured). With nothing to stream,
+   buffering on is the better default: nginx takes the response at once and
+   frees the Node process.
+4. **`/_nuxt/` deliberately untouched.** Nitro already sends
+   `max-age=31536000, immutable` for its own bundles, as `/_next/` did. The
+   `/assets/` block stays because Nitro sends no cache header at all for
+   `public/` — also measured.
 
-Yang **belum** diverifikasi: `nginx -t` belum dijalankan, karena nginx tidak
-terpasang di mesin tempat file ini ditulis. Jalankan sebelum reload.
+## What is not done
 
-## Yang belum dikerjakan
+### Carried over from the Next build — this port changed none of them
 
-Sama dengan build Next, dan bukan hal baru:
+The authoritative text is PRD §risks. In short:
 
-- **B2** — API belum ada; seluruh getter menyajikan `mock/`.
-- **R12** — dua blok Domino masih ekstrapolasi dari wireframe.
-- **R14** — `/contact` berdiri di atas satu kalimat desainer.
-- **R15** — pager FAQ tidak dibangun (halaman 2–3 akan kosong).
-- **R16** — Champions Hall memakai potret asli dengan nama placeholder.
+- **B2** — no API; every getter serves `mock/`.
+- **R10** — 25 assets over 1 MB, deferred by the repo owner until after the
+  presentation.
+- **R11 / R13 / R16** — real, identifiable people used as this federation's
+  officers, champions and news subjects. All three are marked **must be resolved
+  before publication**, and the noindex header in the nginx config is there for
+  exactly this reason.
+- **R12** — the Rulebook block is built, but the two blocks that were
+  extrapolated from the greyscale wireframe (regulations, FAQ) have still not
+  been checked against the hi-fi that now exists.
+- **R14** — `/contact` was built from one sentence; the design screen
+  (`361:16242`) turned out to exist and the page has not been compared to it.
+- **R15** — the FAQ pager is not built, waiting on copy for pages 2–3.
 
-Yang **belum** diverifikasi di port ini: **pixel-parity terhadap Figma**. Build,
-typecheck, lint bersih, ketiga belas route membalas 200 dengan satu `<h1>`, dan
-seluruh section ter-render — tetapi belum ada yang membandingkan hasilnya dengan
-desain di 360/768/1440/1920 (RULES §15). Itu langkah berikutnya.
+### Not verified in this port
+
+- **Pixel parity against Figma.** Build, typecheck and lint are clean, all
+  thirteen routes answer 200 with exactly one `<h1>`, and every section renders —
+  but nothing has been compared to the design at 360/768/1440/1920 (RULES §15).
+  This is the next step, and the largest remaining piece of work.
+- **`nginx -t`** has not been run: nginx is not installed on the machine this was
+  written on.
+
+### Loose ends in the port itself
+
+- `DominoRulebookCard` is registered but used nowhere. It is orphaned in the Next
+  project too — the only mention there is a comment in `ResourceCard` — so this
+  is inherited, not introduced. Delete it or wire it up; do not assume it is
+  live.
+- `content/loading.ts` is dead: `LOADING_COPY` has no reader now that
+  `loading.tsx` has no counterpart. Kept in case a real pending state ever wants
+  it.
+- The 37 `TODO(copy)` / `TODO(design)` markers are all in `content/` and
+  `lib/api/mock/`, inherited verbatim. None were added here.
