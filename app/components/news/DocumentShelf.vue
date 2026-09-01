@@ -31,7 +31,7 @@ defineSlots<{
            rather than in the string, so the copy keeps its own case (D40). -->
       <h2
         :id="`${id}-heading`"
-        class="font-display w-fit bg-[image:var(--gradient-gold-text)] bg-clip-text text-[length:var(--text-display-sm)] leading-[0.95] text-transparent uppercase"
+        class="font-display w-fit text-gold-gradient text-[length:var(--text-display-sm)] leading-[0.95] uppercase"
       >
         {{ heading }}
       </h2>

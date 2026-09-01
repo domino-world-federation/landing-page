@@ -21,7 +21,9 @@ const SETTLE = DURATION * 1.5
  * to page background at the foot (`117:3849`), and a radial vignette over the
  * top (`117:3855`) — and every one of them is already baked into the export
  * (D22). Reproducing them in CSS would darken the picture twice, which is the
- * exact trap S4 hit and NewsIntro records.
+ * exact trap S4 hit and `home/News` records — where the redraw has since gone
+ * the other way, separating the photograph from its wash so the wash could be
+ * drawn in CSS against a taller frame.
  *
  * The text column is `x:525 w:870` — the same column S4's is, to the pixel. The
  * two sections are the same composition with different copy, so they are laid
@@ -76,7 +78,7 @@ const SETTLE = DURATION * 1.5
     >
       <MotionReveal :y="48" blur-from="12px">
         <h2
-          class="font-display bg-[image:var(--gradient-gold-text)] bg-clip-text text-[length:var(--text-display-feature)] leading-none text-transparent uppercase"
+          class="font-display text-gold-gradient text-[length:var(--text-display-feature)] leading-none uppercase"
         >
           {{ HQ_COPY.headline }}
         </h2>

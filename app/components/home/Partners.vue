@@ -55,7 +55,7 @@ const { data: partners } = await useAsyncData("home-partners", () => getPartners
        5.21vw is 19px. -->
   <section
     aria-labelledby="partners-heading"
-    class="overflow-hidden py-[max(48px,5.21vw)]"
+    class="snap-start snap-always overflow-hidden py-[max(48px,5.21vw)]"
   >
     <!-- Figma's 52px gap between heading and row — 2.71vw, floored at 24. -->
     <div class="flex flex-col gap-[max(24px,2.71vw)]">

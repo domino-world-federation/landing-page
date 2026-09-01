@@ -20,6 +20,10 @@ import { TOURNAMENTS_COPY } from "~/content/tournaments"
  * The design sets the rows in DM Sans, which the site does not load — it ships
  * Inter and Bebas (DESIGN-TOKENS §1) — so they are Inter at the same size, the
  * same substitution `SupportCard` makes for Inter Display.
+ *
+ * A snap stop with its own navbar clearance, like the rest of the page: the gold
+ * heading sits at the top of the band and the bar is fixed over the first 112px,
+ * so without the clearance the section arrives with its title cut in half.
  */
 const { data: results } = await useAsyncData(
   "tournaments-olympic-results",
@@ -41,12 +45,12 @@ const TD =
   <section
     v-if="results.length > 0"
     aria-labelledby="olympic-results-heading"
-    class="bg-bg flex flex-col items-center gap-10 px-5 py-16 md:px-10 lg:gap-[2.5vw] lg:px-20 lg:py-[3.125vw]"
+    class="bg-bg flex snap-screen flex-col items-center justify-center gap-10 px-5 pt-28 pb-16 md:px-10 lg:gap-[2.5vw] lg:px-20 lg:pt-[var(--nav-clearance)] lg:pb-[3.125vw]"
   >
     <MotionReveal :y="24">
       <h2
         id="olympic-results-heading"
-        class="font-display bg-[image:var(--gradient-gold-text)] bg-clip-text text-center text-[length:var(--text-display-sm)] leading-[0.95] text-transparent uppercase"
+        class="font-display text-gold-gradient text-center text-[length:var(--text-display-sm)] leading-[0.95] uppercase"
       >
         {{ TOURNAMENTS_COPY.results.heading }}
       </h2>

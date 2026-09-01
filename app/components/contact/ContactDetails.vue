@@ -24,7 +24,7 @@ import { FOOTER_SOCIALS } from "~/content/footer"
   <section aria-labelledby="details-heading" class="flex flex-col gap-8">
     <h2
       id="details-heading"
-      class="font-display w-fit bg-[image:var(--gradient-gold-text)] bg-clip-text text-[length:var(--text-display-sm)] leading-[0.95] text-transparent uppercase"
+      class="font-display w-fit text-gold-gradient text-[length:var(--text-display-sm)] leading-[0.95] uppercase"
     >
       {{ CONTACT_COPY.detailsHeading }}
     </h2>

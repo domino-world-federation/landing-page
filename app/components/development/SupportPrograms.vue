@@ -18,7 +18,7 @@ import { SUPPORT_BENEFITS, SUPPORT_COPY } from "~/content/development/support"
 <template>
   <section
     aria-labelledby="support-heading"
-    class="px-5 py-16 md:px-10 lg:px-20 lg:py-[3.13vw]"
+    class="flex snap-screen flex-col justify-center px-5 pt-28 pb-16 md:px-10 lg:px-20 lg:pt-[var(--nav-clearance)] lg:pb-[3.13vw]"
   >
     <div
       class="flex flex-col gap-10 menu:flex-row menu:justify-between menu:gap-[8.96vw]"
@@ -37,7 +37,7 @@ import { SUPPORT_BENEFITS, SUPPORT_COPY } from "~/content/development/support"
         <MotionReveal :y="40" :delay="STAGGER">
           <h2
             id="support-heading"
-            class="font-display bg-[image:var(--gradient-gold-text)] bg-clip-text text-[length:var(--text-display-sm)] leading-[0.95] text-transparent uppercase"
+            class="font-display text-gold-gradient text-[length:var(--text-display-sm)] leading-[0.95] uppercase"
           >
             {{ SUPPORT_COPY.heading }}
           </h2>

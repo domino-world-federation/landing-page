@@ -28,7 +28,16 @@ import { FOOTER_COPY, FOOTER_GROUPS, FOOTER_SOCIALS } from "~/content/footer"
 </script>
 
 <template>
-  <footer class="relative px-5 py-10 md:px-10 lg:px-20 lg:py-[4.17vw]">
+  <!-- The snap point is for the landing page, which snaps section by section,
+       and it is load-bearing rather than cosmetic: `scroll-snap-type: mandatory`
+       makes everything below the LAST snap position unreachable — the scrollport
+       is pulled back to it the moment the scroll stops — so without one here the
+       footer could not be scrolled to at all. It costs the other pages nothing:
+       `scroll-snap-align` does nothing until some ancestor is a snap container,
+       and only the `home` layout makes `<html>` one. -->
+  <footer
+    class="relative snap-start snap-always px-5 py-10 md:px-10 lg:px-20 lg:py-[4.17vw]"
+  >
     <!-- Figma pads the pane 32px on all sides inside the section's own 80.
          `backdrop-blur-[10px]` is the design's number; the 40% black is what
          keeps the beams readable through it rather than merely visible. -->

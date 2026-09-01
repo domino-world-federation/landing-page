@@ -24,7 +24,7 @@ import {
 <template>
   <section
     aria-labelledby="certifications-heading"
-    class="bg-[linear-gradient(180deg,var(--color-bg)_0%,var(--color-surface-dark)_100%)] py-16 lg:py-[4.17vw]"
+    class="flex snap-screen flex-col justify-center bg-[linear-gradient(180deg,var(--color-bg)_0%,var(--color-surface-dark)_100%)] pt-28 pb-16 lg:pt-[var(--nav-clearance)] lg:pb-[4.17vw]"
   >
     <!-- The section pads top and bottom only (`80px 0px`); its two children
          carry the 80px sides themselves. Reproduced rather than flattened
@@ -43,7 +43,7 @@ import {
         <MotionReveal :y="40" :delay="STAGGER">
           <h2
             id="certifications-heading"
-            class="font-display w-fit bg-[image:var(--gradient-gold-text)] bg-clip-text text-[length:var(--text-display-sm)] leading-[0.95] text-transparent uppercase"
+            class="font-display w-fit text-gold-gradient text-[length:var(--text-display-sm)] leading-[0.95] uppercase"
           >
             {{ CERTIFICATIONS_COPY.heading }}
           </h2>

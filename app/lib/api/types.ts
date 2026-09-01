@@ -80,11 +80,20 @@ export type TournamentStatus = "upcoming" | "live" | "completed"
  * be `upcoming` with registration already `closed`, and `live` while its
  * registration reads `ongoing`.
  *
+ * **`upcoming` is a fourth member, and it had to be.** The union was three, and
+ * the two facts "entries have not opened yet" and "entries are over" were both
+ * being carried by `closed`. That is not a modelling nicety: the card prints the
+ * state as a word AND prints the label under the picture, so a tournament whose
+ * entries open on 1 November was showing a pill that read CLOSED above a tab
+ * that read "Registration opens Nov 1" — the card contradicting itself in two
+ * places a reader sees at once. They are also different offers. Entries that
+ * open later are worth a reminder; entries that are over are not.
+ *
  * A closed union rather than a string: the card colours the pill from this
  * value, so an unexpected member would print an unstyled word instead of
  * failing at the type level.
  */
-export type TournamentRegistration = "open" | "closed" | "ongoing"
+export type TournamentRegistration = "open" | "upcoming" | "ongoing" | "closed"
 
 /**
  * A tournament as the `/tournaments` rail lists it — Figma card `373:17424`.
@@ -106,6 +115,35 @@ export type Tournament = {
   location: string
   imageUrl: string
   imageAlt: string
+  /**
+   * The four fields the card redraw added (`592:16867`).
+   *
+   * All four are pre-formatted for the same reason `dateLabel` on `ShowcaseEvent`
+   * is: the API owns how a date range reads and how a deadline is phrased, and a
+   * page deriving "in 3 days" from a timestamp would re-decide it wrongly the
+   * moment the response was cached.
+   */
+  /** The tab across the picture's top edge, e.g. "Mar 18 - 21, 2027". */
+  dateLabel: string
+  /**
+   * The tab across the picture's bottom edge, and it says what the registration
+   * state is doing: "Registration ends in 3 days" while it is `open`,
+   * "Registration opens Nov 1" while it is `upcoming`, "Registration closed"
+   * once it is `closed`. It must AGREE with `registration` — the pill prints the
+   * state and this prints the detail, and the two sit an inch apart.
+   *
+   * OPTIONAL, because a tournament being played has neither. `ongoing` leaves it
+   * unset and the card drops the tab rather than printing a deadline for
+   * entries that are no longer being taken — which is what it did, and what read
+   * as a card contradicting its own badge.
+   */
+  registrationLabel?: string
+  /** Whether the tournament is played in person or online — the pill beside the
+   *  category (`592:16886`). */
+  attendance: "Offline" | "Online"
+  /** The formats and scoring, as one line: "Single 101, Double 101, 3 Round,
+   *  Best of 3" (`592:16893`). */
+  formatLabel: string
   startsAt: IsoDateString
   endsAt?: IsoDateString
   venue?: string
@@ -113,6 +151,154 @@ export type Tournament = {
   /** The tournament's own page. Unset until the portal exists (B2). */
   href?: string
 }
+
+/**
+ * One labelled fact on the detail page — "Registration period / Jun 01–Aug 14,
+ * 2026", "Participants / 64 Teams".
+ *
+ * Two blocks on that page are built from these and they are drawn as two
+ * different cards: Eligibility & Registration puts a gold-tiled glyph beside the
+ * pair (`517:2052`), Tournament Format prints the pair alone (`517:2137`). Same
+ * shape of fact either way, so it is one type and one card — the presence of
+ * `iconUrl` is what separates them.
+ */
+export type TournamentFact = {
+  id: string
+  /** The small grey line above, printed in caps by the card (D40). */
+  label: string
+  value: string
+  /**
+   * The glyph in the gold tile beside the pair, where the block has one.
+   * Eligibility & Registration draws four (`517:2055` and siblings); Tournament
+   * Format draws none, and a fact without an icon simply has no tile.
+   */
+  iconUrl?: string
+}
+
+/** One entry on the detail page's schedule timeline (`517:2105`). */
+export type TournamentScheduleEntry = {
+  id: string
+  /** Pre-formatted, e.g. "Aug 28. 09:00" — the API owns how a time reads. */
+  time: string
+  title: string
+  /**
+   * Where it happens, as separate parts: the design prints them on one line
+   * divided by a bullet ("Madrid Arena • Main Hall"), and an entry with one
+   * place prints one. Joined by the component rather than stored joined, so the
+   * bullet is a layout decision and not a character inside the data.
+   */
+  places: string[]
+}
+
+/** A referee or official working the tournament (`517:2025`). */
+export type TournamentOfficial = {
+  id: string
+  name: string
+  /** e.g. "Chief Referee". */
+  role: string
+  country: string
+  portraitUrl?: string
+  portraitAlt?: string
+}
+
+/**
+ * A winning player or pair on the detail page's Results & Winners row
+ * (`517:2180`).
+ *
+ * `names` is the printed line — a doubles title is won by two people and the
+ * design prints them as "Luis Ortega & Mateo Ruiz", one string. `portraitUrls`
+ * is a list because the card draws one circle per winner.
+ *
+ * The same R16 caution the champions rail carried applies: these are placeholder
+ * names, and a real name under a real face asserts that a particular living
+ * person won a title that does not exist yet.
+ */
+export type TournamentWinner = {
+  id: string
+  /** "CHAMPION", "RUNNER-UP", "THIRD PLACE" — the ribbon at the card's head. */
+  rankLabel: string
+  names: string
+  country: string
+  portraitUrls: string[]
+}
+
+/**
+ * The venue block on the detail page (`517:1986`) — a photograph, the hall's
+ * name, and the street line under it.
+ *
+ * This is what `Tournament.venue` becomes on a detail record. The list carries
+ * the hall as a bare string because a card prints one line; the page prints a
+ * photograph, an address and a country beside it, so the field WIDENS rather
+ * than being duplicated under a second name — a record carrying both `venue: "Madrid
+ * Arena"` and `venueDetail: { name: "Madrid Arena", … }` is two places to
+ * correct the same fact.
+ */
+export type TournamentVenue = {
+  name: string
+  /** The street line under the name (`517:2002`). */
+  address: string
+  country: string
+  /**
+   * Where the hall is, for the map.
+   *
+   * Figma's venue block is a MAP with a pin card over it (`517:1988` is a map
+   * screenshot, `517:1990` the pin's stem), not a photograph of the building —
+   * so the page embeds a real one, and this is what it needs. A venue without
+   * coordinates falls back to `imageUrl`, which is why that field stays.
+   */
+  coordinates?: { lat: number; lng: number }
+  /** Shown where there are no coordinates to map. */
+  imageUrl: string
+  imageAlt: string
+  /** The small square in the pin card over the map (`517:1992`). */
+  thumbUrl?: string
+}
+
+/** What a detail record adds to a list record — see `TournamentDetail`. */
+export type TournamentDetailExtras = {
+  /** The prose under "Tournament Overview" (`517:2047`). Paragraphs split on
+   *  blank lines by the component, so the copy stays one field. */
+  summary: string
+  /** The full-bleed band under the header (`517:1911`). */
+  heroImageUrl: string
+  heroImageAlt: string
+  /** The gold headline in the hero's info bar — "OCT 12-16, 2026". Separate from
+   *  `dateLabel`, which is the card's tab and is written for a 360px tab. */
+  dateHeading: string
+  venue?: TournamentVenue
+  prize?: {
+    /** "USD 50.000 Prize pool" (`517:2008`). */
+    headline: string
+    note: string
+    imageUrl: string
+    imageAlt: string
+  }
+  eligibility?: TournamentFact[]
+  schedule?: TournamentScheduleEntry[]
+  format?: TournamentFact[]
+  /** The shelf under "Regulations & Rule" (`517:2153`) — the same documents the
+   *  page's own regulations block files. */
+  regulations?: ResourceDocument[]
+  officials?: TournamentOfficial[]
+  contact?: { email: string; phone: string }
+  /** Present only once the tournament has been played (`517:2179`). */
+  winners?: TournamentWinner[]
+}
+
+/**
+ * A tournament as its own page prints it — Figma screen `517:1895`.
+ *
+ * An extension of `Tournament` rather than a separate record, because the header
+ * of this page IS the card's data: the same name, category, registration state,
+ * attendance and format line. What the detail adds is everything a card has no
+ * room for, and all of it is optional except the overview — a tournament that
+ * has only just been announced has no schedule, no officials and no winners, and
+ * the page draws the blocks it has rather than printing empty headings.
+ *
+ * `venue` is omitted from the base and redeclared: see `TournamentVenue`.
+ */
+export type TournamentDetail = Omit<Tournament, "venue"> &
+  TournamentDetailExtras
 
 /**
  * A past winner on the Champions Hall rail (`381:17645`).
@@ -189,6 +375,46 @@ export type MemberFederation = {
    * than an error, and the square is what it falls back to.
    */
   flagUrl?: string
+  /**
+   * The fields the directory's detail card prints (`405:28394` redraw).
+   *
+   * All optional, and that is the contract rather than laziness: the list is the
+   * federation's own register and a body can be recognised long before it has
+   * filed a president's name or a phone number. The card prints the rows it has
+   * and drops the ones it does not, so a half-filled record renders a shorter
+   * card instead of a card full of blanks.
+   */
+  /** Which membership tier, matching `MEMBERSHIP_TIERS`. */
+  tierId?: string
+  /** "Joined since 2025" — the year alone; the card writes the sentence. */
+  joinedYear?: number
+  president?: string
+  /** One line, already formatted: "Miami, FL, United States". */
+  headquarters?: string
+  email?: string
+  phone?: string
+  /** The federation's own site. Opens in a new tab from the card's corner. */
+  websiteUrl?: string
+}
+
+/**
+ * A standing committee of the federation — `/governance`'s `613:24909`.
+ *
+ * Distinct from `SubCommittee`, which is About's flat list of names: this one
+ * carries what the committee is FOR. `remit` is the three chips under the name,
+ * and it is a list rather than a sentence because the design sets them as
+ * separate pills and a joined string would have to be split again to draw them.
+ *
+ * Data rather than copy: a federation reorganises, and the page draws however
+ * many bodies it is handed.
+ */
+export type StandingCommittee = {
+  id: string
+  name: string
+  /** What the committee answers for — three chips in the design. */
+  remit: string[]
+  /** The glyph in its gold tile. */
+  iconUrl?: string
 }
 
 export type ResourceDocument = {
@@ -252,9 +478,22 @@ export type ShowcaseEvent = {
   dateLabel: string
   location: string
   summary: string
-  /** The portrait behind the card's watermark. */
+  /** The event's picture — the landscape card the redraw (`561:13301`) puts in
+   *  the middle column, in place of the portrait panel that stood there. */
   imageUrl: string
   imageAlt: string
+  /**
+   * The tab across the picture's bottom edge, e.g. "Registration ends in 3 days"
+   * (`601:18956`).
+   *
+   * Already formatted, like `dateLabel` and `location` beside it, and for the
+   * same reason: the deadline is the API's to hold and the countdown is the
+   * API's to phrase. A page rendering "in 3 days" off a raw timestamp would be
+   * re-deciding the wording, and re-deciding it wrongly the moment the value is
+   * cached — a page served from an edge cache would keep saying "3 days" into
+   * the following week.
+   */
+  registrationLabel: string
   detailsUrl?: string
   registerUrl?: string
 }

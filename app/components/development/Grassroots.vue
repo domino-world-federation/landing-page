@@ -17,7 +17,7 @@ import {
 <template>
   <section
     aria-labelledby="grassroots-heading"
-    class="flex flex-col gap-10 px-5 py-16 md:px-10 lg:gap-[3.13vw] lg:px-20 lg:py-[4.17vw]"
+    class="flex snap-screen flex-col justify-center gap-10 px-5 pt-28 pb-16 md:px-10 lg:gap-[3.13vw] lg:px-20 lg:pt-[var(--nav-clearance)] lg:pb-[4.17vw]"
   >
     <div class="flex flex-col items-center gap-6 text-center lg:gap-9">
       <MotionReveal :y="32">
@@ -37,7 +37,7 @@ import {
       <MotionReveal :y="48" :delay="STAGGER">
         <h2
           id="grassroots-heading"
-          class="font-display bg-[image:var(--gradient-gold-text)] bg-clip-text text-[length:var(--text-display-statement)] leading-[1.08] text-transparent uppercase"
+          class="font-display text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
         >
           {{ GRASSROOTS_COPY.heading }}
         </h2>

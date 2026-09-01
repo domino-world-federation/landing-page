@@ -6,15 +6,28 @@ import {
 } from "~/content/domino/faq"
 
 /**
- * The Domino page's FAQ — `361:16085` in the updated file.
+ * The Domino page's FAQ — Figma node `572:14502`.
  *
- * This used to be a full white section, which is what the wireframe drew and all
- * there was to go on (D42); the hi-fi makes it a white CARD floating on a
- * `#0E0E0E → #1B1B1B` gradient, so the white no longer runs edge to edge.
+ * **It has been a white section, then a white card, and is now glass.** The
+ * wireframe drew a full white band and that was all there was to go on (D42);
+ * the first hi-fi made it a white CARD on a `#0E0E0E → #1B1B1B` gradient; the
+ * redraw turns the card translucent — `rgba(74,74,74,0.3)` over a 12px backdrop
+ * blur — and takes the type with it. It is the same treatment S11 received in
+ * the same pass, node for node, which is the point: two pages of one site whose
+ * FAQs are built differently for no reason a reader could name is a defect.
  *
- * The heading is centred here where S11's is left-aligned, and black rather than
- * the gold gradient, for the reason `Faq` sets out: gold on white is 1.9:1
- * against the 4.5 RULES §10 asks for, at every one of the brand's three stops.
+ * The card itself is `UiFaqPanel`, which every FAQ on the site now draws — the
+ * pane, its heading, the list and the button are one component so that the next
+ * change to the material happens once rather than four times. What is left here
+ * is the section around it, which genuinely differs per page.
+ *
+ * The heading is also LEFT-aligned now, where it was centred. That was this
+ * page's own variation on S11 and the redraw drops it (`572:14504`).
+ *
+ * The section's own gradient goes too: the redraw leaves the frame unfilled, so
+ * it stands on `--color-bg` like the block above it. A pane you can see through
+ * needs a ground that is one colour, or the blur samples a gradient and the card
+ * reads as two different materials top and bottom.
  *
  * **No `id="faq"`.** That anchor belongs to the landing page, which the footer
  * links to from every page including this one; claiming it here would send a
@@ -26,41 +39,18 @@ import {
 <template>
   <section
     aria-labelledby="domino-faq-heading"
-    class="bg-linear-to-b from-[#0e0e0e] to-[#1b1b1b] px-5 py-14 md:px-10 lg:px-20 lg:py-[4.1667vw]"
+    class="px-5 py-14 md:px-10 lg:px-20 lg:py-[4.4792vw]"
   >
-    <!-- The card: 60 of vertical padding and 160 of horizontal on a 1920 frame
-         (`361:16086`), which puts the questions in a 1440px column. The
-         horizontal figure is held as a `max-w` centred inside the card rather
-         than as padding — as padding it would still be claiming most of a
-         tablet, leaving the questions narrower than the gutters around them
-         (D14). -->
-    <div
-      class="rounded-[var(--radius-card)] bg-white px-5 py-10 shadow-[var(--shadow-card)] md:px-10 lg:px-[8.3333vw] lg:py-[3.125vw]"
-    >
-      <div class="mx-auto flex w-full max-w-[1440px] flex-col gap-8 lg:gap-[3.33vw]">
-        <MotionReveal :y="32">
-          <!-- Bebas 76/72 — `--text-display-sm`, the same step S11's heading and
-               the format panels take. `leading-[0.95]` is Figma's 72 on a 76
-               body. -->
-          <h2
-            id="domino-faq-heading"
-            class="font-display text-center text-[length:var(--text-display-sm)] leading-[0.95] text-black uppercase"
-          >
-            {{ DOMINO_FAQ_COPY.heading }}
-          </h2>
-        </MotionReveal>
-
-        <!-- One entrance for the whole list rather than a stagger down the
-             questions — the same call `Faq` makes: the rows are a list about to
-             be scanned, and animating them in sequence holds the last question
-             back while the reader is already on the first. -->
-        <MotionReveal :y="32">
-          <UiFaqAccordion
-            :items="DOMINO_FAQ_ITEMS"
-            :default-open-id="DOMINO_FAQ_DEFAULT_OPEN"
-          />
-        </MotionReveal>
-      </div>
-    </div>
+    <UiFaqPanel
+      :items="DOMINO_FAQ_ITEMS"
+      :default-open-id="DOMINO_FAQ_DEFAULT_OPEN"
+      :heading="DOMINO_FAQ_COPY.heading"
+      heading-id="domino-faq-heading"
+      tone="dark"
+      :view-more="{
+        label: DOMINO_FAQ_COPY.viewMore,
+        href: DOMINO_FAQ_COPY.viewMoreHref,
+      }"
+    />
   </section>
 </template>

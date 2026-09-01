@@ -2,8 +2,13 @@
 import { TOURNAMENTS_COPY } from "~/content/tournaments"
 
 /**
- * The horizontal rail both card rows on `/tournaments` are built on — the
- * tournament rail (`373:17423`) and Champions Hall (`381:17639`).
+ * The horizontal rail the tournament row on `/tournaments` is built on
+ * (`373:17423`).
+ *
+ * It carried Champions Hall too until that block was replaced by Executive
+ * Boards, which brings About's own strip with it. The slots and the
+ * `showProgress` switch stay: they are what let the rail be a row with a heading
+ * beside its arrows rather than only the one row it now draws.
  *
  * **A native scroller with arrows on top of it, not a carousel.** The design
  * draws four cards side by side, arrows above them, and — on the tournament rail
@@ -25,7 +30,7 @@ withDefaults(
   defineProps<{
     /** Names the rail for assistive tech. */
     label: string
-    /** The tournament rail draws the bar; Champions Hall does not. */
+    /** The tournament rail draws the bar; a plain row does not. */
     showProgress?: boolean
   }>(),
   { showProgress: false },
@@ -92,19 +97,36 @@ const thumbStyle = computed(() => ({
 
 <template>
   <div class="flex flex-col gap-10 lg:gap-[3.125vw]">
-    <div class="flex justify-end">
-      <div class="flex items-center gap-12">
-        <TournamentsRailArrow
+    <!-- The arrows share a row with whatever the caller puts in `#heading`.
+         `581:14652` draws them inside the title frame, beside the name and the
+         "View all" button, and building them as a band of their own cost the
+         section a whole one: measured, the arrow row and its gap took ~124px,
+         which is most of why the rail stood 213px taller than a screen and cut
+         its cards' buttons off the bottom.
+
+         With nothing in the slot the row collapses to just the arrows, pushed
+         right. -->
+    <div class="flex flex-wrap items-center justify-between gap-6">
+      <slot name="heading"><span /></slot>
+
+      <!-- Arrows first, then whatever the caller trails after them. The rail's
+           "View all" sits on the far right of this row in the design, PAST the
+           arrows rather than beside the heading — so it cannot ride in
+           `#heading`, which is the other end of a `justify-between`. -->
+      <div class="flex items-center gap-6 lg:gap-12">
+        <UiRailArrow
           :label="TOURNAMENTS_COPY.previous"
           :disabled="atStart"
           @press="step(-1)"
         />
-        <TournamentsRailArrow
+        <UiRailArrow
           :label="TOURNAMENTS_COPY.next"
           :disabled="atEnd"
           flipped
           @press="step(1)"
         />
+
+        <slot name="trailing" />
       </div>
     </div>
 

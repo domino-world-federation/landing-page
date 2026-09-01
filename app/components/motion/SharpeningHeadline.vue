@@ -87,6 +87,9 @@ const structured = computed(() =>
         // together. Grouping by word also keeps the break opportunities between
         // words — a line of bare `inline-block` letters would let a narrow
         // window wrap mid-word.
+        //
+        // See the template for why this space has to be rendered as an
+        // interpolation rather than written into the markup.
         leadingSpace: w > 0,
         chars: [...word].map((char, c) => ({
           key: `${char}-${c}`,
@@ -134,7 +137,24 @@ const viewport = { once: false, amount: 0.1 } as const
            a translation would have to carry (RULES §9). -->
       <span v-for="row in structured" :key="row.line" class="block">
         <span v-for="word in row.words" :key="word.key">
-          <template v-if="word.leadingSpace">&#32;</template>
+          <!-- The word separator, and it MUST be an interpolation.
+               A numeric-entity space written straight into the markup stood here
+               and rendered nothing at all: Vue's compiler decodes the entity to
+               a plain space, and its default `whitespace: "condense"` then drops
+               any static text node holding only whitespace. Every headline on
+               the site using this component came out run together —
+               "Growingthegame" on Development, and the same on About, Domino,
+               Contact, Gallery, News and everything through `PageHeader`.
+               Confirmed by walking the DOM: each word after the first was a
+               span holding two comment placeholders and the word, with no text
+               node between them.
+
+               An interpolation compiles to a dynamic text vnode instead, which
+               the whitespace rule does not touch. It stays a normal U+0020
+               rather than a no-break space, so the break opportunity between
+               words survives — which is the whole reason the space sits out here
+               rather than inside the word's `inline-block`. -->
+          <template v-if="word.leadingSpace">{{ " " }}</template>
           <span class="inline-block">
             <span
               v-for="glyph in word.chars"

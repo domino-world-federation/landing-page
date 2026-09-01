@@ -14,15 +14,17 @@ import { NEWS_GALLERY_COPY } from "~/content/news/gallery"
  * the design's own width. Reproduced as a scroller rather than a crop: the same
  * picture at the same size, with the rest reachable.
  *
- * **The play badge is decoration.** There is nothing to play (B2), so the tile
- * is a `<figure>` rather than a control — a play button that does nothing is
- * exactly the silent no-op D28 ruled out.
+ * **Pressing a tile opens it.** The collage crops every picture into a 400px
+ * column, so without a viewer there is no way to see one whole; `MediaLightbox`
+ * is that viewer and the tiles are the buttons that raise it. The play badge is
+ * still decoration — there is nothing to stream (B2) and the viewer says so.
  *
  * **Two pages draw this block.** The tournament page repeats it under its own
  * gold heading (`381:17695`) — the same collage, the same desk, the same link to
- * `/gallery`. Only the heading's colour differs, so that is the only thing this
- * takes as a prop: forking the component to change one class would give the site
- * two picture desks that have to be kept in step by hand (D32/D43).
+ * `/gallery`. Only the heading's colour and the page's snapping differ, so those
+ * are the only things this takes as props: forking the component to change a
+ * class would give the site two picture desks that have to be kept in step by
+ * hand (D32/D43).
  */
 withDefaults(
   defineProps<{
@@ -31,8 +33,15 @@ withDefaults(
      * gradient its other headings take.
      */
     headingTone?: "white" | "gold"
+    /**
+     * The tournament page scrolls section by section, so this block is one stop
+     * on it: a screen tall, and holding its content clear of the fixed navbar.
+     * The news page scrolls normally and wants neither — a band that claimed a
+     * whole screen there would put a gap in a page that has none.
+     */
+    snap?: boolean
   }>(),
-  { headingTone: "white" },
+  { headingTone: "white", snap: false },
 )
 
 const { data: items } = await useAsyncData(
@@ -68,15 +77,46 @@ const columns = computed<GalleryItem[][]>(() => {
 
   return out
 })
+
+/**
+ * The viewer's state.
+ *
+ * `index` is into the FLAT feed, not into a column: the arrows walk the
+ * pictures in the order the API sent them, which is the order the collage reads
+ * in, and the columns are a layout the viewer knows nothing about.
+ */
+const viewerOpen = ref(false)
+const viewerIndex = ref(0)
+
+function openViewer(item: GalleryItem) {
+  const found = items.value.findIndex((candidate) => candidate.id === item.id)
+  if (found < 0) return
+
+  viewerIndex.value = found
+  viewerOpen.value = true
+}
 </script>
 
 <template>
   <section
     v-if="items.length > 0"
     aria-labelledby="gallery-heading"
-    class="flex flex-col gap-8 py-10 pl-5 md:pl-10 lg:gap-10 lg:py-[4.1667vw] lg:pl-20"
+    :class="
+      cn(
+        'flex flex-col gap-8 py-10 pl-5 md:pl-10 lg:gap-10 lg:py-[4.1667vw] lg:pl-20',
+        // A snap stop buys its own clearance, the way the rail above it does.
+        // The heading is 76px of Bebas sitting at the top of the section, and
+        // the navbar is fixed 112px of it — without this it opens underneath the
+        // bar.
+        snap && 'snap-screen justify-center pt-28 lg:pt-[var(--nav-clearance)]',
+      )
+    "
   >
-    <div
+    <!-- The heading rises into place, like Executive Boards' does. `MotionReveal`
+         wraps the whole row rather than the `<h2>` alone so the arrow beside it
+         travels with it instead of sitting still while the title moves. -->
+    <MotionReveal
+      :y="40"
       class="flex flex-wrap items-center gap-6 pr-5 md:pr-10 lg:gap-8 lg:pr-[8.3333vw]"
     >
       <h2
@@ -85,7 +125,7 @@ const columns = computed<GalleryItem[][]>(() => {
           cn(
             'font-display text-[length:var(--text-display-sm)] leading-[0.95] uppercase',
             headingTone === 'gold'
-              ? 'bg-[image:var(--gradient-gold-text)] bg-clip-text text-transparent'
+              ? 'text-gold-gradient'
               : 'text-white',
           )
         "
@@ -109,7 +149,7 @@ const columns = computed<GalleryItem[][]>(() => {
           class="size-12 rotate-135 invert transition-transform duration-200 group-hover:translate-x-0.5"
         >
       </NuxtLink>
-    </div>
+    </MotionReveal>
 
     <!-- The scroller. `pr-5` on the track so the last column has a margin to
          come to rest against instead of touching the viewport edge. -->
@@ -130,8 +170,15 @@ const columns = computed<GalleryItem[][]>(() => {
           :key="item.id"
           :item="item"
           :tall="item.kind === 'video'"
+          @press="openViewer(item)"
         />
       </li>
     </ul>
+
+    <NewsMediaLightbox
+      v-model:open="viewerOpen"
+      v-model:index="viewerIndex"
+      :items="items"
+    />
   </section>
 </template>

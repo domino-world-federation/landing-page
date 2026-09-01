@@ -21,6 +21,10 @@ import type { FaqItem } from "~/types/faq"
 
 export const DOMINO_FAQ_COPY = {
   heading: "Frequently Asked Questions",
+  /** `572:14518`. The redraw gives this page the same button the landing FAQ and
+   *  `/tournaments` already carry, to the same destination. */
+  viewMore: "View more",
+  viewMoreHref: "/faq",
 } as const
 
 /**

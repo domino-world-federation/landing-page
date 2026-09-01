@@ -32,7 +32,7 @@ import { JOIN_COPY } from "~/content/home/join"
        than to the button. -->
   <section
     aria-labelledby="join-heading"
-    class="relative flex flex-col items-center gap-8 px-5 py-20 text-center md:px-10 lg:gap-[1.875vw] lg:px-20 lg:py-[5.2083vw]"
+    class="relative flex snap-start snap-always flex-col items-center gap-8 px-5 py-20 text-center md:px-10 lg:gap-[1.875vw] lg:px-20 lg:py-[5.2083vw]"
   >
     <!-- Figma's `56:4697` — the headline and its paragraph on a 24px gap, held
          apart from the button by the section's wider 36. -->

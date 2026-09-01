@@ -25,12 +25,33 @@ export const MEMBERS_COPY = {
    */
   mapPinCity: "Jakarta, ID",
   mapPinTier: "National Members",
-  /** Introduces the colour key under the map. */
-  mapKeyLabel: "Membership tiers",
+  /** Names the filter strip under the map for assistive tech. */
+  mapKeyLabel: "Filter members by tier",
+  /** `404:28374` — the pill that clears the filter. */
+  mapShowAll: "Show All",
+  /** Spoken when the filter changes; the map has no other way to say what
+   *  happened. `%1` is the tier, `%2` how many markers are left. */
+  mapFilterStatus: (tier: string, count: number) =>
+    `Showing ${count} ${tier}`,
+  mapFilterAllStatus: (count: number) => `Showing all ${count} members`,
   /** Names the group of marker buttons on the map for assistive tech. */
   markersLabel: "Member locations",
 
   directoryHeading: "National Federation Members",
+  /** Names the federation list for assistive tech. */
+  directoryListLabel: "National federation members",
+  /** `%s` is the federation — six rows all reading "Open" say nothing about
+   *  which one a screen-reader user is on. */
+  directoryOpenLabel: "Show details for %s",
+  /** The detail card (`405:28394` redraw). */
+  directoryDetail: {
+    joined: (year: number) => `Joined since ${year}`,
+    president: "President",
+    headquarters: "Headquarters",
+    contact: "Contact",
+    /** `%s` is the federation. */
+    websiteLabel: "Open the %s website",
+  },
   /** `405:28519`. Leads to the full directory, which does not exist yet (B2),
    *  so it points at `#` the way the unbuilt nav entries do. */
   directoryCta: "View all",
@@ -52,20 +73,31 @@ export const MEMBERS_COPY = {
 /**
  * The colour key under the map (`404:28373`).
  *
- * **Drawn as a filter, built as a key.** Figma draws these as pill "menus" with
- * "Show All" selected, but the 57 markers are baked into one exported SVG
- * (`world-map-dots.svg`) with their tier colours already in them — there is no
- * marker data to filter, and there will not be until a backend has one (B2).
- * D28 settled what to do in that position: a control that cannot do its job is
- * not shipped looking like a control. So the tiers are presented as what the
- * design's own inner frames call them — a `legend` — and "Show All" is dropped,
- * because a key has nothing to show or hide.
+ * **A filter, as the design draws it.** This shipped as a flat colour key at
+ * first, with "Show All" dropped, and the note here said why: the 57 markers
+ * were baked into one exported SVG with their tier colours already in them, so
+ * there was nothing to filter and D28 forbids shipping a control that cannot do
+ * its job.
  *
- * The counts come from the artwork itself: 5 continent, 34 national, 11
- * regional and 7 club markers, which is why the tiers are listed in that order
- * rather than the design's.
+ * That reasoning expired when `MAP_MARKERS` arrived. Every marker now carries
+ * its own coordinates AND its tier, so the dots are drawn from data rather than
+ * from the export — see `MapMarkers` — and the pills can do exactly what Figma
+ * shows them doing. The stale note is kept here in outline because "we decided
+ * this was impossible" is worth being able to date.
+ *
+ * Listed in the design's own order — continent, national, regional, club
+ * (`404:28373`) — which is how the strip reads left to right. An earlier version
+ * sorted them by marker count, which made the row disagree with the picture it
+ * sits under for no reason a reader could name. The counts are 5, 34, 11 and 7
+ * respectively, and the filter reports them.
  */
 export const MEMBERSHIP_TIERS = [
+  {
+    id: "continent",
+    label: "Continent Members",
+    from: "#E51B5E",
+    to: "#FF5F8F",
+  },
   {
     id: "national",
     label: "National Members",
@@ -75,12 +107,6 @@ export const MEMBERSHIP_TIERS = [
   },
   { id: "regional", label: "Regional Members", from: "#AF68FF", to: "#E0B4FF" },
   { id: "club", label: "Club Members", from: "#4E9EFF", to: "#AAC7FF" },
-  {
-    id: "continent",
-    label: "Continent Members",
-    from: "#E51B5E",
-    to: "#FF5F8F",
-  },
 ] as const
 
 /** The three cards (`405:28526`). Icons are 56px inside a 72px gold tile. */

@@ -15,17 +15,36 @@ import { YOUTH_COPY, YOUTH_STATS } from "~/content/development/youth"
  * curriculum button. Written as `grow`/`basis-0` fractions rather than widths
  * (D14) — the ratio is the design's intent and the pixels are not, so the
  * columns divide whatever row they are given instead of demanding 1760px of it.
+ *
+ * **A fixed band, not a screen** — the same shape Domino's `FormatSplit` has,
+ * and for the same reason. Figma sizes this frame `hug`: 80px of padding around
+ * a 280px title column, so 440 at the design width. Given `snap-screen` instead
+ * it took a whole 1080 and the copy floated in the middle of an empty white
+ * field, which is a different section from the one drawn. The inner row carries
+ * the 280 as `14.58vw` with a floor, so the band keeps its proportion at every
+ * width and stops collapsing onto its own type on a narrow desktop.
+ *
+ * `relative z-10` lives on the SECTION rather than on a wrapper the page puts
+ * round it — again Domino's arrangement. It is what decides that this band
+ * covers the photograph above it rather than the other way round, and that fact
+ * belongs to the section that does the covering.
  */
 </script>
 
 <template>
+  <!-- `data-nav-contrast`: a full-bleed white ground, so the header cannot stay
+       transparent while this passes under it — its wordmark and menu labels are
+       white. See `NavShell`. -->
   <section
     aria-labelledby="youth-heading"
-    class="bg-white px-5 py-16 text-black md:px-10 lg:px-20 lg:py-[4.17vw]"
+    data-nav-contrast
+    class="relative z-10 bg-white px-5 py-16 text-black md:px-10 lg:px-20 lg:py-[4.17vw]"
   >
     <!-- 1760 − 362 − 1259 leaves 139px between the columns at design width
          (7.24vw), which is what `space-between` resolves to there. -->
-    <div class="flex flex-col gap-10 menu:flex-row menu:items-center menu:gap-[7.24vw]">
+    <div
+      class="flex flex-col gap-10 menu:h-[max(280px,14.58vw)] menu:flex-row menu:items-center menu:gap-[7.24vw]"
+    >
       <div
         class="flex flex-col gap-6 menu:shrink-0 menu:grow-[362] menu:basis-0 menu:gap-9"
       >

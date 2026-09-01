@@ -24,12 +24,36 @@ import { TOURNAMENTS_COPY } from "~/content/tournaments"
  * DWF2026 wordmark across the foot.
  */
 defineProps<{ event: ShowcaseEvent }>()
+
+/**
+ * Whether the reminder dialog is showing.
+ *
+ * It lives here rather than inside the dialog because the button that opens it
+ * is a sibling: the dialog owns how it looks and what it does, and this owns
+ * whether it is there at all.
+ */
+const notifyOpen = ref(false)
 </script>
 
 <template>
+  <!-- `data-nav-contrast`: a full-bleed white ground, so the header cannot stay
+       transparent while this passes under it — its wordmark and menu labels are
+       white. See `NavShell`. -->
+  <!-- A full screen, and the height is this build's rather than Figma's:
+       `581:14569` is 849 tall, which is neither the frame's 1080 nor a screen.
+       On a page that snaps section by section a band shorter than the viewport
+       always arrives with the next one's head showing under it, and this is the
+       page's only white ground — the strip of dark below it is the most visible
+       version of that fault there is. Same call the landing page's featured
+       event needed, and for the same reason.
+
+       `min-h`, not `h`: below `menu` the three columns stack, and at that point
+       the content is taller than a phone screen and has to be allowed to grow
+       past it. -->
   <section
     aria-labelledby="highlighted-heading"
-    class="bg-white px-5 py-16 md:px-10 lg:px-20 lg:py-[3.125vw]"
+    data-nav-contrast
+    class="flex snap-screen flex-col justify-center bg-white px-5 py-16 md:px-10 lg:px-20 lg:py-[3.125vw]"
   >
     <div class="flex flex-col gap-10 menu:flex-row menu:gap-[2.29vw]">
       <!-- Inter Medium 20/28 in black, held to 161px in the design so it sets as
@@ -111,10 +135,16 @@ defineProps<{ event: ShowcaseEvent }>()
               {{ TOURNAMENTS_COPY.highlighted.details }}
             </NuxtLink>
 
-            <TournamentsUnavailableButton
-              :notice="TOURNAMENTS_COPY.highlighted.notifyUnavailable"
-              notice-class="text-muted"
+            <!-- It opens a dialog now rather than printing a refusal in place.
+                 The button was an `UnavailableButton` because no dialog was
+                 drawn and a control with no backend can only refuse (D28); the
+                 redraw draws one (`587:16433`), so the interaction takes the
+                 design's shape and the refusal moves to the submit, where there
+                 is still nothing to submit to. -->
+            <button
+              type="button"
               class="rounded-btn font-display focus-visible:ring-gold bg-gold flex h-18 w-full items-center justify-center gap-3 px-5 text-[length:var(--text-display-cta)] leading-11 text-black uppercase transition-colors hover:bg-[var(--color-gold-btn-light)] focus-visible:ring-2 focus-visible:outline-none"
+              @click="notifyOpen = true"
             >
               {{ TOURNAMENTS_COPY.highlighted.notify }}
               <img
@@ -124,7 +154,13 @@ defineProps<{ event: ShowcaseEvent }>()
                 height="32"
                 class="size-8"
               >
-            </TournamentsUnavailableButton>
+            </button>
+
+            <TournamentsNotifyDialog
+              v-model="notifyOpen"
+              :tournament-id="event.id"
+              :event-name="event.name"
+            />
           </div>
         </div>
       </div>

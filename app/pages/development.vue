@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { DEVELOPMENT_HEADER_ALT } from "~/content/development/header"
+
 /**
  * `/development` — Figma screen `190:13600`.
  *
@@ -20,11 +22,25 @@
  * a section whose height depends on how its copy wraps.
  */
 definePageMeta({
-  shine: {
-    src: "/assets/development/decor-shine.svg",
-    aspectClass: "aspect-[1920/2071]",
-  },
+  shine: { aspectClass: "aspect-[1920/2071]" },
 })
+
+/**
+ * Development scrolls section by section, like the landing page, About, Domino,
+ * Tournaments and Members.
+ *
+ * The class rides on `<html>` because that is the document's scrollport —
+ * `scroll-snap-type` on `<body>` is ignored. Declared here rather than in the
+ * `default` layout because that layout serves eleven routes and only six of them
+ * snap; unhead takes the attribute off again on route change, and
+ * `plugins/snap-release.client.ts` takes it off a frame earlier than that when a
+ * navigation starts.
+ *
+ * `snap-children` on `<main>` then makes every direct child a stop — the rule is
+ * in `main.css`. The photograph and the block that covers it are ONE child, and
+ * so one stop: they are a single move.
+ */
+useHead({ htmlAttrs: { class: "snap-sections" } })
 
 useSeoMeta({
   title: "Development | Domino World Federation",
@@ -34,10 +50,29 @@ useSeoMeta({
 </script>
 
 <template>
-  <main class="relative z-10">
+  <main class="snap-children relative z-10">
     <DevelopmentHeader />
-    <DevelopmentClassroomBand />
-    <DevelopmentYouthProgram />
+
+    <!-- The photograph is PINNED and the white band slides over it. `sticky`
+         needs a containing block that outlives the sticky element, so the two
+         are wrapped: the picture holds the top of the screen for as long as this
+         wrapper is on it, and lets go the moment Youth Program's foot passes.
+         Wrapping exactly these two is also what bounds it — sticky against
+         `<main>` would leave the picture pinned behind the whole page.
+
+         `z-0` against Youth Program's own `z-10` decides which one covers which.
+         That section is the one white ground on this page and fully opaque, so
+         it hides the picture completely as it arrives rather than veiling it —
+         and it carries that `z-10` itself rather than getting it from a wrapper
+         here, which is how Domino pairs its tile band with the formats. -->
+    <div class="relative">
+      <UiStickyBand
+        src="/assets/development/band-classroom-session.png"
+        :alt="DEVELOPMENT_HEADER_ALT.band"
+        dim
+      />
+      <DevelopmentYouthProgram />
+    </div>
     <DevelopmentCertifications />
     <DevelopmentLibrary />
     <DevelopmentGrassroots />

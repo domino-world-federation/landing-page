@@ -1,59 +1,61 @@
 <script setup lang="ts">
 import type { ShowcaseEvent } from "~/lib/api/types"
-import { FEATURED_EVENT_COPY } from "~/content/home/featured-event"
 
 /**
- * Seconds for one leg of the drift — out and back is twice this, so the card
- * completes a lap every four seconds. Brisk enough that the movement registers
- * while the card is being looked at, and still slow enough to read as breathing
- * rather than as a loading state.
+ * Where the furniture sits on the picture, as fractions of Figma's 810 × 540
+ * frame (`561:13301`). Percentages rather than pixels for the reason the card
+ * has always used them: the box is a fraction of the viewport at every
+ * breakpoint, so anything placed in pixels would drift off its mark the moment
+ * the card is not 810 wide.
  */
-const DRIFT = 2
+/** 225/810 — where both tabs start, and 360/810 how wide they run. */
+const TAB_LEFT = "left-[27.778%]"
+const TAB_WIDTH = "w-[44.444%]"
+/** 48/540. */
+const TAB_HEIGHT = "h-[8.889%]"
+/** 233/360 — the label's own text box, which is narrower than the tab because
+ *  the tab is a trapezoid and its lower edge is the short one. */
+const TAB_TEXT_WIDTH = "w-[64.7%]"
 
 /**
- * The watermark's larger size. 3%, and deliberately tiny: it is a 365px mark
- * inside a 520px card, so a percent of it is a lot of travel on screen. It
- * starts at `1` — its design size — so the card rests at Figma's exact
- * composition and only ever swells away from it.
- */
-const WATERMARK_MAX = 1.03
-
-/**
- * Percent of its own height the trophy rides up and down. The photograph is
- * full-bleed and 720px tall, so 2% is ~14px at the design size — a drift, not a
- * bob, and small enough that its foot never lifts off the card's bottom edge.
- */
-const TROPHY_RISE = -2
-
-/**
- * The card in S6 — Figma node `52:3038`. A gold-lit panel, 520 × 720, holding
- * the federation watermark, the trophy, and the event's year across its foot.
+ * The card in S6 — Figma node `561:13301`. The event's picture, 810 × 540, with
+ * a tab clipped to each of its long edges: the dates across the top, and how
+ * long registration has left across the bottom.
  *
- * **The motion.** Two layers drift continuously and in step, and they drift the
- * SAME WAY: as the trophy rides up, the watermark behind it swells. Both run on
- * one duration from one shared resting pose, so the pair reads as a single
- * object breathing towards the viewer — put out of phase (the mark shrinking as
- * the hand rises) they pull apart and read as two layers taking turns instead.
- * Nothing else on the card moves — the type, the panel and the light streaks are
- * fixed, which is what keeps the drift legible as depth rather than wobble.
+ * **The dates used to float on the picture in a blurred pill and now sit in the
+ * top tab.** The revision drops the pill (`561:13303`) entirely and gives the
+ * date the tab that "Registration ends in 3 days" used to have, moving that down
+ * to the foot. One less floating element over the photograph, and the two facts
+ * a reader wants from a card at a glance — when, and how long they have — end up
+ * on its two edges rather than one being buried mid-frame.
  *
- * It is a loop, not an entrance: `repeatType: "mirror"` runs the same tween
- * backwards on every other pass, so the ends meet exactly and there is no seam
- * where a restart would show. It only runs while the card is on screen —
- * `whileInView` hands control back to `animate` when it leaves, which parks both
- * layers at their resting values instead of leaving a timer burning against an
- * off-screen element.
+ * The tab type also stops being black-at-60%: the revision sets a flat `#666666`
+ * (`601:18950`), which holds its value against whatever part of the picture the
+ * trapezoid happens to cover instead of taking a tint from it.
  *
- * Only `transform` is animated, and `prefers-reduced-motion` stops the loop
- * entirely rather than slowing it (RULES §12) — through the transition, never by
- * branching the markup, which is what would break hydration.
+ * **It used to be built, and is now printed.** Until the redraw this was a
+ * layered composition at 520 × 720 — a gold gradient panel, the federation
+ * watermark ghosted into it, the trophy photograph, the event's own year set as
+ * live text across the foot, and light streaks blended over the lot — with the
+ * watermark and the trophy drifting gently in step. The redraw replaces all of
+ * it with one landscape raster (`561:13302`) in which every one of those layers
+ * is already flattened, and turns the card on its side while it is at it.
  *
- * The layers are stacked in Figma's own child order: gradient panel, watermark,
- * photograph, wordmark, light streaks.
+ * Two things follow from that, and both are the design's call rather than an
+ * omission here. The drift is gone: there are no longer two layers to move
+ * against each other, and scaling a flattened photograph is a different effect,
+ * not the same one. And the wordmark is now part of the image, so it reads
+ * "DWF2026" for every event in the pager instead of taking its year from
+ * `dateLabel` — see the note in `EventShowcase`.
+ *
+ * The frame keeps its own radial gradient underneath (`circle at 117% -2%`)
+ * even though the picture covers it. That is Figma's own stack, and it is not
+ * quite invisible: the frame is a 12px radius and the picture an 8px one, so a
+ * sliver of gold shows at each corner where the two curves part.
  */
 defineOptions({ inheritAttrs: false })
 
-const props = defineProps<{ event: ShowcaseEvent }>()
+defineProps<{ event: ShowcaseEvent }>()
 
 const attrs = useAttrs()
 const passThrough = computed(() => {
@@ -63,138 +65,97 @@ const passThrough = computed(() => {
 
 const rootClass = computed(() =>
   cn(
-    // 520 × 720 in Figma. The ratio is carried rather than the pixels, so the
-    // card can shrink on a narrow screen without the artwork inside it
+    // 810 × 540 in Figma. The ratio is carried rather than the pixels, so the
+    // card can shrink on a narrow screen without the furniture on it
     // re-composing — every layer below is placed as a percentage of this box.
-    "relative aspect-[520/720] w-full max-w-[520px] shrink-0 overflow-hidden",
+    "relative aspect-[810/540] w-full max-w-[810px] shrink-0",
     "rounded-glass bg-[radial-gradient(circle_at_117%_-2%,#c3ae86_0%,#4f4332_100%)]",
     attrs.class as string | undefined,
   ),
 )
 
-const prefersReducedMotion = useReducedMotion()
+// Figma's 18px as a fraction of the design width rather than as a fixed size.
+// The tab is 44.4% of a card that is itself a fraction of the window, so on a
+// phone it is ~155px wide; 18px held literally would put "Registration ends in
+// 3 days" straight through both ends of it. The floor is where the label is
+// still legible rather than where it still fits.
+const TAB_TEXT = "text-[length:clamp(0.625rem,0.9375vw,1.125rem)]"
 
-// Reduced motion collapses the TRANSITION and leaves the tree alone. Both sides
-// render the same `initial`, and a zero-length tween lands the layers at rest
-// before the first paint.
-//
-// `repeat: 0` is what actually stops the loop; the duration is zeroed too so
-// there is not even a single pass to see.
-const drift = computed(() =>
-  prefersReducedMotion.value
-    ? { duration: 0, repeat: 0 }
-    : {
-        duration: DRIFT,
-        repeat: Number.POSITIVE_INFINITY,
-        repeatType: "mirror" as const,
-        ease: "easeInOut" as const,
-      },
-)
-
-// Where both layers sit when the card is off screen — their design values, so a
-// card that has never been looked at is the still design exactly.
-const rest = { duration: 0 }
-
-const viewport = { once: false, amount: 0.35 } as const
-
-/**
- * The four-digit year out of a formatted range like "Oct 12 - Oct 15, 2026".
- *
- * The last match, not the first: a range that straddles New Year carries two,
- * and the card should wear the year the event finishes in. Falls back to an
- * empty string, so a label the API formats differently leaves the wordmark
- * reading "DWF" rather than printing a fragment of the date.
- */
-const eventYear = computed(
-  () => props.event.dateLabel.match(/\d{4}/g)?.at(-1) ?? "",
-)
+const tabClass = computed(() => cn("absolute", TAB_LEFT, TAB_WIDTH, TAB_HEIGHT))
 </script>
 
 <template>
   <div v-bind="passThrough" :class="rootClass">
-    <!-- The federation mark ghosted into the panel — node `52:3042`. Decorative:
-         the emblem is already spelled out by the logo in the navbar, so naming
-         it here would only repeat it (RULES §7).
+    <!-- The picture. `rounded-[8px]` is Figma's own inner radius against the
+         frame's 12 — see the note above for why the two differ. -->
+    <NuxtImg
+      :src="event.imageUrl"
+      :alt="event.imageAlt"
+      :sizes='imageSizes({ xs: "90vw", menu: "45vw" })'
+      :quality="90"
+      class="absolute inset-0 size-full rounded-[8px] object-cover"
+    />
 
-         The export already carries Figma's 8% IN ITS ALPHA CHANNEL — the PNG's
-         peak alpha is 20/255 ≈ 0.078, measured, not assumed — so an
-         `opacity-[0.08]` class on top of it multiplied out to ~0.6% and the mark
-         disappeared, which is what it was doing. The layer stays fully opaque
-         and lets the asset's own alpha do the work; no filter, so the mark keeps
-         its own pale tone against the gold. -->
-    <Motion
-      as="div"
-      aria-hidden="true"
-      class="absolute top-[14.9%] left-[16.3%] h-[55%] w-[70.2%]"
-      :initial="{ scale: 1 }"
-      :animate="{ scale: 1, transition: rest }"
-      :while-in-view="{ scale: WATERMARK_MAX, transition: drift }"
-      :in-view-options="viewport"
-      :style="{ willChange: 'transform' }"
-    >
-      <NuxtImg
-        src="/assets/global/logo-dwf-watermark.png"
+    <!-- The two tabs (`601:18945`, `601:18951`). One shape used twice: a white
+         trapezoid whose WIDE edge is the one it hangs from, so the lower tab is
+         the same file turned over. The rotation is on the artwork alone — the
+         label sits in its own element above it and stays the right way up.
+
+         The shape is decorative and the words on it are not: the tabs carry the
+         dates and when registration closes, and the dates are the one fact that
+         also appears in the left column — the rest exists nowhere else on the
+         page. So the SVG is `aria-hidden` scenery and the text is real text over
+         it, rather than one flattened picture of both.
+
+         Uppercased in CSS, as Figma sets it ("MAR 18 - 21, 2027"), rather than
+         in the data: `dateLabel` is shared with the left column, which sets it
+         in sentence case, and one field cannot be stored in two cases. -->
+    <div :class="cn(tabClass, 'top-0')">
+      <img
+        src="/assets/home/decor-event-label.svg"
         alt=""
-        :sizes='imageSizes({ xs: "60vw", lg: "27vw" })'
-        class="absolute inset-0 size-full object-contain"
-      />
-    </Motion>
+        aria-hidden="true"
+        width="360"
+        height="48"
+        class="absolute inset-0 size-full"
+      >
+      <p class="relative flex size-full items-center justify-center">
+        <span
+          :class="
+            cn(
+              'font-sans text-center leading-[1.4] font-medium text-[#666666] uppercase',
+              TAB_TEXT,
+              TAB_TEXT_WIDTH,
+            )
+          "
+        >
+          {{ event.dateLabel }}
+        </span>
+      </p>
+    </div>
 
-    <!-- The trophy — node `52:3046`. Figma stretches a 1792 × 2400 photograph
-         into a 402 × 720 slot and crops it horizontally to the middle 75%
-         (`cropTransform` x-scale 0.747, offset 0.126), which is what centres the
-         trophy in the frame. `object-cover` on a box of the slot's own ratio
-         reproduces that: the height fills and the sides are what get trimmed. -->
-    <Motion
-      as="div"
-      class="absolute inset-y-0 left-[11.3%] w-[77.3%]"
-      :initial="{ y: '0%' }"
-      :animate="{ y: '0%', transition: rest }"
-      :while-in-view="{ y: `${TROPHY_RISE}%`, transition: drift }"
-      :in-view-options="viewport"
-      :style="{ willChange: 'transform' }"
-    >
-      <NuxtImg
-        :src="event.imageUrl"
-        :alt="event.imageAlt"
-        :sizes='imageSizes({ xs: "70vw", lg: "30vw" })'
-        :quality="90"
-        class="absolute inset-0 size-full object-cover object-top"
-      />
-    </Motion>
-
-    <!-- "DWF2026" across the foot — node `52:3047`, Bebas 164 with a tight
-         -4.88% tracking. The brand half is copy; the year is the event's, read
-         off `dateLabel`, which is the only field in the contract that carries
-         one. Hard-coding it would pin every card in the pager to the design's
-         single year — and the design's own card is a 2024 event wearing a 2026
-         mark, so there is no one right constant to pick.
-
-         The size is a clamp on `vw` rather than Figma's 164px: the card is a
-         fraction of the viewport at every breakpoint, so a fixed size would
-         outgrow a narrow card. -->
-    <span
-      aria-hidden="true"
-      class="font-display absolute bottom-[7.5%] left-0 w-full text-center text-[length:clamp(3rem,8.5vw,10.25rem)] leading-none tracking-[-0.0488em] text-white"
-    >{{ FEATURED_EVENT_COPY.watermark }}{{ eventYear }}</span>
-
-    <!-- Light streaks over the whole composition — node `52:3048`, drawn well
-         outside the card and clipped by its `overflow-hidden`. Figma composites
-         them with `plus-lighter`, which is `screen`-like: the SVG's own fills
-         already carry the 25% opacity, so the blend is all that is needed to
-         keep them additive rather than painting grey over the gold.
-
-         A plain `<img>`: an SVG passes through the image pipeline unchanged
-         (RULES §7), and positioning it directly keeps the -20%/-16.3%/166.5%
-         overhang on one element instead of splitting the same geometry across a
-         wrapper and its child. -->
-    <img
-      src="/assets/home/decor-card-streaks.svg"
-      alt=""
-      aria-hidden="true"
-      width="946"
-      height="756"
-      class="pointer-events-none absolute top-[-20%] left-[-16.3%] w-[166.5%] max-w-none mix-blend-plus-lighter"
-    >
+    <div :class="cn(tabClass, 'bottom-0')">
+      <img
+        src="/assets/home/decor-event-label.svg"
+        alt=""
+        aria-hidden="true"
+        width="360"
+        height="48"
+        class="absolute inset-0 size-full rotate-180"
+      >
+      <p class="relative flex size-full items-center justify-center">
+        <span
+          :class="
+            cn(
+              'font-sans text-center leading-[1.4] font-medium text-[#666666]',
+              TAB_TEXT,
+              TAB_TEXT_WIDTH,
+            )
+          "
+        >
+          {{ event.registrationLabel }}
+        </span>
+      </p>
+    </div>
   </div>
 </template>

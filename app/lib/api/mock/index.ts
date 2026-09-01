@@ -20,8 +20,15 @@ import type {
   OlympicResult,
   Partner,
   ResourceDocument,
+  StandingCommittee,
   SubCommittee,
   Tournament,
+  TournamentDetail,
+  TournamentDetailExtras,
+  TournamentFact,
+  TournamentOfficial,
+  TournamentScheduleEntry,
+  TournamentWinner,
 } from "../types"
 
 export const MOCK_STATS: FederationStat[] = [
@@ -467,6 +474,81 @@ export const MOCK_RESOURCES: ResourceDocument[] = [
   // rather than "Regulations", which the Domino page asks for by name: these
   // three are what a competitor needs before travelling, not the rules the
   // game is played under.
+  // `/governance` — two shelves. "Statutes" is the pair the Statutes &
+  // Constitution band prints; "Governance" is the six-card repository at the
+  // foot of the page (`613:24962`).
+  {
+    id: "r21",
+    category: "Statutes",
+    title: "DWF Constitution 2025",
+    publishedAt: "2025-05-12T09:00:00Z",
+    fileUrl: "#",
+    fileType: "pdf",
+    fileSize: "5.2 MB",
+  },
+  {
+    id: "r22",
+    category: "Statutes",
+    title: "Electoral Regulation",
+    publishedAt: "2026-01-30T09:00:00Z",
+    fileUrl: "#",
+    fileType: "pdf",
+    fileSize: "3.5 MB",
+  },
+  {
+    id: "r23",
+    category: "Governance",
+    title: "Anti-Doping Code",
+    publishedAt: "2025-05-12T09:00:00Z",
+    fileUrl: "#",
+    fileType: "pdf",
+    fileSize: "5.2 MB",
+  },
+  {
+    id: "r24",
+    category: "Governance",
+    title: "Financial Regulations",
+    publishedAt: "2025-03-22T09:00:00Z",
+    fileUrl: "#",
+    fileType: "pdf",
+    fileSize: "2.2 MB",
+  },
+  {
+    id: "r25",
+    category: "Governance",
+    title: "Athlete Commission Bylaws",
+    publishedAt: "2025-12-25T09:00:00Z",
+    fileUrl: "#",
+    fileType: "zip",
+    fileSize: "45.5 MB",
+  },
+  {
+    id: "r26",
+    category: "Governance",
+    title: "Member Association Audit Guide",
+    publishedAt: "2026-08-23T09:00:00Z",
+    fileUrl: "#",
+    fileType: "pdf",
+    fileSize: "2.1 MB",
+  },
+  {
+    id: "r27",
+    category: "Governance",
+    title: "Regional Federation Guidelines",
+    publishedAt: "2026-08-23T09:00:00Z",
+    fileUrl: "#",
+    fileType: "pdf",
+    fileSize: "2.1 MB",
+  },
+  {
+    id: "r28",
+    category: "Governance",
+    title: "Code of Ethics",
+    publishedAt: "2026-08-23T09:00:00Z",
+    fileUrl: "#",
+    fileType: "pdf",
+    fileSize: "2.1 MB",
+  },
   {
     id: "r18",
     category: "Tournament Regulations",
@@ -584,6 +666,29 @@ export const MOCK_FEATURED_EVENT: FeaturedEvent = {
  * out. The other five are invented here so the pager has something to page,
  * and they follow the same shape rather than repeating the same event.
  */
+/**
+ * The tournament `/tournaments` opens its highlighted band with.
+ *
+ * The same event as `MOCK_SHOWCASE_EVENTS[0]` and a SEPARATE record, because the
+ * two pages picture it differently: S6 prints the flattened gold poster, and the
+ * tournament page's redraw (`581:14582`) puts a photograph of the venue behind a
+ * live "DWF2026" wordmark. One record could not carry both, and `getHighlighted-
+ * Tournament` returning the showcase's first entry was what tied them together.
+ */
+export const MOCK_HIGHLIGHTED_TOURNAMENT: ShowcaseEvent = {
+  id: "e1-highlighted",
+  slug: "caribbean-domino-open-2026",
+  name: "Caribbean Domino Open 2026",
+  dateLabel: "Oct 12 - Oct 16, 2026",
+  location: "Montego Bay, Jamaica",
+  summary:
+    "The premier regional tournament returns to Montego Bay, bringing together elite domino pairings from across the Caribbean for several days of high-level competition.",
+  imageUrl: "/assets/tournaments/highlighted-venue.jpg",
+  imageAlt:
+    "The tournament hall: long rows of playing tables under a beamed ceiling, set for competition",
+  registrationLabel: "Registration ends in 3 days",
+}
+
 export const MOCK_SHOWCASE_EVENTS: ShowcaseEvent[] = [
   {
     // Figma calls this event "CARIBBEAN DOMINO OPEN 2024" in S6 (`52:3030`)
@@ -599,9 +704,10 @@ export const MOCK_SHOWCASE_EVENTS: ShowcaseEvent[] = [
     location: "Montego Bay, Jamaica",
     summary:
       "The premier regional tournament returns to Montego Bay, bringing together elite domino pairings from across the Caribbean for several days of high-level competition.",
-    imageUrl: "/assets/home/event-trophy-hand.png",
+    imageUrl: "/assets/home/event-showcase-card.png",
     imageAlt:
       "A raised gold trophy topped with two domino tiles, held aloft by the winner",
+    registrationLabel: "Registration ends in 3 days",
   },
   {
     id: "e2",
@@ -611,9 +717,10 @@ export const MOCK_SHOWCASE_EVENTS: ShowcaseEvent[] = [
     location: "Mexico City, Mexico",
     summary:
       "Continental qualifying reaches its final stage, with the twelve highest-placed pairs earning direct entry to next season's world championship draw.",
-    imageUrl: "/assets/home/event-trophy-hand.png",
+    imageUrl: "/assets/home/event-showcase-card.png",
     imageAlt:
       "A raised gold trophy topped with two domino tiles, held aloft by the winner",
+    registrationLabel: "Registration ends in 25 days",
   },
   {
     id: "e3",
@@ -623,9 +730,10 @@ export const MOCK_SHOWCASE_EVENTS: ShowcaseEvent[] = [
     location: "Valencia, Spain",
     summary:
       "Sixteen national champions meet in a round-robin format, played under the revised timing protocol introduced in this year's rulebook.",
-    imageUrl: "/assets/home/event-trophy-hand.png",
+    imageUrl: "/assets/home/event-showcase-card.png",
     imageAlt:
       "A raised gold trophy topped with two domino tiles, held aloft by the winner",
+    registrationLabel: "Registration ends in 53 days",
   },
   {
     id: "e4",
@@ -635,9 +743,10 @@ export const MOCK_SHOWCASE_EVENTS: ShowcaseEvent[] = [
     location: "Jakarta, Indonesia",
     summary:
       "The region's largest open draw, with more than four hundred pairs expected across the main and amateur brackets.",
-    imageUrl: "/assets/home/event-trophy-hand.png",
+    imageUrl: "/assets/home/event-showcase-card.png",
     imageAlt:
       "A raised gold trophy topped with two domino tiles, held aloft by the winner",
+    registrationLabel: "Registration closed",
   },
   {
     id: "e5",
@@ -647,9 +756,10 @@ export const MOCK_SHOWCASE_EVENTS: ShowcaseEvent[] = [
     location: "Accra, Ghana",
     summary:
       "A first continental title on the calendar, staged jointly by six member federations and open to every affiliated national association.",
-    imageUrl: "/assets/home/event-trophy-hand.png",
+    imageUrl: "/assets/home/event-showcase-card.png",
     imageAlt:
       "A raised gold trophy topped with two domino tiles, held aloft by the winner",
+    registrationLabel: "Registration opens Jan 12",
   },
   {
     id: "e6",
@@ -659,9 +769,10 @@ export const MOCK_SHOWCASE_EVENTS: ShowcaseEvent[] = [
     location: "Santo Domingo, Dominican Republic",
     summary:
       "The federation's flagship event, where the season's qualified pairs play for the world title over seven days of competition.",
-    imageUrl: "/assets/home/event-trophy-hand.png",
+    imageUrl: "/assets/home/event-showcase-card.png",
     imageAlt:
       "A raised gold trophy topped with two domino tiles, held aloft by the winner",
+    registrationLabel: "Registration opens Mar 2",
   },
 ]
 
@@ -829,9 +940,13 @@ export const MOCK_TOURNAMENTS: Tournament[] = [
     status: "upcoming",
     registration: "open",
     location: "London, United Kingdom",
-    imageUrl: "/assets/tournaments/poster-card-slate.png",
+    imageUrl: "/assets/tournaments/card-champions-arena.jpg",
     imageAlt:
       "Tournament poster: a gold trophy topped with two domino tiles against a slate ground, lettered DWF2026.",
+    dateLabel: "Sep 18 - 21, 2026",
+    registrationLabel: "Registration ends in 3 days",
+    attendance: "Offline",
+    formatLabel: "Single 101, Double 101, 3 Round, Best of 3",
     startsAt: "2026-09-18T09:00:00Z",
     endsAt: "2026-09-21T18:00:00Z",
     country: "GBR",
@@ -842,11 +957,15 @@ export const MOCK_TOURNAMENTS: Tournament[] = [
     name: "Dubai Masters",
     category: "Championship",
     status: "upcoming",
-    registration: "closed",
+    registration: "upcoming",
     location: "Dubai, UAE",
-    imageUrl: "/assets/tournaments/poster-card-gold.png",
+    imageUrl: "/assets/tournaments/card-caribbean-open.jpg",
     imageAlt:
       "Tournament poster: a gold trophy topped with two domino tiles against a warm gold ground, lettered DWF2026.",
+    dateLabel: "Nov 5 - 9, 2026",
+    registrationLabel: "Registration opens Nov 1",
+    attendance: "Offline",
+    formatLabel: "Double 101, 3 Round, Best of 3",
     startsAt: "2026-10-02T09:00:00Z",
     endsAt: "2026-10-06T18:00:00Z",
     country: "ARE",
@@ -859,9 +978,12 @@ export const MOCK_TOURNAMENTS: Tournament[] = [
     status: "live",
     registration: "ongoing",
     location: "Mexico City, MX",
-    imageUrl: "/assets/tournaments/poster-card-magenta.png",
+    imageUrl: "/assets/tournaments/card-regional-play.jpg",
     imageAlt:
       "Tournament poster: a gold trophy topped with two domino tiles against a magenta ground, lettered DWF2026.",
+    dateLabel: "Jan 14 - 17, 2027",
+    attendance: "Online",
+    formatLabel: "Single 101, 1 Round, Best of 3",
     startsAt: "2026-08-20T09:00:00Z",
     endsAt: "2026-08-26T18:00:00Z",
     country: "MEX",
@@ -874,9 +996,13 @@ export const MOCK_TOURNAMENTS: Tournament[] = [
     status: "upcoming",
     registration: "open",
     location: "Stockholm, SE",
-    imageUrl: "/assets/tournaments/poster-card-slate.png",
+    imageUrl: "/assets/tournaments/card-champions-arena.jpg",
     imageAlt:
       "Tournament poster: a gold trophy topped with two domino tiles against a slate ground, lettered DWF2026.",
+    dateLabel: "Mar 18 - 21, 2027",
+    registrationLabel: "Registration ends in 12 days",
+    attendance: "Offline",
+    formatLabel: "Single 101, Double 101, 3 Round, Best of 3",
     startsAt: "2026-11-05T09:00:00Z",
     endsAt: "2026-11-08T18:00:00Z",
     country: "SWE",
@@ -887,17 +1013,454 @@ export const MOCK_TOURNAMENTS: Tournament[] = [
     name: "World Championship 2026",
     category: "Championship",
     status: "upcoming",
-    registration: "open",
+    registration: "closed",
     location: "Jakarta, Indonesia",
-    imageUrl: "/assets/tournaments/poster-card-gold.png",
+    imageUrl: "/assets/tournaments/card-caribbean-open.jpg",
     imageAlt:
       "Tournament poster: a gold trophy topped with two domino tiles against a warm gold ground, lettered DWF2026.",
+    dateLabel: "Jun 2 - 6, 2027",
+    // The one card that exercises `closed` proper — entries taken and over, so
+    // the label says so rather than naming a date that has already passed.
+    registrationLabel: "Registration closed",
+    attendance: "Offline",
+    formatLabel: "Double 101, 3 Round, Best of 3",
     startsAt: "2026-11-14T09:00:00Z",
     endsAt: "2026-11-22T18:00:00Z",
     venue: "Jakarta Convention Center",
     country: "IDN",
   },
+
+  /**
+   * Six more, added for `/tournaments/all` (`517:2487`).
+   *
+   * The rail on the landing page shows five and that was enough for a rail. The
+   * list page filters by registration state and pages the result, and neither
+   * can be seen working against five records that happen to include one `ended`
+   * and no page two. These six give every tab something to show and take the
+   * feed past one page.
+   *
+   * Two are `completed` with `registration: "closed"` — the state pair the rail
+   * never had, and the only one whose detail page can carry winners.
+   */
+  {
+    id: "t6",
+    slug: "caribbean-nations-championship-2026",
+    name: "Caribbean Nations Domino Championship",
+    category: "Inter-continental",
+    status: "upcoming",
+    registration: "open",
+    location: "Montego Bay, Jamaica",
+    imageUrl: "/assets/tournaments/card-caribbean-open.jpg",
+    imageAlt:
+      "Tournament poster: a gold trophy topped with two domino tiles against a warm gold ground, lettered DWF2026.",
+    dateLabel: "Oct 12 - 16, 2026",
+    registrationLabel: "Registration ends in 21 days",
+    attendance: "Offline",
+    formatLabel: "Single 101, Double 101, 3 Round, Best of 3",
+    startsAt: "2026-10-12T09:00:00Z",
+    endsAt: "2026-10-16T18:00:00Z",
+    venue: "Montego Bay Cultural Centre",
+    country: "JAM",
+  },
+  {
+    id: "t7",
+    slug: "online-continental-qualifier-2026",
+    name: "Online Continental Qualifier",
+    category: "Regional qualifier",
+    status: "upcoming",
+    registration: "upcoming",
+    location: "Online",
+    imageUrl: "/assets/tournaments/card-regional-play.jpg",
+    imageAlt:
+      "Tournament poster: a gold trophy topped with two domino tiles against a magenta ground, lettered DWF2026.",
+    dateLabel: "Dec 8 - 10, 2026",
+    registrationLabel: "Registration opens Oct 20",
+    attendance: "Online",
+    formatLabel: "Single 101, 2 Round, Best of 3",
+    startsAt: "2026-12-08T09:00:00Z",
+    endsAt: "2026-12-10T18:00:00Z",
+    country: "CHE",
+  },
+  {
+    id: "t8",
+    slug: "lagos-invitational-2027",
+    name: "Lagos Invitational",
+    category: "Invitational",
+    status: "upcoming",
+    registration: "open",
+    location: "Lagos, Nigeria",
+    imageUrl: "/assets/tournaments/card-champions-arena.jpg",
+    imageAlt:
+      "Tournament poster: a gold trophy topped with two domino tiles against a slate ground, lettered DWF2026.",
+    dateLabel: "Apr 14 - 17, 2027",
+    registrationLabel: "Registration ends in 40 days",
+    attendance: "Offline",
+    formatLabel: "Double 101, 3 Round, Best of 3",
+    startsAt: "2027-04-14T09:00:00Z",
+    endsAt: "2027-04-17T18:00:00Z",
+    venue: "Eko Convention Centre",
+    country: "NGA",
+  },
+  {
+    id: "t9",
+    slug: "havana-classic-2026",
+    name: "Havana Classic",
+    category: "Championship",
+    status: "live",
+    registration: "ongoing",
+    location: "Havana, Cuba",
+    imageUrl: "/assets/tournaments/card-caribbean-open.jpg",
+    imageAlt:
+      "Tournament poster: a gold trophy topped with two domino tiles against a warm gold ground, lettered DWF2026.",
+    dateLabel: "Sep 2 - 5, 2026",
+    attendance: "Offline",
+    formatLabel: "Double 101, 4 Round, Best of 5",
+    startsAt: "2026-09-02T09:00:00Z",
+    endsAt: "2026-09-05T18:00:00Z",
+    venue: "Teatro Nacional de Cuba",
+    country: "CUB",
+  },
+  {
+    id: "t10",
+    slug: "madrid-world-championship-2025",
+    name: "DWF World Domino Championship 2025",
+    category: "Championship",
+    status: "completed",
+    registration: "closed",
+    location: "Madrid, Spain",
+    imageUrl: "/assets/tournaments/card-champions-arena.jpg",
+    imageAlt:
+      "Tournament poster: a gold trophy topped with two domino tiles against a slate ground, lettered DWF2026.",
+    dateLabel: "Aug 28 - 30, 2025",
+    registrationLabel: "Registration closed",
+    attendance: "Offline",
+    formatLabel: "Double 101, 3 Round, Best of 3",
+    startsAt: "2025-08-28T09:00:00Z",
+    endsAt: "2025-08-30T18:00:00Z",
+    venue: "Madrid Arena",
+    country: "ESP",
+  },
+  {
+    id: "t11",
+    slug: "tokyo-masters-2025",
+    name: "Tokyo Masters",
+    category: "Inter-continental",
+    status: "completed",
+    registration: "closed",
+    location: "Tokyo, Japan",
+    imageUrl: "/assets/tournaments/card-regional-play.jpg",
+    imageAlt:
+      "Tournament poster: a gold trophy topped with two domino tiles against a magenta ground, lettered DWF2026.",
+    dateLabel: "May 6 - 9, 2025",
+    registrationLabel: "Registration closed",
+    attendance: "Offline",
+    formatLabel: "Single 101, 3 Round, Best of 3",
+    startsAt: "2025-05-06T09:00:00Z",
+    endsAt: "2025-05-09T18:00:00Z",
+    venue: "Tokyo International Forum",
+    country: "JPN",
+  },
 ]
+
+/**
+ * The detail page's own blocks — Figma screen `517:1895`.
+ *
+ * **Composed rather than written out eleven times, and deliberately.** A
+ * `TournamentDetail` IS a `Tournament` plus the blocks the card has no room for
+ * (see the type), so spelling all eleven out in full would mean eleven copies of
+ * the name, category, dates and registration state — and the day one of them was
+ * corrected in `MOCK_TOURNAMENTS` the detail page would quietly keep printing
+ * the old one. The base record is spread and only the additions are literal,
+ * which is also how the real endpoint will behave: `/tournaments/:slug` returns
+ * the list record with more on it, not a different record.
+ *
+ * The federation's own furniture — eligibility, contact, the regulations shelf —
+ * is the same for every event it sanctions, so it is written once here too. What
+ * genuinely differs per tournament is the venue, the prize, the schedule, the
+ * officials and the winners.
+ */
+const SHARED_ELIGIBILITY: TournamentFact[] = [
+  {
+    id: "period",
+    label: "Registration period",
+    value: "Jun 01–Aug 14, 2026",
+    iconUrl: "/assets/tournaments/icon-fact-period.svg",
+  },
+  {
+    id: "dwf-id",
+    label: "DWF ID Requirement",
+    value: "Active and verified DWF ID required",
+    iconUrl: "/assets/tournaments/icon-fact-id.svg",
+  },
+  {
+    id: "eligibility",
+    label: "Eligibility",
+    value: "Players aged 18+ nominated by a DWF member federation",
+    iconUrl: "/assets/tournaments/icon-fact-eligibility.svg",
+  },
+  {
+    id: "method",
+    label: "Registration Method",
+    value: "Submitted through the player’s national federation",
+    iconUrl: "/assets/tournaments/icon-fact-method.svg",
+  },
+]
+
+/**
+ * Figma labels the first of these "Registration period" (`517:2138`) and prints
+ * "Double-101" under it — the label pasted from the block above, not the fact it
+ * heads. The value decides: this is the discipline played, so the label says so.
+ * Same class of fix as the Tokyo album's pasted heading (D40).
+ */
+const SHARED_FORMAT: TournamentFact[] = [
+  { id: "discipline", label: "Discipline", value: "Double-101" },
+  { id: "participants", label: "Participants", value: "64 Teams" },
+  {
+    id: "system",
+    label: "Competition system",
+    value: "16 groups of four; top two advance to knockout",
+  },
+  {
+    id: "scoring",
+    label: "Scoring",
+    value: "First team to reach 101 points wins the match",
+  },
+]
+
+const SHARED_CONTACT = {
+  email: "contact@dwf-domino.org",
+  phone: "+41 21 032 320 00",
+}
+
+/** `517:2153` files the same three documents the page's own shelf does. */
+const SHARED_REGULATIONS: ResourceDocument[] = MOCK_RESOURCES.filter(
+  (document) => document.category === "Tournament Regulations",
+)
+
+const SHARED_OFFICIALS: TournamentOfficial[] = [
+  {
+    id: "o1",
+    name: "Elene Rodriguez",
+    role: "Chief Referee",
+    country: "Spain",
+    portraitUrl: "/assets/tournaments/champion-portrait-01.png",
+    portraitAlt: "",
+  },
+  {
+    id: "o2",
+    name: "Daniel Morgan",
+    role: "Deputy Referee",
+    country: "Jamaica",
+    portraitUrl: "/assets/tournaments/champion-portrait-02.png",
+    portraitAlt: "",
+  },
+]
+
+const SHARED_SCHEDULE: TournamentScheduleEntry[] = [
+  {
+    id: "s1",
+    time: "Aug 28. 09:00",
+    title: "Opening Ceremony & Team Presentation",
+    places: ["Madrid Arena", "Main Hall"],
+  },
+  {
+    id: "s2",
+    time: "Aug 28. 10:30",
+    title: "Group Stage (Round 1-4)",
+    places: ["Competition Area A & B"],
+  },
+  {
+    id: "s3",
+    time: "Aug 29. 10:00",
+    title: "Round of 16 & Quarterfinals",
+    places: ["Competition Area A"],
+  },
+  {
+    id: "s4",
+    time: "Aug 30. 14:00",
+    title: "Semifinals",
+    places: ["Centre Court"],
+  },
+  {
+    id: "s5",
+    time: "Aug 30. 17:00",
+    title: "Grand Final & Award Ceremony",
+    places: ["Centre Court"],
+  },
+]
+
+const SHARED_PRIZE = {
+  headline: "USD 50.000 Prize pool",
+  note: "Includes medals and official DWF ranking points",
+  imageUrl: "/assets/global/gallery-trophy-presentation.png",
+  imageAlt:
+    "A trophy being handed over on stage at the close of a federation tournament",
+}
+
+const SHARED_SUMMARY =
+  "The 2026 DWF World Domino Championship brings together the world’s leading national teams for three days of elite Double-101 competition. Teams will compete for the official world title, international ranking points, and a USD 50,000 prize pool.\n\nThe championship is organized by the Domino World Federation in partnership with the host national federation and is open to officially nominated teams from eligible DWF member federations."
+
+/**
+ * The winners, and they carry the same caution R16 records for Champions Hall:
+ * these names are placeholders, and the portraits are the federation's own
+ * library rather than photographs of the people named. A real name under a real
+ * face states that a particular living person won a title that does not exist
+ * yet.
+ */
+const MADRID_WINNERS: TournamentWinner[] = [
+  {
+    id: "w1",
+    rankLabel: "Champion",
+    names: "Luis Ortega & Mateo Ruiz",
+    country: "Spain",
+    portraitUrls: [
+      "/assets/tournaments/champion-portrait-03.png",
+      "/assets/tournaments/champion-portrait-04.png",
+    ],
+  },
+  {
+    id: "w2",
+    rankLabel: "Runner-up",
+    names: "Andre Clarke & Devon Reid",
+    country: "Jamaica",
+    portraitUrls: [
+      "/assets/tournaments/champion-portrait-01.png",
+      "/assets/tournaments/champion-portrait-02.png",
+    ],
+  },
+  {
+    id: "w3",
+    rankLabel: "Third place",
+    names: "Kenji Sato & Haruto Mori",
+    country: "Japan",
+    portraitUrls: [
+      "/assets/tournaments/champion-portrait-04.png",
+      "/assets/tournaments/champion-portrait-03.png",
+    ],
+  },
+]
+
+/**
+ * Where each NAMED hall is.
+ *
+ * Checked before the city table below, and the reason is a defect the city table
+ * caused on its own: the pin card prints the venue's name, so a card reading
+ * "Jakarta Convention Center" over a map of Menteng — six kilometres from the
+ * building, because Menteng is what "Jakarta, Indonesia" resolves to — is the
+ * card contradicting the map under it. Where a tournament names a building, the
+ * pin goes on that building.
+ */
+const HALL_COORDINATES: Record<string, { lat: number; lng: number }> = {
+  "Jakarta Convention Center": { lat: -6.2146, lng: 106.8064 },
+  "Eko Convention Centre": { lat: 6.4281, lng: 3.4219 },
+  "Teatro Nacional de Cuba": { lat: 23.122, lng: -82.383 },
+  "Montego Bay Cultural Centre": { lat: 18.4713, lng: -77.9214 },
+  "Madrid Arena": { lat: 40.4197, lng: -3.7443 },
+  "Tokyo International Forum": { lat: 35.6773, lng: 139.7635 },
+}
+
+/**
+ * Where each tournament's city is, for the tournaments that name no hall.
+ *
+ * Keyed on the record's own `location` string rather than repeated inside every
+ * venue: the same city hosts more than one event, and the pair only has to be
+ * written once. A location with no entry simply gets no map and the venue block
+ * falls back to its photograph.
+ *
+ * These ARE city centres, and that is honest here in a way it was not above: the
+ * card for one of these prints the city as its venue name, because that is all
+ * the federation has filed. A pin on the city is what the name claims.
+ */
+const CITY_COORDINATES: Record<string, { lat: number; lng: number }> = {
+  "London, United Kingdom": { lat: 51.5072, lng: -0.1276 },
+  "Dubai, UAE": { lat: 25.2048, lng: 55.2708 },
+  "Stockholm, SE": { lat: 59.3293, lng: 18.0686 },
+  "Jakarta, Indonesia": { lat: -6.2088, lng: 106.8456 },
+  "Montego Bay, Jamaica": { lat: 18.4762, lng: -77.8939 },
+  "Lagos, Nigeria": { lat: 6.5244, lng: 3.3792 },
+  "Havana, Cuba": { lat: 23.1136, lng: -82.3666 },
+  "Madrid, Spain": { lat: 40.4168, lng: -3.7038 },
+  "Tokyo, Japan": { lat: 35.6762, lng: 139.6503 },
+  "Mexico City, MX": { lat: 19.4326, lng: -99.1332 },
+}
+
+const DETAIL_EXTRAS: Record<string, Partial<TournamentDetailExtras>> = {
+  "caribbean-nations-championship-2026": {
+    venue: {
+      name: "Montego Bay Cultural Centre",
+      address: "Sam Sharpe Square, Montego Bay, St James, Jamaica",
+      country: "Jamaica",
+      coordinates: { lat: 18.4713, lng: -77.9214 },
+      imageUrl: "/assets/tournaments/highlighted-venue.jpg",
+      imageAlt:
+        "The tournament hall: long rows of playing tables under a beamed ceiling, set for competition",
+      thumbUrl: "/assets/global/gallery-playing-hall.png",
+    },
+  },
+  "madrid-world-championship-2025": {
+    venue: {
+      name: "Madrid Arena",
+      address: "Av. de Portugal, s/n, Moncloa - Aravaca, 28011 Madrid, Spain",
+      country: "Spain",
+      coordinates: { lat: 40.4197, lng: -3.7443 },
+      imageUrl: "/assets/tournaments/highlighted-venue.jpg",
+      imageAlt:
+        "The tournament hall: long rows of playing tables under a beamed ceiling, set for competition",
+      thumbUrl: "/assets/global/gallery-playing-hall.png",
+    },
+    winners: MADRID_WINNERS,
+  },
+  "tokyo-masters-2025": {
+    venue: {
+      name: "Tokyo International Forum",
+      address: "3-5-1 Marunouchi, Chiyoda City, Tokyo 100-0005, Japan",
+      country: "Japan",
+      coordinates: { lat: 35.6773, lng: 139.7635 },
+      imageUrl: "/assets/tournaments/highlighted-venue.jpg",
+      imageAlt:
+        "The tournament hall: long rows of playing tables under a beamed ceiling, set for competition",
+      thumbUrl: "/assets/global/gallery-team-portrait.png",
+    },
+    winners: MADRID_WINNERS,
+  },
+}
+
+export const MOCK_TOURNAMENT_DETAILS: TournamentDetail[] = MOCK_TOURNAMENTS.map(
+  (tournament) => ({
+    ...tournament,
+    summary: SHARED_SUMMARY,
+    heroImageUrl: "/assets/tournaments/highlighted-venue.jpg",
+    heroImageAlt:
+      "The tournament hall: long rows of playing tables under a beamed ceiling, set for competition",
+    dateHeading: tournament.dateLabel,
+    // An online tournament has no hall to photograph and no address to print, so
+    // it simply has no venue block — the page drops it rather than printing a
+    // heading over nothing.
+    venue:
+      tournament.attendance === "Online"
+        ? undefined
+        : {
+            name: tournament.venue ?? tournament.location,
+            address: tournament.location,
+            country: tournament.location.split(", ").at(-1) ?? "",
+            coordinates: tournament.venue
+              ? HALL_COORDINATES[tournament.venue]
+              : CITY_COORDINATES[tournament.location],
+            imageUrl: "/assets/tournaments/highlighted-venue.jpg",
+            imageAlt:
+              "The tournament hall: long rows of playing tables under a beamed ceiling, set for competition",
+            thumbUrl: "/assets/global/gallery-playing-hall.png",
+          },
+    prize: SHARED_PRIZE,
+    eligibility: SHARED_ELIGIBILITY,
+    schedule: SHARED_SCHEDULE,
+    format: SHARED_FORMAT,
+    regulations: SHARED_REGULATIONS,
+    officials: SHARED_OFFICIALS,
+    contact: SHARED_CONTACT,
+    ...DETAIL_EXTRAS[tournament.slug],
+  }),
+)
 
 /**
  * Champions Hall (`381:17639`).
@@ -1247,24 +1810,114 @@ export const MOCK_MEMBERSHIP_STATS: FederationStat[] = [
  * and Figma draws every row with the same grey placeholder anyway. The rest
  * fall back to that square until the federation supplies the artwork.
  */
+/**
+ * The three standing committees `/governance` draws — `613:24908`.
+ *
+ * A different list from `MOCK_SUB_COMMITTEES`, which About prints: that is six
+ * names with no remit, this is three bodies with what each is responsible for.
+ * The design shows both on the same site, so they are two records rather than
+ * one that some pages read half of.
+ */
+export const MOCK_STANDING_COMMITTEES: StandingCommittee[] = [
+  {
+    id: "technical",
+    name: "Technical rules",
+    remit: [
+      "International Rulebook Oversight",
+      "Equipment Standards",
+      "Tournament Sanctioning",
+    ],
+    iconUrl: "/assets/governance/icon-committee-technical.svg",
+  },
+  {
+    id: "medical",
+    name: "Medical & Anti-doping",
+    remit: [
+      "WADA Compliance",
+      // Figma types "Player Warfare Protocols". A doping committee's business
+      // is player WELFARE; "warfare" is a typo of the kind D40 fixes.
+      "Player Welfare Protocols",
+      "Mental Health in Sport",
+    ],
+    iconUrl: "/assets/governance/icon-committee-medical.svg",
+  },
+  {
+    id: "ethics",
+    name: "Ethics & Compliance",
+    remit: [
+      "Conflict of Interest",
+      "Disciplinary Tribunal",
+      "Good Governance Audit",
+    ],
+    iconUrl: "/assets/governance/icon-committee-ethics.svg",
+  },
+]
+
 export const MOCK_MEMBER_FEDERATIONS: MemberFederation[] = [
   {
     id: "mf1",
     name: "ORADO - Olahraga Domino Indonesia",
     country: "Indonesia",
+    tierId: "national",
+    joinedYear: 2025,
+    president: "Robert H. Miller",
+    headquarters: "Miami, FL, United States",
+    email: "hi@orado.org",
+    phone: "+62 2123 4444",
   },
-  { id: "mf2", name: "USA Domino Federation", country: "United States" },
-  { id: "mf3", name: "Jamaica Domino Board", country: "Jamaica" },
-  { id: "mf4", name: "China Domino Association", country: "China" },
+  {
+    id: "mf2",
+    name: "USA Domino Federation",
+    country: "United States",
+    tierId: "national",
+    joinedYear: 2019,
+    president: "Angela Fitzgerald",
+    headquarters: "Atlanta, GA, United States",
+    email: "office@usadomino.org",
+    phone: "+1 404 555 0142",
+  },
+  {
+    id: "mf3",
+    name: "Jamaica Domino Board",
+    country: "Jamaica",
+    tierId: "national",
+    joinedYear: 2016,
+    president: "Devon Clarke",
+    headquarters: "Kingston, Jamaica",
+    email: "board@jamaicadomino.jm",
+    phone: "+1 876 555 0119",
+  },
+  {
+    id: "mf4",
+    name: "China Domino Association",
+    country: "China",
+    tierId: "national",
+    joinedYear: 2021,
+    president: "Li Wei",
+    headquarters: "Shanghai, China",
+    email: "contact@cda-domino.cn",
+    phone: "+86 21 5555 0170",
+  },
   {
     id: "mf5",
     name: "Federacion Mexicana de Domino",
     country: "Mexico",
     flagUrl: "/assets/global/flags/flag-mex.png",
+    tierId: "national",
+    joinedYear: 2018,
+    president: "Mateo Ruiz",
+    headquarters: "Mexico City, Mexico",
+    email: "info@fmdomino.mx",
+    phone: "+52 55 5555 0123",
   },
   {
+    // Recognised, and that is all the federation has filed. The detail card
+    // drops the rows it has no answer for rather than printing empty ones —
+    // which is the case the optional fields on `MemberFederation` exist for.
     id: "mf6",
     name: "Confederação Brasileira de Dominó",
     country: "Brazil",
+    tierId: "national",
+    joinedYear: 2023,
   },
 ]

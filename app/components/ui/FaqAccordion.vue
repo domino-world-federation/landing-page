@@ -31,14 +31,61 @@ const TOGGLE = 0.28
  * icon, which IS on a hot path shared with the rest of the page, stays on
  * `transform`/`opacity`.
  */
-const props = defineProps<{
-  items: readonly FaqItem[]
-  /** Which item is open on first render. */
-  defaultOpenId: string
-}>()
+const props = withDefaults(
+  defineProps<{
+    items: readonly FaqItem[]
+    /** Which item is open on first render. */
+    defaultOpenId: string
+    /**
+     * Which ground the list is sitting on, and therefore how an item is drawn.
+     *
+     * `light` is the original and stays the default: black type on a white card,
+     * items separated by Figma's 4px `#DADADA` rules. `/domino`, `/tournaments`
+     * and `/faq` are all on white and all want it.
+     *
+     * `dark` is S11's new treatment (`81:690`), where the card became a
+     * translucent dark pane and each item became a filled box of its own
+     * (`rgba(255,255,255,0.08)`, 16px radius) instead of a row between rules.
+     * The two travel together rather than as separate props because they are one
+     * design decision: the dividers only ever existed to separate rows that had
+     * no edges, and boxed items have their own. Same call `MediaGallery` makes
+     * for its heading colour (D32/D43).
+     */
+    tone?: "light" | "dark"
+  }>(),
+  { tone: "light" },
+)
 
 const openId = ref(props.defaultOpenId)
 const prefersReducedMotion = useReducedMotion()
+
+const dark = computed(() => props.tone === "dark")
+
+// Figma's item is `padding: 20px 32px` on a 16px radius (`81:693`). The padding
+// is what spaces the question from the box, so the button gives up the `py-8` it
+// carries on light — doubling the two would put 52px above every question. The
+// row still clears the 48px tap target on its line box alone.
+const itemClass = computed(() =>
+  dark.value
+    ? "rounded-[var(--radius-item)] bg-white/[0.08] px-5 py-4 md:px-8 md:py-5"
+    : "flex flex-col",
+)
+
+const buttonPadding = computed(() => (dark.value ? "py-0" : "py-8"))
+
+const questionColour = computed(() => (dark.value ? "text-white" : "text-black"))
+
+const barColour = computed(() => (dark.value ? "bg-white" : "bg-black"))
+
+// Figma's 18px gap between the question row and the answer inside an open item
+// (`81:696`). On light there is no gap to add — the answer is pulled UP instead,
+// to cancel the 32px the button spends below itself; see the note in the
+// template.
+const answerClass = computed(() =>
+  dark.value
+    ? "pt-[18px] text-[#A3A3A3]"
+    : "-mt-3.5 pb-8 text-[var(--color-muted)]",
+)
 
 // Reduced motion collapses the TRANSITION, never the tree (RULES §12). The
 // preference is `false` during SSR, so anything that branched the markup on it
@@ -54,33 +101,52 @@ function toggle(id: string) {
 
 <template>
   <ul class="flex flex-col gap-6">
-    <li v-for="(item, i) in props.items" :key="item.id" class="flex flex-col">
-      <!-- Figma's separators are 4px `#DADADA` rectangles BETWEEN items
-           (`81:722`, `81:724`) — two of them for three items, with none under
-           the last. Drawn as a `border-t` on every item after the first rather
-           than as elements of their own: a rule that exists only to separate is
-           a border, and as a border it cannot be announced or land in the tab
-           order.
+    <li v-for="(item, i) in props.items" :key="item.id" :class="itemClass">
+      <!-- On `light`, Figma's separators are 4px `#DADADA` rectangles BETWEEN
+           items (`81:722`, `81:724`) — two of them for three items, with none
+           under the last. Drawn as a `border-t` on every item after the first
+           rather than as elements of their own: a rule that exists only to
+           separate is a border, and as a border it cannot be announced or land
+           in the tab order.
 
            The 24px list gap sits on both sides of it, so the rule floats clear
-           of the rows rather than hugging one. -->
-      <h3 :class="i === 0 ? '' : 'border-t-4 border-[var(--color-divider)] pt-6'">
+           of the rows rather than hugging one.
+
+           On `dark` there are no rules at all: the redraw gives every item its
+           own filled box, so the 24px gap between boxes is the separation and a
+           border would draw a second line inside an edge that already exists. -->
+      <h3
+        :class="
+          dark || i === 0 ? '' : 'border-t-4 border-[var(--color-divider)] pt-6'
+        "
+      >
         <!-- `text-left` because a button centres its label by default and these
-             run to two lines on a narrow screen. `py-8` is Figma's 32px, which
-             is also what gives the row its tap target. -->
+             run to two lines on a narrow screen. On `light`, `py-8` is Figma's
+             32px, which is also what gives the row its tap target; on `dark` the
+             item's own box padding does that job instead. -->
         <button
           :id="`faq-button-${item.id}`"
           type="button"
           :aria-expanded="openId === item.id"
           :aria-controls="`faq-panel-${item.id}`"
-          class="focus-visible:ring-gold flex w-full items-center justify-between gap-4 py-8 text-left focus-visible:rounded-[var(--radius-item)] focus-visible:ring-2 focus-visible:outline-none"
+          :class="
+            cn(
+              'focus-visible:ring-gold flex w-full items-center justify-between gap-4 text-left focus-visible:rounded-[var(--radius-item)] focus-visible:ring-2 focus-visible:outline-none',
+              buttonPadding,
+            )
+          "
           @click="toggle(item.id)"
         >
           <!-- Figma's 36/48 (`81:694`) is a ratio of 1.333, and it is set as a
                ratio rather than as `leading-12` so the line box follows the
                question down as the clamp shrinks it. -->
           <span
-            class="font-sans text-[length:var(--text-faq-question)] leading-[1.3333] font-semibold text-black"
+            :class="
+              cn(
+                'font-sans text-[length:var(--text-faq-question)] leading-[1.3333] font-semibold',
+                questionColour,
+              )
+            "
           >
             {{ item.question }}
           </span>
@@ -103,7 +169,12 @@ function toggle(id: string) {
             class="relative block size-8 shrink-0 lg:size-16"
           >
             <span
-              class="absolute top-1/2 left-1/2 h-[6.25%] w-[56.25%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-black"
+              :class="
+                cn(
+                  'absolute top-1/2 left-1/2 h-[6.25%] w-[56.25%] -translate-x-1/2 -translate-y-1/2 rounded-full',
+                  barColour,
+                )
+              "
             />
             <!-- The centring offsets ride in `style` rather than in
                  `-translate-x-1/2` classes: motion writes the whole `transform`,
@@ -112,7 +183,12 @@ function toggle(id: string) {
                  corner. -->
             <Motion
               as="span"
-              class="absolute top-1/2 left-1/2 h-[6.25%] w-[56.25%] rounded-full bg-black"
+              :class="
+                cn(
+                  'absolute top-1/2 left-1/2 h-[6.25%] w-[56.25%] rounded-full',
+                  barColour,
+                )
+              "
               :style="{ x: '-50%', y: '-50%' }"
               :initial="false"
               :animate="{
@@ -147,25 +223,34 @@ function toggle(id: string) {
         :transition="transition"
         class="overflow-hidden"
       >
-        <!-- The padding lives on an inner element, not on the animated box:
+        <!-- The spacing lives on an inner element, not on the animated box:
              padding on the box itself never reaches zero when the height does,
-             so a closed panel would keep 18px of white and the rows would sit
-             unevenly apart.
+             so a closed panel would keep 18px of ground and the rows would sit
+             unevenly apart. It rides here for the same reason the padding does:
+             `overflow-hidden` clips it, and the panel measures this box's height
+             including the offset, so a closed panel is still exactly zero.
 
-             `-mt-3.5` is Figma's 18px arriving by subtraction. The open item
-             (`81:696`) is `padding: 32px 0` with an 18px gap between the
-             question row and the answer, but the button above already spends 32
-             of its own on the bottom — that padding is what makes the whole row
-             a tap target and cannot be traded away, and shrinking it only while
-             open would jump the row by 14px every toggle. So the answer is
-             pulled back up by the 14px difference instead. The bottom stays 32,
-             which is the item's own padding and the one Figma actually draws
-             below the text. It rides on the inner element for the same reason
-             the padding does: `overflow-hidden` clips it, and the panel measures
-             this box's height including the offset, so a closed panel is still
-             exactly zero. -->
+             Both tones are chasing Figma's same 18px gap between the question
+             row and the answer, and they arrive at it from opposite directions.
+
+             On `dark` it is simply that: `pt-[18px]`, because the item's box
+             padding already sits below the answer and the button above spends
+             nothing.
+
+             On `light` it arrives by SUBTRACTION. The open item (`81:696`) is
+             `padding: 32px 0`, but the button above already spends 32 of its own
+             on the bottom — that padding is what makes the whole row a tap
+             target and cannot be traded away, and shrinking it only while open
+             would jump the row by 14px every toggle. So the answer is pulled
+             back up by the 14px difference instead, and `pb-8` restores the 32
+             Figma draws below the text. -->
         <p
-          class="font-sans -mt-3.5 pb-8 text-[length:var(--text-faq-answer)] leading-[1.5] text-[var(--color-muted)]"
+          :class="
+            cn(
+              'font-sans text-[length:var(--text-faq-answer)] leading-[1.5]',
+              answerClass,
+            )
+          "
         >
           <!-- Figma bolds these phrases without linking them (`81:701`), so the
                emphasis is the content's, not a control's — `<strong>`/`<em>`,

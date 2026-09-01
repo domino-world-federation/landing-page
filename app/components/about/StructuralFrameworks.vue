@@ -22,8 +22,10 @@ import { FRAMEWORKS_COPY } from "~/content/about/frameworks"
 </script>
 
 <template>
+  <!-- One screen, like the four sections around it — `566:13603` is 1920 × 1080.
+       See `Heritage` for why the height is `dvh` and not the design's ratio. -->
   <section
-    class="bg-[linear-gradient(180deg,transparent_0%,var(--color-surface-dark)_100%)] px-5 pt-16 md:px-10 lg:px-20 lg:pt-[4.17vw]"
+    class="flex snap-screen flex-col justify-center bg-[linear-gradient(180deg,transparent_0%,var(--color-surface-dark)_100%)] px-5 py-16 md:px-10 lg:px-20 lg:py-[4.17vw]"
   >
     <MotionReveal :y="40">
       <h2

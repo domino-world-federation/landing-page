@@ -333,8 +333,26 @@
      height of a figure. Figma stacks the three rows at a 280px pitch (labels
      48 tall on a 228 gap); 14.58vw is 280/1920, so it tracks
      `--text-display-stat` exactly and the wheel keeps its proportions at every
-     width instead of crowding as the figures shrink. */
-  --stat-slot: clamp(5.5rem, 14.58vw, 17.5rem);
+     width instead of crowding as the figures shrink.
+
+     The `27dvh` cap is about height, and it only started to matter when S5
+     became a full-height stage: the wheel is three slots tall, so the pitch is
+     a third of the window, and at 14.58vw alone a 1920 × 900 screen asks for
+     840px of window inside a 900px stage — level with the design at that one
+     aspect ratio and over the edge at every shorter one. 27dvh holds the window
+     to 81% of the screen whatever its shape. It binds only where the viewport
+     is wider than it is tall by more than about 1.85:1; at 16:9 and at every
+     portrait size the vw term is still the smaller of the two and Figma's
+     number is what renders. */
+  --stat-slot: clamp(5.5rem, min(14.58vw, 27dvh), 17.5rem);
+
+  /* One step of About's pillars column — the pitch from a block to the next,
+     not the height of a block. Figma's mask group is 1080 tall (`566:13543`)
+     and shows three slots through it, so a slot is a third of that: 360 at the
+     design width, which is 18.75vw. The floor is where a block's own contents
+     stop fitting — an eyebrow, a two-line Bebas title and three lines of body
+     come to about 300px once the type steps have clamped down. */
+  --pillar-slot: clamp(18.75rem, 18.75vw, 22.5rem);
 }
 
 /*
@@ -473,35 +491,6 @@
   pointer-events: none;
 }
 
-/*
- * The Pillars marquee on the About page — the column of three blocks rising
- * through its fixed mask.
- *
- * It moves exactly half its track, and that is what makes the loop seamless
- * rather than a jump: the track holds the content twice, so at -50% the second
- * copy is standing exactly where the first one started and the restart is
- * invisible. It only holds if half the track is one whole copy — which is why
- * the caller puts the gap INSIDE each copy as trailing padding rather than
- * between the two, where it would push the halves out of register.
- *
- * `prefers-reduced-motion` is handled by the block at the foot of this file: it
- * collapses the duration to 0.01ms and caps the iteration count at 1, so the
- * track lands on -50% and stays there. With the content duplicated, that end
- * state is visually identical to the start — the marquee simply stops existing
- * rather than showing a broken half-scrolled column.
- *
- * There is no `marquee-x` counterpart: Heritage's strip was one until it turned
- * out that an automatic drift reads as decoration, and it is now dragged by the
- * reader instead.
- */
-@keyframes marquee-y {
-  from {
-    transform: translate3d(0, 0, 0);
-  }
-  to {
-    transform: translate3d(0, -50%, 0);
-  }
-}
 
 /* The loading screen (`app/loading.tsx`).
  *
@@ -547,6 +536,182 @@ body {
   font-family: var(--font-sans);
 }
 
+/* The landing page's section snapping: one gesture, one section.
+ *
+ * `mandatory` forbids the scrollport to come to rest anywhere except a section
+ * head, and `scroll-snap-stop: always` on each head forbids a gesture to pass
+ * one by. The pair is what makes speed stop mattering: a hard flick that would
+ * otherwise carry the reader from the headquarters band to the partner strip is
+ * stopped at the stats row, and reaching the third section means having had the
+ * second on screen. Every section gets looked at rather than skimmed past, which
+ * is the whole point of the arrangement.
+ *
+ * `proximity` was tried first and is not the same thing — it only pulls a scroll
+ * that happens to END near a section head, so a fast flick sails straight
+ * through and a slow one rests wherever it likes. Snapping the three tall
+ * sections alone had the same hole: nothing stopped a gesture crossing the six
+ * short ones between them.
+ *
+ * Sections taller than the viewport are NOT trapped by `mandatory`. CSS Scroll
+ * Snap counts every position in which an oversized snap area covers the
+ * snapport as a valid snap position, so the news list and the FAQ scroll through
+ * on their own and the snap only bites again at the section past them.
+ *
+ * Every section carries a snap point, the footer included, and the footer's is
+ * not decorative: under `mandatory` anything below the LAST snap position is
+ * unreachable, because the scrollport is dragged back to that position every
+ * time the scroll stops. Without one the footer could not be scrolled to at all.
+ *
+ * The class rides on `<html>` because that is the document's scrollport —
+ * `scroll-snap-type` on `<body>` is ignored. The `home` layout puts it there and
+ * unhead takes it off again on route change, so the snapping is the landing
+ * page's alone and the other pages scroll untouched. */
+/*
+ * Every top-level block of an opted-in page is a stop.
+ *
+ * The landing page puts `snap-start snap-always` on each section by hand,
+ * because it has to: the countdown card is a snap point below `menu` and part of
+ * the hero above it, and S5 hands its snap points to the wheel inside it. About
+ * has no such exceptions — its sections are a flat list — so one rule on the
+ * container is the whole of it rather than the same pair repeated across eleven
+ * component files.
+ */
+html.snap-sections .snap-children > * {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+/*
+ * **A snap area taller than the screen rests ANYWHERE inside itself**, and on
+ * this site that is deliberate in one place and a defect everywhere else.
+ *
+ * The spec: where a snap area is larger than the snapport, the scrollport may
+ * come to rest at any position in which that area still covers it. So a 1290px
+ * child in a 1080px window is not one stop — it is a 210px band of "anywhere",
+ * and `scroll-snap-stop: always` does not help, because passing through a region
+ * you are allowed to rest in is not passing over a snap position.
+ *
+ * **Where it is wanted:** the five pages that pin a photograph and slide a band
+ * over it. That pair has to share a wrapper for `position: sticky` to have a
+ * containing block, so the wrapper is the two heights added together and is
+ * always over-tall — and the freedom that buys is the whole effect. The reader
+ * comes to rest with the picture pinned and the band climbing into the lower
+ * half of the frame, which is the composite the design is drawn around. Giving
+ * the photograph a stop of its own was tried and it is worse: the pair splits
+ * into two beats, the picture takes a screen to itself, and the band is not
+ * allowed to appear until the next gesture.
+ *
+ * **Where it is not:** anywhere else. A section that overruns its stop by a
+ * couple of hundred pixels gains nothing and loses the rhythm.
+ *
+ * `snap-stop` gives a stop to something that is not a direct child of
+ * `.snap-children`; `snap-pass` takes one away. Neither is used today — the
+ * pairing settled on the plain arrangement above — and they are kept because
+ * this is a choice that has now been made twice in both directions, and the next
+ * person to revisit it should find the switch rather than rebuild it.
+ */
+html.snap-sections .snap-children > .snap-pass {
+  scroll-snap-align: none;
+}
+
+html.snap-sections .snap-stop {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+/*
+ * One screen, for a section that is a stop on a snapping page.
+ *
+ * A plain viewport — a stop fills the screen it lands on, and it snaps flush to
+ * the top like every other. It briefly measured `100dvh - var(--nav-clearance)`
+ * to keep headings out from under the header; that bought clearance with height
+ * every section had to pay, and the hero's foot was the bill. The header
+ * overlays, as the design draws it, and a section that needs room beneath it
+ * spends its own padding on it.
+ *
+ * Named rather than left as `min-h-dvh` at nine call sites so the next change to
+ * what "one screen" means happens once.
+ */
+.snap-screen {
+  min-height: 100dvh;
+}
+
+html.snap-sections {
+  /*
+   * **Only from `lg`, and the reason is the point of snapping.**
+   *
+   * Mandatory snapping exists here so a reader takes one section per gesture and
+   * cannot skip past a block unread. That works while a section IS a screen. On
+   * a phone it stops being one: measured at 390 x 844, the members directory
+   * comes to 966, its benefits 1111 and its application steps 1101 — the content
+   * is the same but the column is a third of the width, so it runs long. Snap
+   * points sit at each section's TOP, so a mandatory scrollport on a section
+   * taller than the window jumps from its head straight to the next one and the
+   * bottom third is never reachable. Snapping would be skipping the very copy it
+   * was added to protect.
+   *
+   * Below `lg` the page scrolls normally, which on a phone is what a reader
+   * expects anyway. The class stays on `<html>` either way — the scrollbar
+   * hiding below still applies, and `plugins/snap-release.client.ts` still has
+   * something to remove.
+   */
+  scroll-snap-type: none;
+
+  /*
+   * The header is `fixed`, so a section snapped to `start` puts its own top edge
+   * under it — and the first thing at the top of a section is its heading.
+   * "FEATURED TOURNAMENTS" was being sliced in half by the navbar every time the
+   * rail was snapped to.
+   *
+   * `scroll-padding-top` is the purpose-built answer and it belongs on the
+   * SCROLLPORT, not on each section: it tells every scroll — snap, anchor jump,
+   * `scrollIntoView`, keyboard — to stop this far short, so one declaration
+   * covers every stop on every snapping page. The alternative was more top
+   * padding inside each section, which fixes the overlap by making the sections
+   * taller, and their height is the thing already under pressure.
+   *
+   * `--nav-clearance` is the bar at `lg` (36 + 60 + 16 = 112px) rounded up. It is
+   * deliberately the larger of the two heights the header takes: a few pixels
+   * spare is invisible, a few short leaves type clipped.
+   *
+   * **It is NOT `scroll-padding-top`, and that was tried.** Setting it on the
+   * scrollport did clear every heading — by pushing every section down 112px,
+   * which left a strip of the previous one showing above each stop and, worse,
+   * took 112px off the height a full-screen section could actually use. The hero
+   * lost its foot to it. A page does not owe the header a slice of the section
+   * before it; a section that needs room under the bar takes it out of its OWN
+   * padding, which is what the tournament rail does.
+   */
+  --nav-clearance: 7rem;
+
+  /* The scrollbar goes with it. A snapping page does not scroll the way the bar
+     says it does: the thumb jumps a section at a time rather than tracking the
+     gesture, and its length claims a proportion of the document that the reader
+     can never actually rest at. Same three declarations the carousels use — the
+     property is standard in Firefox and Chromium, and the pseudo-element is what
+     Safari still needs.
+
+     It costs nothing that matters here. Hiding the bar does not disable
+     scrolling: the wheel, the trackpad, Page Up/Down, Home/End, space and the
+     arrows all still drive the page, and the snap positions are what they land
+     on. On Windows and Linux it also takes back the ~15px gutter a classic
+     scrollbar reserves, which puts `100vw` and the layout's own width back in
+     agreement — the vw-based Figma measurements across this page are written
+     assuming the two are the same number. */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+@media (min-width: 64rem) {
+  html.snap-sections {
+    scroll-snap-type: y mandatory;
+  }
+}
+
+html.snap-sections::-webkit-scrollbar {
+  display: none;
+}
+
 /* Parallax is disabled entirely, not slowed down (RULES §12).
    Scroll-linked movement is a primary trigger for motion sickness. */
 @media (prefers-reduced-motion: reduce) {
@@ -558,4 +723,151 @@ body {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+
+  /* Snapping moves the viewport after the reader has already stopped scrolling
+     — unrequested scroll-linked motion, which is what the rule above turns off
+     everywhere else. It goes with the parallax rather than surviving it. */
+  html.snap-sections {
+    scroll-snap-type: none;
+  }
+}
+
+
+/*
+ * The dotted landmass on the members hero's globe — Figma's `401:19063`.
+ *
+ * The design's globe exists as a 1.6MB PNG (`decor-hero-globe.png`, kept in the
+ * repo as the reference this is matched against). This is the same thing built
+ * in CSS: no 1.6MB download, scalable to any width, and recolourable from the
+ * theme rather than from Photoshop.
+ *
+ * The continents are a dot grid masked to `decor-map-frame.svg`, the landmass
+ * silhouette the map section already draws. `mask-image` with an SVG uses the
+ * file's alpha, and that file is one opaque path on nothing — so the land keeps
+ * the dots and the oceans drop them. One asset, two uses, and the two cannot
+ * drift apart the way a second exported picture of the same coastline would.
+ *
+ * **What this cannot reproduce, and it is worth being honest about it.** On the
+ * render the dot ROWS curve — they are wrapped around a sphere, so they bow and
+ * the dots squash into ellipses toward the limb. CSS has no spherical mapping;
+ * the closest it gets is tilting a flat plane, which keeps the rows straight.
+ * At this size, behind a pill and four figures, the tilt reads as the same
+ * thing. Straight on, it does not.
+ *
+ * Written here rather than as Tailwind arbitrary values because it needs the
+ * `-webkit-` prefix as well: Safari still ships masking behind it, and Tailwind
+ * emits the standard property only.
+ */
+.globe-dots {
+  /* 6px pitch, dot at ~1.9px. 5px blurred into a haze once the perspective tilt
+     compressed the rows toward the rim; 8px read as blocks rather than a map. */
+  background-image: radial-gradient(
+    circle,
+    rgba(255, 226, 168, 1) 32%,
+    transparent 33%
+  );
+  background-size: 6px 6px;
+
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+}
+
+/*
+ * The members globe's surface turning — the motion the design's reference
+ * component gets from `cobe`, without the WebGL.
+ *
+ * Two copies of the dotted map side by side inside a clipped box; this moves the
+ * pair by exactly half its own width, which puts copy two where copy one
+ * started. That is what makes the loop seamless — any other distance shows the
+ * join.
+ *
+ * **Sideways, because only sideways can loop.** Longitude wraps and latitude
+ * does not: a map scrolled horizontally meets itself at the Pacific, a map
+ * scrolled vertically runs off its top edge and the next copy begins at the
+ * Arctic. That cut crosses the frame once per lap and no mask hides it for a
+ * whole one. See the note in `members/Hero.vue`.
+ *
+ * `transform` only, so the compositor carries it and nothing repaints
+ * (RULES §12). The reduced-motion block below collapses every animation to
+ * 0.01ms, which freezes this at its first frame rather than removing it — the
+ * globe still has its map, it simply stops moving.
+ *
+ * 60s is a full lap. A globe that visibly races is a distraction behind a
+ * headline; at this speed the movement is something a reader notices only if
+ * they look for it.
+ */
+@keyframes globe-drift {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.globe-drift {
+  animation: globe-drift 60s linear infinite;
+  will-change: transform;
+}
+
+/*
+ * The gold edge on the directory's selected row — `405:28410`.
+ *
+ * It is a GRADIENT edge: solid at the right, gone by the left, so the outline
+ * arrives with the wash underneath it rather than boxing the row. `ring` and
+ * `border` both take a colour and nothing else, and `border-image` — the one
+ * property that would take a gradient — stops applying the moment
+ * `border-radius` rounds the box.
+ *
+ * So it is drawn the way the gold CTA's conic stroke is: a gradient painted over
+ * the whole element with the middle punched out by two masks composited apart,
+ * leaving exactly the 1px frame. `border-radius: inherit` keeps it on the row's
+ * own corners.
+ */
+.row-gold-edge::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    rgb(225 183 98 / 0) 0%,
+    rgb(225 183 98 / 0.12) 40%,
+    rgb(225 183 98 / 0.5) 72%,
+    rgb(225 183 98 / 0.95) 100%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+/*
+ * Type painted through the gold fall.
+ *
+ * Thirty-six files were writing the same three utilities in a row —
+ * `bg-[image:var(--gradient-gold-text)] bg-clip-text text-transparent` — which
+ * is not a style so much as a technique: a gradient cannot be a text colour, so
+ * it is painted as a background and clipped to the glyphs, and the glyphs are
+ * made transparent to let it through. Three classes that only ever appear
+ * together, and that break silently if one is dropped, are one thing with a
+ * name.
+ *
+ * Size, leading and case stay with the caller. Those genuinely differ — a
+ * section title is 100px and a card's is 76 — and folding them in here would
+ * make this a component rather than a treatment.
+ */
+.text-gold-gradient {
+  background-image: var(--gradient-gold-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }

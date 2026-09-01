@@ -40,9 +40,19 @@ useSeoMeta({
          the "Official Rules" button on the right (measured: 41px and 5px of bite
          at 1440 and 1280 before the mission cap, 105/133 at 1024). `menu` is the
          measured token nearest that threshold and leaves margin. Below it the
-         card simply follows the hero, which is what it already did below `lg`. -->
+         card simply follows the hero, which is what it already did below `lg`.
+
+         The snap point is the other half of that split, and it switches at the
+         same breakpoint. Below `menu` the card is a band of its own between the
+         hero and S4, and section snapping would fly straight over it — the hero
+         fills the screen, the next snap position is S4's head, and the card is
+         never on screen at rest. From `menu` up it is pulled INTO the hero and
+         has no head of its own to stop at: snapping to it would park the
+         viewport partway down the hero, cutting the artwork in half. So it is a
+         snap point exactly while it is a band, and `snap-align-none` from
+         `menu`, where it goes back to being part of S2. -->
     <div
-      class="relative z-40 flex justify-center px-5 py-12 lg:px-20 menu:-mt-[13.3%] menu:pt-0 menu:pb-0"
+      class="relative z-40 flex snap-start snap-always justify-center px-5 py-12 lg:px-20 menu:-mt-[13.3%] menu:snap-align-none menu:pt-0 menu:pb-0"
     >
       <HomeCountdown />
     </div>
@@ -50,7 +60,9 @@ useSeoMeta({
     <HomeFeatureHq />
     <HomeStats />
     <HomeFeaturedEvent />
-    <HomeNewsIntro />
+    <!-- One section, not two: the photograph, the sentence over it and the card
+         strip are a single 1920 × 1080 frame in the redraw (`53:3067`), so the
+         `HomeNewsIntro` that used to stand here is inside `HomeNews` now. -->
     <HomeNews />
     <HomePartners />
     <HomeResources />

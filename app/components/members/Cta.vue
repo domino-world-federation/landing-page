@@ -15,7 +15,7 @@ import { MEMBERS_COPY } from "~/content/members"
 
 <template>
   <section
-    class="flex flex-col items-center gap-9 px-5 py-16 md:px-10 lg:px-20 lg:py-[5.2vw]"
+    class="flex snap-screen flex-col items-center justify-center gap-9 px-5 pt-28 pb-16 md:px-10 lg:px-20 lg:pt-[var(--nav-clearance)] lg:pb-[5.2vw]"
   >
     <div class="flex flex-col items-center gap-6">
       <!-- Bebas 126/132, 1135 of the design's 1920. `uppercase` is the

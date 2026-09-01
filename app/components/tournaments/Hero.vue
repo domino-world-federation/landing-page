@@ -27,44 +27,82 @@ defineProps<{ event: ShowcaseEvent }>()
   <!-- The radial is Figma's own (`370:17244`): a circle struck at the top
        centre, gold falling to bronze. `min-h` rather than the design's 1083 so a
        long event name grows the block instead of overflowing it. -->
+  <!-- One screen: `581:14547` is 1920 × 1080, like the "All tournaments" band
+       under it. `snap-screen` rather than the design's ratio — the two agree only
+       at 16:9, and a 1512 × 900 laptop is left short by the ratio alone. -->
   <section
     aria-labelledby="tournament-hero-heading"
-    class="relative isolate flex min-h-[560px] flex-col justify-end overflow-hidden bg-[radial-gradient(circle_at_50%_0%,#c3ae86_0%,#4f4332_100%)] lg:min-h-[56.4vw]"
+    class="relative isolate flex snap-screen flex-col justify-end overflow-hidden bg-[radial-gradient(circle_at_50%_0%,#c3ae86_0%,#4f4332_100%)]"
   >
+    <!-- Three layers, three speeds, and the order is the point: depth is read
+         from RATE, so the emblem sunk into the ground trails, the light wash
+         above it moves a little more, and the trophy — the subject — leads
+         (RULES §12). All three on `transform` only, and well under the 3–4
+         moving layers a viewport is allowed.
+
+         `anchor="top"` on every one of them, which is mandatory for a hero: the
+         default `cross` range opens when the section's head meets the viewport's
+         FOOT, so a page that has not been scrolled yet already sits partway
+         along it and every layer renders pre-shifted — visibly detached from the
+         edge it is supposed to start at (D16). -->
+
     <!-- The emblem, 8% black and sunk into the ground rather than lit on top of
-         it (`371:17302`). Decorative. -->
-    <img
-      src="/assets/tournaments/decor-hero-emblem.svg"
-      alt=""
-      aria-hidden
-      class="pointer-events-none absolute top-[10%] left-1/2 -z-10 w-[28.5vw] max-w-[547px] -translate-x-1/2 opacity-[0.08]"
+         it (`371:17302`). Decorative, and the slowest thing here. -->
+    <MotionParallaxLayer
+      :speed="4"
+      anchor="top"
+      decorative
+      class="pointer-events-none absolute top-[10%] left-1/2 -z-10 w-[28.5vw] max-w-[547px] -translate-x-1/2"
     >
+      <img
+        src="/assets/tournaments/decor-hero-emblem.svg"
+        alt=""
+        aria-hidden
+        class="w-full opacity-[0.08]"
+      >
+    </MotionParallaxLayer>
 
     <!-- The light sweep across the top (`371:17308`), wider than the frame in
          the design and left that way — it is a wash, and cropping it at the
          edges is what makes it read as light rather than as a shape. -->
-    <img
-      src="/assets/tournaments/decor-hero-shade.svg"
-      alt=""
-      aria-hidden
+    <MotionParallaxLayer
+      :speed="7"
+      anchor="top"
+      decorative
       class="pointer-events-none absolute -top-[19%] left-1/2 -z-10 w-[121vw] max-w-none -translate-x-1/2"
     >
+      <img
+        src="/assets/tournaments/decor-hero-shade.svg"
+        alt=""
+        aria-hidden
+        class="w-full"
+      >
+    </MotionParallaxLayer>
 
     <!-- The trophy. `priority` because it is this page's LCP, the same call
-         `/domino` and `/development` make for their opening images. -->
-    <div class="pointer-events-none absolute inset-x-0 top-[2.6%] -z-10 flex justify-center">
-      <NuxtImg
-        src="/assets/tournaments/hero-trophy-hand.png"
-        :alt="TOURNAMENTS_COPY.hero.portraitAlt"
-        :width="728"
-        :height="1304"
-        preload
-        loading="eager"
-        fetchpriority="high"
-        :sizes="imageSizes({ xs: '60vw', lg: '38vw' })"
-        class="h-auto w-[60vw] max-w-[728px] lg:w-[38vw]"
-      />
-    </div>
+         `/domino` and `/development` make for their opening images.
+
+         NOT `decorative`: it carries a real `alt`, so the layer must not be
+         hidden from assistive tech the way the two washes above it are. -->
+    <MotionParallaxLayer
+      :speed="14"
+      anchor="top"
+      class="pointer-events-none absolute inset-x-0 top-[2.6%] -z-10 flex justify-center"
+    >
+      <div class="flex w-full justify-center">
+        <NuxtImg
+          src="/assets/tournaments/hero-trophy-hand.png"
+          :alt="TOURNAMENTS_COPY.hero.portraitAlt"
+          :width="728"
+          :height="1304"
+          preload
+          loading="eager"
+          fetchpriority="high"
+          :sizes="imageSizes({ xs: '60vw', lg: '38vw' })"
+          class="h-auto w-[60vw] max-w-[728px] lg:w-[38vw]"
+        />
+      </div>
+    </MotionParallaxLayer>
 
     <!-- Bebas 400 with a white-to-transparent fall (`372:17399`). Decorative: it
          is the tournament's own branding, and the heading below names the event

@@ -20,42 +20,48 @@ const { data: tournaments } = await useAsyncData(
 </script>
 
 <template>
+  <!-- One screen: `581:14648` is 1920 × 1080, the second of the two full-frame
+       bands the page opens with. See `Hero` for why the height is `dvh` rather
+       than the design's ratio. -->
   <section
     v-if="tournaments.length > 0"
     aria-labelledby="tournament-rail-heading"
-    class="bg-linear-to-b from-[var(--color-surface-dark)] to-transparent px-5 py-16 md:px-10 lg:px-20 lg:py-[4.17vw]"
+    class="flex snap-screen flex-col justify-center bg-linear-to-b from-[var(--color-surface-dark)] to-transparent px-5 pt-28 pb-10 md:px-10 lg:px-20 lg:pt-[var(--nav-clearance)] lg:pb-0"
   >
-    <div class="flex flex-col gap-10 lg:gap-[3.125vw]">
-      <!-- The heading row. The arrows live inside `CardRail` because they act on
-           the scroller; this row carries the name and the button, and the two sit
-           on one line at the design width. -->
-      <div class="flex flex-wrap items-center justify-between gap-6">
+    <TournamentsCardRail :label="TOURNAMENTS_COPY.rail.label">
+      <!-- The name, the button and the arrows on one line, which is how
+           `581:14649` frames them. They used to be two rows — the heading here
+           and the arrows inside the rail — and the extra band was most of what
+           pushed this section past a screen. -->
+      <template #heading>
         <MotionReveal :y="24">
           <!-- Bebas 100/108 — `--text-display-statement`, the step the
                Development page's own 100px heading already measured. -->
           <h2
             id="tournament-rail-heading"
-            class="font-display bg-[image:var(--gradient-gold-text)] bg-clip-text text-[length:var(--text-display-statement)] leading-[1.08] text-transparent uppercase"
+            class="font-display text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
           >
             {{ TOURNAMENTS_COPY.rail.heading }}
           </h2>
         </MotionReveal>
+      </template>
 
+      <!-- Past the arrows, on the far right of the row, which is where
+           `581:14655` puts it. It used to sit beside the heading. -->
+      <template #trailing>
         <NuxtLink
           :to="TOURNAMENTS_COPY.rail.viewAllHref"
-          class="font-display focus-visible:ring-gold flex h-16 items-center justify-center rounded-[var(--radius-btn)] bg-white/20 px-5 text-[length:var(--text-display-caption)] leading-[1.25] text-white uppercase transition-colors hover:bg-white/30 focus-visible:ring-2 focus-visible:outline-none"
+          class="font-display focus-visible:ring-gold flex h-16 items-center justify-center rounded-[var(--radius-btn)] bg-white/20 px-5 text-[length:var(--text-display-caption)] leading-[1.25] whitespace-nowrap text-white uppercase transition-colors hover:bg-white/30 focus-visible:ring-2 focus-visible:outline-none"
         >
           {{ TOURNAMENTS_COPY.rail.viewAll }}
         </NuxtLink>
-      </div>
+      </template>
 
-      <TournamentsCardRail :label="TOURNAMENTS_COPY.rail.label" show-progress>
-        <TournamentsTournamentCard
-          v-for="tournament in tournaments"
-          :key="tournament.id"
-          :tournament="tournament"
-        />
-      </TournamentsCardRail>
-    </div>
+      <TournamentsTournamentCard
+        v-for="tournament in tournaments"
+        :key="tournament.id"
+        :tournament="tournament"
+      />
+    </TournamentsCardRail>
   </section>
 </template>

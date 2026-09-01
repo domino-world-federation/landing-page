@@ -36,8 +36,55 @@ const TIER_BY_ID = new Map(MEMBERSHIP_TIERS.map((tier) => [tier.id, tier]))
  * design's for a marker low on the map, and shortens by itself for one near the
  * top. No length is written down anywhere.
  */
+/**
+ * Which tier the legend has narrowed to, or `undefined` for all of them. Owned
+ * by `Map`, because the pills that set it live there.
+ */
+const props = defineProps<{ activeTier?: string }>()
+
 const prefersReducedMotion = useReducedMotion()
 const openId = ref("jakarta")
+
+/**
+ * The markers the filter leaves standing.
+ *
+ * Filtered here rather than hidden with CSS so the buttons leave the tab order
+ * too: a marker nobody can see should not be a stop on the way to the ones they
+ * can.
+ */
+const shown = computed(() =>
+  props.activeTier
+    ? MAP_MARKERS.filter((marker) => marker.tier === props.activeTier)
+    : MAP_MARKERS,
+)
+
+/**
+ * The dot itself, drawn from the record rather than from the export.
+ *
+ * `world-map-dots.svg` used to supply all 57 as one picture with their colours
+ * baked in, which is why the legend below it could only ever be a key — you
+ * cannot hide a circle that is part of a flat image. Every marker carries its
+ * tier, so the ring is built from the tier's own two golds instead.
+ *
+ * The ring is a gradient, and a `border` cannot take one: it is a gradient disc
+ * with the middle punched out by a mask. Same problem as the gold CTA's conic
+ * stroke, same solution.
+ *
+ * The hole has to be `transparent`, not a dark colour. A mask reads ALPHA, so
+ * `#0e0e0e` in the middle — opaque, however black it looks — punches nothing and
+ * every marker came out a solid disc instead of a ring.
+ */
+function dotStyle(marker: (typeof MAP_MARKERS)[number]) {
+  const tier = TIER_BY_ID.get(marker.tier)
+  if (!tier) return undefined
+
+  return {
+    background: `linear-gradient(0deg, ${tier.from} 0%, ${tier.to} 100%)`,
+    boxShadow: `0 0 5px 0 ${tier.from}`,
+    mask: "radial-gradient(circle, transparent 0 2.2px, #000 2.2px)",
+    WebkitMask: "radial-gradient(circle, transparent 0 2.2px, #000 2.2px)",
+  }
+}
 
 const open = computed(() =>
   MAP_MARKERS.find((marker) => marker.id === openId.value),
@@ -81,9 +128,34 @@ const openTierLabel = computed(() =>
   open.value ? TIER_BY_ID.get(open.value.tier)?.label : undefined,
 )
 
+/** The open marker's chevron breathing. Two values, both composited. */
+const pulse = computed(() =>
+  prefersReducedMotion.value
+    ? { opacity: 1, scale: 1 }
+    : { opacity: [1, 0.45, 1], scale: [1, 0.88, 1] },
+)
+
+const pulseTransition = computed(() =>
+  prefersReducedMotion.value
+    ? { duration: 0 }
+    : {
+        duration: 1.6,
+        ease: "easeInOut" as const,
+        repeat: Number.POSITIVE_INFINITY,
+      },
+)
+
 function toggle(id: string) {
   openId.value = openId.value === id ? "" : id
 }
+
+// A filter that hides the open marker has to close its callout as well, or the
+// tag hangs over the map on a leader line pointing at nothing.
+watch(shown, (list) => {
+  if (openId.value && !list.some((marker) => marker.id === openId.value)) {
+    openId.value = ""
+  }
+})
 </script>
 
 <template>
@@ -102,11 +174,17 @@ function toggle(id: string) {
        `inset-0` on the children then means "the marker layer", which is the box
        every coordinate in `MAP_MARKERS` is a percentage of. -->
   <div class="absolute top-[10.52%] left-[8.9%] w-[87.09%]">
-    <!-- The artwork's own marker layer, sized in CSS. The map is named by the
-         section's `aria-label`: an `alt` describing 57 markers would be a
-         paragraph nobody asked for, and the buttons below carry the real
-         names. -->
-    <img src="/assets/members/world-map-dots.svg" alt="" class="w-full">
+    <!-- The layer's own height, and nothing else. `world-map-dots.svg` used to
+         render here and supply all 57 dots as one flat picture; the dots are
+         drawn from `MAP_MARKERS` now so the legend can filter them, and this
+         holds the box open in its place.
+
+         **1505 x 752, and it has to be that.** Every coordinate in `MAP_MARKERS`
+         is a percentage of the DOTS file's box, not the map plate's — the two
+         are different sizes (2.001 against 1.827). Standing this box up at the
+         plate's ratio stretched all 57 markers down the map: Jakarta landed in
+         the Java Sea and its neighbours drifted off their coastlines. -->
+    <div class="aspect-[1505/752] w-full" />
 
     <div
       role="group"
@@ -117,7 +195,7 @@ function toggle(id: string) {
            small to hit reliably, and enlarging the dot would mean redrawing
            artwork that is already correct. -->
       <button
-        v-for="marker in MAP_MARKERS"
+        v-for="marker in shown"
         :key="marker.id"
         type="button"
         :aria-pressed="marker.id === openId"
@@ -130,6 +208,52 @@ function toggle(id: string) {
         }"
         @click="toggle(marker.id)"
       >
+        <!-- The dot. Half the button, centred: the target is 22px because an
+             11px ring is not something a thumb can reliably hit, and growing the
+             ring to match would make the map read as a scatter of blobs.
+
+             The OPEN marker is not a ring — the design replaces it with a white
+             chevron at the foot of the leader line, so the tag and its pointer
+             read as one object rather than a label floating above a dot that
+             looks like every other dot. -->
+        <span
+          v-if="marker.id !== openId"
+          aria-hidden
+          class="absolute top-1/2 left-1/2 size-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
+          :style="dotStyle(marker)"
+        />
+
+        <!-- It pulses, which is the whole reason it is `Motion` and not an
+             `<img>`: opacity and scale only, so the compositor carries it and
+             nothing repaints (RULES §12). `useReducedMotion` collapses the
+             transition rather than removing the element — branching the markup
+             on a preference is the hydration mismatch RULES §12 records. -->
+        <Motion
+          v-else
+          as="span"
+          aria-hidden
+          class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+          :initial="{ opacity: 1, scale: 1 }"
+          :animate="pulse"
+          :transition="pulseTransition"
+        >
+          <svg
+            width="22"
+            height="14"
+            viewBox="0 0 22 14"
+            fill="none"
+            class="w-[22px] drop-shadow-[0_0_6px_rgba(0,0,0,0.8)]"
+          >
+            <path
+              d="M2 2 L11 11 L20 2"
+              stroke="#fff"
+              stroke-width="4"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </Motion>
+
         <!-- The highlight. Only `transform` and `opacity` animate (RULES §12);
              the ring is a gradient disc with its middle masked out, the same way
              the legend's swatches are drawn. -->
@@ -147,19 +271,31 @@ function toggle(id: string) {
         />
       </button>
 
-      <!-- `404:28268` — the tag, hung from the top of the marker layer in the
-           open marker's column, with the leader line filling the distance down
-           to the dot. `role="status"` so a reader who opens a marker by keyboard
-           is told what appeared; it is one node that changes rather than one per
-           marker, so nothing is announced twice. -->
+      <!-- `404:28268` — the tag, sitting just above its own marker.
+
+           **It used to hang from the TOP of the map.** Figma drops a 624px
+           leader line from a tag near the top of the block down to a dot near
+           the bottom, and that was reproduced literally: the tag was pinned to
+           `top-0` and the line stretched to fill whatever was left. It made the
+           tag's position depend on nothing but the marker's column, so a dot in
+           Indonesia got a tag in Siberia and a line down the length of Asia.
+
+           Now the tag is anchored to the marker instead — `bottom` puts its foot
+           on the dot — and the line is a fixed short one. Which marker is open
+           moves the tag with it, and the line only has to say "this dot", not
+           "somewhere far below".
+
+           `role="status"` so a reader who opens a marker by keyboard is told
+           what appeared; one node that changes rather than one per marker, so
+           nothing is announced twice. -->
       <AnimatePresence>
         <Motion
           v-if="open"
           :key="open.id"
           as="div"
           role="status"
-          class="pointer-events-none absolute top-0 z-10 flex -translate-x-1/2 flex-col items-center"
-          :style="{ left: `${open.x}%`, height: `${open.y}%` }"
+          class="pointer-events-none absolute z-10 flex -translate-x-1/2 flex-col items-center"
+          :style="{ left: `${open.x}%`, bottom: `${100 - open.y}%` }"
           :initial="{ opacity: 0, y: -6 }"
           :animate="{ opacity: 1, y: 0 }"
           :exit="{ opacity: 0 }"
@@ -186,11 +322,14 @@ function toggle(id: string) {
           </div>
 
           <!-- `404:28201` — 2px, fading from nothing at the tag to solid gold at
-               the dot, so the eye is led down it rather than up. `flex-1` is
-               what makes the length follow the marker. -->
+               the dot, so the eye is led down it rather than up. A fixed 76px,
+               measured off the design's close-up: 28 was the first attempt and
+               it left the tag sitting almost on top of its own marker. Fixed
+               rather than "whatever is left above the dot", which is what it was
+               before and what put a tag over Siberia for a marker in Java. -->
           <span
             aria-hidden
-            class="w-0.5 flex-1 bg-linear-to-b from-transparent to-[#e1b764]"
+            class="h-19 w-0.5 shrink-0 bg-linear-to-b from-transparent to-[#e1b764]"
           />
         </Motion>
       </AnimatePresence>

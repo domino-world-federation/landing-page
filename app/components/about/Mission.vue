@@ -11,8 +11,10 @@ import { MISSION_CARDS, MISSION_COPY } from "~/content/about/mission"
 </script>
 
 <template>
+  <!-- One screen, like the four sections around it — `566:13564` is 1920 × 1080.
+       See `Heritage` for why the height is `dvh` and not the design's ratio. -->
   <section
-    class="flex flex-col gap-12 px-5 py-16 md:px-10 lg:gap-[3.13vw] lg:px-20 lg:py-[4.17vw]"
+    class="flex snap-screen flex-col justify-center gap-12 px-5 py-16 md:px-10 lg:gap-[3.13vw] lg:px-20 lg:py-[4.17vw]"
   >
     <div class="flex flex-col items-center gap-9 text-center">
       <MotionReveal :y="32">
@@ -25,7 +27,7 @@ import { MISSION_CARDS, MISSION_COPY } from "~/content/about/mission"
 
       <MotionReveal :y="48" :delay="STAGGER" blur-from="10px">
         <h2
-          class="font-display bg-[image:var(--gradient-gold-text)] bg-clip-text text-[length:var(--text-display-statement)] leading-[1.08] text-transparent"
+          class="font-display text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08]"
         >
           <!-- A block per line so the design's break survives without a `<br>` a
                translation would have to carry (RULES §9). -->

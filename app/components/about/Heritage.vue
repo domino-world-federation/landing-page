@@ -22,8 +22,17 @@ const { data: milestones } = await useAsyncData(
 </script>
 
 <template>
+  <!-- A screen of its own: `566:13471` is 1920 × 1080, and so are the four
+       sections after it. On a page that snaps section by section a band shorter
+       than the viewport always arrives with the next one's head showing under
+       it, so the design's full-frame height is not a stylistic detail here — it
+       is what the snapping is built on.
+
+       `snap-screen` rather than the design's `56.25vw`: the two agree only at
+       16:9, and a 1512 × 900 laptop would be left 50px short by the ratio. The
+       viewport unit is the thing actually being filled. -->
   <section
-    class="bg-[linear-gradient(180deg,var(--color-bg)_0%,var(--color-surface-dark)_100%)] pt-16 lg:pt-[4.17vw]"
+    class="flex snap-screen flex-col justify-center bg-[linear-gradient(180deg,var(--color-bg)_0%,var(--color-surface-dark)_100%)] py-16 lg:py-[4.17vw]"
   >
     <div
       class="flex flex-col items-center gap-9 px-5 text-center md:px-10 lg:px-20"
@@ -38,7 +47,7 @@ const { data: milestones } = await useAsyncData(
 
       <MotionReveal :y="40" :delay="STAGGER" blur-from="10px">
         <h2
-          class="font-display bg-[image:var(--gradient-gold-text)] bg-clip-text text-[length:var(--text-display-sm)] leading-[0.95] text-transparent uppercase"
+          class="font-display text-gold-gradient text-[length:var(--text-display-sm)] leading-[0.95] uppercase"
         >
           {{ HERITAGE_COPY.heading }}
         </h2>

@@ -1,7 +1,7 @@
 /**
  * `/tournaments` copy — Figma screen `366:17181` (RULES §9).
  *
- * The tournaments, champions, results and documents are data (`client.ts`);
+ * The tournaments, board members, results and documents are data (`client.ts`);
  * what lives here is the page's own furniture — headings, labels, and the
  * strings the controls say.
  */
@@ -33,29 +33,95 @@ export const TOURNAMENTS_COPY = {
     /** `372:17355`. Unlike S6's "Register", this one asks to be told when
      *  entries open. */
     notify: "Notify me",
-    /** There is no subscription endpoint (B2). Same treatment as the footer's
-     *  newsletter: the control refuses in the open (D28). */
-    notifyUnavailable: "Reminders are not open yet — check back soon.",
+  },
+
+  /**
+   * The reminder dialog the "Notify me" button opens — `587:16433` and its three
+   * sibling states (filled, submitted, rejected).
+   *
+   * It replaces the notice the button used to print in place. That was D28's
+   * rule applied with nothing else to offer: no dialog was drawn, so a control
+   * with no backend could only refuse. The redraw draws one, so the shape of the
+   * interaction is now the design's — and the refusal moves to where it belongs,
+   * the moment of submitting, where `subscribeToTournament` still has nothing to
+   * submit to (B2).
+   */
+  notifyDialog: {
+    /** `587:16436`. The curly apostrophe is Figma's. */
+    heading: "We’ll notify you to this event",
+    placeholder: "Input your email address",
+    /** `587:16493`, in `#54CE83` beside a tick. */
+    success: "Email submitted, thanks to keep in touch",
+    /** `587:16521`, in `#FF1558` beside a cross. Shown for an address the field
+     *  itself can tell is malformed. */
+    invalid: "Hmm… that email doesn’t look valid",
+    /**
+     * Shown when the address is fine but there is nothing to send it to.
+     *
+     * Not in the design, which has no state for it — the design assumes a
+     * backend. Without one the dialog would otherwise have to either claim a
+     * subscription it did not make or fail silently, and both are worse than
+     * saying so.
+     */
+    unavailable: "Reminders are not open yet — check back soon.",
+    /** Names the controls for assistive tech; neither carries a visible label. */
+    closeLabel: "Close",
+    submitLabel: "Submit email address",
   },
 
   rail: {
     /** `373:17422`. Figma types "ALL TOURNAMENT"; the plural is a typo of the
      *  kind D40 fixes — the rail lists several. */
-    heading: "All Tournaments",
+    /**
+     * "Featured Tournaments" in the redraw (`581:14650`), where it read "All
+     * Tournaments" before. Not a typo fix this time — the rail shows three of
+     * five and has a "View all" button beside it, so "All" was the claim that
+     * was wrong.
+     */
+    heading: "Featured Tournaments",
     viewAll: "View all",
-    /** No archive page is drawn for this rail, so the button goes nowhere
-     *  yet (B2). */
-    viewAllHref: "#",
+    /** `/tournaments/all` (`517:2487`) — the archive the rail is three of five
+     *  of. It went nowhere until that screen was drawn. */
+    viewAllHref: "/tournaments/all",
     /** Names the rail for assistive tech. */
     label: "All tournaments",
-    /** The bookmark button on each card (`381:17449`). `%s` is the tournament.
-     *  Nothing stores bookmarks yet (B2). */
-    bookmark: "Save %s",
-    bookmarkUnavailable: "Saving tournaments needs an account — coming soon.",
+    /**
+     * The gold button across the foot of each card (`592:16895`), which the
+     * redraw puts where the bookmark used to be.
+     *
+     * `%s` is the tournament, for the accessible name: five buttons all reading
+     * "Register" tell a screen-reader user nothing about which one they are on.
+     */
+    register: "Register",
+    registerLabel: "Register for %s",
+    /**
+     * The card's foot changes with the tournament's registration state, which is
+     * what the redraw's three cards show side by side: one open and taking
+     * entries, one under way, one not yet accepting them.
+     *
+     * `%s` is the tournament in every accessible name — five cards whose buttons
+     * all read "Register" tell a screen-reader user nothing about which one they
+     * are on.
+     */
+    watchLive: "Watch live",
+    watchLiveLabel: "Watch %s live",
+    viewDetail: "View detail",
+    viewDetailLabel: "View details of %s",
+    notify: "Notify me",
+    notifyLabel: "Get reminders about %s",
+    /** There is no entry form and no portal to host one (B2, phase 2), so the
+     *  button refuses in the open rather than navigating nowhere (D28). */
+    registerUnavailable: "Entries open through the portal — coming soon.",
+    /**
+     * The pill's word, and it has to be the state's own — `upcoming` reading
+     * "Closed" over a tab that says "Registration opens Nov 1" is the card
+     * disagreeing with itself.
+     */
     registration: {
       open: "Open",
-      closed: "Closed",
+      upcoming: "Upcoming",
       ongoing: "Ongoing",
+      closed: "Closed",
     },
   },
 
@@ -63,13 +129,13 @@ export const TOURNAMENTS_COPY = {
     /** `381:17631`. Figma types "Tournament REgulations" — the capitals are the
      *  row's, not the string's (D40). */
     heading: "Tournament Regulations",
-    /** `%1` is the document title, `%2` its printed file description. */
-    downloadLabel: "Download %1, %2",
-  },
-
-  champions: {
-    heading: "Champions Hall",
-    label: "Champions hall",
+    /**
+     * `%s` is the document title — the shelf now draws `ui/ResourceCard`, whose
+     * whole card is one stretched link, so the accessible name is the title
+     * alone. The old `%1, %2` form belonged to `DocumentCard`, where the file
+     * pill was the link and had to say what it was handing over.
+     */
+    downloadLabel: "Download %s",
   },
 
   gallery: {

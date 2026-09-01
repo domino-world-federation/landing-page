@@ -45,18 +45,36 @@ import type { ResourceDocument } from "~/lib/api/types"
  * the anchor is stretched over the card behind it (`after:absolute
  * after:inset-0`), giving the full card as the hit area while announcing once.
  */
-defineProps<{
-  doc: ResourceDocument
-  /** The small line above the title — a category on S10, a date on `/development`. */
-  meta: string
-  /** Accessible-name template for the stretched link; `%s` is the title. */
-  downloadLabel: string
-}>()
+withDefaults(
+  defineProps<{
+    doc: ResourceDocument
+    /** The small line above the title — a category on S10, a date on `/development`. */
+    meta: string
+    /** Accessible-name template for the stretched link; `%s` is the title. */
+    downloadLabel: string
+    /**
+     * Draw the 2px `#DADADA` edge Figma gives this card on the tournament detail
+     * page (`517:2153`).
+     *
+     * The three shelves that drew it first all sit on the dark page, where a
+     * white card separates itself from its ground. The detail page's regulations
+     * shelf sits INSIDE the white overview panel, where a borderless card is
+     * invisible — same card, and the edge is the one thing the ground changes.
+     */
+    outlined?: boolean
+  }>(),
+  { outlined: false },
+)
 </script>
 
 <template>
   <article
-    class="group relative flex flex-col items-start justify-between gap-4 rounded-[var(--radius-card)] bg-white px-5 py-4 text-black sm:flex-row"
+    :class="
+      cn(
+        'group relative flex flex-col items-start justify-between gap-4 rounded-[var(--radius-card)] bg-white px-5 py-4 text-black sm:flex-row',
+        outlined && 'rounded-3xl border-2 border-[#DADADA]',
+      )
+    "
   >
     <div class="flex flex-col gap-2">
       <p

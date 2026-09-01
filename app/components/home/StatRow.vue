@@ -45,8 +45,8 @@ const focus = computed(() => props.tone === "focus")
         cn(
           'font-display text-[length:var(--text-display-stat)] leading-none',
           focus
-            ? 'bg-[image:var(--gradient-gold-text)] bg-clip-text text-transparent'
-            : 'bg-linear-to-b from-white to-white/40 bg-clip-text text-transparent blur-[10px]',
+            ? 'text-gold-gradient'
+            : 'bg-linear-to-b from-white to-white/40 bg-clip-text blur-[10px]',
         )
       "
     >

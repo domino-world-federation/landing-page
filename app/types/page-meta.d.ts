@@ -18,14 +18,16 @@ declare module "#app" {
      * context to be behind it slides underneath the page background itself. The
      * two always travel together, so they are one key.
      *
-     * `src` and `aspectClass` travel together too — the pages export different
-     * heights of the same beams, and reading one file at the other's ratio would
-     * stretch its baked-in fade off the page foot. The aspect is a literal
-     * Tailwind utility because the class scanner reads source text: a ratio
-     * interpolated into a style would never be seen, and the layer would
+     * `aspectClass` is how much of the page's foot the layer covers, and it is
+     * per-page because the three designs lit different amounts of theirs. It is
+     * a literal Tailwind utility because the class scanner reads source text: a
+     * ratio interpolated into a style would never be seen, and the layer would
      * collapse to zero height in a production build.
+     *
+     * There is no `src` any more. Each page used to name its own exported SVG;
+     * the layer is now drawn entirely in CSS over a black ground.
      */
-    shine?: { src: string; aspectClass: string }
+    shine?: { aspectClass: string }
   }
 }
 

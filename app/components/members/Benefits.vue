@@ -25,14 +25,22 @@ import { MEMBERSHIP_BENEFITS, MEMBERS_COPY } from "~/content/members"
 </script>
 
 <template>
+  <!-- `scroll-mt-28` is gone, and its absence is deliberate. It cleared the
+       fixed navbar for the hero's "#membership-benefits" jump back when this
+       section had no top padding of its own. Now the section is a snap stop and
+       buys that clearance out of its OWN padding — the call `main.css` records
+       for every stop on every snapping page — so a scroll margin on top of it
+       counts the navbar twice. Measured, it landed the snap 112px short of the
+       section boundary: the stop above stayed visible as a strip, and the
+       gesture that should have advanced one section did not finish. -->
   <section
     id="membership-benefits"
     aria-labelledby="benefits-heading"
-    class="flex scroll-mt-28 flex-col gap-10 px-5 py-10 md:px-10 lg:gap-15 lg:px-20 lg:py-[4.1667vw]"
+    class="flex snap-screen flex-col justify-center gap-10 px-5 pt-28 pb-10 md:px-10 lg:gap-15 lg:px-20 lg:pt-[var(--nav-clearance)] lg:pb-[4.1667vw]"
   >
     <h2
       id="benefits-heading"
-      class="font-display bg-[image:var(--gradient-gold-text)] bg-clip-text text-center text-[length:var(--text-display-statement)] leading-[1.08] text-transparent uppercase"
+      class="font-display text-gold-gradient text-center text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
     >
       {{ MEMBERS_COPY.benefitsHeading }}
     </h2>

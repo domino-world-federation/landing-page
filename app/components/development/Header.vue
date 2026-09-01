@@ -15,6 +15,12 @@ import { DEVELOPMENT_HEADER_COPY } from "~/content/development/header"
  * as an opacity cross-fade between two static-blur copies, never as an animated
  * `filter` (RULES §11). The intro beside it does not move at all — two things
  * arriving means neither is the arrival.
+ *
+ * **NOT `snap-screen`**, even though this page snaps. It is 530px in Figma — a
+ * band, not a screen — and About and Domino keep it at that on their snapping
+ * pages too. Given a full screen with `justify-end` the title drops to the foot
+ * of the window and the band above it is empty, which is a different page from
+ * the one that was drawn.
  */
 </script>
 

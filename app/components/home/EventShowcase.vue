@@ -14,10 +14,17 @@ import type { ShowcaseEvent } from "~/lib/api/types"
  * The section shell around it — the band, the eyebrow, the heading — is markup
  * with nothing to hydrate, and so is the fetch above it.
  *
- * Every event wears the same card: one gold-lit panel with the federation
- * watermark, the trophy and the event's own year across the foot. The year is
- * the only part of the card that is data, so the six read as one series rather
- * than six unrelated posters.
+ * Every event wears the same card, and after the redraw (`561:13301`) that card
+ * is one flattened landscape picture rather than the layered gold panel it was.
+ *
+ * **The year on it no longer follows the event.** The old panel set the event's
+ * own year as live text across its foot, read off `dateLabel`, precisely so the
+ * six would read as one series rather than as six copies of the same poster.
+ * The redraw bakes "DWF2026" into the raster, so every event in the pager now
+ * wears 2026 — including "World Championship 2027" at position six. Recorded
+ * here rather than quietly worked around: getting it back means either six
+ * exports or rebuilding the composition in layers at the new 810 × 540, and
+ * neither is something to decide inside a component.
  *
  * Switching is a plain swap, not a transition. The band is dense with type — a
  * name, two fields, a paragraph, a pager and two buttons — and fading or sliding
@@ -45,34 +52,37 @@ function step(delta: number) {
 </script>
 
 <template>
-  <!-- Figma's own 100px gutter between the columns, as a fraction of the design
-       width so it narrows with the window instead of squeezing the columns.
+  <!-- `space-between`, not a gutter: `561:13283` gives the row three FIXED
+       widths — 380, 810, 380 — inside the section's 1760 content box and lets
+       the 190px left over fall into the two gaps, 95 each. Writing it as a gap
+       would fix the wrong number; writing the columns as fractions and spacing
+       them apart keeps Figma's proportions and lets the gaps give way first as
+       the window narrows, which is the right thing to lose.
 
-       The row starts at `menu` (1400), not `lg`, and the widths inside it are
-       proportional rather than fixed — both for the same measured reason. Three
-       columns at Figma's literal 380 + 520 + 380 plus two 100px gutters, the
-       eyebrow beside them and the section's own 80px padding, need 1772px of
-       window before they fit. At `lg` they did not: the row overflowed the
-       viewport and the WHOLE PAGE scrolled sideways from 1024 all the way to
-       ~1700 (measured `scrollWidth` 1614 at 1024, 1657 at 1440, 1674 at 1600).
-       The section had only ever been checked at 1920, where it fits.
+       Every width is a fraction of the design width, capped at the literal it
+       comes from: 19.79vw is 380/1920 and 42.19vw is 810/1920. At 1920 the row
+       lays out at Figma's exact numbers; narrower windows scale all three
+       together instead of squeezing one.
 
-       Two changes make it fit at 1400 instead. The card is sized as a fraction
-       of the window (27.08vw = 520/1920, capped at its design size), so it gives
-       ground with the window as everything else here already does; and the side
-       columns take what is left rather than demanding 380 — `flex-1 basis-0`
-       with the design width as a ceiling, so 1920 still lays out exactly as
-       before and narrower windows split the remainder evenly. At 1400 that
-       leaves 284px a column, which the name and the two fields carry without
-       wrapping differently.
+       **The row waits for `menu-lg` (1600) rather than `menu` (1400).** Three
+       columns at 380 + 810 + 380 plus the section's own 80px padding come to
+       1650 before a single pixel of gap — the design width has only 190 spare,
+       where the old 520-wide layout had 162 of slack AND 100px gutters it could
+       give back. At 1600 the columns measure 317/676/317 with 47px gaps, which
+       still carries the name and the two fields without rewrapping.
 
-       Below `menu` the three stack in reading order — name, card, summary —
-       which is what they already did below `lg`. -->
+       The height is the row's, not each column's: `561:13284`, `561:13301` and
+       `561:13317` are all exactly 540 tall, and the two side columns distribute
+       their contents down it. Setting it once here and letting the children
+       stretch is what keeps the three in register — see `EventDetails` and
+       `EventActions`, which both spend it with `justify-between`.
+
+       Below `menu-lg` the three stack in reading order — name, card, summary. -->
   <div
     v-if="event"
-    class="flex flex-col items-start gap-10 menu:flex-row menu:gap-[5.2vw]"
+    class="flex flex-col items-start gap-10 menu-lg:h-[min(540px,28.125vw)] menu-lg:flex-row menu-lg:items-stretch menu-lg:justify-between menu-lg:gap-0"
   >
-    <div class="w-full menu:max-w-[380px] menu:flex-1 menu:basis-0">
+    <div class="w-full menu-lg:w-[19.79vw] menu-lg:max-w-[380px]">
       <HomeEventDetails
         :event="event"
         :names="names"
@@ -84,11 +94,12 @@ function step(delta: number) {
       />
     </div>
 
-    <!-- 27.08vw is 520/1920, so the design width renders the card at exactly its
-         Figma size and narrower windows scale it down with them. -->
-    <HomeEventCard :event="event" class="mx-auto menu:mx-0 menu:w-[27.08vw]" />
+    <HomeEventCard
+      :event="event"
+      class="mx-auto menu-lg:mx-0 menu-lg:w-[42.19vw] menu-lg:max-w-[810px]"
+    />
 
-    <div class="w-full menu:max-w-[380px] menu:flex-1 menu:basis-0">
+    <div class="w-full menu-lg:w-[19.79vw] menu-lg:max-w-[380px]">
       <HomeEventActions :event="event" />
     </div>
   </div>

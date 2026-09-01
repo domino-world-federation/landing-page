@@ -19,9 +19,16 @@ import { VISION_ALT, VISION_COPY } from "~/content/about/vision"
   <!-- `amount` a third rather than the default half: the section is 1106px tall
        — most of a viewport at 1920 — and waiting for half of it on screen would
        hold the entrance until the reader has already read the eyebrow. -->
-  <MotionEntranceGroup :amount="0.3" class="relative overflow-hidden">
-    <!-- 57.6vw is 1106/1920. Below `lg` the blocks stack and the height comes
-         from the copy instead, with the tile behind it as a backdrop. -->
+  <MotionEntranceGroup
+    :amount="0.3"
+    class="relative flex snap-screen flex-col justify-center overflow-hidden"
+  >
+    <!-- One screen, like the four sections around it — `566:13530` is
+         1920 × 1080. See `Heritage` for why the height is `dvh` and not the
+         design's ratio; 57.6vw was this section's own measured 1106 and is kept
+         as a FLOOR, so a very wide window still gives the artwork the height it
+         was composed at. Below `lg` the blocks stack and the height comes from
+         the copy instead, with the tile behind it as a backdrop. -->
     <div class="relative min-h-[560px] lg:h-[57.6vw]">
       <!-- 1. The wash the section opens with — `--color-surface-dark` to nothing
            over the top 317px (16.5vw). It is the same colour Heritage ends on,
@@ -139,7 +146,7 @@ import { VISION_ALT, VISION_COPY } from "~/content/about/vision"
           </p>
 
           <h2
-            class="font-display mt-9 bg-[image:var(--gradient-gold-text)] bg-clip-text text-[length:var(--text-display-statement)] leading-[1.08] text-transparent uppercase"
+            class="font-display mt-9 text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
           >
             <!-- A block per line so the design's break survives without a `<br>`
                  a translation would have to carry (RULES §9). -->

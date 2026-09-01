@@ -47,7 +47,7 @@ const SETTLE = DURATION * 1.5
        narrow desktops. Below `lg` the height follows the copy and the picture
        becomes a backdrop behind it. -->
   <section
-    class="relative isolate flex min-h-[560px] flex-col justify-center overflow-hidden lg:h-[max(720px,56.25vw)] lg:min-h-0"
+    class="relative isolate flex min-h-[560px] snap-start snap-always flex-col justify-center overflow-hidden lg:h-[max(720px,56.25vw)] lg:min-h-0"
   >
     <!-- Slow, and slower than anything in the hero: this is the backdrop, so it
          trails the page rather than racing it. `-z-10` keeps the whole layer
@@ -93,7 +93,7 @@ const SETTLE = DURATION * 1.5
     >
       <MotionReveal :y="48" blur-from="12px">
         <h2
-          class="font-display bg-[image:var(--gradient-gold-text)] bg-clip-text text-[length:var(--text-display-feature)] leading-none text-transparent uppercase"
+          class="font-display text-gold-gradient text-[length:var(--text-display-feature)] leading-none uppercase"
         >
           <!-- A block per line so the design's break survives, rather than a
                `<br>` that a translation would have to carry along (RULES §9). -->

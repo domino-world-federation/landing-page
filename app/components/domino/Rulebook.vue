@@ -38,7 +38,7 @@ const active = computed(
     <div class="flex flex-col items-center gap-6 lg:gap-9">
       <h2
         id="rulebook-heading"
-        class="font-display bg-[image:var(--gradient-gold-text)] bg-clip-text text-center text-[length:var(--text-display-statement)] leading-[1.08] text-transparent uppercase"
+        class="font-display text-gold-gradient text-center text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
       >
         {{ RULEBOOK_COPY.heading }}
       </h2>
