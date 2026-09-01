@@ -8,12 +8,15 @@
  */
 export const FEATURED_EVENT_COPY = {
   /**
-   * Two entries because Figma breaks the line explicitly (`52:3028`): the
-   * eyebrow is set two words tall against the card's left edge. A `<br>` in the
-   * JSX would make the break part of the markup rather than part of the text,
-   * so a translation could not move it.
+   * One line, and it used to be two.
+   *
+   * The old node set it against the card's LEFT EDGE, stacked "FEATURED /
+   * EVENT", because the section was a row and the eyebrow was a column of its
+   * own beside the content. The revision (`561:13282`) turns the section into a
+   * column and lifts the eyebrow above the row as a full-width label, where a
+   * forced break would leave one word hanging over 1760px of empty space.
    */
-  eyebrow: ["FEATURED", "EVENT"],
+  eyebrow: "Featured event",
 
   /** Field labels above the date and place (`52:3033`, `52:3036`). */
   dateLabel: "Date",

@@ -33,9 +33,15 @@ const [singles, doubles] = FORMATS
 </script>
 
 <template>
+  <!-- The gradient is Figma's own (`572:13990`, `#0E0E0E → #1B1B1B`) and the
+       section was rendering without it: transparent looks identical while the
+       page background is all that sits behind, which it was. It is not any more
+       — the tile band above is `sticky` and stays under this section as it
+       climbs, so the ground has to be opaque or the picture shows straight
+       through the copy. -->
   <section
     aria-labelledby="format-singles-heading"
-    class="px-5 py-10 md:px-10 lg:px-20 lg:py-[3.13vw]"
+    class="relative z-10 bg-[linear-gradient(180deg,var(--color-bg)_0%,#1b1b1b_100%)] px-5 py-10 md:px-10 lg:px-20 lg:py-[3.13vw]"
   >
     <!-- 800 tall in Figma minus its 60px of vertical padding; 35.42vw is
          680/1920. The floor keeps the panels from crushing their three

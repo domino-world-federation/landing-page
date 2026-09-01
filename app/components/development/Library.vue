@@ -27,7 +27,7 @@ const { data: documents } = await useAsyncData(
 <template>
   <section
     aria-labelledby="library-heading"
-    class="px-5 py-16 md:px-10 lg:px-20 lg:py-[3.13vw]"
+    class="flex snap-screen flex-col justify-center px-5 pt-28 pb-16 md:px-10 lg:px-20 lg:pt-[var(--nav-clearance)] lg:pb-[3.13vw]"
   >
     <div class="flex flex-col gap-10 lg:flex-row lg:gap-[13.96vw]">
       <div
@@ -44,7 +44,7 @@ const { data: documents } = await useAsyncData(
         <MotionReveal :y="40" :delay="STAGGER">
           <h2
             id="library-heading"
-            class="font-display bg-[image:var(--gradient-gold-text)] bg-clip-text text-[length:var(--text-display-sm)] leading-[0.95] text-transparent uppercase"
+            class="font-display text-gold-gradient text-[length:var(--text-display-sm)] leading-[0.95] uppercase"
           >
             {{ LIBRARY_COPY.heading }}
           </h2>

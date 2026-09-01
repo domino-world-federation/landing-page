@@ -25,8 +25,20 @@ withDefaults(
      * so its colour is the caller's.
      */
     noticeClass?: string
+    /**
+     * Fill the row rather than hug the label.
+     *
+     * The wrapper below is what actually has width — `class` reaches the BUTTON,
+     * because `inheritAttrs` is off and the attrs are bound there — so a caller
+     * putting `flex-1` on this component was sizing the button inside a wrapper
+     * that had already shrunk to `w-fit`. The tournament cards' buttons came out
+     * 131px wide in a 620px card, all three different widths, because each hugged
+     * its own label. The hero's two still want to hug, so this is a prop rather
+     * than a change to the default.
+     */
+    block?: boolean
   }>(),
-  { noticeClass: "text-white/60" },
+  { noticeClass: "text-white/60", block: false },
 )
 
 const attrs = useAttrs()
@@ -34,7 +46,11 @@ const pressed = ref(false)
 </script>
 
 <template>
-  <div class="flex w-full flex-col gap-2 lg:w-fit">
+  <div
+    :class="
+      cn('flex w-full flex-col gap-2', block ? 'flex-1' : 'lg:w-fit')
+    "
+  >
     <button type="button" v-bind="attrs" @click="pressed = true">
       <slot />
     </button>

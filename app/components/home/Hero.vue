@@ -71,7 +71,7 @@ const TILE_DELAY = HERO_RETREAT / 3
        (measured `scrollWidth` 1551 against a 1280 viewport). A height cannot
        push the width around. -->
   <section
-    class="from-hero-top to-hero-bottom relative isolate flex min-h-dvh flex-col overflow-hidden bg-linear-to-b lg:h-[max(840px,54.17vw)] lg:min-h-0"
+    class="from-hero-top to-hero-bottom relative isolate flex min-h-dvh snap-start snap-always flex-col overflow-hidden bg-linear-to-b lg:h-[max(840px,54.17vw)] lg:min-h-0"
   >
     <!-- The stage IS the coordinate space, at every width: `inset-0` means a
          layer's percentages are percentages of the section.

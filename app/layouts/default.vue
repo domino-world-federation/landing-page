@@ -29,11 +29,7 @@ const shine = computed(() => route.meta.shine)
     <!-- Declared by the page through `definePageMeta`, rendered here — a route
          component may only have one root element, so `/development` and
          `/members` cannot put this beside their own `<main>`. -->
-    <UiPageShine
-      v-if="shine"
-      :src="shine.src"
-      :aspect-class="shine.aspectClass"
-    />
+    <UiPageShine v-if="shine" :aspect-class="shine.aspectClass" />
 
     <slot />
     <LayoutFooter />

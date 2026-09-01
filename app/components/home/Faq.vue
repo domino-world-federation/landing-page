@@ -4,14 +4,24 @@ import { FAQ_COPY, FAQ_DEFAULT_OPEN, FAQ_ITEMS } from "~/content/home/faq"
 /**
  * S11 — Figma node `81:690`. The FAQ.
  *
- * A white 20px-radius card on the page's dark ground, holding a gold-less black
- * heading and three question rows. The card is the section's whole treatment: no
- * artwork, no gradient, just a large field of white after ten sections of dark —
- * which is what makes the questions read as reference material rather than as
- * more of the page's pitch.
+ * **It used to be a white card and is not any more.** The redraw turns the pane
+ * translucent — `rgba(74,74,74,0.3)` over a 12px backdrop blur — and takes the
+ * type with it: the heading and the questions go white, the answers to
+ * `#A3A3A3`, and each question gains a filled box of its own instead of a rule
+ * between it and the next. The reasoning behind the old treatment ("a large
+ * field of white after ten sections of dark") is simply no longer the design's;
+ * the section now reads as glass laid over the page rather than as a sheet set
+ * down on it.
  *
- * Figma pads it `60px 160px` inside an outer 80px section padding, so at the
- * design width the questions start 240px from the window edge. That inner
+ * That inverts what the layer underneath is for. The `home` layout's `PageShine`
+ * reaches roughly 500px up into this section, and the whole point of `<main>`'s
+ * `z-10` was to keep the wash OFF an opaque white card. The card is not opaque
+ * now, so the beams are meant to come through it — the guard still matters,
+ * because it is what keeps the shine behind the card's own pane and blur rather
+ * than painted flat over the questions.
+ *
+ * Figma pads the pane `60px 160px` inside an outer 80px section padding, so at
+ * the design width the questions start 240px from the window edge. That inner
  * padding is written as a fraction (8.33vw = 160/1920) rather than as pixels:
  * held literally it would still be claiming 320px of a 768px tablet, leaving the
  * questions a column narrower than the gutters around them (D14). Below `lg` it
@@ -26,35 +36,15 @@ import { FAQ_COPY, FAQ_DEFAULT_OPEN, FAQ_ITEMS } from "~/content/home/faq"
   <section
     id="faq"
     aria-labelledby="faq-heading"
-    class="px-5 py-16 md:px-10 lg:px-20 lg:py-[4.17vw]"
+    class="snap-start snap-always px-5 py-16 md:px-10 lg:px-20 lg:py-[4.17vw]"
   >
-    <!-- The card rises as the section arrives — one move for the whole block
-         rather than a stagger down the questions. The rows are a list the reader
-         is about to scan, and animating them in sequence would hold the last
-         question back while they are already reading the first. -->
-    <MotionReveal :y="32">
-      <div
-        class="shadow-card rounded-[var(--radius-card)] bg-white px-5 py-10 md:px-10 lg:px-[8.33vw] lg:py-[3.13vw]"
-      >
-        <div class="flex flex-col gap-8 lg:gap-[2.5vw]">
-          <!-- Bebas 76/72 in black (`81:691`) — the same size S10's heading
-               carries, so it borrows `--text-display-sm` rather than gaining a
-               step of its own. `leading-[0.95]` is Figma's 72 on a 76 body.
-
-               Black rather than the gold gradient every other heading uses: the
-               card is white, and gold on white fails contrast at any of the
-               brand's three stops (`#E1B762` on white is 1.9:1 against the 4.5
-               RULES §10 requires). Figma makes the same call. -->
-          <h2
-            id="faq-heading"
-            class="font-display text-[length:var(--text-display-sm)] leading-[0.95] text-black uppercase"
-          >
-            {{ FAQ_COPY.heading }}
-          </h2>
-
-          <UiFaqAccordion :items="FAQ_ITEMS" :default-open-id="FAQ_DEFAULT_OPEN" />
-        </div>
-      </div>
-    </MotionReveal>
+    <UiFaqPanel
+      :items="FAQ_ITEMS"
+      :default-open-id="FAQ_DEFAULT_OPEN"
+      :heading="FAQ_COPY.heading"
+      heading-id="faq-heading"
+      tone="dark"
+      :view-more="{ label: FAQ_COPY.viewMore, href: FAQ_COPY.viewMoreHref }"
+    />
   </section>
 </template>

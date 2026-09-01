@@ -17,6 +17,7 @@ import {
   MOCK_GALLERY,
   MOCK_GALLERY_ALBUMS,
   MOCK_HERITAGE_MILESTONES,
+  MOCK_HIGHLIGHTED_TOURNAMENT,
   MOCK_MEMBERSHIP_STATS,
   MOCK_MEMBER_FEDERATIONS,
   MOCK_NEWS,
@@ -24,8 +25,10 @@ import {
   MOCK_PARTNERS,
   MOCK_RESOURCES,
   MOCK_STATS,
+  MOCK_STANDING_COMMITTEES,
   MOCK_SUB_COMMITTEES,
   MOCK_TOURNAMENTS,
+  MOCK_TOURNAMENT_DETAILS,
 } from "./mock"
 import type {
   BoardMember,
@@ -41,8 +44,11 @@ import type {
   OlympicResult,
   Partner,
   ResourceDocument,
+  StandingCommittee,
   SubCommittee,
   Tournament,
+  TournamentDetail,
+  TournamentRegistration,
 } from "./types"
 
 /**
@@ -322,9 +328,47 @@ export async function getGalleryAlbums(slug?: string): Promise<GalleryAlbum[]> {
  * timeline: the page has no way to know whether the federation leads with the
  * nearest date, the biggest event, or the one it is selling tickets to.
  */
-export async function getTournaments(): Promise<Tournament[]> {
-  if (useMock()) return MOCK_TOURNAMENTS
-  return request<Tournament[]>("/tournaments")
+/**
+ * The federation's standing committees (`613:24908`), in the federation's own
+ * order — which body it leads with is its call, not the page's.
+ */
+export async function getStandingCommittees(): Promise<StandingCommittee[]> {
+  if (useMock()) return MOCK_STANDING_COMMITTEES
+  return request<StandingCommittee[]>("/committees/standing")
+}
+
+export async function getTournaments(
+  registration?: TournamentRegistration,
+): Promise<Tournament[]> {
+  if (useMock()) {
+    return registration
+      ? MOCK_TOURNAMENTS.filter((t) => t.registration === registration)
+      : MOCK_TOURNAMENTS
+  }
+
+  // Filtered by the server rather than by the page, for the reason the news
+  // archive's category filter is (D50): `/tournaments/all` renders during SSR
+  // and a filtered list has to be a URL somebody can send, which means the
+  // filter has to survive a cold request with no client state.
+  return request<Tournament[]>(
+    registration ? `/tournaments?registration=${registration}` : "/tournaments",
+  )
+}
+
+/**
+ * One tournament with everything its own page prints — Figma screen `517:1895`.
+ *
+ * `undefined` rather than a throw for a slug that names nothing: a bad URL is a
+ * 404 the page renders, not an error the request layer decides how to report.
+ * The page turns it into one with `createError`.
+ */
+export async function getTournament(
+  slug: string,
+): Promise<TournamentDetail | undefined> {
+  if (useMock()) {
+    return MOCK_TOURNAMENT_DETAILS.find((t) => t.slug === slug)
+  }
+  return request<TournamentDetail>(`/tournaments/${encodeURIComponent(slug)}`)
 }
 
 /**
@@ -343,7 +387,7 @@ export async function getTournaments(): Promise<Tournament[]> {
 export async function getHighlightedTournament(): Promise<
   ShowcaseEvent | undefined
 > {
-  if (useMock()) return MOCK_SHOWCASE_EVENTS[0]
+  if (useMock()) return MOCK_HIGHLIGHTED_TOURNAMENT
   return request<ShowcaseEvent>("/tournaments/highlighted")
 }
 
@@ -393,4 +437,39 @@ export async function getMemberFederations(
   }
   const query = limit === undefined ? "" : `?limit=${limit}`
   return request<MemberFederation[]>(`/members${query}`)
+}
+
+/**
+ * Register an email address for reminders about one tournament — the "Notify me"
+ * dialog on `/tournaments` (`587:16433` and its three sibling states).
+ *
+ * **The first write in this file, and the first place a mock could be a lie.**
+ * Everything above returns invented data, which is honest enough: the page shows
+ * numbers nobody promised are real. A submit is different — the dialog answers
+ * "Email submitted, thanks to keep in touch", and if that came back from a
+ * component that had spoken to nothing, the page would be telling the reader it
+ * had their address when it had thrown it away.
+ *
+ * So the mock does NOT resolve. It rejects with a message the dialog is willing
+ * to show, which keeps the design's success state real code — reached the moment
+ * a base URL exists — while never claiming a subscription that did not happen.
+ * That is D28's rule (a control with nothing behind it refuses in the open)
+ * applied to a form rather than to a button.
+ *
+ * `runtimeConfig.public.apiBaseUrl` is what flips it. Blocker B2.
+ */
+export async function subscribeToTournament(
+  tournamentId: string,
+  email: string,
+): Promise<void> {
+  if (useMock()) {
+    throw new Error("no-backend")
+  }
+  // `unknown`, not `void`: `request` puts its parameter through `ofetch`, whose
+  // response type has to be an actual type. The endpoint's body is discarded
+  // either way, which is what this function's own `Promise<void>` says.
+  await request<unknown>(`/tournaments/${tournamentId}/subscribe`, {
+    method: "POST",
+    body: { email },
+  })
 }

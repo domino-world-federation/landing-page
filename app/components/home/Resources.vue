@@ -42,7 +42,7 @@ const { data: documents } = await useAsyncData(
 <template>
   <section
     aria-labelledby="resources-heading"
-    class="px-5 py-16 md:px-10 lg:px-20 lg:py-[4.17vw]"
+    class="snap-start snap-always px-5 py-16 md:px-10 lg:px-20 lg:py-[4.17vw]"
   >
     <div class="flex flex-col gap-10 lg:flex-row lg:gap-[13.96vw]">
       <!-- 356/1652 of the content box — the fraction Figma gives the left column
@@ -60,7 +60,7 @@ const { data: documents } = await useAsyncData(
              a block rather than as two sentences. -->
         <h2
           id="resources-heading"
-          class="font-display bg-[image:var(--gradient-gold-text)] bg-clip-text text-[length:var(--text-display-sm)] leading-[0.95] text-transparent uppercase"
+          class="font-display text-gold-gradient text-[length:var(--text-display-sm)] leading-[0.95] uppercase"
         >
           {{ RESOURCES_COPY.heading }}
         </h2>

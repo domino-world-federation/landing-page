@@ -8,10 +8,14 @@ export const DEVELOPMENT_HEADER_COPY = {
    * One entry per line, for the same reason `ABOUT_HEADER_COPY.title` is an
    * array: the sharpening sweep runs left-to-right along **each** line, so the
    * lines have to be known rather than left to whatever the column width
-   * happens to produce. Figma sets this on one line at 824px, and one entry is
-   * what says so.
+   * happens to produce.
+   *
+   * TWO entries, and the break is deliberate rather than a consequence of the
+   * column: "Growing / the Game" sets the verb on its own line and lets the
+   * object land under it. One entry left the break to whatever 824px happened to
+   * allow, which put it in a different place at every width.
    */
-  title: ["Growing the game"],
+  title: ["Growing", "the Game"],
   intro:
     "Establishing the global infrastructure for competitive excellence and grassroots participation.",
 } as const

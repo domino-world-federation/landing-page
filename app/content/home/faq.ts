@@ -23,6 +23,10 @@ import type { FaqItem } from "~/types/faq"
 
 export const FAQ_COPY = {
   heading: "Frequently Asked Questions",
+  /** `572:14451`. The landing page did not have this button until the redraw;
+   *  `/tournaments` has carried the same one to the same place since D59/D60. */
+  viewMore: "View more",
+  viewMoreHref: "/faq",
 } as const
 
 export const FAQ_ITEMS: readonly FaqItem[] = [

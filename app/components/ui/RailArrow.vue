@@ -1,6 +1,12 @@
 <script setup lang="ts">
 /**
- * One arrow on a card rail — `381:17672` (dimmed) and `381:17673`.
+ * One arrow on a horizontal rail — `/tournaments` draws it at `381:17672`
+ * (dimmed) and `381:17673`, and S8's redraw puts the same 64px glyph at each end
+ * of the news strip (`566:13385`, `566:13386`).
+ *
+ * Lifted out of `tournaments/` on its second user, which is where this codebase
+ * moves a component up (D32/D43) — the news strip would otherwise have had to
+ * reach across a page boundary for a button.
  *
  * The design dims the backward arrow at the start of the row, which is the state
  * it drew; here both ends do it, and `disabled` rather than a lower opacity

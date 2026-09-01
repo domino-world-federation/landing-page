@@ -4,14 +4,17 @@ import { FEATURED_EVENT_COPY } from "~/content/home/featured-event"
 
 /**
  * The right column — the summary and the two buttons, pinned to opposite ends of
- * the card's height in Figma (`52:3053`, `justifyContent: space-between`).
+ * the card's height in Figma (`561:13317`, `justifyContent: space-between`).
  *
- * That split only holds where the column is as tall as the card, so it is `menu`
- * and up — the same breakpoint the row itself starts at; stacked below that, the
- * buttons simply follow the prose. The height tracks the card rather than being
- * pinned to Figma's 721: the card is `27.08vw` wide and keeps its 520/720 ratio,
- * which puts its height at `37.5vw` until it caps at its design size. A fixed
- * 721 would leave the buttons hanging below the card at every width under 1920.
+ * That split only holds where the column is as tall as the card, so it is
+ * `menu-lg` and up — the same breakpoint the row itself starts at; stacked below
+ * that, the buttons simply follow the prose.
+ *
+ * The height comes from the ROW rather than from a number here. `EventShowcase`
+ * sets the 540 once and stretches all three columns to it, which is what keeps
+ * this column, the picture and the left column in register — a height computed
+ * separately here would agree with the card only as long as nobody edited one of
+ * them.
  *
  * Both links fall back to `#` because the portal that will host the event pages
  * does not exist yet (PRD §5) — the mock leaves `detailsUrl` and `registerUrl`
@@ -23,7 +26,7 @@ defineProps<{ event: ShowcaseEvent }>()
 
 <template>
   <div
-    class="flex flex-col justify-between gap-10 menu:h-[min(720px,37.5vw)] menu:gap-0"
+    class="flex flex-col justify-between gap-10 menu-lg:h-full menu-lg:gap-0"
   >
     <p
       aria-live="polite"
@@ -33,9 +36,10 @@ defineProps<{ event: ShowcaseEvent }>()
     </p>
 
     <div class="flex flex-col gap-5">
-      <!-- 72px tall in Figma, both of them (`52:3056`, `162:7614`). The
-           secondary is the page's divider grey; the primary is the brand gold —
-           the only place on this white band the gold appears. -->
+      <!-- 72px tall in Figma, both of them (`561:13320`, `561:13322`), and
+           unchanged by the redraw. The secondary is the page's divider grey; the
+           primary is the brand gold — the only place on this white band the gold
+           appears. -->
       <NuxtLink
         :to="event.detailsUrl ?? '#'"
         class="rounded-btn font-display focus-visible:ring-gold flex h-18 items-center justify-center bg-[var(--color-surface-grey)] px-5 text-[length:var(--text-display-btn)] leading-10 text-black uppercase transition-colors hover:bg-[#c8c8c8] focus-visible:ring-2 focus-visible:outline-none"

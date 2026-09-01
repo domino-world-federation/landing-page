@@ -46,8 +46,14 @@ defineProps<{ card: GrassrootsCardCopy }>()
       </p>
     </div>
 
+    <!-- 3:4 is the design's shape, and `max-h` is what stops it from setting the
+         section's height. At 504px of card width the ratio alone gives a 672px
+         picture and a 978px card, which puts this section at 1402 in a 1080
+         window — a snap stop that does not fit its own stop. Capped, the crop
+         tightens and the card comes back under the screen; `object-cover` means
+         the picture loses its edges rather than distorting. -->
     <div
-      class="relative mt-auto aspect-3/4 w-full overflow-hidden rounded-[var(--radius-glass)]"
+      class="relative mt-auto aspect-3/4 w-full overflow-hidden rounded-[var(--radius-glass)] lg:max-h-[32dvh]"
     >
       <!-- One of three cards from `lg` up, one per row below it. The card is
            inset by the section's 80px padding and its own 28px, which the rough

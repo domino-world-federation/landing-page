@@ -7,10 +7,15 @@ export const DOMINO_HEADER_COPY = {
   /**
    * One entry per line, for the same reason `ABOUT_HEADER_COPY.title` is an
    * array: the sharpening sweep runs left-to-right along **each** line, so the
-   * lines have to be known rather than left to the column width. This title is
-   * short enough to sit on one, and one entry is what says so.
+   * lines have to be known rather than left to the column width.
+   *
+   * Two entries, not one. It was set on a single line here because the title is
+   * short enough to fit one — but the design breaks it (`572:13928` carries a
+   * literal `The\nDomino`), and at 84px against an 824px column that break is
+   * the composition rather than a consequence of the width. Each line then
+   * sharpens on its own ramp, which is the shape the other page headers have.
    */
-  title: ["The Domino"],
+  title: ["The", "Domino"],
   /**
    * Figma writes "Mathematic Precision" (`119:4817`) where the wireframe's
    * equivalent heading reads "Mathematical" (`119:4491`). Left as the hi-fi

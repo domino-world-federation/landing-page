@@ -12,6 +12,16 @@
  * The footer is inside that wrapper but outside `<main>`: it is a landmark of
  * its own, and the shine has to reach it.
  */
+
+/**
+ * Section snapping is the landing page's alone, and `scroll-snap-type` has to
+ * sit on the document's scrollport — `<html>` — to have any effect at all. The
+ * rule itself is in `main.css`; this only decides which pages wear it. Declaring
+ * it here rather than in the page ties it to the layout's lifetime: unhead drops
+ * the attribute when the layout unmounts, so navigating to About or Tournaments
+ * leaves an unsnapped `<html>` behind.
+ */
+useHead({ htmlAttrs: { class: "snap-sections" } })
 </script>
 
 <template>
@@ -21,10 +31,7 @@
     <slot />
 
     <div class="relative isolate">
-      <UiPageShine
-        src="/assets/home/decor-shine.svg"
-        aspect-class="aspect-[1920/1775]"
-      />
+      <UiPageShine aspect-class="aspect-[1920/1775]" />
       <HomeJoin />
       <LayoutFooter />
     </div>

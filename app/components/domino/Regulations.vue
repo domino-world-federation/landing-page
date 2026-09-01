@@ -47,13 +47,20 @@ const { data } = await useAsyncData("domino-regulations", async () => {
       v-if="data.rulebook"
       class="flex shrink-0 flex-col justify-between gap-10 rounded-[var(--radius-card)] bg-[#262626] p-8 lg:min-h-[522px] lg:w-[560px] lg:p-10"
     >
+      <!-- NO opacity class, and that is the whole of it. The export carries
+           Figma's 10% INSIDE the file, on a `<g opacity="0.1">` wrapping every
+           path; the `opacity-10` that used to sit here multiplied against it and
+           the mark rendered at 1% — present in the DOM, invisible on the screen.
+           Exactly the trap `EventCard`'s watermark records, and the reason that
+           note exists. The file's own alpha is the design's value; anything
+           added here can only take it away. -->
       <img
         src="/assets/domino/decor-rulebook-union.svg"
         alt=""
         aria-hidden
         width="131"
         height="142"
-        class="w-20 opacity-10 lg:w-[131px]"
+        class="w-20 lg:w-[131px]"
       >
 
       <div class="flex flex-col gap-6">
@@ -88,7 +95,7 @@ const { data } = await useAsyncData("domino-regulations", async () => {
              heading's, not the string's (D40). -->
         <h2
           id="regulations-heading"
-          class="font-display w-fit bg-[image:var(--gradient-gold-text)] bg-clip-text text-[length:var(--text-display-statement)] leading-[1.08] text-transparent uppercase"
+          class="font-display w-fit text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
         >
           {{ REGULATIONS_COPY.refereeHeading }}
         </h2>

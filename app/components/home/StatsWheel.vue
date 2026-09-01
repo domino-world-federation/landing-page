@@ -2,32 +2,6 @@
 import type { FederationStat } from "~/lib/api/types"
 
 /**
- * Seconds a stat holds the focused slot before the wheel turns again.
- *
- * Was 2.6, which is roughly how long a figure needs to be *read* — and that is
- * the wrong thing to time a detent against. At that hold the three notches are
- * too far apart to land as a rhythm: each click reads as its own event rather
- * than one of a series, which is most of what `SNAP` was put in to convey.
- * Shortened until the ticks belong to the same beat.
- *
- * The floor is that the wheel repeats forever, so a figure missed on this lap
- * comes back on the next, and the accessible copy of the list (`Stats`) is not
- * on a timer at all.
- */
-const HOLD = 1.2
-
-/**
- * Seconds set aside for one turn.
- *
- * Not the length of the turn — `SNAP` is a spring and a spring has no fixed end.
- * This is the budget the wheel schedules against, and it has to outlast the
- * spring's settle rather than its arrival: the interval must not fire while the
- * track is still moving, and the lap rewind below must land on a track that has
- * already stopped. `SNAP` arrives in 0.18s and is at rest well inside this.
- */
-const TURN = 0.5
-
-/**
  * The turn itself — a detent, not a glide.
  *
  * The wheel used to cross its slot on the page's easing curve, which is shaped
@@ -42,9 +16,11 @@ const TURN = 0.5
  * it. That recoil is the whole effect; without it the move is merely fast, and
  * fast alone still reads as sliding.
  *
- * Written as `visualDuration`/`bounce` rather than `stiffness`/`damping` because
- * those two say nothing about how long the move takes, and this timing has to be
- * reasoned about against `TURN` and `HOLD`.
+ * It survives the move off the timer unchanged, and that is the point: the
+ * reader now supplies the *when*, but the *how* is still the design's. A spring
+ * is also what keeps the notch honest under a fast flick — the index jumps
+ * whole numbers, so the track always plays the detent rather than being dragged
+ * continuously by the scroll.
  */
 const SNAP = { type: "spring", visualDuration: 0.18, bounce: 0.3 } as const
 
@@ -74,19 +50,44 @@ const DIM = 0.2
 const NEIGHBOUR_SCALE = 0.875
 
 /**
- * The stats wheel — figures taking turns in a fixed focused slot.
+ * The stats wheel — figures taking turns in a fixed focused slot, turned by the
+ * reader's own scroll.
  *
  * The design (`37:1874`) is a picker wheel: two rules bracket a centre slot, the
  * stat inside it is gold, full size and sharp, and the ones above and below are
  * dim, blurred and slightly smaller. So the frame is what stays put and the
  * content is what moves — each stat rides up through the focused slot in turn.
  *
- * **Why the list is rendered twice.** A wheel has no end, and a track that runs
- * out has to jump back. Two copies of the stats mean that after a full lap the
- * track is showing cells whose *content* is identical to where it started, so
- * the reset is invisible: the index snaps from `N+1` back to `1` with the
- * transition collapsed, and the three visible cells carry the same three stats
- * at the same three offsets. Sampled at the seam, nothing changes on screen.
+ * **The wheel used to turn itself.** A `setInterval` advanced it every 1.7s
+ * while the section was in view, and it looped forever. That was replaced by
+ * scroll: the section is a track one viewport tall per stat, the wheel is
+ * `sticky` inside it, and the scroll through the track is what advances the
+ * index. The reader now decides the pace, and a figure cannot go past
+ * unlooked-at while they are reading something else — which is the whole reason
+ * the timer went. There is no lap and no rewind: the wheel starts on the first
+ * notch and stops on the last, and the section releases to S6.
+ *
+ * **How the track is measured.** One viewport of scroll per stat, so `steps`
+ * viewports of height with a `100dvh` sticky stage inside. That leaves
+ * `steps - 1` viewports of travel while the stage is pinned, which is exactly
+ * the number of turns the wheel has to make. `useScroll`'s `start start` →
+ * `end end` range spans precisely that travel: it opens when the track's head
+ * reaches the top of the screen (where the stage pins) and closes when its foot
+ * reaches the bottom (where the stage releases). Progress is therefore
+ * `notch / (steps - 1)`, and rounding it is what turns a continuous scroll back
+ * into whole notches for `SNAP` to spring between.
+ *
+ * Each notch also carries a scroll-snap point of its own (the markers in the
+ * template), so a wheel gesture advances the wheel by one stat and no more —
+ * the same rule the page's sections follow, applied inside a section.
+ *
+ * **Why the list is rendered twice.** The focused slot has a neighbour above it
+ * and below it, so the cells at `index - 1` and `index + 1` must both exist. On
+ * a single lap the first stat has nothing above it and the last has nothing
+ * below, and the wheel would open and close against an empty slot. Two copies
+ * put a real figure in every neighbouring cell at every notch. (It was two laps
+ * under the timer as well, for a different reason: the loop's seam. The loop is
+ * gone; the second lap is still needed.)
  *
  * **Why the offset is a percentage.** Each cell is exactly one slot tall, so
  * translating the track by `100 / cells` percent of its own height moves it by
@@ -105,70 +106,57 @@ const NEIGHBOUR_SCALE = 0.875
  * blurred white one, and only their `opacity` cross-fades — the same trick
  * `SofteningImage` and `Reveal` use.
  *
- * The wheel is `aria-hidden`: it shows the same three stats over and over, and a
- * screen reader following it would hear them repeat. The section renders a plain
- * list alongside for that (see `Stats`).
+ * The wheel is `aria-hidden`: it is one figure repeated through a slot, and a
+ * screen reader walking a three-viewport track to hear three numbers is being
+ * charged for a visual effect. The section renders a plain list alongside for
+ * that (see `Stats`).
  */
 const props = defineProps<{ stats: FederationStat[] }>()
 
-const root = useTemplateRef<HTMLDivElement>("root")
+const track = useTemplateRef<HTMLDivElement>("track")
 const prefersReducedMotion = useReducedMotion()
 
-// Only turn while the section is actually being looked at — an interval running
-// against an off-screen element is battery spent on nothing.
-const inView = useInView(root, { amount: 0.3 })
-
-// Two laps of the stats, so the track always has a cell to bring in and one to
-// carry off without running out.
+// Two laps of the stats, so every notch has a real figure in the slot above and
+// the slot below it.
 const cells = computed(() => [...props.stats, ...props.stats])
-const lap = computed(() => props.stats.length)
+
+/** One notch per stat, and therefore one viewport of track per stat. */
+const steps = computed(() => props.stats.length)
 
 // `1` is the design's resting state: the second stat is the one in the focused
 // slot. Starting there means the server, the first client render, and a reader
 // who prefers reduced motion all get exactly the still design — without
 // branching the tree, which is what RULES §12 forbids.
 const index = ref(1)
-const instant = ref(false)
 
-const turning = computed(() => inView.value && !prefersReducedMotion.value)
-
-watch(
-  turning,
-  (on, _was, onCleanup) => {
-    if (!on) return
-
-    const timer = setInterval(
-      () => {
-        index.value += 1
-        instant.value = false
-      },
-      (HOLD + TURN) * 1000,
-    )
-    onCleanup(() => clearInterval(timer))
-  },
-  { immediate: true },
-)
-
-// A lap is over once the track has advanced by the length of the list. The snap
-// waits for the turn to land, then rewinds with the transition collapsed — see
-// the note above for why nothing is visible.
-watch(index, (value, _was, onCleanup) => {
-  if (value <= lap.value) return
-
-  const timer = setTimeout(() => {
-    index.value = 1
-    instant.value = true
-  }, TURN * 1000)
-  onCleanup(() => clearTimeout(timer))
+// Scoped to the track, not the page: the range has to be this section's own
+// travel or the notches land somewhere other than the snap points (RULES §12).
+const { scrollYProgress } = useScroll({
+  target: track,
+  offset: ["start start", "end end"],
 })
 
-// The seam rewind and a reader who prefers reduced motion both want the track to
-// arrive having visibly travelled nothing. Same tree either way, only the
-// transition is zeroed (RULES §12).
-const still = computed(() => prefersReducedMotion.value || instant.value)
+useMotionValueEvent(scrollYProgress, "change", (progress: number) => {
+  // `steps - 1` turns for `steps` notches. A single stat has no turn to make,
+  // and under `prefers-reduced-motion` the track is collapsed to one viewport
+  // (see the template) so the range has no length and progress never leaves 0 —
+  // which is how the preference stops the wheel without a branch in the tree.
+  const turns = steps.value - 1
+  if (turns < 1 || !Number.isFinite(progress)) return
 
-const trackTransition = computed(() => (still.value ? { duration: 0 } : SNAP))
-const fadeTransition = computed(() => (still.value ? { duration: 0 } : FADE))
+  const notch = Math.min(Math.max(Math.round(progress * turns), 0), turns)
+  index.value = notch + 1
+})
+
+// Same tree whatever the preference; only the transition is zeroed (RULES §12).
+// `duration: 0` still lands the track on its notch — motion starts animations in
+// a layout effect, so the value is final before the browser paints.
+const trackTransition = computed(() =>
+  prefersReducedMotion.value ? { duration: 0 } : SNAP,
+)
+const fadeTransition = computed(() =>
+  prefersReducedMotion.value ? { duration: 0 } : FADE,
+)
 
 // `1 - index`, not `-index`: the focused stat belongs in the *middle* of the
 // three slots, so the track sits one slot lower than a plain top-aligned offset
@@ -183,61 +171,104 @@ function distanceFrom(i: number) {
 </script>
 
 <template>
-  <!-- Three slots tall, so the focused one has a neighbour visible above and
-       below. `overflow-hidden` is what makes it a window onto the track. -->
+  <!-- The scroll track: one viewport per stat. `--stats-steps` carries the count
+       into CSS because the height is a `calc()` and the count comes from data —
+       it is written by the server and re-read identically on the client, so it
+       is not a branch.
+
+       `motion-reduce:h-dvh` collapses the track to a single viewport, and it is
+       a media query rather than a `useReducedMotion()` branch on purpose
+       (RULES §12): the two render different trees and Vue would hydrate one onto
+       the other. Collapsed, the `start start` → `end end` range has no length,
+       progress stays at 0, and the wheel simply holds the design's resting notch
+       — the still frame, with no scroll-linked movement anywhere in it. -->
   <div
-    ref="root"
+    ref="track"
     aria-hidden="true"
-    class="relative h-[calc(var(--stat-slot)*3)] overflow-hidden"
+    :style="{ '--stats-steps': steps }"
+    class="relative h-[calc(var(--stats-steps)*100dvh)] motion-reduce:h-dvh"
   >
-    <Motion
-      as="div"
-      class="absolute inset-x-0 top-0"
-      :animate="{ y: trackY }"
-      :transition="trackTransition"
-      :style="{ willChange: 'transform' }"
+    <!-- One snap point per notch, so a gesture turns the wheel exactly once —
+         the page's own rule (`scroll-snap-stop: always`) applied inside a
+         section. They are markers rather than content: absolutely positioned, so
+         they add nothing to the track's layout, and the first sits at the
+         track's head, which is what gives S5 the section-level snap point its
+         siblings carry on the `<section>` itself.
+
+         Hidden under reduced motion for the same reason the track collapses:
+         they would otherwise stack `steps` viewports of snap points inside a
+         one-viewport track and spill into S6. Snapping is off entirely there
+         anyway (see `main.css`), so nothing is lost. -->
+    <div
+      class="pointer-events-none absolute inset-x-0 top-0 h-full motion-reduce:hidden"
     >
-      <!-- Cells are positional, and the list repeats — the content's own id is
-           not unique across the track, so it cannot be the key. -->
       <div
-        v-for="(stat, i) in cells"
-        :key="`${stat.id}-${i}`"
-        class="relative h-[var(--stat-slot)]"
+        v-for="notch in steps"
+        :key="notch"
+        class="h-dvh snap-start snap-always"
+      />
+    </div>
+
+    <!-- The stage. It pins at the top of the screen for the whole track and is
+         released by the track's last viewport, so the wheel is what stays put
+         while the scroll runs past it — the same figure/ground split the design
+         draws, with the frame fixed and the content moving. -->
+    <div class="sticky top-0 flex h-dvh items-center px-5 md:px-10 lg:px-20">
+      <!-- Three slots tall, so the focused one has a neighbour visible above and
+           below. `overflow-hidden` is what makes it a window onto the track. -->
+      <div
+        class="relative h-[calc(var(--stat-slot)*3)] w-full overflow-hidden"
       >
-        <!-- Both copies fill the same cell, so they register exactly and the
-             cross-fade happens in place. The cell's height is fixed by
-             `--stat-slot`, so neither copy can shift the track. -->
-        <HomeStatRow
-          :stat="stat"
-          :visible="distanceFrom(i) === FOCUSED ? 1 : 0"
-          :scale="1"
-          :transition="fadeTransition"
-          tone="focus"
+        <Motion
+          as="div"
+          class="absolute inset-x-0 top-0"
+          :animate="{ y: trackY }"
+          :transition="trackTransition"
+          :style="{ willChange: 'transform' }"
+        >
+          <!-- Cells are positional, and the list repeats — the content's own id
+               is not unique across the track, so it cannot be the key. -->
+          <div
+            v-for="(stat, i) in cells"
+            :key="`${stat.id}-${i}`"
+            class="relative h-[var(--stat-slot)]"
+          >
+            <!-- Both copies fill the same cell, so they register exactly and the
+                 cross-fade happens in place. The cell's height is fixed by
+                 `--stat-slot`, so neither copy can shift the track. -->
+            <HomeStatRow
+              :stat="stat"
+              :visible="distanceFrom(i) === FOCUSED ? 1 : 0"
+              :scale="1"
+              :transition="fadeTransition"
+              tone="focus"
+            />
+            <HomeStatRow
+              :stat="stat"
+              :visible="distanceFrom(i) === NEIGHBOUR ? DIM : 0"
+              :scale="NEIGHBOUR_SCALE"
+              :transition="fadeTransition"
+              tone="idle"
+            />
+          </div>
+        </Motion>
+
+        <!-- The two rules that bracket the focused slot. They belong to the
+             frame, not to the track, so they do not move — that is what makes
+             the wheel read as a selector rather than a list sliding past.
+
+             Figma draws four, but the outer pair is at `opacity: 0` — a spacing
+             artefact of the stacked layout rather than something that renders.
+
+             Node `47:2654`: 591 × 8, a left-to-right fade to white at 40%.
+             Right-aligned, because the figures it separates are. -->
+        <div
+          class="absolute right-0 top-[var(--stat-slot)] h-[clamp(2px,0.42vw,8px)] w-[30.8vw] max-w-[591px] -translate-y-1/2 bg-linear-to-r from-transparent to-white opacity-40"
         />
-        <HomeStatRow
-          :stat="stat"
-          :visible="distanceFrom(i) === NEIGHBOUR ? DIM : 0"
-          :scale="NEIGHBOUR_SCALE"
-          :transition="fadeTransition"
-          tone="idle"
+        <div
+          class="absolute right-0 top-[calc(var(--stat-slot)*2)] h-[clamp(2px,0.42vw,8px)] w-[30.8vw] max-w-[591px] -translate-y-1/2 bg-linear-to-r from-transparent to-white opacity-40"
         />
       </div>
-    </Motion>
-
-    <!-- The two rules that bracket the focused slot. They belong to the frame,
-         not to the track, so they do not move — that is what makes the wheel
-         read as a selector rather than a list sliding past.
-
-         Figma draws four, but the outer pair is at `opacity: 0` — a spacing
-         artefact of the stacked layout rather than something that renders.
-
-         Node `47:2654`: 591 × 8, a left-to-right fade to white at 40%.
-         Right-aligned, because the figures it separates are. -->
-    <div
-      class="absolute right-0 top-[var(--stat-slot)] h-[clamp(2px,0.42vw,8px)] w-[30.8vw] max-w-[591px] -translate-y-1/2 bg-linear-to-r from-transparent to-white opacity-40"
-    />
-    <div
-      class="absolute right-0 top-[calc(var(--stat-slot)*2)] h-[clamp(2px,0.42vw,8px)] w-[30.8vw] max-w-[591px] -translate-y-1/2 bg-linear-to-r from-transparent to-white opacity-40"
-    />
+    </div>
   </div>
 </template>

@@ -1,0 +1,497 @@
+# Rules — Standar Kerja DWF Website
+
+Aturan teknis yang mengikat seluruh kode di repo ini.
+Konteks produk ada di [PRD.md](PRD.md); status pengerjaan di [PROGRESS.md](PROGRESS.md).
+
+---
+
+## 1. Penamaan
+
+### File & folder
+
+| Jenis | Konvensi | Contoh |
+|---|---|---|
+| Komponen React | PascalCase | `HeroSection.tsx` |
+| Hook | camelCase, awalan `use` | `useMediaQuery.ts` |
+| Utility / config | kebab-case | `format-date.ts` |
+| Type | PascalCase, kata benda tunggal | `NewsArticle`, bukan `NewsArticles` |
+| Folder | kebab-case | `components/home/` |
+| Aset | `<kategori>-<nama>[-varian].<ext>` | `logo-dwf-horizontal.svg` |
+| Route | kebab-case | `app/tournament-schedule/` |
+
+Aturan aset: kategori di depan agar file sejenis mengelompok saat di-sort.
+Angka **selalu** dipad 2 digit (`news-thumb-01`, bukan `news-1`) supaya urutannya
+tetap benar setelah melewati 9. Tanpa spasi, tanpa PascalCase.
+
+Kategori yang dipakai: `logo-`, `icon-`, `decor-`, `flag-`, dan prefiks section
+untuk foto (`hero-`, `feature-`, `event-`, `news-`). **Tanpa pengecualian** —
+satu file tanpa prefiks langsung merusak pengelompokan seluruh folder.
+
+Nama harus menyebut apa yang benar-benar ada di dalam file, bukan di mana ia
+kebetulan dipakai pertama kali:
+
+- Arah ikut ke dalam nama bila asetnya berarah. `icon-arrow-left.svg` memang
+  menunjuk kiri; tanpa itu, dua komponen harus menjelaskan arahnya lewat
+  komentar dan tanda rotasinya pernah terbalik (D31).
+- Foto diberi prefiks section **pemakainya**, bukan section tempat ia pertama
+  diletakkan. `event-trophy-hand.png` dipakai kartu S6, bukan hero.
+- Deskripsikan isi, bukan kesan. `decor-card-streaks.svg` berisi garis cahaya
+  yang dikomposit `plus-lighter` — nama lamanya (`card-shade`) justru
+  menyiratkan bayangan gelap.
+- Komposit desain diberi akhiran `-composite`, sebagai pengingat bahwa wash-nya
+  sudah terbakar di dalam file dan tidak boleh digambar ulang di CSS
+  (`feature-hq-composite.png`, D22).
+
+### Brand
+
+Tulis **DWF** (Domino World Federation) di seluruh kode, komentar, dan teks UI.
+Nama folder project `dfw` keliru dan dibiarkan agar tidak memutus path.
+Jangan pakai `dfw` untuk nama file, komponen, atau variabel baru.
+
+---
+
+## 2. Struktur folder
+
+```
+src/
+  app/                    # route App Router
+    layout.tsx
+    page.tsx
+    globals.css
+  components/
+    home/                 # landing page — section + potongan miliknya sendiri
+    layout/               # Navbar, Footer, dan potongannya
+    motion/               # primitif gerak (ParallaxLayer, Reveal, …)
+    ui/                   # primitif UI lintas halaman (GoldCta, Marquee, …)
+  lib/
+    api/
+      types.ts            # kontrak data
+      client.ts           # wrapper fetch — satu-satunya pintu data
+      mock/               # data dummy
+    utils/
+  content/                # teks statis (persiapan i18n)
+    home/                 # dicermin dari components/home/
+public/assets/
+  global/                 # dipakai lintas halaman
+    flags/
+    partners/
+  home/                   # khusus landing page
+docs/
+```
+
+**Komponen dikelompokkan per halaman, bukan per tingkat abstraksi** (D32).
+Aturan penempatannya satu pertanyaan: *apakah halaman lain akan memakainya?*
+
+- Tidak → duduk bersama section-nya di folder halaman. Kartu, accordion, roda
+  angka, dan pager semuanya potongan satu section; menaruhnya di `ui/` membuat
+  folder itu tidak lagi bisa dipercaya sebagai "aman dipakai ulang".
+- Ya, dan ia soal **gerak** → `motion/`. Klaster ini saling terkait:
+  `ParallaxLayer` dan `SofteningImage` sama-sama memakai `useEntrance` dari
+  `EntranceGroup`.
+- Ya, dan ia soal **tampilan** → `ui/`.
+
+`content/` mencerminkan struktur yang sama: teks satu halaman masuk
+subfoldernya, teks lintas halaman (`navigation.ts`, `footer.ts`) di akar.
+
+Halaman fase 2 menambah folder sendiri (`components/rankings/`,
+`content/rankings/`) tanpa menyentuh yang sudah ada.
+
+Aturan penempatan aset: membawa identitas brand **atau** berulang lintas
+halaman → `global/`. Terikat pada satu section → `home/` (atau folder halaman
+terkait). Ikon UI generik (panah, unduh) dihitung lintas halaman meski saat ini
+baru landing yang memakainya — portal pasti membutuhkannya lagi.
+
+---
+
+## 3. TypeScript
+
+- `strict: true`. Tanpa pengecualian.
+- **Dilarang `any`.** Pakai `unknown` lalu persempit tipenya.
+- Type untuk data eksternal ditulis di `lib/api/types.ts`, tidak berserakan.
+- Props komponen di-type eksplisit; hindari `React.FC`.
+- Utamakan `type` untuk bentuk data, `interface` untuk kontrak yang di-extend.
+- Tanpa `@ts-ignore`. Bila benar-benar terpaksa, pakai `@ts-expect-error`
+  disertai komentar alasan.
+
+---
+
+## 4. Komentar
+
+**Seluruh komentar di dalam kode ditulis dalam bahasa Inggris.** Berlaku untuk
+komentar baris, blok, JSDoc, nama variabel, dan pesan `@ts-expect-error`.
+
+Dokumentasi di `docs/` tetap bahasa Indonesia — batasnya jelas: apa pun yang
+ada di dalam `src/` berbahasa Inggris, apa pun di `docs/` berbahasa Indonesia.
+
+```ts
+// ✅
+// Bound useScroll to this element; without a target the whole page counts.
+
+// ❌
+// Batasi useScroll ke elemen ini; tanpa target seluruh halaman ikut terhitung.
+```
+
+Alasannya: kode memakai identifier dan istilah teknis berbahasa Inggris, jadi
+komentar sebahasa membuat kalimatnya utuh. Ini juga menjaga repo tetap terbaca
+bila ada kontributor non-Indonesia di fase portal.
+
+Isi komentarnya: **jelaskan alasan, bukan mekanisme.** Kode sudah menyatakan
+apa yang terjadi; komentar dipakai untuk hal yang tidak terbaca dari kode —
+kenapa sebuah nilai dipilih, kenapa jalur yang jelas justru dihindari.
+
+```ts
+// ✅ menerangkan sebab
+// Figma names this --font-display, but that collides with Tailwind's
+// @theme namespace and silently resolves to itself.
+
+// ❌ mengulang kode
+// Set the font variable
+```
+
+Rujukan ke dokumen boleh tetap memakai nomornya (`RULES §11`, `PRD D9`) —
+itu penunjuk lokasi, bukan kalimat.
+
+---
+
+## 5. Komponen
+
+- **Server Component sebagai default.** Tambahkan `"use client"` hanya bila
+  memang perlu (state, effect, event handler, animasi/parallax).
+- Satu komponen = satu tanggung jawab. Section melebihi ~150 baris → pecah.
+- Turunkan `"use client"` ke titik terdalam: bungkus tombol interaktifnya,
+  jangan seluruh halaman.
+- Tanpa default export untuk komponen, kecuali file `page.tsx`/`layout.tsx`
+  yang memang mewajibkan.
+
+Urutan isi file:
+
+```tsx
+// 1. import
+// 2. type
+// 3. constants (copy, config)
+// 4. component
+```
+
+---
+
+## 6. Styling
+
+- Tailwind untuk semua styling. CSS kustom hanya bila Tailwind tidak mampu.
+- **Dilarang nilai warna hardcode.** Pakai token dari blok `@theme` di
+  `src/app/globals.css`. Daftar lengkap warna, tipografi, gradient, dan
+  spacing — [DESIGN-TOKENS.md](DESIGN-TOKENS.md). Warna brand: emas `#E1B762`,
+  emas tua `#AD8752`.
+- Tailwind v4 memakai konfigurasi **CSS-first**. Tidak ada `tailwind.config.ts`;
+  token baru ditambahkan ke `@theme`, bukan ke file JS.
+- Mobile-first: gaya dasar untuk layar kecil, lalu naik lewat `sm:` `md:` `lg:`.
+- Urutan class: layout → spacing → sizing → typography → visual → state.
+- Class kondisional memakai `clsx`/`cn`, bukan rangkaian template string.
+- Tanpa `!important`.
+
+---
+
+## 7. Gambar
+
+- **Selalu `next/image`**, jangan `<img>`.
+- `alt` wajib deskriptif. Gambar murni dekoratif: `alt=""`.
+- Gambar hero (above the fold): beri `priority`.
+- Aset di atas 1 MB dioptimasi lebih dulu sebelum masuk repo. Tiga file masih
+  melewatinya — `event-trophy-hand.png` (2.4 MB), `hero-domino-tile.png` dan
+  `feature-hq-composite.png` (~1.1 MB) — ditunda sampai setelah presentasi
+  (PRD R10).
+- Sertakan `sizes` untuk gambar responsif agar srcset tidak boros.
+
+---
+
+## 8. Data & API
+
+**Aturan utama:** seluruh akses data melewati `lib/api/client.ts`.
+Dilarang memanggil `fetch` langsung dari komponen.
+
+Alasannya: backend belum ada. Saat API nyata siap, hanya `client.ts` yang
+berubah — komponen tidak tersentuh.
+
+- Type ditulis lebih dulu di `types.ts` sebagai kontrak.
+- Bentuk mock **wajib** menyerupai response asli, termasuk field opsional.
+- Fetch data di Server Component bila memungkinkan; TanStack Query hanya untuk
+  bagian client yang interaktif.
+- Kredensial API tidak pernah menyentuh Client Component.
+- Setiap pemanggilan data punya penanganan error dan loading state.
+
+---
+
+## 9. Teks & i18n
+
+Situs saat ini English-only tanpa route `[locale]` (PRD D4).
+
+Agar i18n bisa ditambahkan nanti tanpa membongkar struktur:
+
+- **Dilarang hardcode teks di tengah JSX.** Simpan sebagai konstanta di atas
+  komponen, atau di `src/content/`.
+- Satu sumber teks per section, mudah diekstrak ke file translasi.
+
+```tsx
+// ✅
+const COPY = {
+  title: "Domino World Federation",
+  cta: "Join the tournament",
+} as const
+
+// ❌
+<h1>Domino World Federation</h1>
+```
+
+---
+
+## 10. Aksesibilitas
+
+- HTML semantik: `<header>`, `<nav>`, `<main>`, `<section>`, `<footer>`.
+- Satu `<h1>` per halaman; hierarki heading tidak melompat.
+- Kontras teks minimal 4.5:1 (emas di atas gelap perlu dicek).
+- Seluruh elemen interaktif dapat diakses keyboard dan punya focus state.
+- Ikon tanpa teks wajib `aria-label`.
+- Animasi menghormati `prefers-reduced-motion`.
+
+---
+
+## 11. Animasi
+
+Pustaka: **`motion`** — nama baru `framer-motion` sejak rebrand 2025.
+Install `bun add motion`, import dari `motion/react`. Jangan pasang paket
+`framer-motion` yang lama.
+
+```tsx
+import { motion, useScroll, useTransform } from "motion/react"
+```
+
+- Animasikan `transform` dan `opacity` saja — hindari properti yang memicu
+  layout reflow.
+  Pengecualian hanya bila **keempatnya** terpenuhi: satu elemen, dipicu aksi
+  eksplisit pembaca (bukan scroll), di bawah ~300ms, dan tidak ada gerak lain
+  berjalan bersamanya. Panel accordion S11 satu-satunya sejauh ini — alasan dan
+  alternatif yang diukur ada di PRD D23. Bagian yang tetap berbagi hot path
+  dengan halaman (ikon toggle-nya) tetap di `transform`/`opacity`.
+- **`Reveal blurFrom` merender anaknya dua kali.** Efek "keluar dari blur"
+  adalah cross-fade antara salinan buram dan salinan tajam, jadi apa pun di
+  dalamnya muncul dua kali di DOM. Jangan menaruh `id` di dalamnya: id-nya
+  ganda, dan `aria-labelledby` akan menunjuk salinan yang `aria-hidden`.
+  Heading yang menamai section-nya memakai `Reveal` biasa (`y` saja).
+- Durasi 200–400ms untuk interaksi mikro.
+- Komponen beranimasi butuh `"use client"` — letakkan sedalam mungkin agar
+  tidak menyeret seluruh section ke client.
+- Hormati `prefers-reduced-motion`.
+
+---
+
+## 12. Parallax
+
+Situs ini bergaya **parallax**. Aset sengaja dipisah per layer supaya tiap
+elemen bisa bergerak dengan kecepatan berbeda.
+
+### Prinsip
+
+- Kedalaman ditentukan **kecepatan**: layer belakang bergerak paling lambat,
+  layer depan paling cepat. Latar dekoratif < subjek utama < elemen foreground.
+- **Hanya `transform` dan `opacity`.** Dilarang menganimasikan `top`, `left`,
+  `margin`, `width`, atau `height` — semuanya memicu reflow tiap frame.
+- Beri `will-change: transform` pada layer yang bergerak, tapi jangan diobral —
+  tiap layer memakan memori GPU.
+- Satu section = satu container `relative`; layer di dalamnya `absolute`
+  dengan `z-index` eksplisit dan berurutan.
+
+### Implementasi
+
+Pakai `useScroll` + `useTransform` dari `motion/react`:
+
+```tsx
+"use client"
+
+import { motion, useScroll, useTransform } from "motion/react"
+import { useRef } from "react"
+
+export function ParallaxLayer({ speed = 0.5, children }: Props) {
+  const ref = useRef<HTMLDivElement>(null)
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  })
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", `${speed * 100}%`])
+
+  return (
+    <div ref={ref}>
+      <motion.div style={{ y }}>{children}</motion.div>
+    </div>
+  )
+}
+```
+
+Selalu batasi `useScroll` dengan `target` ke section terkait — tanpa itu,
+seluruh halaman ikut terhitung dan efeknya meleset.
+
+**Periksa juga bahwa rentang scroll-nya benar-benar ada.** `offset` bawaan
+`["start end", "end start"]` baru mencapai progress 1 saat kepala section
+melewati atas viewport — dan section **terakhir** halaman tidak pernah sampai ke
+sana, karena dokumennya habis lebih dulu. Layer-nya mandek di tengah rentang dan
+diam-diam hanya menyampaikan sebagian travel; S7 terukur berhenti di f≈0,5 dan
+memberi 27px dari 58px, yang terbaca sebagai "animasinya tidak ada". Pakai
+`anchor="foot"` (`["start end", "end end"]`) di sana — rentangnya berakhir saat
+kaki section bertemu kaki viewport, yang selalu tersedia. Ukur `y` di scroll
+maksimum, jangan berhenti pada asumsi bahwa nilainya tercapai (D16).
+
+### Wajib
+
+- **`prefers-reduced-motion`: parallax dimatikan penuh**, bukan sekadar
+  diperlambat. Gerakan terkait scroll adalah pemicu utama motion sickness.
+  Layer tetap tampil di posisi diamnya.
+- **Matikan lewat nilai animasi, jangan lewat cabang markup.**
+  `useReducedMotion()` mengembalikan `null` di server dan `true`/`false` di
+  client, jadi `if (prefersReducedMotion) return <A/>` atau
+  `{!prefersReducedMotion && <span/>}` membuat HTML server dan client berbeda —
+  React melempar *hydration failed* dan **membuang seluruh subtree** lalu
+  merender ulang di client. Terbukti di S2: satu cabang di `SofteningImage`
+  membatalkan seluruh hero.
+
+  Render pohon yang sama di kedua sisi; yang berubah hanya transisi dan
+  rentang gerak:
+
+  ```tsx
+  // ❌ beda markup server vs client
+  if (prefersReducedMotion) return <div style={{ filter: blur }}>{img}</div>
+  {!prefersReducedMotion && <motion.span … />}
+
+  // ✅ markup identik, gerak yang dinolkan
+  const y = useTransform(p, [0, 1], ["0%", reduce ? "0%" : `${speed}%`])
+  <motion.span animate={reduce ? { x: 0 } : { x: ["0%", "400%"] }}
+               transition={reduce ? { duration: 0 } : { duration: 1.1 }} />
+  ```
+
+  `duration: 0` tetap mendaratkan layer di posisi diamnya — `motion` memulai
+  animasi di layout effect, jadi nilainya sudah final sebelum browser paint.
+  Aturan yang sama berlaku untuk tiap hook yang hanya ada di client
+  (`matchMedia`, `window`, ukuran layar).
+- **Mobile:** kurangi jumlah layer atau nonaktifkan. Parallax berat menguras
+  baterai dan sering patah-patah di perangkat kelas bawah.
+- Layar tidak boleh melompat/bergeser saat layer masuk — kunci tinggi
+  container agar tidak menggeser layout.
+- Layer dekoratif memakai `aria-hidden="true"` dan `alt=""`.
+- Uji di perangkat nyata, bukan hanya device toolbar browser.
+
+### Batas performa
+
+- Maksimal **3–4 layer bergerak** per viewport.
+- Jangan pasang parallax pada gambar yang belum dioptimasi — tiga aset di atas
+  1 MB wajib dikompres lebih dulu (PRD R10).
+- Target 60fps. Kalau turun, kurangi layer — jangan turunkan kualitas gambar
+  sebagai jalan pintas.
+
+---
+
+## 13. Package manager — Bun
+
+**Selalu Bun.** Jangan `npm`, `yarn`, atau `pnpm`.
+
+| Keperluan | Perintah |
+|---|---|
+| Install dependency | `bun install` |
+| Tambah / hapus paket | `bun add <pkg>` · `bun remove <pkg>` |
+| Jalankan script | `bun run dev` · `bun run build` |
+| Eksekusi paket sekali pakai | `bunx <pkg>` (bukan `npx`) |
+| Scaffold project | `bunx create-next-app@latest --use-bun` |
+
+Next.js dijalankan di atas runtime Bun lewat flag `--bun` — **kecuali `build`
+dan `start`**:
+
+```json
+{
+  "scripts": {
+    "dev": "bun --bun next dev",
+    "build": "next build",
+    "start": "next start"
+  }
+}
+```
+
+Tanpa `--bun`, Bun hanya bertindak sebagai package manager sementara Next tetap
+berjalan di Node.
+
+> **Kenapa `build` tidak pakai `--bun`.** Diuji 2026-08-20 dan gagal:
+> `Failed to load external module … app-page-turbo.runtime.prod.js:
+> Expected CommonJS module to have a function wrapper`. Turbopack memuat runtime
+> CJS lewat jalur yang belum didukung Bun. `dev` diuji terpisah dan normal.
+> Coba lagi setelah Bun naik versi; kalau sudah lolos, kembalikan `--bun`.
+> Detail: PRD D9.
+
+Aturan lockfile: commit `bun.lock`. Jangan pernah commit `package-lock.json`
+atau `yarn.lock` — kalau muncul, hapus.
+
+Seluruh perintah di dokumentasi dan contoh kode ditulis dengan Bun.
+
+> Deploy ke Vercel: runtime Bun masih public beta, aktif lewat
+> `"bunVersion": "1.x"` di `vercel.json`. Bila belum stabil saat deploy,
+> Bun tetap dipakai untuk install & build, runtime produksi jatuh ke Node.
+
+---
+
+## 14. Git
+
+Format commit: `<type>: <deskripsi>`
+
+Type: `feat` · `fix` · `style` · `refactor` · `docs` · `chore` · `perf`
+
+```
+feat: add hero section
+fix: correct partner logo aspect ratio
+chore: optimize hq building image
+```
+
+- Commit atomik — satu perubahan logis per commit.
+- Branch: `feat/nama-fitur`, `fix/nama-bug`.
+- Jangan commit `.DS_Store`, `.env*`, `node_modules/`, `package-lock.json`,
+  `yarn.lock`.
+- Jangan commit rahasia. Figma API key ada di `~/.claude.json`, **bukan** di repo.
+
+### Penulis commit
+
+Commit ditulis atas nama pemilik repo saja. **Dilarang mencantumkan AI sebagai
+penulis atau co-author** — tanpa trailer `Co-Authored-By: Claude`, tanpa
+`Generated with`, tanpa emoji bot di pesan commit maupun deskripsi PR.
+
+```
+# ✅
+feat: add hero section
+
+# ❌
+feat: add hero section
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+```
+
+Alasannya: riwayat git adalah catatan tanggung jawab. Yang menekan commit
+bertanggung jawab atas isinya, terlepas dari alat bantu yang dipakai.
+
+---
+
+## 15. Sebelum menandai selesai
+
+- [ ] `bun run build` lolos tanpa error
+- [ ] Tanpa error TypeScript
+- [ ] Tanpa warning ESLint
+- [ ] Diuji di 360px, 768px, 1440px, 1920px
+- [ ] Tanpa scroll horizontal di semua breakpoint
+- [ ] Gambar memakai `next/image` dan punya `alt`
+- [ ] Tanpa `console.log` tersisa
+- [ ] Tanpa warna hardcode
+- [ ] `PROGRESS.md` diperbarui
+
+---
+
+## 16. Pemeliharaan dokumen
+
+| Dokumen | Isi | Kapan diperbarui |
+|---|---|---|
+| `PRD.md` | Apa & mengapa; keputusan; risiko | Ada keputusan atau perubahan lingkup |
+| `PROGRESS.md` | Status & blocker | Setiap menyelesaikan tugas |
+| `RULES.md` | Standar teknis | Ada konvensi baru yang disepakati |
+| `DESIGN-TOKENS.md` | Font, tipografi, warna, spacing | Ada token baru terbaca dari Figma |
+
+Keputusan arsitektur dicatat di PRD §7 — satu tempat saja, jangan digandakan.

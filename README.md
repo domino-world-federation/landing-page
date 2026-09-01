@@ -1,12 +1,18 @@
 # DWF Website — Nuxt
 
-A Nuxt 4 port of [`../landing-page`](../landing-page) (Next 16). The same
-thirteen routes, the same copy, the same assets, the same design decisions.
+A Nuxt 4 port of the Next 16 build that preceded it. The same thirteen routes,
+the same copy, the same assets, the same design decisions.
 
-Product and technical rules stay where they were —
-[`../landing-page/docs/`](../landing-page/docs/): PRD, RULES, DESIGN-TOKENS,
-PROGRESS. This document records only **what changed because the framework
-changed**, and why.
+That project's folder is gone from the repo; it is archived at
+`../landing-page-next.zip`, and its git history lives at
+`git@github.com:domino-world-federation/landing-page.git` on `main`.
+
+Product and technical rules moved here with it, byte-identical:
+[`docs/`](docs/) — PRD, RULES, DESIGN-TOKENS, PROGRESS. **Several RULES clauses
+were written for Next and no longer hold as written** — §5 (Server Components),
+§7 (`next/image`), §11 (`motion/react`), §13 (`bun --bun next`). What replaces
+them is the table below. The documents are deliberately left unrewritten: they
+are the project's record, and this file is the delta.
 
 ## Running it
 
@@ -44,8 +50,10 @@ app/
   types/               shared types + PageMeta augmentation
   utils/               auto-imported: cn, dates, motion constants, imageSizes
 public/assets/         110 files, copied verbatim
+docs/                  PRD, PROGRESS, RULES, DESIGN-TOKENS — moved here intact
 deploy/nginx/          nginx config
 ecosystem.config.cjs   PM2 process definition
+CLAUDE.md              the short version, for whoever opens this next
 ```
 
 **Component names are the folder plus the file**, and Nuxt drops a repeated

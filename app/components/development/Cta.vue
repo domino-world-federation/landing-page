@@ -14,7 +14,7 @@ import { DEVELOPMENT_CTA_COPY } from "~/content/development/cta"
 <template>
   <section
     aria-labelledby="development-cta-heading"
-    class="flex flex-col items-center gap-8 px-5 py-20 text-center md:px-10 lg:gap-9 lg:px-20 lg:py-[5.21vw]"
+    class="flex snap-screen flex-col items-center justify-center gap-8 px-5 pt-28 pb-20 text-center md:px-10 lg:gap-9 lg:px-20 lg:pt-[var(--nav-clearance)] lg:pb-[5.21vw]"
   >
     <div class="flex flex-col items-center gap-5 lg:gap-6">
       <!-- 1135 of the design's 1920 — narrow enough that the headline breaks
