@@ -376,6 +376,12 @@ Domino yang sama sampai ke label tabnya. Jadi node yang tercatat berlaku di
 keduanya. **Yang tanpa akhiran dipakai sebagai acuan** karena itu yang terakhir
 ditunjuk pengguna; `xdogWlTYLSqwh2fBTmxPJi` adalah salinan yang sama isinya.
 
+**File ketiga muncul 2026-09-01: `VHKnrwJJW8Se8g1IUyELsY` ("REVISION").**
+Diberikan pengguna untuk redraw kartu S3, lalu disusul link ke
+`oY2v2wq359rIRK4KaItmxc` yang sudah jadi acuan. Untuk hero home dan kartunya
+keduanya identik — node id, posisi dan dimensi sama persis — jadi tidak ada
+acuan yang berpindah lagi. Sisanya tidak dibandingkan.
+
 File baru jauh lebih rapi: tiap halaman jadi SECTION bernama di kanvas
 `Finalization`, jadi tidak perlu lagi menebak `screen` tanpa nama seperti yang
 memaksa penelusuran header di halaman News dan Gallery (D33).

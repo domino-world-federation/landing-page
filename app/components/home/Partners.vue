@@ -50,12 +50,23 @@ const { data: partners } = await useAsyncData("home-partners", () => getPartners
 
 <template>
   <!-- No horizontal padding: the strip runs off both edges, which is what says
-       there is more of it than the window shows. 100px of vertical padding in
-       Figma (5.21vw), floored so the band does not collapse on a phone where
-       5.21vw is 19px. -->
+       there is more of it than the window shows.
+
+       Vertically the design pads `140 0 70` (`56:4541`) — 7.29vw and 3.65vw of
+       the 1920 it is drawn at.
+
+       **The top floor is 144px and it is not the design's number.** This band is
+       where the page's snap comes to rest, so its head lands under a navbar that
+       is up to 112px tall (`NavShell`'s `NAV_HEIGHT`) — and 7.29vw only clears
+       that above ~1540px. At 1400 it resolves to 102 against a bar of 102, which
+       puts the heading exactly behind it. 144 clears the bar at every width with
+       room left over, and costs the design 4px at 1920.
+
+       The band no longer carries the snap point itself: it shares one with the
+       resource library below it, placed by the page. See the note there. -->
   <section
     aria-labelledby="partners-heading"
-    class="snap-start snap-always overflow-hidden py-[max(48px,5.21vw)]"
+    class="overflow-hidden pt-[max(144px,7.29vw)] pb-[max(48px,3.65vw)]"
   >
     <!-- Figma's 52px gap between heading and row — 2.71vw, floored at 24. -->
     <div class="flex flex-col gap-[max(24px,2.71vw)]">

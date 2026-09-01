@@ -9,6 +9,11 @@
  */
 
 export const COUNTDOWN_COPY = {
+  /**
+   * Spoken only. The redraw gives the card's heading slot to the event's own
+   * name, so this no longer prints — it is read out ahead of that name, because
+   * a landmark called "World Championship 2026" does not say what the card is.
+   */
   label: "Upcoming Match",
   cta: "See Details",
   /** Keys are the render order of the three columns. */

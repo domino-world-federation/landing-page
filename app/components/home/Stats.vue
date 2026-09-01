@@ -5,10 +5,15 @@ import { STATS_COPY } from "~/content/home/stats"
 /**
  * S5 — Figma node `37:1874`. The federation in numbers.
  *
- * Three figures take turns in a focused slot: gold, sharp and full size in the
- * centre, dim and blurred above and below. The wheel itself — the track, the
- * turning, the cross-fade, the frame — lives in `StatsWheel`; this file supplies
- * the data and the landmark around it.
+ * Four figures take turns in a focused slot: gold, sharp and full size in the
+ * centre, dim and blurred above and below, with a rail of dots beside them
+ * saying how many there are and which one is up. The wheel itself — the track,
+ * the turning, the cross-fade, the frame, the rail — lives in `StatsWheel`; this
+ * file supplies the data and the landmark around it.
+ *
+ * The count is data, not a constant: the track is a viewport per stat and the
+ * rail is a dot per stat, so the redraw from three figures to four cost nothing
+ * here beyond the list it fetches.
  *
  * The section is a full-height stage now rather than a band in the flow: the
  * wheel is `sticky` inside a track a viewport tall per stat, and the reader's
@@ -21,10 +26,10 @@ import { STATS_COPY } from "~/content/home/stats"
  * and hands the result to the client in the payload, so the browser never asks
  * again. The React build got the same thing from being a Server Component.
  *
- * **Two renderings of the same three stats.** The wheel is `aria-hidden`: it
- * shows one figure at a time in a slot, and reaching the third means scrolling
- * three viewports — a reader on a screen reader would be walked through a
- * visual effect to be told three numbers. The `<dl>` here is the accessible one
+ * **Two renderings of the same stats.** The wheel is `aria-hidden`: it shows one
+ * figure at a time in a slot, and reaching the last means scrolling a viewport
+ * per figure — a reader on a screen reader would be walked through a visual
+ * effect to be told four numbers. The `<dl>` here is the accessible one
  * — every stat once, in source order, visually hidden. `sr-only` rather than
  * `display:none`, so it is in the accessibility tree, and it is `absolute`, so
  * it adds nothing to the track's measurements.

@@ -16,12 +16,28 @@ import { FEATURED_EVENT_COPY } from "~/content/home/featured-event"
  * separately here would agree with the card only as long as nobody edited one of
  * them.
  *
- * Both links fall back to `#` because the portal that will host the event pages
- * does not exist yet (PRD §5) — the mock leaves `detailsUrl` and `registerUrl`
- * unset on purpose, so the shape of the real response is what is being built
- * against (RULES §8).
+ * **Both buttons now land somewhere real, and neither number is invented here.**
+ * `detailsUrl` and `registerUrl` are still the API's to give and the mock still
+ * leaves them unset on purpose, so the shape of the real response is what is
+ * being built against (RULES §8) — what changed is the fallback. It used to be
+ * `#` for both, from when the portal that will host event pages did not exist;
+ * the tournament detail route does exist now, and the event carries the `slug`
+ * that addresses it, so "Details" can be derived rather than waited for.
+ *
+ * "Register" goes to `/contact`. There is no registration form anywhere in the
+ * design or the build, and a button that opens nothing is the silent no-op D28
+ * forbids — the contact page is where a reader asking to enter an event is
+ * actually answered today. It is a fallback, so the day the API returns a real
+ * registration URL this stops applying without a code change.
  */
-defineProps<{ event: ShowcaseEvent }>()
+const REGISTER_FALLBACK = "/contact"
+
+const props = defineProps<{ event: ShowcaseEvent }>()
+
+/** `/tournaments/[slug]` — the page the showcase's own `slug` addresses. */
+const detailsHref = computed(
+  () => props.event.detailsUrl ?? `/tournaments/${props.event.slug}`,
+)
 </script>
 
 <template>
@@ -41,14 +57,14 @@ defineProps<{ event: ShowcaseEvent }>()
            primary is the brand gold — the only place on this white band the gold
            appears. -->
       <NuxtLink
-        :to="event.detailsUrl ?? '#'"
+        :to="detailsHref"
         class="rounded-btn font-display focus-visible:ring-gold flex h-18 items-center justify-center bg-[var(--color-surface-grey)] px-5 text-[length:var(--text-display-btn)] leading-10 text-black uppercase transition-colors hover:bg-[#c8c8c8] focus-visible:ring-2 focus-visible:outline-none"
       >
         {{ FEATURED_EVENT_COPY.details }}
       </NuxtLink>
 
       <NuxtLink
-        :to="event.registerUrl ?? '#'"
+        :to="event.registerUrl ?? REGISTER_FALLBACK"
         class="rounded-btn font-display focus-visible:ring-gold bg-gold flex h-18 items-center justify-center px-5 text-[length:var(--text-display-cta)] leading-11 text-black uppercase transition-colors hover:bg-[var(--color-gold-btn-light)] focus-visible:ring-2 focus-visible:outline-none"
       >
         {{ FEATURED_EVENT_COPY.register }}

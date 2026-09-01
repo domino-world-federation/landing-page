@@ -8,6 +8,12 @@ import { NAV_COPY } from "~/content/navigation"
  * occupying a band of its own. It travels with the page: `NavShell` holds it
  * fixed, and the glass belongs to the pill and the burger rather than to the
  * bar behind them.
+ *
+ * The mark is 60px in Figma and is set on the design's slope (60/1920) for the
+ * reason `NavMenu` gives at length: the bar reads too heavy on any window
+ * narrower than 1920 while its parts are held at the design's raw pixels. The
+ * floor is 50px, which is what the slope reaches at 1600 — the width where the
+ * menu's own floor takes over — so the two stop scaling together.
  */
 </script>
 
@@ -28,7 +34,7 @@ import { NAV_COPY } from "~/content/navigation"
         width="156"
         height="60"
         fetchpriority="high"
-        class="h-11 w-auto lg:h-15"
+        class="h-11 w-auto lg:h-[clamp(3.125rem,3.125vw,3.75rem)]"
       >
     </NuxtLink>
 

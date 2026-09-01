@@ -33,10 +33,18 @@ import { FAQ_COPY, FAQ_DEFAULT_OPEN, FAQ_ITEMS } from "~/content/home/faq"
 </script>
 
 <template>
+  <!-- `81:690` pads `86 80`, and 86 is not enough at the top: this section is a
+       snap stop, so its head comes to rest under a navbar that is up to 112px
+       tall (`NavShell`'s `NAV_HEIGHT`) — the panel's own heading sat behind the
+       bar. The floor is 144, the same clearance the partners band above it
+       carries, so the two agree about how far under the bar a section may start.
+
+       4.48vw is the design's own 86/1920, kept as the slope so the band still
+       grows with the window once it is past the floor. -->
   <section
     id="faq"
     aria-labelledby="faq-heading"
-    class="snap-start snap-always px-5 py-16 md:px-10 lg:px-20 lg:py-[4.17vw]"
+    class="snap-start snap-always px-5 pt-[max(144px,4.48vw)] pb-[max(64px,4.48vw)] md:px-10 lg:px-20"
   >
     <UiFaqPanel
       :items="FAQ_ITEMS"

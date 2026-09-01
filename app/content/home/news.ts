@@ -12,16 +12,20 @@
 
 export const NEWS_COPY = {
   /**
-   * Figma node `55:3224`, verbatim — the line over the photograph.
+   * Figma node `673:1453` — the section's title, hard left in its header row.
    *
-   * One entry per line, for the same reason `DEVELOPMENT_HEADER_COPY.title` and
-   * `ABOUT_HEADER_COPY.title` are arrays: the sharpening sweep runs
-   * left-to-right along **each** line independently, so the lines have to be
-   * known rather than left to whatever the column width happens to produce.
-   * Figma breaks it after "from" inside its 1008px box, and two entries are what
-   * say so.
+   * It replaces the sentence that used to stand here ("Find the news and updates
+   * from / the main source", `55:3224`): a centred, blur-swept line over the
+   * photograph, which the redraw dropped from the frame entirely. A title in the
+   * page's own gold display style says what the section is in three words where
+   * the sentence took nine, and it leaves the right half of the row for the
+   * controls.
+   *
+   * A plain string, where the sentence was an array: the array existed because
+   * the sharpening sweep runs along each line independently and had to be told
+   * where the lines were. Nothing sweeps this one.
    */
-  headline: ["Find the news and updates from", "the main source"],
+  heading: "News & Updates",
   /**
    * The eyebrow every card carries in Figma (`55:3217` and siblings), written
    * there in capitals. Stored in its natural case and capitalised in CSS, so a
@@ -36,7 +40,7 @@ export const NEWS_COPY = {
   readLabel: "Read: %s",
   /** Names the region for assistive technology, which cannot see the strip. */
   regionLabel: "Latest news",
-  /** The two rail controls the redraw adds (`566:13385`, `566:13386`). */
+  /** The two rail controls, now a pair on the right (`673:1455`, `673:1456`). */
   previous: "Previous articles",
   next: "More articles",
 } as const
@@ -44,8 +48,8 @@ export const NEWS_COPY = {
 export const NEWS_ALT = {
   /**
    * Decorative. The photograph carries the section's mood, not its meaning —
-   * the sentence over it is the content, and describing the desk would only
-   * make a screen reader read past it to reach the words (RULES §12).
+   * the title over it and the cards under it are the content, and describing the
+   * desk would only make a screen reader read past it to reach them (RULES §12).
    */
   desk: "",
 } as const

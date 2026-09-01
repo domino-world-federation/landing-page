@@ -60,8 +60,8 @@ const GUTTER = 24
  * fixed 384px out of a short mobile frame.
  *
  * **The strip is driven, not driving.** It was a marquee travelling at ~39px/s
- * on a 75-second lap; the redraw puts an arrow at each end of the frame
- * (`566:13384`), and an arrow on a strip that moves by itself is two things
+ * on a 75-second lap; the redraw puts a pair of arrows in the header
+ * (`673:1454`), and an arrow on a strip that moves by itself is two things
  * fighting for the same track. So the marquee is gone and the row is a native
  * horizontal scroller: touch and trackpad get the gesture they already expect, a
  * keyboard reaches every card by tabbing into it, and the arrows sit over the
@@ -134,12 +134,12 @@ function step(direction: 1 | -1) {
 
 <template>
   <!-- No fixed height, unlike the sections built on a Figma ratio. At the design
-       width the contents add up to the frame's own 1080 — 125 above the
-       sentence, its 124, 35 to the arrows, their 64, 32 to the mosaic and its
-       700 — and letting them add up to it is what keeps a wrapped sentence or a
-       taller card from being clipped. The background layers are placed as
-       percentages of whatever that comes to, so the composition holds either
-       way.
+       width the contents stack to 1012 of the frame's 1080 — 140 above the
+       header, its 108, 64 to the mosaic and the mosaic's 700, with the frame's
+       own tail below — and letting them add up rather than pinning a height is
+       what keeps a taller card or a wrapped title from being clipped. The
+       background layers are placed as percentages of whatever that comes to, so
+       the composition holds either way.
 
        `isolate` keeps the two negative z-indexes below from escaping into the
        page's root stacking context and sliding behind the page background
@@ -148,8 +148,6 @@ function step(direction: 1 | -1) {
     aria-labelledby="news-heading"
     class="relative isolate snap-start snap-always overflow-hidden pb-16 lg:pb-0"
   >
-    <h2 id="news-heading" class="sr-only">{{ NEWS_COPY.regionLabel }}</h2>
-
     <!-- Figma's 1920 × 1464 at `y:-384` against a 1080 frame: 384/1080 of
          overhang above, 1464/1080 of height. -->
     <MotionParallaxLayer
@@ -212,56 +210,55 @@ function step(direction: 1 | -1) {
       class="absolute inset-0 -z-10 bg-linear-to-b from-[rgba(14,14,14,0)] to-[rgba(14,14,14,1)] to-45%"
     />
 
-    <!-- Node `55:3224`: 1008px wide and centred on the frame, its top at
-         `y:125` — 6.51% of the design's 1920 width, the fraction the section
-         reproduces from `lg`. Below `lg` a flat gutter instead, where the frame
-         has no fixed ratio to measure against.
+    <!-- `673:1452`: the frame's header — 1760 wide, which is the design's 1920
+         less its own 80px gutters — with the title hard left and both arrows
+         together on the right.
 
-         **The same sweep the page headers use.** Figma leaves a
-         `filter: blur(7.5px)` on this text, exactly as it does on About's,
-         Domino's and Development's `<h1>` — and this codebase already has one
-         answer to that: `SharpeningHeadline` reads the blur as the state the
-         line STARTS from and clears it left to right, letter by letter, as an
-         opacity cross-fade between two static-blur copies. Never an animated
-         `filter` (RULES §11).
+         **It replaces two things at once, and they left together.** A centred
+         sentence sat over the photograph (`55:3224`, blur-swept line by line)
+         and the two arrows stood at opposite ENDS of the row below it. The
+         redraw drops the sentence from the frame and pairs the arrows, and the
+         pairing is the point: two arrows at opposite edges read as the two ends
+         of a track the reader is inside, where two side by side read as one
+         control for a strip they are looking at. A title in the page's own gold
+         does the naming the sentence was standing in for.
 
-         It replaces a blur-and-grow entrance that was this section's own. Two
-         entrances doing the same job in one site is the defect
-         `development/Header` names — three pages that open differently for no
-         reason a reader could name — and the sweep is the one the rest of the
-         site already speaks. The growth went with it: the picture behind is
-         travelling upwards already, and the sweep is a change along the line
-         rather than a move, which keeps the two apart better than a zoom did.
+         `MotionSharpeningHeadline` went with the sentence and is untouched
+         elsewhere — About, Domino and Development still open on it.
 
-         The line break is data now rather than `text-balance`, because each line
-         sweeps on its own and the component has to know where they are. Figma
-         breaks it after "from" in its 1008px box. -->
-    <div class="px-5 pt-24 md:px-10 lg:px-20 lg:pt-[6.51%]">
-      <p
-        class="font-sans mx-auto max-w-[1008px] text-center text-[length:var(--text-news-intro)] leading-[0.97] font-medium text-white"
-      >
-        <MotionSharpeningHeadline :lines="NEWS_COPY.headline" />
-      </p>
-    </div>
-
-    <!-- `566:13384`: one arrow at each end of a 1760-wide row, which is the
-         frame's width less its own 80px gutter — so they line up with the page's
-         margin rather than with the strip, which bleeds past it. 35px below the
-         sentence at the design width (1.82% of 1920). -->
+         Top at `y:140` of the 1080 frame, written as 7.29% of the design's WIDTH
+         because this section has no fixed ratio of its own for a percentage of
+         height to resolve against. -->
     <div
-      class="flex justify-between px-5 pt-8 md:px-10 lg:px-20 lg:pt-[1.82%]"
+      class="flex items-center justify-between gap-6 px-5 pt-24 md:px-10 lg:px-20 lg:pt-[7.29%]"
     >
-      <UiRailArrow
-        :label="NEWS_COPY.previous"
-        :disabled="atStart"
-        @press="step(-1)"
-      />
-      <UiRailArrow
-        :label="NEWS_COPY.next"
-        :disabled="atEnd"
-        flipped
-        @press="step(1)"
-      />
+      <!-- Bebas 100/108 under the gold sweep — the statement heading eight other
+           sections already carry, and the one the repo owner pointed at ("pakai
+           text style kayak resource library"). The SIZE is this frame's own 100
+           rather than the Resource Library's 76: same style, each at the size
+           its own frame draws it. -->
+      <h2
+        id="news-heading"
+        class="font-display text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
+      >
+        {{ NEWS_COPY.heading }}
+      </h2>
+
+      <!-- `673:1454` is a 184px box around two 64px glyphs, so 56 between them.
+           Halved below `lg`, where `RailArrow` itself steps down to 48. -->
+      <div class="flex shrink-0 items-center gap-7 lg:gap-14">
+        <UiRailArrow
+          :label="NEWS_COPY.previous"
+          :disabled="atStart"
+          @press="step(-1)"
+        />
+        <UiRailArrow
+          :label="NEWS_COPY.next"
+          :disabled="atEnd"
+          flipped
+          @press="step(1)"
+        />
+      </div>
     </div>
 
     <!-- No horizontal padding: the strip runs off both edges, which is what
@@ -272,12 +269,13 @@ function step(direction: 1 | -1) {
          hidden because the design draws none; the row is still reachable by
          wheel, trackpad, touch, keyboard and the two arrows above it.
 
-         32px below the arrows at the design width (1.67% of 1920). -->
+         64px below the header at the design width — the strip opens at `y:312`
+         and the header's 108px line ends at 248 (3.33% of 1920). -->
     <div
       ref="track"
       role="group"
       :aria-label="NEWS_COPY.regionLabel"
-      class="mt-8 flex snap-x items-center gap-6 overflow-x-auto scroll-smooth [scrollbar-width:none] lg:mt-[1.67%] [&::-webkit-scrollbar]:hidden"
+      class="mt-8 flex snap-x items-center gap-6 overflow-x-auto scroll-smooth [scrollbar-width:none] lg:mt-[3.33%] [&::-webkit-scrollbar]:hidden"
       @scroll="measure"
     >
       <HomeNewsCard

@@ -40,9 +40,16 @@ const { data: documents } = await useAsyncData(
 </script>
 
 <template>
+  <!-- `56:4554` pads `140 80 168` — 7.29vw and 8.75vw of the design width. The
+       top one matters more than it looks: it is half of the 210px Figma leaves
+       between this and the partners band above (their 70 plus this 140), and the
+       two now sit in one snap unit, so that gap is the only thing keeping the
+       logos and the library from reading as one list.
+
+       No snap of its own — the page gives the pair a single stop. -->
   <section
     aria-labelledby="resources-heading"
-    class="snap-start snap-always px-5 py-16 md:px-10 lg:px-20 lg:py-[4.17vw]"
+    class="px-5 pt-[max(64px,7.29vw)] pb-[max(64px,8.75vw)] md:px-10 lg:px-20"
   >
     <div class="flex flex-col gap-10 lg:flex-row lg:gap-[13.96vw]">
       <!-- 356/1652 of the content box — the fraction Figma gives the left column

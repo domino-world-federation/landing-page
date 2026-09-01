@@ -134,15 +134,14 @@ const TOP_FADE = "linear-gradient(to bottom, transparent 0%, #000 38%)"
  * document, which the opaque bottom of the file used to occlude.
  *
  * **Anchored to the FOOT of the block it backs, not to its head.** On the
- * landing page Figma puts the artwork at `y:6826` with a height of 1775, so it
- * ends at 8601 — within ~50px of where the footer's own content ends, and
- * roughly 520px into the FAQ at the other end. Only one of those two numbers
- * survives contact with real content: the FAQ's height depends on which answer
- * is open and how the questions wrap, so a top offset measured from it would
- * slide. The foot does not — it is the end of the document either way. So the
- * layer is pinned `bottom-0`, and `aspectClass` still carries each page's own
- * height because the three lit different amounts of their page (1775, 1907,
- * 2071) and that judgement is the design's.
+ * landing page Figma puts the artwork at `y:6484` with a height of 2695, so it
+ * ends at 9179 — within a few pixels of the document's own end, and exactly at
+ * the FAQ's head at the other. Only one of those two numbers survives contact
+ * with real content: the FAQ's height depends on which answer is open and how
+ * the questions wrap, so a top offset measured from it would slide. The foot
+ * does not — it is the end of the document either way. So the layer is pinned
+ * `bottom-0`, and `aspectClass` still carries each page's own height because the
+ * three lit different amounts of their page and that judgement is the design's.
  *
  * It rides a slow parallax on `anchor="foot"`, which is mandatory here: this is
  * the last thing on the page, and the default `cross` range needs the section's

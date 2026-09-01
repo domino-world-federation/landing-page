@@ -75,7 +75,12 @@ watch(() => props.startsAt, (next) => {
 </script>
 
 <template>
-  <div class="flex items-center justify-between">
+  <!-- `gap-3` and the units filling what is left, rather than
+       `justify-between`: the redraw drops the row into a 12px-padded box
+       (`24:1029`), and a spread row pushes "05" and "42" against that box's
+       inner edge — the design keeps the three columns evenly wide and the
+       colons between them. -->
+  <div class="flex items-center gap-3">
     <!-- One live region for the whole row, so a change is announced as a
          sentence instead of three loose numbers. -->
     <p class="sr-only" aria-live="polite">{{ spoken }}</p>
@@ -87,10 +92,26 @@ watch(() => props.startsAt, (next) => {
         class="font-display text-[length:var(--text-display-2xs)] leading-none text-white"
       >:</span>
 
-      <div aria-hidden="true" class="flex flex-1 flex-col items-center gap-3">
-        <!-- `tabular-nums` so the digits keep their column as they tick. -->
+      <div aria-hidden="true" class="flex flex-1 flex-col items-center gap-2">
+        <!-- `tabular-nums` so the digits keep their column as they tick.
+             `leading-[0.7]` is Figma's own ratio, and it is the whole of why the
+             card used to render 314px against a design that measures 292.
+
+             Figma gives these digits no line height at all — auto — and auto for
+             Bebas Neue is a box the height of the caps: the exported `24:1029`
+             is 99px tall, which is 12 + 45 + 8 + 22 + 12, so a 64px digit sits
+             in a 45px box. `leading-none` is the browser's version of "tight"
+             and it is not the same thing: 1.0 of 64px is 64px, and three of the
+             19px it adds are what pushed the card past the hero's foot.
+
+             45/64 is 0.703. The glyphs are 47px of ink, so they overhang the box
+             by a pixel top and bottom — which is what Figma draws too, and is
+             only safe because these are filled with `text-white`. It would NOT
+             be safe on the hero's headline: that one is a gradient behind
+             `bg-clip-text`, and a background only paints inside the box, so
+             tightening its leading would shave the caps off the letters. -->
         <span
-          class="font-display text-[length:var(--text-display-xs)] leading-none text-white tabular-nums"
+          class="font-display text-[length:var(--text-display-xs)] leading-[0.7] text-white tabular-nums"
         >
           {{ remaining ? padUnit(remaining[unit.key]) : "--" }}
         </span>

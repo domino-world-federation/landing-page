@@ -31,7 +31,16 @@ useHead({ htmlAttrs: { class: "snap-sections" } })
     <slot />
 
     <div class="relative isolate">
-      <UiPageShine aspect-class="aspect-[1920/1775]" />
+      <!-- 2695/1920, and the number is the redraw's (`56:4970`: `y:6484`, height
+           2695). It was 1775, measured against the older file — enough to reach
+           a few hundred pixels into the FAQ back when the closing CTA was a
+           short band of padding. Pinning that CTA to a full screen added ~600px
+           between the footer and the FAQ, and the old figure would have left the
+           light stopping partway up the section it exists to sit behind.
+
+           2695 is the design's own span: anchored to the document's foot it
+           reaches exactly the FAQ's head, which is where Figma starts it. -->
+      <UiPageShine aspect-class="aspect-[1920/2695]" />
       <HomeJoin />
       <LayoutFooter />
     </div>

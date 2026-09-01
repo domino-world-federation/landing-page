@@ -46,6 +46,17 @@ const NEIGHBOUR = 1
 /** The design's resting opacity for the two stats flanking the focused one. */
 const DIM = 0.2
 
+/**
+ * Pixels between the centres of two dots on the indicator rail — the design's
+ * 24px dot box plus its 32px gap (`702:1487`).
+ *
+ * Written as a number because the rail's resting offset is arithmetic on it, and
+ * kept in px rather than on a `vw` slope: the rail is a 24px column of markers
+ * beside figures that are already 200px tall, so scaling it would only make the
+ * thing that is meant to be read at a glance harder to see on a small window.
+ */
+const DOT_STEP = 56
+
 /** 175/200 — the design shrinks the off-centre figures by this much. */
 const NEIGHBOUR_SCALE = 0.875
 
@@ -64,8 +75,11 @@ const NEIGHBOUR_SCALE = 0.875
  * `sticky` inside it, and the scroll through the track is what advances the
  * index. The reader now decides the pace, and a figure cannot go past
  * unlooked-at while they are reading something else — which is the whole reason
- * the timer went. There is no lap and no rewind: the wheel starts on the first
- * notch and stops on the last, and the section releases to S6.
+ * the timer went. There is no lap and no rewind: the wheel opens on the first
+ * stat, stops on the last, and the section releases to S6.
+ *
+ * A rail of dots runs beside it (`702:1487`), one per stat, marking which figure
+ * is up and how many are left — the count a three-slot window cannot show.
  *
  * **How the track is measured.** One viewport of scroll per stat, so `steps`
  * viewports of height with a `100dvh` sticky stage inside. That leaves
@@ -81,13 +95,13 @@ const NEIGHBOUR_SCALE = 0.875
  * template), so a wheel gesture advances the wheel by one stat and no more —
  * the same rule the page's sections follow, applied inside a section.
  *
- * **Why the list is rendered twice.** The focused slot has a neighbour above it
- * and below it, so the cells at `index - 1` and `index + 1` must both exist. On
- * a single lap the first stat has nothing above it and the last has nothing
- * below, and the wheel would open and close against an empty slot. Two copies
- * put a real figure in every neighbouring cell at every notch. (It was two laps
- * under the timer as well, for a different reason: the loop's seam. The loop is
- * gone; the second lap is still needed.)
+ * **Why the list is padded at both ends.** The focused slot has a neighbour above
+ * it and below it, so the cells at `index - 1` and `index + 1` must both exist.
+ * On a bare list the first stat has nothing above it and the last has nothing
+ * below, and the wheel would open and close against an empty slot. A copy of the
+ * last stat before the list and a copy of the first after it fills both. See
+ * `cells` for why this replaced two full laps — the laps forced the wheel to
+ * open on the second stat, which is not the order the list is written in.
  *
  * **Why the offset is a percentage.** Each cell is exactly one slot tall, so
  * translating the track by `100 / cells` percent of its own height moves it by
@@ -116,17 +130,40 @@ const props = defineProps<{ stats: FederationStat[] }>()
 const track = useTemplateRef<HTMLDivElement>("track")
 const prefersReducedMotion = useReducedMotion()
 
-// Two laps of the stats, so every notch has a real figure in the slot above and
-// the slot below it.
-const cells = computed(() => [...props.stats, ...props.stats])
+/**
+ * The list with one stat padded onto each end — the last before it, the first
+ * after it — so every notch has a real figure in the slot above and the slot
+ * below it.
+ *
+ * **This is what lets the wheel open on the FIRST stat.** The focused cell needs
+ * a neighbour above, and a bare list has nothing above its head, so the wheel
+ * used to start one step in and show `stats[1]` first: Continents was written at
+ * the top of the list and the reader met it last. It ran two full laps to keep
+ * the slots filled, and the price was a wrap — the final notch landed back on
+ * `stats[0]`, which sent the rail's gold dot from the bottom of the column to
+ * the top in one step.
+ *
+ * A pad of one at each end costs `n + 2` cells instead of `2n`, fills every slot
+ * at every notch, and leaves the notches running straight down the list with
+ * nothing to wrap. The figure above the opening one is the last in the list,
+ * which is what a picker wheel shows anyway.
+ */
+const cells = computed(() => {
+  const list = props.stats
+  if (list.length === 0) return []
+  return [list[list.length - 1]!, ...list, list[0]!]
+})
 
 /** One notch per stat, and therefore one viewport of track per stat. */
 const steps = computed(() => props.stats.length)
 
-// `1` is the design's resting state: the second stat is the one in the focused
-// slot. Starting there means the server, the first client render, and a reader
-// who prefers reduced motion all get exactly the still design — without
-// branching the tree, which is what RULES §12 forbids.
+// `1` is the first real stat: cell 0 is the pad. Server, first client render and
+// a reader who prefers reduced motion all start here — one constant, no branch
+// in the tree, which is what RULES §12 forbids.
+//
+// Figma draws this wheel with the SECOND stat focused (`Continents` above
+// `National Federation` above `Regional`). That frame is not the resting state,
+// it is notch 1 — and it renders exactly as drawn when the reader reaches it.
 const index = ref(1)
 
 // Scoped to the track, not the page: the range has to be this section's own
@@ -168,6 +205,35 @@ const trackY = computed(
 function distanceFrom(i: number) {
   return Math.abs(i - index.value)
 }
+
+/**
+ * Which stat the rail marks. Cell 1 is `stats[0]`, so the offset is the pad and
+ * nothing more — the gold walks straight down the column, one dot per notch,
+ * with no wrap to jump.
+ */
+const activeIndex = computed(() => index.value - 1)
+
+/**
+ * Where the rail sits relative to its own centre, in pixels — **the offset that
+ * keeps the gold dot on the focused line**.
+ *
+ * The window is three slots tall and the focused one is the middle, so the row's
+ * centre IS the focused line. Figma pairs the two explicitly: 60px of padding
+ * above a centred column, which works out to putting the SECOND dot on that line
+ * (measured: dot centre 302 against the label's 300) — and the second dot is the
+ * one the design draws gold. So the pairing is the rule, not the padding, which
+ * only produces it for the one frame and the one count Figma drew.
+ *
+ * The rail therefore rides with the wheel rather than standing still: one step
+ * per notch, on the wheel's own detent, so the marker and the figure it marks
+ * arrive together. That was not available while the wheel wrapped — the final
+ * notch used to send the active stat from the bottom of the list back to the
+ * top, and a rail chasing it would have crossed its whole length in one step.
+ * Padding the cells instead of lapping them removed the wrap, and this followed.
+ */
+const railY = computed(
+  () => ((steps.value - 1) / 2 - activeIndex.value) * DOT_STEP,
+)
 </script>
 
 <template>
@@ -214,60 +280,114 @@ function distanceFrom(i: number) {
          while the scroll runs past it — the same figure/ground split the design
          draws, with the frame fixed and the content moving. -->
     <div class="sticky top-0 flex h-dvh items-center px-5 md:px-10 lg:px-20">
-      <!-- Three slots tall, so the focused one has a neighbour visible above and
-           below. `overflow-hidden` is what makes it a window onto the track. -->
-      <div
-        class="relative h-[calc(var(--stat-slot)*3)] w-full overflow-hidden"
-      >
+      <!-- `702:1497`: the rail and the wheel are one row, 36px apart. -->
+      <div class="flex w-full items-center gap-9">
+        <!-- The indicator rail (`702:1487`) — one dot per stat, the current one
+             gold and full size, the rest white at 12% and two thirds the width.
+             It tells the reader how many figures the section holds and how far
+             through them they are, which a wheel showing three slots cannot.
+
+             Two circles per dot rather than one that resizes: the sizes are the
+             design's 24 and 16, and animating a width would lay out on every
+             frame where cross-fading two fixed circles composites. It is the
+             same trade `StatRow` makes for its gold and its blur, on the same
+             `fadeTransition`, so the dot hands over at the moment the figure
+             does.
+
+             The column itself moves on the wheel's spring so the gold stays on
+             the focused line — see `railY`. Two transitions, and deliberately:
+             the travel is a detent like the wheel's, the hand-over is a fade
+             like the figures', and each is the one its own job asks for.
+
+             Dropped below `md`. It is 24px of marker plus a 36px gap against a
+             row that is already a long label facing a 200px figure; on a phone
+             it would take a sixth of the width to say something the scroll
+             already tells you. -->
         <Motion
           as="div"
-          class="absolute inset-x-0 top-0"
-          :animate="{ y: trackY }"
+          class="hidden w-6 shrink-0 flex-col items-center gap-8 md:flex"
+          :initial="false"
+          :animate="{ y: railY }"
           :transition="trackTransition"
-          :style="{ willChange: 'transform' }"
         >
-          <!-- Cells are positional, and the list repeats — the content's own id
-               is not unique across the track, so it cannot be the key. -->
-          <div
-            v-for="(stat, i) in cells"
-            :key="`${stat.id}-${i}`"
-            class="relative h-[var(--stat-slot)]"
+          <span
+            v-for="(stat, i) in stats"
+            :key="stat.id"
+            class="relative flex size-6 items-center justify-center"
           >
-            <!-- Both copies fill the same cell, so they register exactly and the
-                 cross-fade happens in place. The cell's height is fixed by
-                 `--stat-slot`, so neither copy can shift the track. -->
-            <HomeStatRow
-              :stat="stat"
-              :visible="distanceFrom(i) === FOCUSED ? 1 : 0"
-              :scale="1"
+            <Motion
+              as="span"
+              class="absolute size-4 rounded-full bg-white/12"
+              :initial="false"
+              :animate="{ opacity: i === activeIndex ? 0 : 1 }"
               :transition="fadeTransition"
-              tone="focus"
             />
-            <HomeStatRow
-              :stat="stat"
-              :visible="distanceFrom(i) === NEIGHBOUR ? DIM : 0"
-              :scale="NEIGHBOUR_SCALE"
+            <Motion
+              as="span"
+              class="absolute size-6 rounded-full bg-[image:var(--gradient-gold-tile)]"
+              :initial="false"
+              :animate="{ opacity: i === activeIndex ? 1 : 0 }"
               :transition="fadeTransition"
-              tone="idle"
             />
-          </div>
+          </span>
         </Motion>
 
-        <!-- The two rules that bracket the focused slot. They belong to the
-             frame, not to the track, so they do not move — that is what makes
-             the wheel read as a selector rather than a list sliding past.
+        <!-- Three slots tall, so the focused one has a neighbour visible above
+             and below. `overflow-hidden` is what makes it a window onto the
+             track. -->
+          <div
+            class="relative h-[calc(var(--stat-slot)*3)] min-w-0 flex-1 overflow-hidden"
+          >
+          <Motion
+            as="div"
+            class="absolute inset-x-0 top-0"
+            :animate="{ y: trackY }"
+            :transition="trackTransition"
+            :style="{ willChange: 'transform' }"
+          >
+            <!-- Cells are positional, and the list repeats — the content's own id
+                 is not unique across the track, so it cannot be the key. -->
+            <div
+              v-for="(stat, i) in cells"
+              :key="`${stat.id}-${i}`"
+              class="relative h-[var(--stat-slot)]"
+            >
+              <!-- Both copies fill the same cell, so they register exactly and the
+                   cross-fade happens in place. The cell's height is fixed by
+                   `--stat-slot`, so neither copy can shift the track. -->
+              <HomeStatRow
+                :stat="stat"
+                :visible="distanceFrom(i) === FOCUSED ? 1 : 0"
+                :scale="1"
+                :transition="fadeTransition"
+                tone="focus"
+              />
+              <HomeStatRow
+                :stat="stat"
+                :visible="distanceFrom(i) === NEIGHBOUR ? DIM : 0"
+                :scale="NEIGHBOUR_SCALE"
+                :transition="fadeTransition"
+                tone="idle"
+              />
+            </div>
+          </Motion>
 
-             Figma draws four, but the outer pair is at `opacity: 0` — a spacing
-             artefact of the stacked layout rather than something that renders.
+          <!-- The two rules that bracket the focused slot. They belong to the
+               frame, not to the track, so they do not move — that is what makes
+               the wheel read as a selector rather than a list sliding past.
 
-             Node `47:2654`: 591 × 8, a left-to-right fade to white at 40%.
-             Right-aligned, because the figures it separates are. -->
-        <div
-          class="absolute right-0 top-[var(--stat-slot)] h-[clamp(2px,0.42vw,8px)] w-[30.8vw] max-w-[591px] -translate-y-1/2 bg-linear-to-r from-transparent to-white opacity-40"
-        />
-        <div
-          class="absolute right-0 top-[calc(var(--stat-slot)*2)] h-[clamp(2px,0.42vw,8px)] w-[30.8vw] max-w-[591px] -translate-y-1/2 bg-linear-to-r from-transparent to-white opacity-40"
-        />
+               Figma draws four, but the outer pair is at `opacity: 0` — a spacing
+               artefact of the stacked layout rather than something that renders.
+
+               Node `47:2654`: 591 × 8, a left-to-right fade to white at 40%.
+               Right-aligned, because the figures it separates are. -->
+          <div
+            class="absolute right-0 top-[var(--stat-slot)] h-[clamp(2px,0.42vw,8px)] w-[30.8vw] max-w-[591px] -translate-y-1/2 bg-linear-to-r from-transparent to-white opacity-40"
+          />
+          <div
+            class="absolute right-0 top-[calc(var(--stat-slot)*2)] h-[clamp(2px,0.42vw,8px)] w-[30.8vw] max-w-[591px] -translate-y-1/2 bg-linear-to-r from-transparent to-white opacity-40"
+          />
+          </div>
       </div>
     </div>
   </div>

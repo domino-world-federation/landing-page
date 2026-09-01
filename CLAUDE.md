@@ -16,6 +16,9 @@ ikut berubah karena frameworknya berubah:
 - [docs/PROGRESS.md](docs/PROGRESS.md) — status & blocker
 - [docs/RULES.md](docs/RULES.md) — standar teknis (**baca sebelum menulis kode**)
 - [docs/DESIGN-TOKENS.md](docs/DESIGN-TOKENS.md) — font, tipografi, warna, spacing
+- [docs/FIGMA-HOME.md](docs/FIGMA-HOME.md) — angka desain halaman depan, disalin
+  dari Figma. **Baca ini dulu sebelum menarik data Figma untuk home** — fileKey,
+  peta section, dan ukuran yang sudah diukur ada di sana
 
 **Beberapa pasal RULES ditulis untuk Next dan sudah tidak berlaku apa adanya** —
 §5 (Server Component), §7 (`next/image`), §11 (`motion/react`), §13 (`bun --bun

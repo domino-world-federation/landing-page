@@ -31,10 +31,35 @@ import type {
   TournamentWinner,
 } from "../types"
 
+/**
+ * The landing page's stats wheel (`37:1874`), redrawn to four.
+ *
+ * **The order here IS the reading order.** The wheel opens on the first entry
+ * and runs straight down, so Continents leads and Annual Event closes.
+ *
+ * It did not always: the wheel used to open on `stats[1]`, because its focused
+ * slot needs a neighbour above and the head of a bare list has none. Continents
+ * was written first and reached last. `StatsWheel` pads the cells now instead of
+ * lapping them, so this array can be read as what it looks like.
+ *
+ * Figma's own frame shows Continents above National Federation above Regional
+ * with the second dot gold — that is notch 1, not the opening state, and it
+ * renders exactly as drawn when the reader reaches it.
+ *
+ * `1.420` keeps the design's separator, which is the same call `MOCK_MEMBERSHIP_STATS`
+ * records below — printing a figure as drawn is a different act from correcting
+ * a spelling, and the two pages now show the same number.
+ *
+ * Those two lists stay apart even though the redraw made their contents agree.
+ * They are two endpoints (`/stats` and the members hero's own), and collapsing
+ * them into one would mean whichever page was edited last decided what the other
+ * showed — the reason the split was made, and it survives the overlap.
+ */
 export const MOCK_STATS: FederationStat[] = [
-  { id: "members", label: "Member Federation", value: "84+" },
-  { id: "players", label: "Registered Players", value: "563K" },
-  { id: "referees", label: "Certified Referees", value: "1.5K" },
+  { id: "continents", label: "Continents", value: "6" },
+  { id: "members", label: "Member Federation", value: "142" },
+  { id: "regional", label: "Regional", value: "1.420" },
+  { id: "annual-events", label: "Annual Event", value: "850" },
 ]
 
 export const MOCK_PARTNERS: Partner[] = [
@@ -658,6 +683,13 @@ export const MOCK_FEATURED_EVENT: FeaturedEvent = {
   location: "Mexico City",
   country: "MEX",
   flagUrl: "/assets/global/flags/flag-mex.png",
+  /**
+   * "See Details" goes to the tournament of the same name. This is the one place
+   * the two lists already agree — `world-championship-2026` is a real slug in
+   * `MOCK_TOURNAMENTS` — so the card opens the event it is counting down to
+   * rather than a stand-in.
+   */
+  ctaUrl: "/tournaments/world-championship-2026",
 }
 
 /**
@@ -689,6 +721,23 @@ export const MOCK_HIGHLIGHTED_TOURNAMENT: ShowcaseEvent = {
   registrationLabel: "Registration ends in 3 days",
 }
 
+/**
+ * **`detailsUrl` is a prototype bridge, not a fact about the data.**
+ *
+ * These six and `MOCK_TOURNAMENTS` are two different lists of events that have
+ * never been reconciled — the showcase carries the names Figma drew for S6, the
+ * tournaments carry the names it drew for `/tournaments` — so a "Details" button
+ * deriving `/tournaments/{slug}` from the showcase's own slug led to a 404 on
+ * every card. Each is pointed at the nearest real tournament instead: same
+ * region where there is one, same event where there is one
+ * (`world-championship-2027` → `world-championship-2026`).
+ *
+ * Set as DATA rather than patched into the component, and that matters: the
+ * field is the API's, so the day the backend returns real detail URLs — or the
+ * day the two lists become one list — these lines are deleted and nothing else
+ * changes. Written on the repo owner's call, who asked for the button to reach a
+ * tournament at all rather than to reach the right one.
+ */
 export const MOCK_SHOWCASE_EVENTS: ShowcaseEvent[] = [
   {
     // Figma calls this event "CARIBBEAN DOMINO OPEN 2024" in S6 (`52:3030`)
@@ -708,6 +757,7 @@ export const MOCK_SHOWCASE_EVENTS: ShowcaseEvent[] = [
     imageAlt:
       "A raised gold trophy topped with two domino tiles, held aloft by the winner",
     registrationLabel: "Registration ends in 3 days",
+    detailsUrl: "/tournaments/caribbean-nations-championship-2026",
   },
   {
     id: "e2",
@@ -721,6 +771,7 @@ export const MOCK_SHOWCASE_EVENTS: ShowcaseEvent[] = [
     imageAlt:
       "A raised gold trophy topped with two domino tiles, held aloft by the winner",
     registrationLabel: "Registration ends in 25 days",
+    detailsUrl: "/tournaments/havana-classic-2026",
   },
   {
     id: "e3",
@@ -734,6 +785,7 @@ export const MOCK_SHOWCASE_EVENTS: ShowcaseEvent[] = [
     imageAlt:
       "A raised gold trophy topped with two domino tiles, held aloft by the winner",
     registrationLabel: "Registration ends in 53 days",
+    detailsUrl: "/tournaments/stockholm-invitational-2026",
   },
   {
     id: "e4",
@@ -747,6 +799,7 @@ export const MOCK_SHOWCASE_EVENTS: ShowcaseEvent[] = [
     imageAlt:
       "A raised gold trophy topped with two domino tiles, held aloft by the winner",
     registrationLabel: "Registration closed",
+    detailsUrl: "/tournaments/dubai-masters-2026",
   },
   {
     id: "e5",
@@ -760,6 +813,7 @@ export const MOCK_SHOWCASE_EVENTS: ShowcaseEvent[] = [
     imageAlt:
       "A raised gold trophy topped with two domino tiles, held aloft by the winner",
     registrationLabel: "Registration opens Jan 12",
+    detailsUrl: "/tournaments/lagos-invitational-2027",
   },
   {
     id: "e6",
@@ -773,6 +827,7 @@ export const MOCK_SHOWCASE_EVENTS: ShowcaseEvent[] = [
     imageAlt:
       "A raised gold trophy topped with two domino tiles, held aloft by the winner",
     registrationLabel: "Registration opens Mar 2",
+    detailsUrl: "/tournaments/world-championship-2026",
   },
 ]
 

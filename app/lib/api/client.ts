@@ -290,6 +290,24 @@ export async function getGalleryItems(limit?: number): Promise<GalleryItem[]> {
  * written about now sort to the front on their own, without the page ranking
  * them.
  */
+/**
+ * One story, by slug — what `/news/[slug]` reads.
+ *
+ * `undefined` for a slug naming nothing, so the page can raise a real 404 rather
+ * than render a header over an empty record. Same shape as `getTournament`,
+ * which answers the same question for the other detail route.
+ *
+ * The mock has no `body` on any article: the field exists on `NewsArticle` and
+ * is documented as list-responses-omit-it, and no mock copy has ever been
+ * written for it (B2). The page renders what is there.
+ */
+export async function getNewsArticle(
+  slug: string,
+): Promise<NewsArticle | undefined> {
+  if (useMock()) return MOCK_NEWS.find((a) => a.slug === slug)
+  return request<NewsArticle>(`/news/${encodeURIComponent(slug)}`)
+}
+
 export async function getNewsCategories(): Promise<string[]> {
   if (useMock()) return [...new Set(MOCK_NEWS.map((a) => a.category))]
   return request<string[]>("/news/categories")

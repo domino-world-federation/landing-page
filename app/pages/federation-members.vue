@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /**
- * `/members` — Figma screen `386:18480`, in the "Members" section of the
+ * `/federation-members` — Figma screen `386:18480`, in the "Members" section of the
  * **updated** design file.
  *
  * The first page built from `xdogWlTYLSqwh2fBTmxPJi`, which replaced

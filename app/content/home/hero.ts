@@ -12,6 +12,12 @@ export const HERO_COPY = {
   accountability:
     "Designed and operates under a rigorous framework of accountability",
   primaryCta: "Explore Membership",
+  /**
+   * The federation directory. The hero's gold pill is the page's loudest
+   * control and pointed at `#` until the destination was decided; it now goes
+   * where the navbar's own "Federation Members" goes.
+   */
+  primaryCtaUrl: "/federation-members",
   secondaryCta: "Official Rules",
 } as const
 

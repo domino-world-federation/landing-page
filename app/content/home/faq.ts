@@ -78,9 +78,13 @@ export const FAQ_A11Y = {
 } as const
 
 /**
- * Which item starts open. Figma draws the second one expanded (`81:696`) and
- * that is deliberate: an accordion where everything is shut opens on a wall of
- * questions with nothing to read, so one answer is left showing as a sample of
- * what the others hold.
+ * Which item starts open.
+ *
+ * The FIRST, on the repo owner's call. Figma draws the second one expanded
+ * (`81:696`) and the point of drawing any of them open holds either way — an
+ * accordion where everything is shut opens on a wall of questions with nothing
+ * to read, so one answer is left showing as a sample of what the others hold.
+ * Which one carries that job is not something the design argues for, and the
+ * first is the one a reader's eye lands on before they have decided to look.
  */
-export const FAQ_DEFAULT_OPEN = FAQ_ITEMS[1]!.id
+export const FAQ_DEFAULT_OPEN = FAQ_ITEMS[0]!.id

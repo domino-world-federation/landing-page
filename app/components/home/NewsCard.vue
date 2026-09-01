@@ -131,44 +131,54 @@ const rootClass = computed(() =>
           )
         "
       >
-        <!-- The stretched link: `after` covers the tile, so the anchor is the
-             whole card while the accessible name stays just the headline. -->
-        <NuxtLink
-          :to="`/news/${article.slug}`"
-          :aria-label="NEWS_COPY.readLabel.replace('%s', article.title)"
-          class="after:absolute after:inset-0 after:content-[''] focus-visible:outline-none"
-        >
-          {{ article.title }}
-        </NuxtLink>
+        {{ article.title }}
       </h3>
     </div>
 
     <!-- Node `55:3219`: 48px glass square, `rgba(0,0,0,0.7)` + `blur(4px)`, 12px
          padding around a 24px icon, inset 12px from the top-right.
 
-         Decorative and `aria-hidden`: the stretched anchor above already
-         announces the card, and a second focusable control pointing at the same
-         URL would make every tile take two tab stops. The focus ring is driven
-         by the link through `group-focus-within` so the corner still shows where
-         the keyboard is. -->
-    <div
-      aria-hidden
-      class="pointer-events-none absolute top-3 right-3 flex size-12 items-center justify-center rounded-[var(--radius-btn)] bg-black/70 backdrop-blur-[4px] transition-transform duration-200 group-hover:-translate-y-0.5 group-focus-within:ring-2 group-focus-within:ring-white"
+         **The anchor is here, and the headline is plain text.** Figma draws the
+         corner as the affordance, so that is where the link belongs; it used to
+         sit on the headline with the corner as decoration announced to nobody.
+
+         **The link is the whole tile and the square is drawn inside it** —
+         `inset-0` with `p-3` and `items-start justify-end`, which lands the glass
+         exactly where `top-3 right-3` did. Not an absolutely-positioned 48px
+         anchor with a stretched `::after`, which is what the headline's link
+         used and does NOT survive the move: `inset-0` on a pseudo-element
+         resolves against the nearest POSITIONED ancestor, and once the anchor
+         itself is positioned that ancestor is the anchor — the overlay would
+         have covered the corner and nothing else, quietly taking the rest of the
+         card out of the hit area.
+
+         Still one control per tile. Two anchors to the same URL would make every
+         card take two tab stops, and the accessible name stays the headline
+         (`readLabel`): the corner has no text of its own, and seven tiles
+         announcing themselves as a glyph are seven identical links. -->
+    <NuxtLink
+      :to="`/news/${article.slug}`"
+      :aria-label="NEWS_COPY.readLabel.replace('%s', article.title)"
+      class="absolute inset-0 flex items-start justify-end p-3 focus-visible:outline-none"
     >
-      <!-- The shared asset points LEFT (S6's pager uses it both ways), so +135°
-           brings it round to up-and-right — the "opens an article" glyph, rather
-           than the straight rightward arrow that would read as "next item". Sign
-           matters and is easy to get backwards: -135° on a left-pointing source
-           aims it DOWN-right, which was the first attempt. `invert` because the
-           source is drawn in `#0E0E0E` for use on white, and here it sits on a
-           dark glass square. -->
-      <img
-        src="/assets/global/icon-arrow-left.svg"
-        alt=""
-        width="24"
-        height="24"
-        class="size-6 rotate-135 invert"
+      <span
+        class="flex size-12 items-center justify-center rounded-[var(--radius-btn)] bg-black/70 backdrop-blur-[4px] transition-transform duration-200 group-hover:-translate-y-0.5 group-focus-within:ring-2 group-focus-within:ring-white"
       >
-    </div>
+        <!-- The shared asset points LEFT (S6's pager uses it both ways), so +135°
+             brings it round to up-and-right — the "opens an article" glyph, rather
+             than the straight rightward arrow that would read as "next item". Sign
+             matters and is easy to get backwards: -135° on a left-pointing source
+             aims it DOWN-right, which was the first attempt. `invert` because the
+             source is drawn in `#0E0E0E` for use on white, and here it sits on a
+             dark glass square. -->
+        <img
+          src="/assets/global/icon-arrow-left.svg"
+          alt=""
+          width="24"
+          height="24"
+          class="size-6 rotate-135 invert"
+        >
+      </span>
+    </NuxtLink>
   </article>
 </template>
