@@ -40,6 +40,15 @@ export default defineNuxtConfig({
   },
 
   image: {
+    // STOPGAP — the production box is a KVM guest reporting "Common KVM
+    // processor": its flags stop at `clflush`, with no sse4_2/popcnt, so it is
+    // below x86-64-v2. sharp's prebuilt libvips refuses to load there and every
+    // `/_ipx/` request answers 500, which takes down every image on the site.
+    // Building sharp from source is also blocked — the box cannot install
+    // libvips-dev. With `none` the transforms are skipped and the originals are
+    // served as-is: correct, but 77 MB of raster assets go over the wire
+    // unresized. REMOVE THIS once the host exposes a modern CPU model.
+    provider: "none",
     // The design is drawn at 1920 and the site runs full-bleed, so the ladder
     // reaches past it for 2x phones and wide monitors.
     screens: {
