@@ -24,7 +24,7 @@ export const DOMINO_FAQ_COPY = {
   /** `572:14518`. The redraw gives this page the same button the landing FAQ and
    *  `/tournaments` already carry, to the same destination. */
   viewMore: "View more",
-  viewMoreHref: "/faq",
+  viewMoreHref: "/page/faq",
 } as const
 
 /**
@@ -81,11 +81,3 @@ export const DOMINO_FAQ_ITEMS: readonly FaqItem[] = [
     ],
   },
 ] as const
-
-/**
- * Which item starts open. The second one, for the same reason the landing
- * page's FAQ opens on its second: it is the only question whose answer is
- * actually the design's, and an accordion where everything is shut opens on a
- * wall of questions with nothing to read.
- */
-export const DOMINO_FAQ_DEFAULT_OPEN = DOMINO_FAQ_ITEMS[0]!.id

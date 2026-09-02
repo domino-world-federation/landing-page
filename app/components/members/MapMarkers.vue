@@ -46,17 +46,27 @@ const prefersReducedMotion = useReducedMotion()
 const openId = ref("jakarta")
 
 /**
- * The markers the filter leaves standing.
+ * The markers the filter leaves standing, **plus whichever one is open**.
+ *
+ * The open marker is exempt because the filter is a way of looking at the map,
+ * not a way of leaving it: a reader who has opened Jakarta and then narrows to
+ * another tier was reading Jakarta, and taking it off the map mid-sentence
+ * throws away what they were doing. It used to disappear, and its callout with
+ * it. Keeping it costs nothing — it is one marker, it is the one the reader
+ * pointed at, and the count below the map still reports the filter's own total
+ * rather than this list's.
  *
  * Filtered here rather than hidden with CSS so the buttons leave the tab order
  * too: a marker nobody can see should not be a stop on the way to the ones they
  * can.
  */
-const shown = computed(() =>
-  props.activeTier
-    ? MAP_MARKERS.filter((marker) => marker.tier === props.activeTier)
-    : MAP_MARKERS,
-)
+const shown = computed(() => {
+  if (!props.activeTier) return MAP_MARKERS
+
+  return MAP_MARKERS.filter(
+    (marker) => marker.tier === props.activeTier || marker.id === openId.value,
+  )
+})
 
 /**
  * The dot itself, drawn from the record rather than from the export.
@@ -149,13 +159,10 @@ function toggle(id: string) {
   openId.value = openId.value === id ? "" : id
 }
 
-// A filter that hides the open marker has to close its callout as well, or the
-// tag hangs over the map on a leader line pointing at nothing.
-watch(shown, (list) => {
-  if (openId.value && !list.some((marker) => marker.id === openId.value)) {
-    openId.value = ""
-  }
-})
+// No watch closing the callout on a filter change any more, and none is needed:
+// `shown` keeps the open marker whatever the filter says, so the tag can never
+// be left hanging on a leader line pointing at nothing — which is the failure
+// the watch existed to catch.
 </script>
 
 <template>

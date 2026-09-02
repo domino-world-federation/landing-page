@@ -26,7 +26,8 @@ withDefaults(
     /** The questions. */
     items: readonly FaqItem[]
     /** Which one is open on first render. */
-    defaultOpenId: string
+    /** Optional — the accordion opens its first row when this is absent. */
+    defaultOpenId?: string
     heading: string
     /** The `id` the section's `aria-labelledby` points at. */
     headingId: string

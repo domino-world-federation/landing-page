@@ -19,13 +19,29 @@ import { INTEGRITY_COPY } from "~/content/integrity"
  * it on route change, and `plugins/snap-release.client.ts` removes it a frame
  * earlier when a navigation starts.
  *
- * The shine is declared here and rendered by the `default` layout. Figma starts
- * the artwork at `y:4010` — where the procedural flow begins — and runs it
- * 2103px to the foot of the document, so anchoring to the bottom reproduces both
- * ends without measuring a section whose height depends on how its copy wraps.
+ * The shine is declared here and rendered by the `default` layout. Figma puts
+ * the artwork at `y:4280` — exactly where the procedural flow begins — and runs
+ * it 2779px to `y:7059`, the foot of the document, so anchoring the layer to the
+ * bottom reproduces both ends without measuring a section whose height depends
+ * on how its copy wraps.
+ *
+ * **2103 was the earlier draft's number and it stopped short**, the same way
+ * Governance's 1919 did: that draft's sections were hug-height, and the redraw
+ * makes both the flow and the report a full 1080 each, which takes the block
+ * this layer backs from 2103 to 2779. The old ratio left the beam's head inside
+ * the report form, so the flow sat on bare `--color-bg`.
+ *
+ * **The floor is not decoration.** The ratio is measured against the viewport's
+ * WIDTH and the two sections it has to cover are measured in `dvh`, so the two
+ * agree only at 16:9 — on a 1440 x 900 window the ratio yields 2084px against
+ * content standing 2264 tall, and the head lands back inside the flow. `200dvh`
+ * is those two sections exactly and `32.24vw` is the design's own footer (619 of
+ * 1920), so the minimum states the same measurement in the units the page is
+ * actually built in. The larger wins, which keeps Figma's number wherever
+ * Figma's number is already enough. Governance carries the identical pair.
  */
 definePageMeta({
-  shine: { aspectClass: "aspect-[1920/2103]" },
+  shine: { aspectClass: "aspect-[1920/2779] min-h-[calc(200dvh+32.24vw)]" },
 })
 
 useHead({ htmlAttrs: { class: "snap-sections" } })
@@ -41,20 +57,70 @@ useSeoMeta({
   <main class="snap-children relative z-10">
     <IntegrityHeader />
 
-    <!-- The photograph is PINNED and the white band slides over it. `sticky`
-         needs a containing block that outlives the sticky element, so the two
-         are wrapped: the picture holds the top of the screen for as long as this
-         wrapper is on it, and lets go the moment Core Principles' foot passes.
-         Wrapping exactly these two is what bounds it — sticky against `<main>`
-         would leave the picture pinned behind the whole page.
+    <!-- **Three stops a screen apart: the picture, the composite, the cover** —
+         the arrangement About opened with and that Domino, Development and
+         Governance now carry. Four pages of one site that open differently for
+         no reason a reader could name is a defect rather than a variation.
 
-         `z-0` against Core Principles' own `z-10` decides which covers which. -->
-    <div class="relative">
+         **The numbers are this section's own.** `601:17853` runs from y1610 to
+         the Code of Ethics at y2310 — 700 of a 1080 frame — so Core Principles
+         is held to `65dvh`, deeper than Governance's 50 because its right-hand
+         frame wraps to two rows of principles rather than sitting on one. The
+         wrapper is three screens; the picture is `sticky` and one screen tall,
+         so it stays pinned through both beats that need it behind. The panel
+         runs from `135dvh` to the wrapper's foot — 200 minus the band's own 65 —
+         which at the second beat puts the band's head exactly `65dvh` above the
+         bottom of the screen, and at the third has it at the top.
+         `top-[17.5dvh]` is `(100 - 65) / 2`, the offset that pins it centred
+         once the white covers.
+
+         The band is `sticky` inside its panel because the ground has to keep
+         rising after the copy has stopped; without it the third beat is a blank
+         white screen with the words scrolled off it. The threshold does the
+         second beat's work for free: there the band sits 65dvh down, below 17.5
+         and so not yet pinned.
+
+         **`snap-pass` because the wrapper is three screens tall.** A snap area
+         taller than the screen is a band the reader may rest ANYWHERE inside
+         rather than a position, and `scroll-snap-stop: always` cannot forbid
+         passing through a region you are allowed to stop in.
+
+         No `overflow-hidden` here: clipping on any ancestor of a sticky element
+         cancels the sticking. -->
+    <div class="snap-pass relative h-[300dvh]">
+      <!-- Markers rather than stops on the elements themselves — the picture is
+           `sticky` and the band is `sticky` inside an `absolute` panel, so
+           neither one's box is where it appears to be once it moves. -->
+      <div
+        aria-hidden="true"
+        class="snap-stop pointer-events-none absolute inset-x-0 top-0 h-px"
+      />
+      <div
+        aria-hidden="true"
+        class="snap-stop pointer-events-none absolute inset-x-0 top-[100dvh] h-px"
+      />
+      <div
+        aria-hidden="true"
+        class="snap-stop pointer-events-none absolute inset-x-0 top-[200dvh] h-px"
+      />
+
       <UiStickyBand
+        class="snap-screen"
         src="/assets/integrity/band-integrity-hall.png"
         :alt="INTEGRITY_COPY.bandAlt"
       />
-      <IntegrityPrinciples />
+
+      <!-- The panel is the GROUND and the section inside it is the copy: two
+           elements because the ground has to keep rising after the copy stops.
+           `bg-white` because that is what Core Principles itself is — this
+           page's one white ground, and the two have to meet invisibly. The
+           section keeps the `z-10` it carries itself, which decides that it
+           covers the picture. -->
+      <div class="absolute inset-x-0 top-[135dvh] bottom-0 z-10 bg-white">
+        <IntegrityPrinciples
+          class="min-h-[65dvh] lg:sticky lg:top-[17.5dvh] lg:h-[65dvh]"
+        />
+      </div>
     </div>
 
     <IntegrityEthics />

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import {
   DOMINO_FAQ_COPY,
-  DOMINO_FAQ_DEFAULT_OPEN,
   DOMINO_FAQ_ITEMS,
 } from "~/content/domino/faq"
 
@@ -53,7 +52,6 @@ import {
   >
     <UiFaqPanel
       :items="DOMINO_FAQ_ITEMS"
-      :default-open-id="DOMINO_FAQ_DEFAULT_OPEN"
       :heading="DOMINO_FAQ_COPY.heading"
       heading-id="domino-faq-heading"
       tone="dark"

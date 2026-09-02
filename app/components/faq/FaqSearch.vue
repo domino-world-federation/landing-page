@@ -27,7 +27,7 @@ defineProps<{ query?: string; category?: string }>()
        header row and carries the implicit `auto` minimum the input has just
        given up (D29). -->
   <form
-    action="/faq"
+    action="/page/faq"
     method="get"
     role="search"
     class="flex w-full min-w-0 items-center gap-4 rounded-[var(--radius-glass)] bg-white/12 px-4 py-3.5 focus-within:ring-2 focus-within:ring-white/40 lg:max-w-[402px]"

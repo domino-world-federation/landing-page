@@ -107,10 +107,24 @@ defineProps<{ event: ShowcaseEvent }>()
     <!-- Bebas 400 with a white-to-transparent fall (`372:17399`). Decorative: it
          is the tournament's own branding, and the heading below names the event
          for anyone who cannot see it. Sized as a fraction of the window so it
-         keeps its place across the trophy at every width. -->
+         keeps its place across the trophy at every width.
+
+         **`leading-[0.9]`, and the tops of the letters are why.** This is a
+         gradient behind `bg-clip-text`, and a background is only painted inside
+         the element's box — so a line box shorter than the glyphs does not
+         overflow them, it ERASES the part that sticks out. Bebas caps run about
+         0.73em and the leading was 0.7, which shaved the head off every letter
+         in the wordmark. The same trap is recorded on the countdown's digits,
+         where tightening the leading IS safe because those are a flat colour.
+
+         `-mt-[0.1em]` puts it back where it was: the box grew by 0.2em and the
+         ink centres in it, so the text had dropped by half of that. `em` here
+         resolves against this element's own font size, which is a fraction of
+         the window — so the correction tracks the type at every width instead of
+         being a pixel guess against the section's height. -->
     <p
       aria-hidden
-      class="font-display pointer-events-none absolute inset-x-0 top-[58%] -z-10 bg-linear-to-b from-white to-transparent bg-clip-text text-center text-[20.83vw] leading-[0.7] tracking-[-0.0492em] text-transparent"
+      class="font-display pointer-events-none absolute inset-x-0 top-[58%] -z-10 -mt-[0.1em] bg-linear-to-b from-white to-transparent bg-clip-text text-center text-[20.83vw] leading-[0.9] tracking-[-0.0492em] text-transparent"
     >
       {{ TOURNAMENTS_COPY.hero.watermark }}
     </p>

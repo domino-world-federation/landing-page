@@ -22,6 +22,16 @@ import type { LegalSection } from "~/content/legal"
  * bottom keeps the band narrow so exactly one clause is ever "the one being
  * read" rather than every clause on screen.
  *
+ * **A click marks its own row, and the observer stands back while it lands.**
+ * Following a link is the reader saying which clause they are on, so the mark
+ * should move at the click rather than several hundred milliseconds later when
+ * the scroll settles — and for the last clauses it would never move at all,
+ * because the document runs out before the heading can reach the band. The lock
+ * is what stops the observer overruling the click on the way there: every
+ * crossing between here and the target fires, and the topmost one in the band
+ * would win each time, so the mark would run down the list and then back. It
+ * lifts on `scrollend`, with a timer behind it for browsers that do not send it.
+ *
  * The initial state is the first clause on both sides of hydration, and the
  * markup does not branch on anything the server cannot know — the observer only
  * ever changes which existing node carries which class (RULES §12).
@@ -33,6 +43,12 @@ const props = defineProps<{
 }>()
 
 const activeId = ref(props.sections[0]?.id ?? "")
+
+/**
+ * Set while a click's scroll is still in flight, so the observer updates its
+ * band but leaves the mark where the reader put it.
+ */
+const following = ref(false)
 
 // Which clauses are inside the band right now. A plain Set rather than reactive
 // state: it is written on every crossing and only the derived `activeId` should
@@ -47,6 +63,10 @@ onMounted(() => {
         if (entry.isIntersecting) inBand.add(id)
         else inBand.delete(id)
       }
+
+      // The band is kept up to date even while a click is landing; only the
+      // mark waits, so whatever is on screen when the lock lifts is correct.
+      if (following.value) return
 
       // The topmost clause in the band wins, which is source order — the
       // observer hands entries back in whatever order they fired.
@@ -66,6 +86,38 @@ onMounted(() => {
 
   onBeforeUnmount(() => observer.disconnect())
 })
+
+/**
+ * Milliseconds to hold the mark when the browser does not report `scrollend`.
+ *
+ * Long enough for a smooth scroll the length of the document — Safari has no
+ * `scrollend` at the time of writing — and short enough that the observer is
+ * back in charge before the reader has done any scrolling of their own.
+ */
+const SETTLE_MS = 900
+
+let release: ReturnType<typeof setTimeout> | undefined
+
+function follow(id: string) {
+  activeId.value = id
+  following.value = true
+
+  clearTimeout(release)
+  release = setTimeout(() => (following.value = false), SETTLE_MS)
+
+  if (import.meta.client) {
+    window.addEventListener(
+      "scrollend",
+      () => {
+        clearTimeout(release)
+        following.value = false
+      },
+      { once: true },
+    )
+  }
+}
+
+onBeforeUnmount(() => clearTimeout(release))
 </script>
 
 <template>
@@ -76,6 +128,7 @@ onMounted(() => {
       :href="`#${section.id}`"
       :active="section.id === activeId"
       current="true"
+      @click="follow(section.id)"
     >
       <!-- The number comes from the position, never from the string — Figma
            types every heading in both documents as "1." (see the sections

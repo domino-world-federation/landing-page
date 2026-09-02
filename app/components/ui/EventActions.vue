@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ShowcaseEvent } from "~/lib/api/types"
-import { FEATURED_EVENT_COPY } from "~/content/home/featured-event"
+import { FEATURED_EVENT_COPY } from "~/content/event-showcase"
 
 /**
  * The right column — the summary and the two buttons, pinned to opposite ends of

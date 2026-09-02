@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { NewsArticle } from "~/lib/api/types"
-import { NEWS_COPY } from "~/content/home/news"
+import { NEWS_COPY } from "~/content/news-strip"
 
 /**
  * The three shapes Figma cuts the mosaic from, as width/height pairs at design

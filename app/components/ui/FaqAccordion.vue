@@ -35,13 +35,17 @@ const props = withDefaults(
   defineProps<{
     items: readonly FaqItem[]
     /** Which item is open on first render. */
-    defaultOpenId: string
+    defaultOpenId?: string
     /**
      * Which ground the list is sitting on, and therefore how an item is drawn.
      *
      * `light` is the original and stays the default: black type on a white card,
-     * items separated by Figma's 4px `#DADADA` rules. `/domino`, `/tournaments`
-     * and `/faq` are all on white and all want it.
+     * items separated by Figma's 4px `#DADADA` rules. `/domino` and
+     * `/tournaments` sit on white and want it.
+     *
+     * `/page/faq` used to as well, and no longer does: its redraw (`613:23255`)
+     * took the white card away and left the items standing on the page's own
+     * ground, which is this component's `dark` tone exactly.
      *
      * `dark` is S11's new treatment (`81:690`), where the card became a
      * translucent dark pane and each item became a filled box of its own
@@ -56,7 +60,20 @@ const props = withDefaults(
   { tone: "light" },
 )
 
-const openId = ref(props.defaultOpenId)
+/**
+ * Which row starts open — **the first, everywhere, unless a caller says
+ * otherwise**.
+ *
+ * It was a required prop and every page exported a constant for it, which meant
+ * four places could disagree about a rule that is the same on all of them: an
+ * accordion with everything shut opens on a wall of questions with nothing to
+ * read, so one answer is left showing as a sample of what the others hold. Which
+ * one carries that job is not something any of the designs argue for, and the
+ * first is the one a reader's eye lands on before they have decided to look.
+ *
+ * Stated here so a page added later inherits it rather than choosing again.
+ */
+const openId = ref(props.defaultOpenId ?? props.items[0]?.id)
 const prefersReducedMotion = useReducedMotion()
 
 const dark = computed(() => props.tone === "dark")

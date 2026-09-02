@@ -3,13 +3,29 @@ import { FAQ_PAGE_COPY } from "~/content/faq"
 import { FAQ_PAGE_ITEMS, type FaqPageItem } from "~/content/faq/items"
 
 /**
- * `/faq` — Figma screen `173:9459`.
+ * `/page/faq` — Figma screen `613:23161`.
  *
- * The eleventh page, and the fourth on the side-tab shell: the band from
+ * **A sibling of `[key].vue`, not an entry in it.** The three side-tab documents
+ * share a URL shape because the repo owner asked for one, and Nuxt resolves a
+ * static segment ahead of a dynamic one, so this file takes `/page/faq` and the
+ * parameter route is left with the documents it actually knows how to render. A
+ * branch inside `[key].vue` would have been one route doing two unrelated jobs:
+ * the legal pages are a numbered document with a table of contents, and this is
+ * a filtered accordion with a search field and two URL-driven filters. They meet
+ * at the shell, which is where D57 already drew the line.
+ *
+ * The fourth page on the side-tab shell: the band from
  * `ui/PageHeader`, the two columns from `ui/SideTabLayout`, the card from
  * `ui/SupportCard` (D57). What it does not share is the body — a filtered
  * accordion is not a numbered document, so it is not built on `LegalDocument`
  * even though that component's note offered to take this screen.
+ *
+ * **The redraw took the white card away.** `173:9459` put the questions in the
+ * legal panel — black type on white, on a dark page; `613:23161` drops it and
+ * lets the items stand on the screen's own ground as filled boxes. `FaqBoard`
+ * carries the change and its note has the reasoning; the only thing it reaches
+ * out here is the "clear search" link, which was black for the card it no longer
+ * sits on.
  *
  * **The questions are copy, not data.** They live in `content/faq/`, like the
  * legal clauses and unlike the news feed: an FAQ is a document the federation
@@ -81,7 +97,7 @@ const shown = computed(() => {
 const boardKey = computed(() => `${category.value ?? "all"}:${term.value}`)
 
 const clearHref = computed(() =>
-  category.value ? `/faq?category=${category.value}` : "/faq",
+  category.value ? `/page/faq?category=${category.value}` : "/page/faq",
 )
 </script>
 
@@ -114,7 +130,7 @@ const clearHref = computed(() =>
             {{ FAQ_PAGE_COPY.emptySearch.replace("%s", q ?? "") }}
             <NuxtLink
               :to="clearHref"
-              class="focus-visible:ring-gold text-black underline decoration-from-font underline-offset-4 transition-colors hover:text-black/70 focus-visible:ring-2 focus-visible:outline-none"
+              class="focus-visible:ring-gold text-white underline decoration-from-font underline-offset-4 transition-colors hover:text-white/70 focus-visible:ring-2 focus-visible:outline-none"
             >{{ FAQ_PAGE_COPY.searchClear }}</NuxtLink>
           </template>
           <template v-else>{{ FAQ_PAGE_COPY.empty }}</template>

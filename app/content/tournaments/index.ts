@@ -24,16 +24,6 @@ export const TOURNAMENTS_COPY = {
       "A raised gold trophy topped with two domino tiles, held aloft by the winner",
   },
 
-  highlighted: {
-    /** The rotated eyebrow beside the band (`372:17315`). */
-    eyebrow: "Highlighted Tournaments",
-    dateLabel: "Date",
-    locationLabel: "Location",
-    details: "Details",
-    /** `372:17355`. Unlike S6's "Register", this one asks to be told when
-     *  entries open. */
-    notify: "Notify me",
-  },
 
   /**
    * The reminder dialog the "Notify me" button opens — `587:16433` and its three
@@ -138,6 +128,23 @@ export const TOURNAMENTS_COPY = {
     downloadLabel: "Download %s",
   },
 
+  champions: {
+    /**
+     * `381:17635`. The block came back after being replaced by Executive
+     * Boards — see `ChampionsHall` for what changed in the data that made it
+     * safe to.
+     */
+    heading: "Champions Hall",
+    /** Names the rail for assistive tech, which cannot see the strip. */
+    label: "Champions hall",
+    /**
+     * The per-card button. `%s` is the champion's name — a rail of tiles
+     * labelled "photograph" is several identical controls with nothing to
+     * choose between.
+     */
+    open: "View portrait of %s",
+  },
+
   gallery: {
     /** `381:17698`. The block is the news page's media desk under this page's
      *  own gold heading. */
@@ -163,8 +170,8 @@ export const TOURNAMENTS_COPY = {
      *  typo S11 carries and gets the same correction (D40). */
     heading: "Frequently Asked Questions",
     viewMore: "View more",
-    /** The FAQ page, which now exists — see `/faq`. */
-    viewMoreHref: "/faq",
+    /** The FAQ page, which now exists — see `/page/faq`. */
+    viewMoreHref: "/page/faq",
   },
 
   /** Shared arrow labels for both rails. */

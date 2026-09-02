@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { TOURNAMENTS_COPY } from "~/content/tournaments"
 import {
-  TOURNAMENT_FAQ_DEFAULT_OPEN,
   TOURNAMENT_FAQ_ITEMS,
 } from "~/content/tournaments/faq"
 
@@ -29,11 +28,10 @@ import {
 <template>
   <section
     aria-labelledby="tournament-faq-heading"
-    class="px-5 py-16 md:px-10 lg:px-20 lg:py-[4.4792vw]"
+    class="px-5 pt-28 pb-16 md:px-10 lg:px-20 lg:pt-[max(var(--nav-clearance),4.4792vw)] lg:pb-[4.4792vw]"
   >
     <UiFaqPanel
       :items="TOURNAMENT_FAQ_ITEMS"
-      :default-open-id="TOURNAMENT_FAQ_DEFAULT_OPEN"
       :heading="TOURNAMENTS_COPY.faq.heading"
       heading-id="tournament-faq-heading"
       tone="dark"

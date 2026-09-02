@@ -61,5 +61,22 @@ import {
         </MotionReveal>
       </li>
     </ul>
+
+    <!-- The site's secondary pill, centred under the row — the same white-20%
+         box on `radius-btn` the hero's "Official Rules" and S4's button carry,
+         so the page has one shape for "there is more of this" rather than a
+         third one invented here.
+
+         `w-fit` on a centred flex child rather than a width: the label sets the
+         button and a longer translation grows it, where a fixed width would clip
+         (RULES §9). -->
+    <MotionReveal :y="24" :delay="STAGGER * 3" class="mx-auto w-fit">
+      <NuxtLink
+        :to="GRASSROOTS_COPY.viewAllHref"
+        class="rounded-btn font-display focus-visible:ring-gold flex h-16 items-center justify-center bg-white/20 px-5 text-[length:var(--text-display-btn)] leading-10 text-white uppercase transition-colors hover:bg-white/30 focus-visible:ring-2 focus-visible:outline-none"
+      >
+        {{ GRASSROOTS_COPY.viewAll }}
+      </NuxtLink>
+    </MotionReveal>
   </section>
 </template>

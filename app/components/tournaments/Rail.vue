@@ -26,7 +26,7 @@ const { data: tournaments } = await useAsyncData(
   <section
     v-if="tournaments.length > 0"
     aria-labelledby="tournament-rail-heading"
-    class="flex snap-screen flex-col justify-center bg-linear-to-b from-[var(--color-surface-dark)] to-transparent px-5 pt-28 pb-10 md:px-10 lg:px-20 lg:pt-[var(--nav-clearance)] lg:pb-0"
+    class="flex snap-screen flex-col justify-center bg-linear-to-b from-[var(--color-surface-dark)] to-transparent px-5 pt-28 pb-10 md:px-10 lg:px-20 lg:pt-[max(var(--nav-clearance),7.29vw)] lg:pb-0"
   >
     <TournamentsCardRail :label="TOURNAMENTS_COPY.rail.label">
       <!-- The name, the button and the arrows on one line, which is how

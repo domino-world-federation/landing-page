@@ -985,12 +985,21 @@ export const MOCK_SUB_COMMITTEES: SubCommittee[] = [
  *
  * `world-championship-2026` predates the page — it was the contract sketch for
  * phase 2 — and is kept, now carrying the fields the card needs.
+ *
+ * **The names were lengthened to a common measure**, on the repo owner's call,
+ * and the reason is the rail rather than the wording: a card's title is clamped
+ * to two lines, so a feed mixing "London Open" with "Caribbean Nations Domino
+ * Championship" gives a row where some cards carry one line and some carry two
+ * and nothing under them lines up. Every name now states its place and its
+ * discipline and lands between 28 and 37 characters, which is two lines at the
+ * card's measure at every width the rail is drawn at. The places, the years and
+ * the slugs are untouched — the slugs address the detail pages.
  */
 export const MOCK_TOURNAMENTS: Tournament[] = [
   {
     id: "t1",
     slug: "london-open-2026",
-    name: "London Open",
+    name: "London International Domino Open",
     category: "Inter-continental",
     status: "upcoming",
     registration: "open",
@@ -1009,7 +1018,7 @@ export const MOCK_TOURNAMENTS: Tournament[] = [
   {
     id: "t2",
     slug: "dubai-masters-2026",
-    name: "Dubai Masters",
+    name: "Dubai Grand Masters Domino Series",
     category: "Championship",
     status: "upcoming",
     registration: "upcoming",
@@ -1028,7 +1037,7 @@ export const MOCK_TOURNAMENTS: Tournament[] = [
   {
     id: "t3",
     slug: "winter-finals-championship-2026",
-    name: "Winter Finals Championship",
+    name: "Winter Finals Domino Championship",
     category: "Regional qualifier",
     status: "live",
     registration: "ongoing",
@@ -1046,7 +1055,7 @@ export const MOCK_TOURNAMENTS: Tournament[] = [
   {
     id: "t4",
     slug: "stockholm-invitational-2026",
-    name: "Stockholm Invitational",
+    name: "Stockholm Nordic Domino Invitational",
     category: "Regional qualifier",
     status: "upcoming",
     registration: "open",
@@ -1065,7 +1074,7 @@ export const MOCK_TOURNAMENTS: Tournament[] = [
   {
     id: "t5",
     slug: "world-championship-2026",
-    name: "World Championship 2026",
+    name: "DWF World Domino Championship 2026",
     category: "Championship",
     status: "upcoming",
     registration: "closed",
@@ -1120,7 +1129,7 @@ export const MOCK_TOURNAMENTS: Tournament[] = [
   {
     id: "t7",
     slug: "online-continental-qualifier-2026",
-    name: "Online Continental Qualifier",
+    name: "Online Continental Domino Qualifier",
     category: "Regional qualifier",
     status: "upcoming",
     registration: "upcoming",
@@ -1139,7 +1148,7 @@ export const MOCK_TOURNAMENTS: Tournament[] = [
   {
     id: "t8",
     slug: "lagos-invitational-2027",
-    name: "Lagos Invitational",
+    name: "Lagos African Domino Invitational",
     category: "Invitational",
     status: "upcoming",
     registration: "open",
@@ -1159,7 +1168,7 @@ export const MOCK_TOURNAMENTS: Tournament[] = [
   {
     id: "t9",
     slug: "havana-classic-2026",
-    name: "Havana Classic",
+    name: "Havana Heritage Domino Classic",
     category: "Championship",
     status: "live",
     registration: "ongoing",
@@ -1198,7 +1207,7 @@ export const MOCK_TOURNAMENTS: Tournament[] = [
   {
     id: "t11",
     slug: "tokyo-masters-2025",
-    name: "Tokyo Masters",
+    name: "Tokyo Pacific Domino Masters",
     category: "Inter-continental",
     status: "completed",
     registration: "closed",

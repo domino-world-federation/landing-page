@@ -19,11 +19,12 @@ export const INTEGRITY_COPY = {
 
   principlesHeading: "Core Principles",
 
+  /**
+   * The rest of the section — the three clauses and the photograph beside them
+   * — lives in `./ethics`, because it is a list the column iterates rather than
+   * a heading the section states once.
+   */
   ethicsHeading: "Code of Ethics",
-  ethicsAlt: [
-    "Players shaking hands across the table at the end of a match",
-    "A referee watching a hand being played, close over the tiles",
-  ],
 
   technical: {
     heading: "Technical Overview",

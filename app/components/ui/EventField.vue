@@ -1,6 +1,6 @@
 <script setup lang="ts">
-/** A label above its value — Figma's `item` frame (`372:17320`). */
-defineProps<{ label: string; value: string }>()
+/** A label above its value — Figma's `item` frame (`52:3032`). */
+defineProps<{ label: string; value: string; all: string[] }>()
 </script>
 
 <template>
@@ -10,10 +10,12 @@ defineProps<{ label: string; value: string }>()
     >
       {{ label }}
     </dt>
-    <dd
+    <UiEventReserved
+      as="dd"
+      :all="all"
       class="font-sans text-xl leading-7 font-medium text-[var(--color-ink-body)]"
     >
-      {{ value }}
-    </dd>
+      <span class="col-start-1 row-start-1">{{ value }}</span>
+    </UiEventReserved>
   </div>
 </template>

@@ -25,16 +25,9 @@ defineProps<{ card: GrassrootsCardCopy }>()
     class="flex h-full flex-col gap-7 rounded-[var(--radius-feature)] bg-[var(--color-surface-card)]/50 p-7"
   >
     <div class="flex flex-col gap-3">
-      <!-- Bebas 32/40 at 50% — the programme's family, set above the name the
-           way an eyebrow is. Not a heading: it repeats across cards, so
-           announcing it as one would put two "Community" entries in the page
-           outline. -->
-      <p
-        class="font-display text-[length:var(--text-display-caption)] leading-[1.25] text-white/50 uppercase"
-      >
-        {{ card.kicker }}
-      </p>
-
+      <!-- The Bebas kicker that sat here — the programme's "family" — is gone;
+           see `GRASSROOTS_CARDS` for why. The title carries the card on its own,
+           which is what it was doing anyway. -->
       <h3
         class="font-sans text-[length:var(--text-body-lg)] leading-[1.22] font-semibold text-white"
       >

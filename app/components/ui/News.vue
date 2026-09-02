@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { getLatestNews } from "~/lib/api/client"
-import { NEWS_ALT, NEWS_COPY } from "~/content/home/news"
+import { NEWS_ALT, NEWS_COPY } from "~/content/news-strip"
 
 /**
  * How far the photograph rides up as the section arrives, as a percentage of the
@@ -26,8 +26,27 @@ const RISE = -14
  */
 const CARD_W = "w-[max(260px,28.125vw)]"
 
+/**
+ * The same card, capped by the WINDOW'S HEIGHT as well as its width.
+ *
+ * The strip is sized off `vw` because that is how the design draws it — 540 of
+ * 1920 — and a card sized off the width knows nothing about how tall the window
+ * is. On the landing page that is fine: the section is composed around a
+ * photograph and has the frame's own height to spend. On a page that renders it
+ * flat (`backdrop: false`) the strip is the whole section, and at 28.125vw a
+ * 1796 × 1047 window gives a 505px card 655px tall — which, under the header and
+ * the page's clearance, runs past the fold and the cards come out cut.
+ *
+ * `42dvh` is the width at which the card's own 540:700 lands at ~55% of the
+ * screen, which is what the header, the clearance and a foot leave it. The
+ * `min()` only bites where the window is short for its width; a 16:9 screen at
+ * the design size is unaffected.
+ */
+const CARD_W_FLAT = "w-[max(260px,min(28.125vw,42dvh))]"
+
 /** The square pair is 258/540 of a full card, less half the 24px gutter. */
 const SQUARE_W = "w-[calc((max(260px,28.125vw)-0.625vw)/2)]"
+const SQUARE_W_FLAT = "w-[calc((max(260px,min(28.125vw,42dvh))-0.625vw)/2)]"
 
 /** Figma's 24px gutter between slots, which the arrow step has to know about. */
 const GUTTER = 24
@@ -74,8 +93,28 @@ const GUTTER = 24
  * which is what keeps the strip from reading as a plain filmstrip. Sizes come
  * from `NewsCard`; the arrangement lives here.
  */
+// The key is the FEED's, not a page's: the landing page and Development both
+// render this strip from the same `getLatestNews`, and a key naming one of them
+// would be a lie on the other.
+/**
+ * Whether the desk photograph and its wash are drawn behind the strip.
+ *
+ * On by default, which is the landing page: the picture is S8's own and the
+ * section is composed around it. Development renders the same strip on the
+ * page's flat ground — it already opens on a photograph of its own two sections
+ * up, and a second full-bleed picture in one page is the page repeating itself.
+ *
+ * A prop rather than a second component: what differs is one layer, and a copy
+ * of the strip would be seven cards, a mosaic, a scroller and two arrows kept in
+ * step for it.
+ */
+const props = withDefaults(
+  defineProps<{ backdrop?: boolean }>(),
+  { backdrop: true },
+)
+
 const { data: articles } = await useAsyncData(
-  "home-news",
+  "latest-news",
   () => getLatestNews(),
   { default: () => [] },
 )
@@ -85,6 +124,13 @@ const { data: articles } = await useAsyncData(
 // index and rendering it only when it is there keeps the section rendering on
 // whatever the feed actually returned.
 const slot = (i: number) => articles.value[i]
+
+// Which of the two the strip is drawn at. A computed rather than a class
+// written inline, because Tailwind extracts utilities by scanning source text —
+// both literals have to appear above, and only the choice between them is made
+// here.
+const cardWidth = computed(() => (props.backdrop ? CARD_W : CARD_W_FLAT))
+const squareWidth = computed(() => (props.backdrop ? SQUARE_W : SQUARE_W_FLAT))
 
 const track = useTemplateRef<HTMLDivElement>("track")
 
@@ -146,11 +192,31 @@ function step(direction: 1 | -1) {
        itself. -->
   <section
     aria-labelledby="news-heading"
-    class="relative isolate snap-start snap-always overflow-hidden pb-16 lg:pb-0"
+    :class="
+      cn(
+        'relative isolate snap-start snap-always overflow-hidden',
+        // With the picture, the section's padding is the design's: the
+        // photograph's overhang is its head and the wash carries its foot, so
+        // `lg:pb-0` is right there and nowhere else.
+        backdrop && 'pb-16 lg:pb-0',
+        // Without it the section has neither. It takes the page's clearance at
+        // the head — the plain token, not the larger slope the picture's frame
+        // spends — and a foot of its own, because the strip is 700px of card and
+        // the next section starts the moment this one ends. On the slope alone
+        // it ran past the fold and the cards came out cut.
+        !backdrop && 'pt-28 pb-16 lg:pt-[var(--nav-clearance)] lg:pb-[4.17vw]',
+      )
+    "
   >
     <!-- Figma's 1920 × 1464 at `y:-384` against a 1080 frame: 384/1080 of
-         overhang above, 1464/1080 of height. -->
+         overhang above, 1464/1080 of height.
+
+         The photograph and the wash over it are the landing page's, and they go
+         together: the gradient exists to turn the frame's lower half into flat
+         page background for the cards, so on a section with no photograph it is
+         a fade from black to black. Both are behind `backdrop`. -->
     <MotionParallaxLayer
+      v-if="backdrop"
       :speed="RISE"
       anchor="foot"
       decorative
@@ -206,6 +272,7 @@ function step(direction: 1 | -1) {
          Opaque by 45%, which is what turns the frame's lower half into flat page
          background for the cards to sit on. -->
     <div
+      v-if="backdrop"
       aria-hidden="true"
       class="absolute inset-0 -z-10 bg-linear-to-b from-[rgba(14,14,14,0)] to-[rgba(14,14,14,1)] to-45%"
     />
@@ -278,25 +345,25 @@ function step(direction: 1 | -1) {
       class="mt-8 flex snap-x items-center gap-6 overflow-x-auto scroll-smooth [scrollbar-width:none] lg:mt-[3.33%] [&::-webkit-scrollbar]:hidden"
       @scroll="measure"
     >
-      <HomeNewsCard
+      <UiNewsCard
         v-if="slot(0)"
         :article="slot(0)!"
         size="tall"
-        :class="`shrink-0 snap-start ${CARD_W}`"
+        :class="`shrink-0 snap-start ${cardWidth}`"
         :sizes='imageSizes({ xs: "60vw", lg: "28vw" })'
       />
-      <HomeNewsCard
+      <UiNewsCard
         v-if="slot(1)"
         :article="slot(1)!"
         size="tall"
-        :class="`shrink-0 snap-start ${CARD_W}`"
+        :class="`shrink-0 snap-start ${cardWidth}`"
         :sizes='imageSizes({ xs: "60vw", lg: "28vw" })'
       />
-      <HomeNewsCard
+      <UiNewsCard
         v-if="slot(2)"
         :article="slot(2)!"
         size="tall"
-        :class="`shrink-0 snap-start ${CARD_W}`"
+        :class="`shrink-0 snap-start ${cardWidth}`"
         :sizes='imageSizes({ xs: "60vw", lg: "28vw" })'
       />
 
@@ -307,33 +374,33 @@ function step(direction: 1 | -1) {
         v-if="slot(3) && slot(4) && slot(5)"
         class="flex shrink-0 snap-start flex-col justify-center gap-6"
       >
-        <HomeNewsCard
+        <UiNewsCard
           :article="slot(3)!"
           size="wide"
-          :class="CARD_W"
+          :class="cardWidth"
           :sizes='imageSizes({ xs: "60vw", lg: "28vw" })'
         />
         <div class="flex gap-6">
-          <HomeNewsCard
+          <UiNewsCard
             :article="slot(4)!"
             size="square"
-            :class="`shrink-0 ${SQUARE_W}`"
+            :class="`shrink-0 ${squareWidth}`"
             :sizes='imageSizes({ xs: "30vw", lg: "14vw" })'
           />
-          <HomeNewsCard
+          <UiNewsCard
             :article="slot(5)!"
             size="square"
-            :class="`shrink-0 ${SQUARE_W}`"
+            :class="`shrink-0 ${squareWidth}`"
             :sizes='imageSizes({ xs: "30vw", lg: "14vw" })'
           />
         </div>
       </div>
 
-      <HomeNewsCard
+      <UiNewsCard
         v-if="slot(6)"
         :article="slot(6)!"
         size="tall"
-        :class="`shrink-0 snap-start ${CARD_W}`"
+        :class="`shrink-0 snap-start ${cardWidth}`"
         :sizes='imageSizes({ xs: "60vw", lg: "28vw" })'
       />
     </div>

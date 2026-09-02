@@ -47,7 +47,7 @@ function href(category?: FaqCategory) {
     props.query ? `q=${encodeURIComponent(props.query)}` : "",
   ].filter(Boolean)
 
-  return params.length ? `/faq?${params.join("&")}` : "/faq"
+  return params.length ? `/page/faq?${params.join("&")}` : "/page/faq"
 }
 
 const shown = computed(() =>

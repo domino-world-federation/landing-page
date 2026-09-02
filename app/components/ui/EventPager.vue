@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FEATURED_EVENT_COPY } from "~/content/home/featured-event"
+import { FEATURED_EVENT_COPY } from "~/content/event-showcase"
 
 /**
  * The step-through controls — node `163:8168`.

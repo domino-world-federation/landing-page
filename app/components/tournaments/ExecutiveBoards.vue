@@ -53,9 +53,16 @@ const { data: members } = await useAsyncData(
         <MotionReveal :y="40">
           <!-- Bebas 100/108 in the gold fall (`586:15153`) — the same token the
                rail's heading above it is painted with, so the two agree. -->
+          <!-- `w-fit` is what makes this match the other statement headings
+               rather than merely share their classes. The sweep is
+               `bg-clip-text`, and a background is painted across the ELEMENT's
+               box before it is clipped to the glyphs — a block-level heading
+               takes the full column, so the gradient's white and gold ends land
+               in the margins and the words get the flat middle of it. Same fix
+               About's three governance headings needed. -->
           <h2
             id="tournaments-boards-heading"
-            class="font-display text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
+            class="font-display w-fit text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
           >
             {{ BOARDS_COPY.heading }}
           </h2>

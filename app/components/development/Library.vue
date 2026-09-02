@@ -44,7 +44,7 @@ const { data: documents } = await useAsyncData(
         <MotionReveal :y="40" :delay="STAGGER">
           <h2
             id="library-heading"
-            class="font-display text-gold-gradient text-[length:var(--text-display-sm)] leading-[0.95] uppercase"
+            class="font-display text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
           >
             {{ LIBRARY_COPY.heading }}
           </h2>

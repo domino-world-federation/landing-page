@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FAQ_COPY, FAQ_DEFAULT_OPEN, FAQ_ITEMS } from "~/content/home/faq"
+import { FAQ_COPY, FAQ_ITEMS } from "~/content/home/faq"
 
 /**
  * S11 — Figma node `81:690`. The FAQ.
@@ -48,7 +48,6 @@ import { FAQ_COPY, FAQ_DEFAULT_OPEN, FAQ_ITEMS } from "~/content/home/faq"
   >
     <UiFaqPanel
       :items="FAQ_ITEMS"
-      :default-open-id="FAQ_DEFAULT_OPEN"
       :heading="FAQ_COPY.heading"
       heading-id="faq-heading"
       tone="dark"

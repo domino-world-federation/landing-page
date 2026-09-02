@@ -19,6 +19,19 @@ import {
  * unnamed list is not navigable, and printing a heading the design does not draw
  * would be the louder change.
  */
+
+/**
+ * Which grade the strip is showing. `C` first — the list runs entry-level
+ * upwards, so the tab a reader lands on is the one they are most likely to be
+ * asking about, and the ladder reads in its own direction from there.
+ */
+const activeGradeId = ref(REFEREE_GRADES[0]!.id)
+
+const activeGrade = computed(
+  () =>
+    REFEREE_GRADES.find((grade) => grade.id === activeGradeId.value)
+    ?? REFEREE_GRADES[0]!,
+)
 </script>
 
 <template>
@@ -43,7 +56,7 @@ import {
         <MotionReveal :y="40" :delay="STAGGER">
           <h2
             id="certifications-heading"
-            class="font-display w-fit text-gold-gradient text-[length:var(--text-display-sm)] leading-[0.95] uppercase"
+            class="font-display w-fit text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
           >
             {{ CERTIFICATIONS_COPY.heading }}
           </h2>
@@ -58,56 +71,135 @@ import {
       <div
         class="flex flex-col gap-10 px-5 md:px-10 menu:flex-row menu:gap-[5.21vw] lg:px-20"
       >
-        <div class="flex flex-col gap-4 menu:grow-[760] menu:basis-0 lg:gap-6">
+        <!-- **The design's three rows, and each one selects.** They stay stacked
+             exactly as `192:14573` draws them — badge, name, scope — because
+             that is the shape a reader scans a ladder in. What the press changes
+             is the column beside them: the pathway on the right answers the
+             grade, where it used to be one fixed ladder standing next to three
+             rows it had no relationship with.
+
+             `role="tablist"` with `aria-selected` / `aria-controls` rather than
+             three plain buttons: a screen reader is told this is a set of three,
+             which one is current, and that the panel opposite belongs to it —
+             none of which the visual highlight says on its own. Same
+             construction the Rulebook's format strip uses.
+
+             `text-left` because a `<button>` centres its content by default, and
+             these rows are read rather than pressed like a pill. -->
+        <div
+          role="tablist"
+          :aria-label="CERTIFICATIONS_COPY.gradesLabel"
+          class="flex flex-col gap-4 menu:grow-[760] menu:basis-0 lg:gap-6"
+        >
           <h3 class="sr-only">{{ CERTIFICATIONS_COPY.gradesLabel }}</h3>
 
-          <ul class="flex list-none flex-col gap-4 lg:gap-6">
-            <li v-for="(grade, i) in REFEREE_GRADES" :key="grade.id" class="flex">
-              <MotionReveal :y="24" :delay="STAGGER * i" class="w-full">
-                <!-- Node `192:14573`: a 24px-radius row at 50% of
-                     `surface-card`, padded 16 with an extra 8 on the right where
-                     the badge already supplies the left. -->
-                <div
-                  class="rounded-[var(--radius-panel)] bg-[var(--color-surface-card)]/50 flex items-center gap-5 p-4 pr-6"
+          <MotionReveal
+            v-for="(grade, i) in REFEREE_GRADES"
+            :key="grade.id"
+            :y="24"
+            :delay="STAGGER * i"
+            class="w-full"
+          >
+            <button
+              type="button"
+              role="tab"
+              :aria-selected="grade.id === activeGradeId"
+              aria-controls="certification-pathway"
+              :class="
+                cn(
+                  'focus-visible:ring-gold flex w-full items-center gap-5 rounded-[var(--radius-panel)] p-4 pr-6 text-left transition-colors focus-visible:ring-2 focus-visible:outline-none',
+                  // **Only the selected row has a ground.** The other two sit
+                  // on the page itself, so the panel IS the selection rather
+                  // than a shade of it — at 50% against 100% the three read as
+                  // three panels of slightly different greys, a difference the
+                  // eye has to measure rather than see. The badge keeps its own
+                  // square on every row, which is what still marks them a set.
+                  grade.id === activeGradeId
+                    ? 'bg-[var(--color-surface-card)]'
+                    : 'bg-transparent hover:bg-[var(--color-surface-card)]/40',
+                )
+              "
+              @click="activeGradeId = grade.id"
+            >
+              <!-- The badge — a 108px column at 16% white, the letter over the
+                   word "GRADE". -->
+              <span
+                class="flex w-20 shrink-0 flex-col items-center gap-1 rounded-[var(--radius-glass)] bg-white/16 py-2 lg:w-[5.63vw]"
+              >
+                <span
+                  class="font-sans text-[length:var(--text-body-xl)] leading-[1.17] font-semibold text-white"
                 >
-                  <!-- The badge — a 108px column at 16% white, the letter over
-                       the word "GRADE". -->
-                  <div
-                    class="flex w-20 shrink-0 flex-col items-center gap-1 rounded-[var(--radius-glass)] bg-white/16 py-2 lg:w-[5.63vw]"
-                  >
-                    <span
-                      class="font-sans text-[length:var(--text-body-xl)] leading-[1.17] font-semibold text-white"
-                    >
-                      {{ grade.letter }}
-                    </span>
-                    <span
-                      class="font-sans text-[length:var(--text-eyebrow)] leading-8 text-white/60 uppercase"
-                    >
-                      {{ CERTIFICATIONS_COPY.gradeWord }}
-                    </span>
-                  </div>
+                  {{ grade.letter }}
+                </span>
+                <span
+                  class="font-sans text-[length:var(--text-eyebrow)] leading-8 text-white/60 uppercase"
+                >
+                  {{ CERTIFICATIONS_COPY.gradeWord }}
+                </span>
+              </span>
 
-                  <div class="flex flex-col gap-2 lg:gap-3">
-                    <h4
-                      class="font-display text-[length:var(--text-display-year)] leading-[1.15] text-white"
-                    >
-                      {{ grade.name }}
-                    </h4>
-                    <p
-                      class="font-sans text-[length:var(--text-eyebrow)] leading-7 text-white/60"
-                    >
-                      {{ grade.scope }}
-                    </p>
-                  </div>
-                </div>
-              </MotionReveal>
-            </li>
-          </ul>
+              <span class="flex min-w-0 flex-1 flex-col gap-2 lg:gap-3">
+                <span
+                  class="font-display text-[length:var(--text-display-year)] leading-[1.15] text-white"
+                >
+                  {{ grade.name }}
+                </span>
+                <span
+                  class="font-sans text-[length:var(--text-eyebrow)] leading-7 text-white/60"
+                >
+                  {{ grade.scope }}
+                </span>
+              </span>
+
+              <!-- `601:19349` — a bare 48px outline arrow, NOT a glyph in a dark
+                   square. The square is the federation register's treatment and
+                   it was wrong here: that list sits on a photograph and needs a
+                   ground under its control, where this row already has one of
+                   its own and a second filled shape inside it is a panel within
+                   a panel.
+
+                   Drawn rather than fetched: three points and a stroke cost less
+                   than the request would, and `currentColor` is what lets it
+                   take the row's own colour without a second file.
+
+                   It marks the selected row rather than every row: on all three
+                   it is decoration, on one it says which pathway the column
+                   opposite is showing. `aria-hidden` because the button around
+                   it already carries the name. -->
+              <svg
+                v-if="grade.id === activeGradeId"
+                aria-hidden="true"
+                width="48"
+                height="48"
+                viewBox="0 0 24 24"
+                fill="none"
+                class="size-9 shrink-0 text-white lg:size-12"
+              >
+                <path
+                  d="M9 5.5 L15.5 12 L9 18.5"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+          </MotionReveal>
         </div>
 
-        <div class="menu:grow-[900] menu:basis-0">
+        <div
+          id="certification-pathway"
+          role="tabpanel"
+          class="menu:grow-[900] menu:basis-0"
+        >
           <h3 class="sr-only">{{ CERTIFICATIONS_COPY.levelsLabel }}</h3>
-          <DevelopmentCertificationLadder />
+          <!-- `:key` so the pathway re-enters when the grade changes: swapped in
+               place, three blocks of copy changing under the reader read as a
+               glitch rather than as an answer to the press. -->
+          <DevelopmentCertificationLadder
+            :key="activeGrade.id"
+            :levels="activeGrade.levels"
+          />
         </div>
       </div>
     </div>

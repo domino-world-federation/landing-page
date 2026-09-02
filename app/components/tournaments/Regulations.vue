@@ -36,7 +36,7 @@ const { data: documents } = await useAsyncData(
   <section
     v-if="documents.length > 0"
     aria-labelledby="tournament-regulations-heading"
-    class="bg-bg flex snap-screen flex-col justify-center px-5 pt-28 pb-16 md:px-10 lg:px-20 lg:pt-[var(--nav-clearance)] lg:pb-[3.125vw]"
+    class="bg-bg flex flex-col px-5 pt-28 pb-16 md:px-10 lg:px-20 lg:pt-[max(var(--nav-clearance),7.29vw)] lg:pb-[3.125vw]"
   >
     <!-- The 356 / 268 / 1136 split the other two shelves use, written as growth
          factors rather than pixels (D14): holding the heading at 360 while the
@@ -48,7 +48,7 @@ const { data: documents } = await useAsyncData(
              the shelf (`381:17631`). -->
         <h2
           id="tournament-regulations-heading"
-          class="font-display text-gold-gradient text-[length:var(--text-display-sm)] leading-[0.95] uppercase"
+          class="font-display w-fit text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
         >
           {{ TOURNAMENTS_COPY.regulations.heading }}
         </h2>

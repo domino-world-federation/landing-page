@@ -40,6 +40,18 @@ const { data: federations } = await useAsyncData(
  */
 const openId = ref<string>()
 
+/**
+ * Whether the record is showing. Separate from `openId`, which survives the
+ * dialog closing: a reader who opens Indonesia, reads it and closes the dialog
+ * should find Indonesia still marked in the register rather than the selection
+ * thrown away with the window.
+ */
+const dialogOpen = ref(false)
+
+watch(openId, (id) => {
+  if (id) dialogOpen.value = true
+})
+
 const open = computed(
   () =>
     federations.value.find((f) => f.id === openId.value) ?? federations.value[0],
@@ -50,7 +62,7 @@ const open = computed(
   <section
     v-if="federations.length > 0"
     aria-labelledby="directory-heading"
-    class="flex snap-screen flex-col items-center justify-center gap-8 px-5 pt-28 pb-10 md:px-10 lg:gap-12 lg:px-20 lg:pt-[var(--nav-clearance)] lg:pb-[3.125vw]"
+    class="flex snap-screen flex-col items-center justify-center gap-8 px-5 pt-28 pb-10 md:px-10 lg:gap-16 lg:px-20 lg:pt-[max(var(--nav-clearance),4.17vw)] lg:pb-[4.17vw]"
   >
     <!-- Bebas 100 through the page's gold gradient. `uppercase` is the
          heading's, not the string's (D40). -->
@@ -81,41 +93,43 @@ const open = computed(
          resolves against a DEFINITE one, and `max-height` is not definite — with
          it the card's `h-full` had nothing to measure against and collapsed to
          133px. -->
-    <div class="flex w-full flex-col gap-4 lg:flex-row lg:items-stretch lg:gap-5">
-      <!-- A fixed viewport onto the register, which is what the design draws:
-           its last row is cut and fading, so the list reads as longer than the
-           space given to it. 33rem shows five rows and the head of a sixth.
+    <!-- **Two columns of three, and the whole register is on screen** —
+         `613:22526` draws two `list` frames side by side, 20 apart, each holding
+         three rows on the same 20. There is no scroll and no fade any more, and
+         that is the redraw's doing rather than a simplification: the register is
+         six federations, six rows fit a screen in two columns, and a scrolling
+         viewport with a cut last row was the answer to a single column that no
+         longer exists. The record that used to stand beside the list is a press
+         away instead (`793:3568`).
 
-           The fade is a MASK, not a gradient laid over the top. An overlay would
-           need the section's background colour baked into it, and this list sits
-           on the page rather than on a panel — the moment the page's ground
-           changed, the overlay would show as a band.
+         `grid`, not two columns of a flex row: a grid fills across and then
+         down, so the register reads left-to-right in pairs the way the design
+         numbers it, and a row whose name wraps cannot push its neighbour out of
+         step.
 
-           Scrollbar hidden because the fade already says there is more; the
-           list scrolls by every other means. -->
-      <ul
-        :aria-label="MEMBERS_COPY.directoryListLabel"
-        class="flex flex-1 list-none flex-col gap-2 lg:h-[33rem] lg:overflow-y-auto lg:[mask-image:linear-gradient(to_bottom,#000_0%,#000_82%,transparent_100%)] lg:[scrollbar-width:none] lg:[&::-webkit-scrollbar]:hidden"
-      >
-        <MembersRow
-          v-for="federation in federations"
-          :key="federation.id"
-          :federation="federation"
-          :active="federation.id === open?.id"
-          @open="openId = federation.id"
-        />
-      </ul>
+         **It will grow past the screen if the register does.** Six is what the
+         feed holds and what the design draws; a seventh would add a row to the
+         left column and the section would outgrow its stop. That is the right
+         failure — a register that quietly hid its newest member would be
+         worse — and it is the point at which the scroll comes back. -->
+    <ul
+      :aria-label="MEMBERS_COPY.directoryListLabel"
+      class="grid w-full list-none grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-5"
+    >
+      <MembersRow
+        v-for="federation in federations"
+        :key="federation.id"
+        :federation="federation"
+        :active="federation.id === openId"
+        @open="openId = federation.id"
+      />
+    </ul>
 
-      <!-- The SAME height as the list, stated rather than inherited. Left to
-           stretch, the row took whichever column was taller — so a federation
-           with a long name and a full panel (520px) grew the row past the list
-           (480) and the card changed size again, which is the thing being fixed.
-           Both columns are told the one number; the card scrolls if a record
-           ever outgrows it. -->
-      <div class="lg:h-[33rem] lg:w-[31%] lg:shrink-0">
-        <MembersDetailCard v-if="open" :federation="open" />
-      </div>
-    </div>
+    <!-- The record, on a press rather than beside the list. -->
+    <MembersDetailDialog
+      v-model:open="dialogOpen"
+      :federation="open"
+    />
 
   </section>
 </template>

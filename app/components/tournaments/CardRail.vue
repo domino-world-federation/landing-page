@@ -136,11 +136,17 @@ const thumbStyle = computed(() => ({
 
          `scrollbar-width: none` hides the native bar because the design draws
          its own below; the row is still scrollable by every other means. -->
+      <!-- `scroll-pl` matches the gutter the padding already gives the FIRST
+           card. Without it only that one sat inside the margin: `snap-start`
+           aligns a card to the scrollport's own left edge, so every card the
+           reader scrolled to afterwards came to rest flush against the window
+           while the first stayed indented. The scroll padding is what tells the
+           snap where the content really starts. -->
     <div
       ref="track"
       role="group"
       :aria-label="label"
-      class="-mx-5 flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth px-5 [scrollbar-width:none] md:-mx-10 md:px-10 lg:-mx-20 lg:px-20 [&::-webkit-scrollbar]:hidden"
+      class="-mx-5 flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-pl-5 scroll-smooth px-5 [scrollbar-width:none] md:-mx-10 md:scroll-pl-10 md:px-10 lg:-mx-20 lg:scroll-pl-20 lg:px-20 [&::-webkit-scrollbar]:hidden"
       @scroll="measure"
     >
       <slot />

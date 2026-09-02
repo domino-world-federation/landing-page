@@ -9,7 +9,7 @@
  * **FAQ used to point at `/#faq`**, the landing page's S11, because the FAQ
  * screen (`173:9459`) was drawn and not built — so "FAQ" in the footer of any
  * page sent the reader home to a section holding three of the ten questions.
- * It goes to `/faq` now that the page exists.
+ * It goes to `/page/faq` now that the page exists.
  */
 
 import { FEDERATION_ADDRESS } from "@/content/federation"
@@ -32,7 +32,7 @@ export const FOOTER_GROUPS: readonly FooterGroup[] = [
       { label: "About Us", href: "/about" },
       { label: "Tournaments", href: "/tournaments" },
       { label: "News", href: "/news" },
-      { label: "FAQ", href: "/faq" },
+      { label: "FAQ", href: "/page/faq" },
       { label: "Gallery", href: "/gallery" },
       // TODO(design): not in Figma's list (`56:5159`), which stops at Gallery.
       // Added because `/contact` was otherwise reachable from exactly one place
@@ -130,8 +130,8 @@ export const FOOTER_COPY = {
   copyright: "© 2026 Domino World Federation (DWF). All rights reserved.",
   legal: [
     // The cookie policy is still `#` — it is drawn nowhere in the design.
-    { label: "Privacy", href: "/privacy" },
-    { label: "Terms", href: "/terms" },
+    { label: "Privacy", href: "/page/privacy" },
+    { label: "Terms", href: "/page/terms" },
     { label: "Cookie Policy", href: "#" },
   ],
   logoAlt: "Domino World Federation",

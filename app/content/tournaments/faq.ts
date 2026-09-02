@@ -73,10 +73,3 @@ export const TOURNAMENT_FAQ_ITEMS: readonly FaqItem[] = [
     ],
   },
 ] as const
-
-/**
- * Which item starts open. The design draws the second one expanded
- * (`385:17872`) — an accordion where everything is shut opens on a wall of
- * questions with nothing to read.
- */
-export const TOURNAMENT_FAQ_DEFAULT_OPEN = TOURNAMENT_FAQ_ITEMS[1]!.id

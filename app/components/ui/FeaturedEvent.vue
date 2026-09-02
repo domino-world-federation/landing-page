@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { getShowcaseEvents } from "~/lib/api/client"
-import { FEATURED_EVENT_COPY } from "~/content/home/featured-event"
+import type { ShowcaseEvent } from "~/lib/api/types"
+import { FEATURED_EVENT_COPY } from "~/content/event-showcase"
 
 /**
  * S6 — Figma node `561:13281`. The featured event.
@@ -27,11 +27,14 @@ import { FEATURED_EVENT_COPY } from "~/content/home/featured-event"
  * card, their own name, dates, place and summary. The arrows step through the
  * set and wrap at both ends.
  */
-const { data: events } = await useAsyncData(
-  "home-showcase-events",
-  () => getShowcaseEvents(),
-  { default: () => [] },
-)
+/**
+ * The events the band steps through. A PROP rather than a fetch, which is what
+ * makes this plug-and-play: the landing page hands it six from
+ * `getShowcaseEvents`, the tournaments page hands it the one it has highlighted,
+ * and the band itself has no opinion about where they came from. A component
+ * that fetched could only ever show one page's list.
+ */
+defineProps<{ events: ShowcaseEvent[] }>()
 </script>
 
 <template>
@@ -70,6 +73,6 @@ const { data: events } = await useAsyncData(
       {{ FEATURED_EVENT_COPY.eyebrow }}
     </p>
 
-    <HomeEventShowcase :events="events" />
+    <UiEventShowcase :events="events" />
   </section>
 </template>

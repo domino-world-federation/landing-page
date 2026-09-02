@@ -50,7 +50,7 @@ const TD =
     <MotionReveal :y="24">
       <h2
         id="olympic-results-heading"
-        class="font-display text-gold-gradient text-center text-[length:var(--text-display-sm)] leading-[0.95] uppercase"
+        class="font-display mx-auto w-fit text-gold-gradient text-center text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
       >
         {{ TOURNAMENTS_COPY.results.heading }}
       </h2>

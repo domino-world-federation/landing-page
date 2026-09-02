@@ -40,6 +40,11 @@ export const MEMBERS_COPY = {
   directoryHeading: "National Federation Members",
   /** Names the federation list for assistive tech. */
   directoryListLabel: "National federation members",
+  /**
+   * The record window's close button. A label rather than a bare glyph: the
+   * button is an `×` and a screen reader has nothing to read off it.
+   */
+  detailCloseLabel: "Close federation record",
   /** `%s` is the federation — six rows all reading "Open" say nothing about
    *  which one a screen-reader user is on. */
   directoryOpenLabel: "Show details for %s",

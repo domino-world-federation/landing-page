@@ -191,7 +191,27 @@ function actionClass(tone: "gold" | "quiet") {
     :class="
       cn(
         'flex flex-col gap-6 rounded-[32px] bg-[#161616] p-7',
-        fluid ? 'h-full w-full' : 'w-[min(85vw,676px)] shrink-0 snap-start',
+        // **A fraction of the window, not a fixed 556.** 28.96vw is 556/1920,
+        // so the design width renders the design's own card (`592:16867`: a
+        // 500px picture inside 28px of padding) and every narrower window
+        // scales it down instead of showing fewer of them. That is the point —
+        // the width decides how many the rail holds, and at a fixed 556 a
+        // 1600px window fit two and a half where the design shows three and the
+        // edge of a fourth. On the slope the count never changes: three cards
+        // and their two gaps stay the same share of the row at any width, so
+        // the fourth is always cut rather than hidden.
+        //
+        // It is also what lets the name break where the design breaks it, after
+        // `Domino` rather than after `Nations`. The measure scales with the
+        // type, so the line that fits at 1920 still fits at 1600; a fixed card
+        // with fluid type is what pushed the name onto a third line.
+        //
+        // Capped at the design's 556 so a very wide window stops enlarging the
+        // card and lets the peek grow instead. Below `lg` the rail is a
+        // one-card-at-a-time swipe and 85vw is the right answer there.
+        fluid
+          ? 'h-full w-full'
+          : 'w-[85vw] shrink-0 snap-start lg:w-[28.96vw] lg:max-w-[556px]',
       )
     "
   >
@@ -273,27 +293,45 @@ function actionClass(tone: "gold" | "quiet") {
     </div>
 
     <div class="flex flex-col gap-3">
-      <div class="flex flex-wrap items-center gap-3">
-        <!-- Bebas 32/40 at half opacity (`592:16884`). -->
+      <!-- Bebas 32/40 at half opacity (`592:16884`). The attendance chip that
+           stood beside it — "Offline" / "Online" (`592:16886`) — is gone on the
+           repo owner's call: the card already carries a category, a state pill,
+           a format line and two actions, and where an event is played is the one
+           of them a reader is not choosing between. `Tournament.attendance` is
+           untouched, and the detail page still prints it. -->
+      <!-- The category and the state on one line, the state hard right. They
+           are the pair a reader scans a rail with — what kind of event it is and
+           whether they can still enter — so they belong on the same line rather
+           than a title apart. -->
+      <div class="flex items-center justify-between gap-3">
         <p
           class="font-display text-[length:var(--text-display-caption)] leading-[1.25] text-white/50"
         >
           {{ tournament.category }}
         </p>
 
-        <!-- Whether it is played in a hall or online (`592:16886`) — a 12% white
-             chip, the card's own material rather than a colour that would have
-             to mean something. -->
+        <!-- The colour carries meaning, so the word carries it too rather than
+             the fill alone — RULES §10 does not let a state be a hue. -->
         <span
-          class="font-sans rounded-[var(--radius-btn)] bg-white/12 px-3 py-1 text-[length:var(--text-eyebrow)] leading-8 font-medium text-white uppercase"
+          :class="
+            cn(
+              'font-sans shrink-0 rounded-[5px] px-3 py-1 text-[length:var(--text-eyebrow)] leading-8 font-bold text-white uppercase',
+              PILL_TONE[tournament.registration],
+            )
+          "
         >
-          {{ tournament.attendance }}
+          {{ label }}
         </span>
       </div>
 
-      <!-- Inter SemiBold 36/44 (`592:16887`). -->
+      <!-- Inter SemiBold 36/44 (`592:16887`), held to two lines. The names come
+           from the feed and nothing guarantees the next one is as short as the
+           six that are written: an unclamped third line pushes the format strip
+           and the buttons down on that card alone, and a rail whose cards end at
+           different heights is the thing the fixed card size exists to prevent.
+           `line-clamp` bounds it without measuring text. -->
       <h3
-        class="font-sans text-[length:var(--text-display-label)] leading-[1.22] font-semibold text-white"
+        class="font-sans line-clamp-2 text-[length:var(--text-display-label)] leading-[1.22] font-semibold text-white"
       >
         <NuxtLink
           :to="href"
@@ -304,19 +342,6 @@ function actionClass(tone: "gold" | "quiet") {
       </h3>
 
       <div class="flex flex-wrap items-center gap-3">
-        <!-- The colour carries meaning, so the word carries it too rather than
-             the fill alone — RULES §10 does not let a state be a hue. -->
-        <span
-          :class="
-            cn(
-              'font-sans rounded-[5px] px-3 py-1 text-[length:var(--text-eyebrow)] leading-8 font-bold text-white uppercase',
-              PILL_TONE[tournament.registration],
-            )
-          "
-        >
-          {{ label }}
-        </span>
-
         <p class="font-sans text-[length:var(--text-body-sm)] leading-8 text-white/60">
           {{ tournament.location }}
         </p>
@@ -326,7 +351,7 @@ function actionClass(tone: "gold" | "quiet") {
     <!-- The formats strip (`592:16892`): a grey wash falling to nothing upwards,
          squared at the top and rounded at the foot, as Figma draws it. -->
     <p
-      class="font-sans rounded-b-[var(--radius-btn)] bg-[linear-gradient(0deg,rgba(138,138,138,0.2)_0%,rgba(138,138,138,0)_100%)] p-2 text-center text-[length:var(--text-body-sm)] leading-6 text-[#8A8A8A]"
+      class="format-strip-stroke font-sans relative rounded-b-[var(--radius-btn)] bg-[linear-gradient(0deg,rgba(138,138,138,0.2)_0%,rgba(138,138,138,0)_100%)] p-2 text-center text-[length:var(--text-body-sm)] leading-6 text-[#8A8A8A]"
     >
       {{ tournament.formatLabel }}
     </p>

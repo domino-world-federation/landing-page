@@ -83,7 +83,7 @@ function step(delta: number) {
     class="flex flex-col items-start gap-10 menu-lg:h-[min(540px,28.125vw)] menu-lg:flex-row menu-lg:items-stretch menu-lg:justify-between menu-lg:gap-0"
   >
     <div class="w-full menu-lg:w-[19.79vw] menu-lg:max-w-[380px]">
-      <HomeEventDetails
+      <UiEventDetails
         :event="event"
         :names="names"
         :dates="dates"
@@ -94,13 +94,13 @@ function step(delta: number) {
       />
     </div>
 
-    <HomeEventCard
+    <UiEventCard
       :event="event"
       class="mx-auto menu-lg:mx-0 menu-lg:w-[42.19vw] menu-lg:max-w-[810px]"
     />
 
     <div class="w-full menu-lg:w-[19.79vw] menu-lg:max-w-[380px]">
-      <HomeEventActions :event="event" />
+      <UiEventActions :event="event" />
     </div>
   </div>
 </template>

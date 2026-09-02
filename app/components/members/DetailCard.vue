@@ -3,7 +3,24 @@ import type { MemberFederation } from "~/lib/api/types"
 import { MEMBERS_COPY, MEMBERSHIP_TIERS } from "~/content/members"
 
 /**
- * The record beside the directory list — the redraw of `405:28394`.
+ * The record, now shown in a window over the page — `793:3634`.
+ *
+ * **It carries its own ground, and that is the fix for what it looked like
+ * without one.** It stood beside the list before, where a translucent
+ * `bg-white/[0.07]` was right: the page behind it was the section's own black.
+ * Inside a dialog the same panel let the register show straight through it and
+ * the record read as floating text over a blurred page. The design's card is
+ * `#161616` at 24 of padding on a 20 radius, and the ground belongs to the card
+ * rather than to the dialog — the dialog is the window, this is the thing in
+ * it.
+ *
+ * `h-full` went with it: the card was told the list's height so the two columns
+ * stayed level, and there is no list beside it now. `max-h-[85dvh]` in its place
+ * so a long record scrolls inside the window rather than growing past it.
+ *
+ * The website link moved off the corner to `right-14`: the dialog's close button
+ * takes the top-right, which is where the design puts it (`793:3656`), and two
+ * controls stacked on the same corner is one of them unreachable.
  *
  * The federation's mark, its tier, its name, the year it joined, and a panel of
  * the three facts a reader would write down: who runs it, where it is, how to
@@ -62,7 +79,7 @@ const VALUE =
        screen reader is told once. -->
   <div
     role="status"
-    class="flex h-full flex-col items-center gap-3 overflow-y-auto rounded-[var(--radius-card)] bg-white/[0.07] p-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+    class="flex max-h-[85dvh] flex-col items-center gap-6 overflow-y-auto rounded-[var(--radius-card)] bg-[#161616] p-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
   >
     <div class="relative flex w-full flex-col items-center gap-2">
       <!-- The federation's own site, top-right (`405:28398`). Absent where the
@@ -74,7 +91,7 @@ const VALUE =
         target="_blank"
         rel="noopener noreferrer"
         :aria-label="COPY.websiteLabel.replace('%s', federation.name)"
-        class="focus-visible:ring-gold absolute top-0 right-0 flex size-10 items-center justify-center rounded-[var(--radius-btn)] bg-black/50 transition-colors hover:bg-black/80 focus-visible:ring-2 focus-visible:outline-none"
+        class="focus-visible:ring-gold absolute top-0 right-14 flex size-10 items-center justify-center rounded-[var(--radius-btn)] bg-black/50 transition-colors hover:bg-black/80 focus-visible:ring-2 focus-visible:outline-none"
       >
         <!-- The shared glyph points LEFT; +135° turns it up-and-right.
              `invert` because it is drawn dark for use on white. -->

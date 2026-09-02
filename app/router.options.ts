@@ -4,7 +4,7 @@ import type { RouterConfig } from "@nuxt/schema"
  * Where the page lands after a navigation.
  *
  * Nuxt's default sends every route change to the top, which is right when the
- * destination is a different page and wrong for the filter strips on `/faq`,
+ * destination is a different page and wrong for the filter strips on `/page/faq`,
  * `/gallery`, the news archive and `/tournaments/all`. Those are links — the
  * filter lives in the URL so it can be shared (D50) — but the reader is already
  * looking at the list when they narrow it, and jumping to the top of the

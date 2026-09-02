@@ -348,6 +348,12 @@
      floor keeps "Caribbean Domino Open 2026" to three lines at 360px, above
      the meta line it sits under. */
   --text-heading-hero: clamp(1.75rem, 3.3333vw, 4rem); /* 64/1920 */
+  /* The player-membership hero's claim — Inter Medium 84 (`629:28460`). Its own
+     step rather than a neighbour rounded to: `heading-hero` above is 64 and
+     `display-md` is 126, and the design's 84 sits squarely between them. 4.375vw
+     is 84/1920, so the design width renders 84 exactly. The 2rem floor keeps
+     "Your Global Domino Identity" to three lines at 360px. */
+  --text-heading-claim: clamp(2rem, 4.375vw, 5.25rem); /* 84/1920 */
 
   /* One step of the stats wheel — the pitch from a figure to the next, not the
      height of a figure. Figma stacks the three rows at a 280px pitch (labels
@@ -366,13 +372,19 @@
      number is what renders. */
   --stat-slot: clamp(5.5rem, min(14.58vw, 27dvh), 17.5rem);
 
-  /* One step of About's pillars column — the pitch from a block to the next,
-     not the height of a block. Figma's mask group is 1080 tall (`566:13543`)
-     and shows three slots through it, so a slot is a third of that: 360 at the
-     design width, which is 18.75vw. The floor is where a block's own contents
-     stop fitting — an eyebrow, a two-line Bebas title and three lines of body
-     come to about 300px once the type steps have clamped down. */
-  --pillar-slot: clamp(18.75rem, 18.75vw, 22.5rem);
+  /* One step of a turning column — the pitch from a block to the next, not the
+     height of a block. Figma's mask group on About's pillars is 1080 tall
+     (`566:13543`) and shows three slots through it, so a slot is a third of
+     that: 360 at the design width, which is 18.75vw. The floor is where a
+     block's own contents stop fitting — an eyebrow, a two-line Bebas title and
+     three lines of body come to about 300px once the type steps have clamped
+     down.
+
+     Named for the construction rather than for About because Integrity's code
+     of ethics is drawn as the same one (`762:1320`); that section overrides the
+     value locally, since it carries a heading above its window and so has less
+     of the screen to spend. */
+  --column-slot: clamp(18.75rem, 18.75vw, 22.5rem);
 }
 
 /*
@@ -465,6 +477,42 @@
   border-radius: inherit;
   padding: 3px;
   background: var(--gradient-countdown-stroke);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/*
+ * The format strip's 1px stroke at the foot of a tournament card
+ * (`592:16892`).
+ *
+ * Third user of the trick `.countdown-stroke` documents, and the reason is the
+ * same every time: the stroke is a GRADIENT — transparent at the top, `#5B5B5B`
+ * by the bottom — and `border-color` takes a colour. `border-image` would draw
+ * it and is ignored the moment `border-radius` rounds the box.
+ *
+ * It cannot be done the cheaper way either, with a gradient-filled wrapper and
+ * the strip painted over it: the strip's own fill is translucent, so the border
+ * gradient behind it would show straight through the middle instead of only at
+ * the edge. Masking the ring out of a pseudo-element is what leaves the fill
+ * alone.
+ *
+ * `border-radius: inherit` picks up the strip's own `0 0 8px 8px`, so the ring
+ * follows the two rounded corners without repeating the number.
+ */
+.format-strip-stroke::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(180deg, rgb(91 91 91 / 0) 0%, rgb(91 91 91) 100%);
   -webkit-mask:
     linear-gradient(#000 0 0) content-box,
     linear-gradient(#000 0 0);

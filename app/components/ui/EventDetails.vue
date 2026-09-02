@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ShowcaseEvent } from "~/lib/api/types"
-import { FEATURED_EVENT_COPY } from "~/content/home/featured-event"
+import { FEATURED_EVENT_COPY } from "~/content/event-showcase"
 
 /**
  * The left column — the event's name, its date and place, and the pager.
@@ -61,38 +61,46 @@ const emit = defineEmits<{ step: [delta: number] }>()
            and would still be wrong on a narrow screen, where the column is no
            longer 380px. Measured across all six names — only this one wraps
            differently under balancing. -->
-    <HomeEventReserved
+    <UiEventReserved
       :all="names"
       class="font-display text-[length:var(--text-display-sm)] leading-[0.95] text-balance uppercase"
     >
       <h3 class="col-start-1 row-start-1 text-black">{{ event.name }}</h3>
-    </HomeEventReserved>
+    </UiEventReserved>
 
     <!-- 258px wide in Figma (`561:13286`), not the column's full 380 — the two
            fields are short and the design lets the line break early. -->
     <dl class="flex w-full flex-col gap-5 lg:w-[258px]">
-      <HomeEventField
+      <UiEventField
         :label="FEATURED_EVENT_COPY.dateLabel"
         :value="event.dateLabel"
         :all="dates"
       />
-      <HomeEventField
+      <UiEventField
         :label="FEATURED_EVENT_COPY.locationLabel"
         :value="event.location"
         :all="locations"
       />
     </dl>
 
-    <!-- `sr-only` is `position: absolute`, so this takes no part in the
-         `space-between` above it and cannot become a fourth block to distribute. -->
-    <p class="sr-only">
-      {{ FEATURED_EVENT_COPY.pagerPosition(current, total) }}
-    </p>
+    <!-- Both are dropped for a single event, and not merely hidden: "1 of 1"
+         beside two arrows that cannot go anywhere is the silent no-op D28 rules
+         out. The tournaments page renders this showcase with one highlighted
+         event, so the case is real rather than defensive.
 
-    <HomeEventPager
-      :current="current"
-      :total="total"
-      @step="(delta) => emit('step', delta)"
-    />
+         `sr-only` is `position: absolute`, so the announcement takes no part in
+         the `space-between` above it and cannot become a fourth block to
+         distribute. -->
+    <template v-if="total > 1">
+      <p class="sr-only">
+        {{ FEATURED_EVENT_COPY.pagerPosition(current, total) }}
+      </p>
+
+      <UiEventPager
+        :current="current"
+        :total="total"
+        @step="(delta) => emit('step', delta)"
+      />
+    </template>
   </div>
 </template>

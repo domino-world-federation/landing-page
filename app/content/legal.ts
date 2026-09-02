@@ -1,11 +1,16 @@
 /**
  * The shape a legal document takes on this site.
  *
- * Terms & Conditions (`174:11162`) and the Privacy Policy (`174:10759`) are the
+ * Terms & Conditions (`613:24310`) and the Privacy Policy (`613:23545`) are the
  * same screen with different clauses in it — same header, same contents column,
- * same white card, same 4px rules — so they share a type and a component rather
- * than each carrying a copy of both (D32/D43, on its second user).
+ * same translucent panel — so they share a type, a component and, since the
+ * repo owner asked for it, a single route (D32/D43, on its second user).
  */
+
+import { PRIVACY_COPY } from "~/content/privacy"
+import { PRIVACY_SECTIONS } from "~/content/privacy/sections"
+import { TERMS_COPY } from "~/content/terms"
+import { TERMS_SECTIONS } from "~/content/terms/sections"
 
 export type LegalSection = {
   /** Anchors the clause and the contents link that points at it. */
@@ -40,3 +45,45 @@ export type LegalDocumentCopy = {
   contentsTitle: string
   contentsLabel: string
 }
+
+/** A whole document: its furniture, its clauses, and what search engines see. */
+export type LegalDocument = {
+  copy: LegalDocumentCopy
+  sections: readonly LegalSection[]
+  /** Written here rather than in the route, which no longer knows which one. */
+  seo: { title: string; description: string }
+}
+
+/**
+ * Every document `/page/[key]` can serve, keyed by the segment that names it.
+ *
+ * **One route, not one page each.** `/terms` and `/privacy` were two files that
+ * differed only in which two constants they imported, and a third document would
+ * have been a third copy of the same eleven lines. The key IS the registry
+ * lookup, so adding a document is adding an entry here — nothing under `pages/`
+ * changes, and nothing can be added that the route does not already know how to
+ * render.
+ *
+ * The keys are the public URLs (`/page/terms`, `/page/privacy`), so they are
+ * part of the site's addresses and not free to rename.
+ */
+export const LEGAL_DOCUMENTS: Readonly<Record<string, LegalDocument>> = {
+  terms: {
+    copy: TERMS_COPY,
+    sections: TERMS_SECTIONS,
+    seo: {
+      title: "Terms & Conditions | Domino World Federation",
+      description:
+        "The terms of engagement for the Domino World Federation portal — member federation status, intellectual property, code of conduct, tournament participation, liability and governing law.",
+    },
+  },
+  privacy: {
+    copy: PRIVACY_COPY,
+    sections: PRIVACY_SECTIONS,
+    seo: {
+      title: "Privacy Policy | Domino World Federation",
+      description:
+        "How the Domino World Federation captures, processes and preserves personal details — what is collected, how it is used, who it is shared with, and the rights registered members hold.",
+    },
+  },
+} as const

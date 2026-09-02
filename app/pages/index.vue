@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { getShowcaseEvents } from "~/lib/api/client"
+
 definePageMeta({ layout: "home" })
 
 /**
@@ -11,6 +13,18 @@ definePageMeta({ layout: "home" })
  * its dark wash fell across the white card. Figma has the same overlap and the
  * same answer: the card is opaque and the beams run behind it.
  */
+/**
+ * S6's six events. Fetched here rather than inside the band, which is now shared
+ * with `/tournaments` and takes its list as a prop — a component that fetched
+ * could only ever show one page's list. `useAsyncData` is what keeps it on the
+ * server: it runs during SSR and hands the result to the client in the payload.
+ */
+const { data: showcaseEvents } = await useAsyncData(
+  "home-showcase-events",
+  () => getShowcaseEvents(),
+  { default: () => [] },
+)
+
 useSeoMeta({
   title: "Domino World Federation",
   description:
@@ -74,11 +88,11 @@ useSeoMeta({
 
     <HomeFeatureHq />
     <HomeStats />
-    <HomeFeaturedEvent />
+    <UiFeaturedEvent :events="showcaseEvents" />
     <!-- One section, not two: the photograph, the sentence over it and the card
          strip are a single 1920 × 1080 frame in the redraw (`53:3067`), so the
-         `HomeNewsIntro` that used to stand here is inside `HomeNews` now. -->
-    <HomeNews />
+         `UiNewsIntro` that used to stand here is inside `UiNews` now. -->
+    <UiNews />
     <!-- One snap unit, two regions. The partners band is ~250px of logos under a
          single line of heading; as a stop of its own it parked the reader in
          front of a mostly empty screen, with the navbar — 112px of fixed bar —

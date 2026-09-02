@@ -26,10 +26,14 @@ import { TOURNAMENTS_COPY } from "~/content/tournaments"
  * years; a page that contradicts itself about which tournament it is opening
  * with is a defect rather than a variation.
  *
- * **Champions Hall is gone**, replaced by Executive Boards (`586:15151`) on the
- * user's call. It was the page's one open identity risk — R16, real faces under
- * real names claiming titles that do not exist — and the block that replaces it
- * makes no such claim.
+ * **Champions Hall is back and Executive Boards is gone**, which is the reverse
+ * of the swap made earlier. Champions Hall came out as the page's one open
+ * identity risk — R16, real faces under real names claiming titles that do not
+ * exist — and Executive Boards was built to take its place. The repo owner has
+ * asked for the reverse; what makes it safe is that the data no longer carries
+ * the claim (see `ChampionsHall`). `TournamentsExecutiveBoards` is still in the
+ * repo and nothing renders it — the About page draws the same board from the
+ * same endpoint, so the officers are still on the site.
  */
 useSeoMeta({
   title: "Tournaments | Domino World Federation",
@@ -64,14 +68,20 @@ const { data: highlighted } = await useAsyncData(
          gradient, and the page still has eight blocks that stand alone. -->
     <template v-if="highlighted">
       <TournamentsHero :event="highlighted" />
-      <TournamentsHighlightedTournament :event="highlighted" />
+      <!-- The landing page's featured-event band, given the one event this page
+           highlights. It is the same component on both, which is what the block
+           looked like it should be all along: two pages showing the same kind of
+           thing in two shapes is the reader's cost, not ours. `EventDetails`
+           drops its pager for a single event rather than printing "1 of 1"
+           beside two dead arrows. -->
+      <UiFeaturedEvent :events="[highlighted]" />
     </template>
     <!-- The page still needs a name when its `<h1>` is the hero's. -->
     <h1 v-else class="sr-only">{{ TOURNAMENTS_COPY.pageTitle }}</h1>
 
     <TournamentsRail />
     <TournamentsRegulations />
-    <TournamentsExecutiveBoards />
+    <TournamentsChampionsHall />
     <NewsMediaGallery heading-tone="gold" snap />
     <TournamentsOlympicResults />
     <TournamentsFaq />

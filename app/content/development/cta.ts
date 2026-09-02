@@ -19,5 +19,5 @@ export const DEVELOPMENT_CTA_COPY = {
    * does nothing — the same call every other placeholder destination on the
    * site makes.
    */
-  ctaHref: "#",
+  ctaHref: "/contact",
 } as const

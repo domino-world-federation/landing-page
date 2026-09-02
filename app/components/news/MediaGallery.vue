@@ -123,7 +123,7 @@ function openViewer(item: GalleryItem) {
         id="gallery-heading"
         :class="
           cn(
-            'font-display text-[length:var(--text-display-sm)] leading-[0.95] uppercase',
+            'font-display w-fit text-[length:var(--text-display-statement)] leading-[1.08] uppercase',
             headingTone === 'gold'
               ? 'text-gold-gradient'
               : 'text-white',

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { COACHING_LEVELS } from "~/content/development/certifications"
+import type { CoachingLevel } from "~/content/development/certifications"
 
 /**
  * The coaching ladder beside the referee grades — Figma node `192:14728`.
@@ -22,12 +22,19 @@ import { COACHING_LEVELS } from "~/content/development/certifications"
  * The whole gutter is `aria-hidden`. It is an ornament for the eye — the list
  * already announces three items in order, and dots read aloud add nothing.
  */
+
+/**
+ * The levels are a PROP now, where they used to be a constant this file
+ * imported. The column answers whichever grade the reader pressed, so the ladder
+ * cannot own the list — it draws whatever it is handed.
+ */
+defineProps<{ levels: readonly CoachingLevel[] }>()
 </script>
 
 <template>
   <ol class="flex list-none flex-col gap-13">
     <li
-      v-for="(level, i) in COACHING_LEVELS"
+      v-for="(level, i) in levels"
       :key="level.id"
       class="flex gap-4 lg:gap-[1.04vw]"
     >
