@@ -195,17 +195,27 @@
      1.25rem floor keeps the longest title ("Membership Application
      Guidelines") to two lines once the card is at its narrowest. */
   --text-resource-title: clamp(1.25rem, 1.875vw, 2.25rem);
-  /* S11's questions are Inter SemiBold 36/48 (`81:694`). 1.875vw is 36/1920 —
-     the same number S10's titles carry, but that token is a Bebas size and
-     these are Inter, so the two are kept apart rather than shared. The
-     1.125rem floor is set by the longest question ("Where can I find the
-     tournament rules?"), which holds to two lines at 360px beside its toggle. */
-  --text-faq-question: clamp(1.125rem, 1.875vw, 2.25rem);
-  /* Its answers are Inter Regular 32/48 (`81:701`). 1.6667vw is 32/1920. The
-     0.9375rem floor keeps the answer visibly smaller than the question it
-     belongs to once both have bottomed out — at equal size the pair stops
-     reading as question-and-answer. */
-  --text-faq-answer: clamp(0.9375rem, 1.6667vw, 2rem);
+  /* **Both cap at 24, on the repo owner's call, and that is a departure.**
+     Figma draws the questions Inter SemiBold 36/48 (`81:694`) and the answers
+     Inter Regular 32/48 (`81:701`); at those sizes an accordion of four
+     questions is most of a screen before a single one is opened, and the
+     instruction was a flat 24 for the FAQ everywhere it appears — the home
+     page, Domino, Tournaments and `/faq` all render the same two components,
+     so one pair of tokens is the whole change.
+
+     1.25vw is 24/1920, so the design width renders exactly 24 and narrower
+     windows scale rather than stepping.
+
+     **The size no longer separates the two; weight does.** The old answer token
+     was deliberately a slope below the question's so the pair kept reading as
+     question-and-answer once both bottomed out, and that argument is now
+     carried by SemiBold against Regular alone. The floors keep a little of it:
+     the answer still bottoms out smaller, so the distinction returns on the
+     screens where weight alone is hardest to see. The question's 1.125rem floor
+     is set by the longest question ("Where can I find the tournament rules?"),
+     which holds to two lines at 360px beside its toggle. */
+  --text-faq-question: clamp(1.125rem, 1.25vw, 1.5rem);
+  --text-faq-answer: clamp(0.9375rem, 1.25vw, 1.5rem);
   /* S14's footer links are Inter Medium 24/32 (`56:4945`). 1.25vw is 24/1920.
      The 1rem floor is a tap target, not a wrap: below it the 32px line box
      stops giving the rows enough separation to hit one cleanly on a phone. */
