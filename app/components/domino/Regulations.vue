@@ -37,7 +37,7 @@ const { data } = await useAsyncData("domino-regulations", async () => {
 <template>
   <section
     aria-labelledby="regulations-heading"
-    class="bg-bg flex flex-col gap-9 px-5 py-14 md:px-10 lg:flex-row lg:items-start lg:px-20 lg:py-[3.125vw]"
+    class="bg-bg flex flex-col gap-9 px-5 pt-28 pb-14 md:px-10 lg:flex-row lg:items-start lg:px-20 lg:pt-[max(var(--nav-clearance),3.125vw)] lg:pb-[3.125vw]"
   >
     <!-- `359:15820` — 560 × 522, `#262626`, the parts pushed to the ends by
          `justify-between` as Figma has them. `min-h` rather than the fixed

@@ -83,8 +83,8 @@ useSeoMeta({
          single line of heading; as a stop of its own it parked the reader in
          front of a mostly empty screen, with the navbar — 112px of fixed bar —
          sitting across the only words in it. Merged with the library below, the
-         stop lands on a band with something in it, and the bar has 144px of
-         clearance to overlay instead of 100.
+         stop lands on a band with something in it, and the bar overlays
+         `--nav-clearance` of padding instead of 100px of it.
 
          The wrapper rather than a merged component, unlike the S7/S8 merge two
          sections up: Figma still draws these as two frames (`56:4541` at 5404,

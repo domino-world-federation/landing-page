@@ -25,7 +25,7 @@ const { data: committees } = await useAsyncData(
 </script>
 
 <template>
-  <section class="px-5 py-16 md:px-10 lg:px-20 lg:py-[4.17vw]">
+  <section class="px-5 pt-28 pb-16 md:px-10 lg:px-20 lg:pt-[max(var(--nav-clearance),4.17vw)] lg:pb-[4.17vw]">
     <!-- Heading and description on one row — Figma `114:3668`. The description
          is 480 of 1920 and sits at the right, so the two read as a title and its
          note rather than as a paragraph under a heading. -->
@@ -33,8 +33,10 @@ const { data: committees } = await useAsyncData(
       class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between lg:gap-16"
     >
       <MotionReveal :y="40">
+        <!-- The gold statement heading `Mission` uses — see
+             `StructuralFrameworks` for why it carries `w-fit`. -->
         <h2
-          class="font-sans text-[length:var(--text-heading-section)] leading-[1.1] text-white"
+          class="font-display w-fit text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08]"
         >
           {{ COMMITTEES_COPY.heading }}
         </h2>

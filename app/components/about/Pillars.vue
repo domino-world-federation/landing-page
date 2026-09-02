@@ -2,30 +2,6 @@
 import { PILLARS, PILLARS_ALT } from "~/content/about/pillars"
 
 /**
- * Seconds a pillar holds the focused slot before the column turns.
- *
- * It is the reading that sets this, and only the tail of it is a choice. The
- * sentence starts lighting the moment the block is handed the slot, so it runs
- * through the turn as well: about 3.6s of reading against a 1.15s turn leaves
- * roughly a second of stillness before the column moves again.
- *
- * That tail was 3.3s at `HOLD = 4.5` and read as the section having stalled —
- * the sentence had plainly finished and nothing happened for another beat and a
- * half. A second is a pause on the full stop rather than a wait. It has to be
- * re-derived whenever `WORD_STEP` moves, which is why the arithmetic is written
- * out here rather than left as a number that once felt right.
- */
-const HOLD = 3.2
-
-/**
- * Seconds set aside for one turn. Not the length of the turn — `TURN_EASE` is a
- * tween and this is the budget the column schedules against, so it has to
- * outlast the move: the interval must not fire while the track is still
- * travelling, and the lap rewind below has to land on a track that has stopped.
- */
-const TURN = 1.5
-
-/**
  * The turn itself — a glide, not the stats wheel's detent.
  *
  * `StatsWheel` springs, because a picker wheel is a thing being CAUGHT at each
@@ -78,63 +54,77 @@ const TURN_EASE = { duration: 1.15, ease: EASE } as const
  * the three are different heights, and a gap would put each one at a different
  * place in the window as it arrived.
  */
+/** One notch per pillar, and therefore one viewport of track per pillar. */
+const steps = computed(() => PILLARS.length)
+
 const track = useTemplateRef<HTMLDivElement>("track")
+const stage = useTemplateRef<HTMLDivElement>("stage")
 const prefersReducedMotion = useReducedMotion()
 
-// Only turn while the section is being looked at — an interval running against
-// an off-screen element is battery spent on nothing.
-const inView = useInView(track, { amount: 0.3 })
+// Measured on the STAGE rather than the track: the track is `steps` viewports
+// tall, so a fraction of it is a fraction of something mostly off screen. Same
+// split `StatsWheel` uses — measure the frame, drive the content.
+const inView = useInView(stage, { amount: 0.3 })
 
-// Two laps, so the track always has a cell to bring in and one to carry off.
-const cells = computed(() => [...PILLARS, ...PILLARS])
-const lap = computed(() => PILLARS.length)
+/**
+ * The list with one block padded onto each end — the last before it, the first
+ * after it — so every notch has a real block in the slot above and the slot
+ * below it.
+ *
+ * It was two full laps, which is what a column that looped needed. Nothing loops
+ * now: the reader opens on the first pillar and stops on the last, and a pad of
+ * one at each end fills both neighbouring slots for `n + 2` cells instead of
+ * `2n`. It is also what lets the column open on the FIRST block — the laps
+ * forced it to start at index 1 and so to open on the second, which is not the
+ * order the list is written in.
+ */
+const cells = computed(() => [
+  PILLARS[PILLARS.length - 1]!,
+  ...PILLARS,
+  PILLARS[0]!,
+])
 
-// `1` is the design's resting state: the second pillar is the one in the focused
-// slot, which is the block Figma draws lit. Starting there means the server, the
-// first client render and a reader who prefers reduced motion all get exactly
-// the still design — without branching the tree, which RULES §12 forbids.
+/** Cell 0 is the pad, so cell 1 is the first real block. */
 const index = ref(1)
-const instant = ref(false)
 
-const turning = computed(() => inView.value && !prefersReducedMotion.value)
-
-watch(
-  turning,
-  (on, _was, onCleanup) => {
-    if (!on) return
-
-    const timer = setInterval(
-      () => {
-        index.value += 1
-        instant.value = false
-      },
-      (HOLD + TURN) * 1000,
-    )
-    onCleanup(() => clearInterval(timer))
-  },
-  { immediate: true },
-)
-
-// A lap is over once the track has advanced by the length of the list. The
-// rewind waits for the turn to land, then jumps with the transition collapsed:
-// the second copy is showing the same three blocks at the same three offsets, so
-// sampled at the seam nothing changes on screen.
-watch(index, (value, _was, onCleanup) => {
-  if (value <= lap.value) return
-
-  const timer = setTimeout(() => {
-    index.value = 1
-    instant.value = true
-  }, TURN * 1000)
-  onCleanup(() => clearTimeout(timer))
+/**
+ * **The column is turned by the reader, not by a clock.**
+ *
+ * It ran on a `setInterval` — 3.2s of hold plus 1.5s of turn — and the trouble
+ * with a timer is that it does not know whether anyone is reading. A slow reader
+ * lost the sentence mid-way; a fast one waited. Worse for this page: the section
+ * was one screen and its neighbours snap, so a reader who arrived and scrolled
+ * on took the next section with them and never saw two of the three claims.
+ *
+ * The section is a track one viewport tall per pillar with the stage `sticky`
+ * inside it, and the scroll through that track is what advances the index — the
+ * construction `StatsWheel` settled on, for the same reason. Reaching the
+ * section after this one now means having scrolled past all three, which is what
+ * the repo owner asked for in as many words.
+ *
+ * `steps - 1` turns for `steps` notches. The `start start` → `end end` range
+ * spans exactly the travel available while the stage is pinned: it opens when
+ * the track's head reaches the top of the screen and closes when its foot
+ * reaches the bottom. Rounding the progress is what turns a continuous scroll
+ * back into whole notches for the glide to travel between.
+ */
+const { scrollYProgress } = useScroll({
+  target: track,
+  offset: ["start start", "end end"],
 })
 
-// The seam rewind and a reader who prefers reduced motion both want the track to
-// arrive having visibly travelled nothing. Same tree either way; only the
-// transition is zeroed (RULES §12).
-const still = computed(() => prefersReducedMotion.value || instant.value)
+useMotionValueEvent(scrollYProgress, "change", (progress: number) => {
+  const turns = steps.value - 1
+  if (turns < 1 || !Number.isFinite(progress)) return
 
-const trackTransition = computed(() => (still.value ? { duration: 0 } : TURN_EASE))
+  const notch = Math.min(Math.max(Math.round(progress * turns), 0), turns)
+  index.value = notch + 1
+})
+
+// Same tree whatever the preference; only the transition is zeroed (RULES §12).
+const trackTransition = computed(() =>
+  prefersReducedMotion.value ? { duration: 0 } : TURN_EASE,
+)
 
 // `1 - index`, not `-index`: the focused block belongs in the MIDDLE of the
 // three slots, so the track sits one slot lower than a plain top-aligned offset
@@ -148,24 +138,57 @@ const COLUMN_MASK =
 </script>
 
 <template>
-  <!-- One screen, like the four sections around it — `566:13542` is 1920 × 1080.
-       See `Heritage` for why the height is `dvh` and not the design's ratio.
+  <!-- **A track, one viewport per pillar, with the stage pinned inside it.** The
+       section used to be one screen and the column turned itself; now the scroll
+       through this track is what turns it, so the reader cannot reach the next
+       section without having passed all three. See the script for why the timer
+       went.
 
-       **`h-dvh` from `lg`, not `snap-screen`.** The column is three slots tall and
-       the design lets it EXCEED the frame's content box: Figma's mask group is a
-       full 1080 inside a frame padded 80, so it runs past the padding at both
-       ends. A minimum height lets it push instead, which measured 1240 against a
-       1080 screen — the section grew past the viewport and the snap no longer
-       landed the column centred in it. A fixed height makes the column overflow
-       and be clipped, which is what the design draws, and `overflow-hidden`
-       keeps that off the section snapped after it. The clipping is invisible:
-       the column's own mask has faded it to nothing by its edges.
+       `snap-pass` because the track is three screens tall, and a snap area
+       taller than the screen is a band the reader may rest ANYWHERE inside
+       rather than a position — `main.css` records the rule at length. The
+       notches below are the stops instead, one per pillar, which is the same
+       thing every other section on this page gets from `snap-children`.
 
-       Below `lg` the column and the picture stack, and then the height has to
-       come from them — hence `snap-screen` there. -->
+       The track only exists from `lg`. Below it the column and the picture stack
+       and the height has to come from them, and the page does not snap there at
+       all — a three-screen track with a pinned stage would be three screens of
+       nothing to scroll past. -->
   <section
-    class="flex snap-screen flex-col items-center justify-center gap-12 overflow-hidden px-5 py-16 md:px-10 lg:h-dvh lg:min-h-0 lg:flex-row lg:justify-between lg:gap-16 lg:px-20 lg:py-[4.17vw]"
+    ref="track"
+    :style="{ '--pillars-steps': steps }"
+    class="snap-pass relative lg:h-[calc(var(--pillars-steps)*100dvh)] lg:motion-reduce:h-dvh"
   >
+    <!-- One snap point per notch, so a gesture turns the column exactly once —
+         the page's own `scroll-snap-stop: always` applied inside a section.
+         Markers rather than content: absolutely positioned, so they add nothing
+         to the track's layout, and the first sits at the track's head, which is
+         what gives this section the stop its siblings carry on the section
+         itself.
+
+         Hidden under reduced motion for the same reason the track collapses
+         there: they would otherwise stack three viewports of snap points inside
+         a one-viewport track and spill into the section after it. -->
+    <div
+      aria-hidden="true"
+      class="pointer-events-none absolute inset-x-0 top-0 hidden h-full lg:block lg:motion-reduce:hidden"
+    >
+      <div
+        v-for="notch in steps"
+        :key="notch"
+        class="h-dvh snap-start snap-always"
+      />
+    </div>
+
+    <!-- The stage. `60 80` is the frame's own padding (`728:1230`), with the top
+         floored at 144: this is where the scroll comes to rest, so its head
+         lands under a navbar up to 112px tall (`NavShell`'s `NAV_HEIGHT`), and
+         3.125vw is 60 at the design width. Same floor the partners band, the
+         home FAQ and Heritage carry. -->
+    <div
+      ref="stage"
+      class="flex flex-col items-center justify-center gap-12 overflow-hidden px-5 pt-28 pb-[max(48px,3.125vw)] md:px-10 lg:pt-[max(var(--nav-clearance),3.125vw)] lg:sticky lg:top-0 lg:h-dvh lg:flex-row lg:justify-between lg:gap-16 lg:px-20"
+    >
     <!-- The mask is on the OUTER element and the movement on the inner one.
          Reversed, the window would travel with the blocks and never fade
          anything — the point is that one is fixed and the other is not.
@@ -174,7 +197,6 @@ const COLUMN_MASK =
          360px slots) and what gives the focused block a neighbour to fade out
          above it and one to fade in below. -->
     <div
-      ref="track"
       class="relative h-[calc(var(--pillar-slot)*3)] w-full overflow-hidden lg:w-[42.71%]"
       :style="{ maskImage: COLUMN_MASK, WebkitMaskImage: COLUMN_MASK }"
     >
@@ -203,7 +225,7 @@ const COLUMN_MASK =
                design's resting state has one block already lit. -->
           <AboutPillarBlock
             :pillar="pillar"
-            :duplicate="i >= lap"
+            :duplicate="i === 0 || i === cells.length - 1"
             :focused="i === index"
             :reading="i === index && inView"
           />
@@ -247,6 +269,7 @@ const COLUMN_MASK =
         height="361"
         class="pointer-events-none absolute top-[9.48%] left-0 h-[37.6%] w-[6.32%]"
       >
+      </div>
     </div>
   </section>
 </template>

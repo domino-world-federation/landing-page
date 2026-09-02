@@ -22,7 +22,11 @@ import { RULEBOOK_COPY, RULE_SETS } from "~/content/domino/rulebook"
  * because the card's every line changes with the tab — there is no static half
  * to leave alone (the same reasoning the news page's featured band records).
  */
-const activeId = ref(RULE_SETS[0]?.id)
+// The MIDDLE tab, not the first: `572:14031` is the one the design draws
+// selected, and the card it opens is the only one the design writes. Falling
+// back to the head of the list keeps a shorter `RULE_SETS` from opening on
+// nothing.
+const activeId = ref(RULE_SETS[1]?.id ?? RULE_SETS[0]?.id)
 
 const active = computed(
   () => RULE_SETS.find((set) => set.id === activeId.value) ?? RULE_SETS[0],
@@ -33,9 +37,9 @@ const active = computed(
   <section
     v-if="active"
     aria-labelledby="rulebook-heading"
-    class="bg-bg flex flex-col gap-10 px-5 py-14 md:px-10 lg:gap-15 lg:px-20 lg:py-[4.1667vw]"
+    class="flex flex-col gap-10 bg-[#1b1b1b] px-5 pt-28 pb-14 md:px-10 lg:gap-9 lg:px-20 lg:pt-[max(var(--nav-clearance),7.29vw)] lg:pb-[2.08vw]"
   >
-    <div class="flex flex-col items-center gap-6 lg:gap-9">
+    <div class="flex flex-col items-center gap-6">
       <h2
         id="rulebook-heading"
         class="font-display text-gold-gradient text-center text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
@@ -43,9 +47,11 @@ const active = computed(
         {{ RULEBOOK_COPY.heading }}
       </h2>
 
-      <!-- `288:15756` — the navbar's chrome again: 40% black under a 10px
-           backdrop blur, 12px radius, 4px of padding. Only drawn when there is
-           more than one set to choose between. -->
+      <!-- `572:14028` — the navbar's chrome again: 40% black under a 10px
+           backdrop blur, 12px radius, 4px of padding, and the same Inter Medium
+           18/26 at `0.04em` the bar's own items use, which is what `text-nav`
+           holds. Still guarded on there being more than one set: a single-tab
+           tab bar is chrome pretending to be a control. -->
       <div
         v-if="RULE_SETS.length > 1"
         role="tablist"
@@ -61,7 +67,7 @@ const active = computed(
           aria-controls="rulebook-panel"
           :class="
             cn(
-              'rounded-btn font-sans focus-visible:ring-gold px-5 py-3 text-[length:var(--text-label-sm)] leading-relaxed font-medium tracking-[0.04em] whitespace-nowrap text-white uppercase transition-opacity focus-visible:ring-2 focus-visible:outline-none',
+              'rounded-btn font-sans focus-visible:ring-gold text-nav px-5 py-3 leading-[1.4444] font-medium tracking-[0.04em] whitespace-nowrap text-white uppercase transition-opacity focus-visible:ring-2 focus-visible:outline-none',
               set.id === active.id ? 'bg-white/12' : 'opacity-50 hover:opacity-80',
             )
           "

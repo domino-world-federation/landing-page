@@ -8,8 +8,17 @@ import type { HeritageMilestone } from "~/lib/api/types"
  *
  * The year sits above the card on the design's dashed rule; the pair is one
  * column so the marker travels with the card it belongs to at every width.
- * Alternating cards drop 100px (Figma's y 240 / 340), which is what keeps the
- * strip from reading as a plain row of four.
+ *
+ * **The drop is on the column, not on the card inside it.** Alternating columns
+ * hang 100px apart (Figma's y 240 / 340), which is what keeps the strip from
+ * reading as a plain row of four — and moving the card alone left every marker
+ * dot sitting on one level, which is not what the design draws. The whole
+ * column moves now, dot and all.
+ *
+ * Every column is the same height (`100% - --heritage-drop-max`) whatever its
+ * parity, so the two differ in where they hang rather than in how big they are.
+ * The two offsets live in `HeritageTimeline`, where the maximum they subtract is
+ * also stated.
  */
 defineProps<{ milestone: HeritageMilestone; index: number }>()
 </script>
@@ -19,7 +28,14 @@ defineProps<{ milestone: HeritageMilestone; index: number }>()
        adjacent elements whose offset difference IS one card-plus-gap. -->
   <li
     data-milestone
-    class="flex w-[clamp(280px,25vw,480px)] shrink-0 snap-start flex-col"
+    :class="
+      cn(
+        'flex h-[calc(100%-var(--heritage-drop-max))] w-[clamp(280px,25vw,480px)] shrink-0 snap-start flex-col',
+        index % 2 === 0
+          ? 'mt-[var(--heritage-drop-min)]'
+          : 'mt-[var(--heritage-drop-max)]',
+      )
+    "
   >
     <!-- Year and dot, centred on the rule below them — Figma `88:1171`. -->
     <div class="flex flex-col items-center gap-2 self-start">
@@ -34,12 +50,14 @@ defineProps<{ milestone: HeritageMilestone; index: number }>()
     <div
       :class="
         cn(
-          'flex h-[clamp(400px,26.04vw,500px)] flex-col gap-4 rounded-[32px] bg-[var(--color-surface-card)]/50 p-5 lg:gap-[1.46vw] lg:p-[1.46vw]',
-          // Figma's y 240 for the odd cards and 340 for the even ones, measured
-          // down from the marker row rather than from the section top.
-          index % 2 === 0
-            ? 'mt-[clamp(32px,8.33vw,160px)]'
-            : 'mt-[clamp(32px,13.54vw,260px)]',
+          // The design's 500 is a CAP now, not a height. It was
+          // `h-[clamp(400px,26.04vw,500px)]`, which is measured off the
+          // viewport's width and so knew nothing about how tall the window
+          // actually was: on a wide, short screen the card kept its 500 and
+          // pushed the section past the screen it has to fit inside. As a flex
+          // child it takes what the scroller has instead, and the cap keeps a
+          // tall window from stretching it past the size the design draws.
+          'flex min-h-0 max-h-[500px] flex-1 flex-col gap-4 rounded-[32px] bg-[var(--color-surface-card)]/50 p-5 lg:gap-[1.46vw] lg:p-[1.46vw]',
         )
       "
     >

@@ -30,13 +30,17 @@ const { data: members } = await useAsyncData(
 
 <template>
   <section
-    class="bg-[linear-gradient(180deg,var(--color-surface-dark)_0%,var(--color-bg)_100%)] px-5 py-16 md:px-10 lg:px-20 lg:py-[4.17vw]"
+    class="bg-[linear-gradient(180deg,var(--color-surface-dark)_0%,var(--color-bg)_100%)] px-5 pt-28 pb-16 md:px-10 lg:px-20 lg:pt-[max(var(--nav-clearance),4.17vw)] lg:pb-[4.17vw]"
   >
     <AboutBoardCarousel :members="members">
       <template #heading>
         <MotionReveal :y="40">
+          <!-- The gold statement heading `Mission` uses — see
+               `StructuralFrameworks` for why it carries `w-fit`. Here it also
+               keeps the heading off the carousel's arrows, which share its
+               row. -->
           <h2
-            class="font-sans text-[length:var(--text-heading-section)] leading-[1.1] text-white"
+            class="font-display w-fit text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08]"
           >
             {{ BOARDS_COPY.heading }}
           </h2>

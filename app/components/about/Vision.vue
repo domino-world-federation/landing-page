@@ -21,15 +21,29 @@ import { VISION_ALT, VISION_COPY } from "~/content/about/vision"
        hold the entrance until the reader has already read the eyebrow. -->
   <MotionEntranceGroup
     :amount="0.3"
-    class="relative flex snap-screen flex-col justify-center overflow-hidden"
+    class="relative flex snap-screen flex-col justify-center overflow-hidden lg:h-dvh"
   >
     <!-- One screen, like the four sections around it — `566:13530` is
          1920 × 1080. See `Heritage` for why the height is `dvh` and not the
-         design's ratio; 57.6vw was this section's own measured 1106 and is kept
-         as a FLOOR, so a very wide window still gives the artwork the height it
-         was composed at. Below `lg` the blocks stack and the height comes from
-         the copy instead, with the tile behind it as a backdrop. -->
-    <div class="relative min-h-[560px] lg:h-[57.6vw]">
+         design's ratio.
+
+         **The band fills the section, and that is what closes the seam.** It was
+         `lg:h-[57.6vw]` — this section's own measured 1106 — inside a section
+         that is only `min-h-dvh`, so the two agreed at exactly one window size
+         and nowhere else. On anything shorter than 57.6vw the band overflowed
+         and the section grew past a screen; on anything taller the band was
+         SHORTER than the section and `justify-center` split the difference into
+         a strip of bare section above and below it. That strip has no ground of
+         its own, so it showed the page's `--color-bg` — a hard black line
+         between Heritage's foot, which ends on `--color-surface-dark`, and this
+         section's top wash, which starts on the same colour and should have met
+         it invisibly.
+
+         Filling the section removes both. Every layer inside is placed as a
+         percentage, so the composition scales with the screen rather than
+         needing one to match. Below `lg` the blocks stack and the height comes
+         from the copy instead, with the tile behind it as a backdrop. -->
+    <div class="relative min-h-[560px] lg:h-full">
       <!-- 1. The wash the section opens with — `--color-surface-dark` to nothing
            over the top 317px (16.5vw). It is the same colour Heritage ends on,
            so the two bands meet with no visible join. -->
@@ -101,11 +115,25 @@ import { VISION_ALT, VISION_COPY } from "~/content/about/vision"
         <div
           class="pointer-events-none absolute top-[1.29%] left-[2.35%] h-[91.25%] w-[95.1%]"
         >
+          <!-- **`ellipse farthest-side`, NOT `circle`** — the trap `main.css`
+               records for the hero's gold CTA, hit again here and worth more on
+               a box this lopsided. Figma fits a radial gradient to the layer's
+               bounding box, so on 485 × 918 it is an ellipse stretched down the
+               tile. CSS's `circle` takes one radius for both axes and, at
+               `farthest-corner`, that radius is set by the long side: the light
+               gold at the 100% stop then only reaches the corners, the whole
+               middle sits at a flat mid-tone, and the halo reads as a uniform
+               amber slab rather than as light with a centre. Fitting the
+               gradient to the box is what Figma is doing and what this now says.
+
+               `farthest-side` rather than the default `farthest-corner` for the
+               same reason it is spelled out on the CTA: the corner radius over-
+               shoots the box and the outer stop never lands on the edge. -->
           <div
-            class="absolute inset-0 rounded-[40px] bg-[radial-gradient(circle_at_50%_50%,var(--color-gold-dark)_0%,var(--color-gold-light)_100%)] blur-[47px]"
+            class="absolute inset-0 rounded-[40px] bg-[radial-gradient(ellipse_farthest-side_at_50%_50%,var(--color-gold-dark)_0%,var(--color-gold-light)_100%)] blur-[47px]"
           />
           <div
-            class="absolute inset-0 rounded-[60px] bg-[radial-gradient(circle_at_50%_50%,var(--color-gold-dark)_0%,var(--color-gold-light)_100%)] blur-[17px]"
+            class="absolute inset-0 rounded-[60px] bg-[radial-gradient(ellipse_farthest-side_at_50%_50%,var(--color-gold-dark)_0%,var(--color-gold-light)_100%)] blur-[17px]"
           />
         </div>
 
@@ -123,10 +151,23 @@ import { VISION_ALT, VISION_COPY } from "~/content/about/vision"
 
       <!-- 4. The vignette that puts the tile back into the dark — a radial fall
            to `--color-bg`, transparent for the first 45% of its radius so the
-           glow survives inside it. Over the tile, under the copy. -->
+           glow survives inside it. Over the tile, under the copy.
+
+           **`ellipse farthest-side`, and this is where the missing shadow at the
+           foot went.** Same trap as the glow above, with a worse consequence.
+           Figma fits this to its own 1920 × 742 box; CSS's `circle` takes ONE
+           radius for both axes and, at the default `farthest-corner`, that
+           radius comes out around 1228px — so the 88% stop, where the wash is
+           meant to reach full `--color-bg`, landed 1081px below a box only 742px
+           tall. The darkening simply never finished inside the section: the tile
+           kept its lit foot, the band handed over to the next section on a
+           mid-grey, and the shadow the design puts under all of it was nowhere.
+
+           Fitted to the box, the same 88% lands 653px down and the foot is the
+           page's own black, which is what the next section starts from. -->
       <div
         aria-hidden="true"
-        class="pointer-events-none absolute inset-x-0 top-[33%] bottom-0 bg-[radial-gradient(circle_at_51%_0%,transparent_45%,var(--color-bg)_88%)]"
+        class="pointer-events-none absolute inset-x-0 top-[33%] bottom-0 bg-[radial-gradient(ellipse_farthest-side_at_51%_0%,transparent_45%,var(--color-bg)_88%)]"
       />
 
       <!-- 5. The left column — Figma x80 y411, 560 wide. Absolute from `lg`,

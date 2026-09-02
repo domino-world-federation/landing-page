@@ -115,13 +115,22 @@ const position = computed(() =>
   <div class="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
     <slot name="heading" />
 
+    <!-- `UiRailArrow`, not a third copy of the same button. `AboutBoardArrow`
+         drew the same 64px control from the same asset and differed from it in
+         two ways that showed: a 32px glyph inside the 64px box where the shared
+         one fills it, and a round button where the shared one takes the site's
+         `radius-btn`. Figma gives both places the same `vuesax/outline/arrow`
+         component, so the difference was ours, not the design's.
+
+         The shared one moved to `ui/` on its second user (D32/D43); this is the
+         third, and the same rule that put it there is what removes this copy. -->
     <div class="flex shrink-0 items-center gap-[46px]">
-      <AboutBoardArrow
+      <UiRailArrow
         :label="BOARDS_COPY.previous"
         :disabled="atStart"
         @press="step(-1)"
       />
-      <AboutBoardArrow
+      <UiRailArrow
         :label="BOARDS_COPY.next"
         :disabled="atEnd"
         flipped

@@ -23,13 +23,29 @@ import { FRAMEWORKS_COPY } from "~/content/about/frameworks"
 
 <template>
   <!-- One screen, like the four sections around it — `566:13603` is 1920 × 1080.
-       See `Heritage` for why the height is `dvh` and not the design's ratio. -->
+       See `Heritage` for why the height is `dvh` and not the design's ratio.
+
+       `--nav-clearance` under the head, like every other stop on this page and
+       on the four pages that already read it: this section comes to rest under
+       the fixed bar, and its own `4.17vw` is 80 at the design width against a
+       bar of 112. Taking the larger of the two keeps Figma's padding wherever
+       Figma's padding is already enough. -->
   <section
-    class="flex snap-screen flex-col justify-center bg-[linear-gradient(180deg,transparent_0%,var(--color-surface-dark)_100%)] px-5 py-16 md:px-10 lg:px-20 lg:py-[4.17vw]"
+    class="flex snap-screen flex-col justify-center bg-[linear-gradient(180deg,transparent_0%,var(--color-surface-dark)_100%)] px-5 pt-28 pb-16 md:px-10 lg:px-20 lg:pt-[max(var(--nav-clearance),4.17vw)] lg:pb-[4.17vw]"
   >
     <MotionReveal :y="40">
+    <!-- The gold statement heading `Mission` uses — Bebas 100/108 under the
+         `text-gold-gradient` sweep, in place of the plain white sans 72 this and
+         the two governance sections carried. Applied on the repo owner's call so
+         the four read as one family.
+
+         `w-fit` is not decoration. The sweep is `bg-clip-text`, and a background
+         is painted across the ELEMENT's box before it is clipped to the glyphs —
+         a block-level heading takes the full column, so the gradient's ends land
+         in the margins and the words get only the flat middle of it. The box has
+         to hug the type. Same fix the home hero's headline needed. -->
       <h2
-        class="font-sans text-[length:var(--text-heading-section)] leading-[1.1] text-white"
+        class="font-display w-fit text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08]"
       >
         {{ FRAMEWORKS_COPY.heading }}
       </h2>

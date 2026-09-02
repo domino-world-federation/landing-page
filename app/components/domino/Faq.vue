@@ -37,9 +37,19 @@ import {
 </script>
 
 <template>
+  <!-- **Top-aligned, not centred, and the section above is the reason.** Referee
+       Guidelines measures ~676px against a 1080 screen, so its stop leaves the
+       top of this section showing underneath it — which is the whole affordance
+       saying there is more of the page. Centred, that visible strip was the empty
+       half of a `min-h-dvh` box and read as the page having run out; from the
+       top, it is this section's heading and its first question.
+  
+       `snap-screen` stays: this is still a stop of its own and still fills the
+       screen when the reader lands on it. Only where the content sits inside that
+       screen changed. -->
   <section
     aria-labelledby="domino-faq-heading"
-    class="px-5 py-14 md:px-10 lg:px-20 lg:py-[4.4792vw]"
+    class="flex snap-screen flex-col px-5 pt-28 pb-14 md:px-10 lg:px-20 lg:pt-[max(var(--nav-clearance),4.4792vw)] lg:pb-[4.4792vw]"
   >
     <UiFaqPanel
       :items="DOMINO_FAQ_ITEMS"

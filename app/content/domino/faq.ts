@@ -88,4 +88,4 @@ export const DOMINO_FAQ_ITEMS: readonly FaqItem[] = [
  * actually the design's, and an accordion where everything is shut opens on a
  * wall of questions with nothing to read.
  */
-export const DOMINO_FAQ_DEFAULT_OPEN = DOMINO_FAQ_ITEMS[1]!.id
+export const DOMINO_FAQ_DEFAULT_OPEN = DOMINO_FAQ_ITEMS[0]!.id

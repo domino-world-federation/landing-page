@@ -55,18 +55,20 @@ const { data: partners } = await useAsyncData("home-partners", () => getPartners
        Vertically the design pads `140 0 70` (`56:4541`) — 7.29vw and 3.65vw of
        the 1920 it is drawn at.
 
-       **The top floor is 144px and it is not the design's number.** This band is
-       where the page's snap comes to rest, so its head lands under a navbar that
-       is up to 112px tall (`NavShell`'s `NAV_HEIGHT`) — and 7.29vw only clears
+       **The floor under it is `--nav-clearance`, and it is not the design's
+       number.** This band is where the page's snap comes to rest, so its head
+       lands under a navbar that is up to 112px tall — and 7.29vw only clears
        that above ~1540px. At 1400 it resolves to 102 against a bar of 102, which
-       puts the heading exactly behind it. 144 clears the bar at every width with
-       room left over, and costs the design 4px at 1920.
+       puts the heading exactly behind it. The token is the site's own answer to
+       that, read by every snapping section on Development, Governance, Integrity
+       and News; taking the larger of it and the design's slope keeps Figma's
+       padding wherever Figma's padding is already enough.
 
        The band no longer carries the snap point itself: it shares one with the
        resource library below it, placed by the page. See the note there. -->
   <section
     aria-labelledby="partners-heading"
-    class="overflow-hidden pt-[max(144px,7.29vw)] pb-[max(48px,3.65vw)]"
+    class="overflow-hidden pt-28 pb-[max(48px,3.65vw)] lg:pt-[max(var(--nav-clearance),7.29vw)]"
   >
     <!-- Figma's 52px gap between heading and row — 2.71vw, floored at 24. -->
     <div class="flex flex-col gap-[max(24px,2.71vw)]">

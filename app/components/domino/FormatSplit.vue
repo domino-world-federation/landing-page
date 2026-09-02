@@ -41,13 +41,21 @@ const [singles, doubles] = FORMATS
        through the copy. -->
   <section
     aria-labelledby="format-singles-heading"
-    class="relative z-10 bg-[linear-gradient(180deg,var(--color-bg)_0%,#1b1b1b_100%)] px-5 py-10 md:px-10 lg:px-20 lg:py-[3.13vw]"
+    class="relative z-10 bg-[linear-gradient(180deg,var(--color-bg)_0%,#1b1b1b_100%)] px-5 py-10 md:px-10 lg:flex lg:flex-col lg:justify-center lg:px-20 lg:py-[3.13vw]"
   >
     <!-- 800 tall in Figma minus its 60px of vertical padding; 35.42vw is
          680/1920. The floor keeps the panels from crushing their three
          statistics rows together on a narrow desktop — the same reason S4 and
          the About HQ band carry one. Below `lg` the height follows the copy. -->
-    <div class="flex flex-col lg:h-[max(560px,35.42vw)] lg:flex-row">
+    <!-- The design's `max(560px, 35.42vw)` is a CAP now rather than a height.
+         The page pins this section to a share of the SCREEN (see `domino.vue`),
+         and a height measured off the viewport's width knows nothing about how
+         tall the window is — on a wide, short one the split kept its 680 and
+         pushed the section past the room it was given. As a flex child it takes
+         what the section has and stops at the design's size. -->
+    <div
+      class="flex flex-col lg:max-h-[max(560px,35.42vw)] lg:min-h-0 lg:flex-1 lg:flex-row"
+    >
       <DominoFormatPanel
         v-if="singles"
         :format="singles"

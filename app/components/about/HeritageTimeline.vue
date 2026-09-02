@@ -138,6 +138,25 @@ const EDGE_MASK =
  * dashes; the second is its stroke gradient, opaque for the top 80% and gone by
  * the foot, so the rules dissolve into the band rather than stopping on a line.
  */
+/**
+ * How far a card's whole column drops, by parity — Figma's own y 240 and 340,
+ * measured down from the marker row.
+ *
+ * Declared here rather than on the card because the card also has to give the
+ * height back: every column is `100% - DROP_MAX` tall, so the two parities keep
+ * the same card size and differ only in where they hang. Two numbers in one
+ * place beats the same two written three times.
+ *
+ * `min(..., dvh)` is the guard the width-based clamps do not have. `13.54vw` is
+ * 260px on any 1920-wide window, including one 800px tall — where a 260px drop
+ * would leave the card 200px of the screen to live in. The viewport-height term
+ * takes over exactly when the window is too short to afford the design's offset.
+ */
+const DROP_STYLE = {
+  "--heritage-drop-min": "min(clamp(32px,8.33vw,160px),14dvh)",
+  "--heritage-drop-max": "min(clamp(32px,13.54vw,260px),22dvh)",
+} as const
+
 const RULES_STYLE = {
   backgroundImage:
     "repeating-linear-gradient(90deg, var(--color-timeline-rule) 0 2px, transparent 2px 220px)",
@@ -155,7 +174,7 @@ const RULES_STYLE = {
        the strip by keyboard is as much in the middle of reading it as someone
        hovering, and only the former pair bubbles up to this wrapper. -->
   <div
-    class="relative"
+    class="relative flex h-full flex-col"
     @pointerenter="paused = true"
     @pointerleave="paused = false"
     @focusin="paused = true"
@@ -184,15 +203,27 @@ const RULES_STYLE = {
       role="region"
       :aria-label="HERITAGE_COPY.timelineLabel"
       tabindex="0"
-      class="overflow-x-auto overscroll-x-contain pb-16 lg:pb-[3.13vw] snap-x snap-proximity scroll-pl-[clamp(20px,18.23vw,350px)] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden cursor-grab active:cursor-grabbing focus-visible:ring-gold focus-visible:ring-2 focus-visible:outline-none"
+      class="min-h-0 flex-1 overflow-x-auto overscroll-x-contain pb-16 lg:pb-[3.13vw] snap-x snap-proximity scroll-pl-[clamp(20px,18.23vw,350px)] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden cursor-grab active:cursor-grabbing focus-visible:ring-gold focus-visible:ring-2 focus-visible:outline-none"
       :style="{ maskImage: EDGE_MASK, WebkitMaskImage: EDGE_MASK }"
     >
       <!-- `select-none`: without it the browser starts its own text/image
            selection the moment the pointer moves, and the drag turns into a
            highlight. -->
-      <div class="select-none" v-on="dragHandlers">
+      <div class="h-full select-none" v-on="dragHandlers">
+        <!-- The heights above this are one chain: the section fixes itself to
+             the screen, the scroller takes what the title leaves, and the cards
+             take what the scroller has — without it the cards size themselves
+             and the section overruns the screen on any window shorter than the
+             card's own `26.04vw`.
+
+             `items-start`, NOT `items-stretch`, and that is what lets the
+             columns hang at different heights: a stretched item is forced to the
+             row's full height, so the drop below would only ever shorten a card
+             rather than move it. Each column states its own height instead and
+             the row leaves it alone. -->
         <ol
-          class="flex w-max list-none gap-[clamp(24px,9.375vw,180px)] pr-[clamp(24px,9.375vw,180px)] pl-[clamp(20px,18.23vw,350px)]"
+          :style="DROP_STYLE"
+          class="flex h-full w-max list-none items-start gap-[clamp(24px,9.375vw,180px)] pr-[clamp(24px,9.375vw,180px)] pl-[clamp(20px,18.23vw,350px)]"
         >
           <AboutMilestoneCard
             v-for="(milestone, i) in milestones"

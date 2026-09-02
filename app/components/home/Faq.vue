@@ -44,7 +44,7 @@ import { FAQ_COPY, FAQ_DEFAULT_OPEN, FAQ_ITEMS } from "~/content/home/faq"
   <section
     id="faq"
     aria-labelledby="faq-heading"
-    class="snap-start snap-always px-5 pt-[max(144px,4.48vw)] pb-[max(64px,4.48vw)] md:px-10 lg:px-20"
+    class="snap-start snap-always px-5 pt-28 pb-[max(64px,4.48vw)] md:px-10 lg:px-20 lg:pt-[max(var(--nav-clearance),4.48vw)]"
   >
     <UiFaqPanel
       :items="FAQ_ITEMS"

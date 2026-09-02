@@ -32,13 +32,13 @@ const SETTLE = DURATION * 1.5
 </script>
 
 <template>
-  <!-- 900/1920 from `lg` up, with a floor for the same reason S4 has one: the
-       text column does not shrink with the window, so pure ratio would squeeze
-       three contact rows and a button against the section's edges on a narrow
-       desktop. Below `lg` the height follows the copy and the picture becomes a
-       backdrop behind it. -->
+  <!-- **A screen of its own, like every other stop on this page.** It was
+       `max(620px, 46.88vw)` — the design's 900 — which on a snapping page is a
+       stop shorter than the screen, and a stop shorter than the screen is one a
+       flick can cross along with whatever follows it. Below `lg` the height
+       follows the copy and the picture becomes a backdrop behind it. -->
   <section
-    class="relative isolate flex min-h-[620px] flex-col justify-center overflow-hidden lg:h-[max(620px,46.88vw)] lg:min-h-0"
+    class="relative isolate flex min-h-[620px] snap-screen flex-col justify-center overflow-hidden lg:h-dvh lg:min-h-0"
   >
     <!-- Slower than anything in front of it — this is the backdrop, so it trails
          the page rather than racing it. `-z-10` keeps the layer behind the copy;
@@ -69,6 +69,29 @@ const SETTLE = DURATION * 1.5
         />
       </MotionReveal>
     </MotionParallaxLayer>
+
+    <!-- **The foot, faded to the page.** `feature-hq-composite.png` carries its
+         own fade to `#0E0E0E` in its bottom rows — which is why the home page's
+         copy of it needs no overlay — but that only survives while the frame
+         keeps the picture's 16:9. This section does not: at the design's 46.88vw
+         it was already cropping the baked fade away, and pinning it to the
+         screen crops more. `object-cover` takes the difference off the top and
+         bottom, so the first thing lost is exactly the thing that made the join
+         seamless, and the section ended on a hard horizontal edge against the
+         footer's black.
+
+         Drawn here instead, where the crop cannot reach it. A gradient rather
+         than a blur: there is nothing behind this to blur, and `backdrop-filter`
+         over a photograph costs a snapshot every frame for a softness a two-stop
+         gradient states outright.
+
+         No z-index: the section is `isolate`, the picture sits at `-z-10`, and
+         this is `z-auto` — above the photograph, and below the copy, which comes
+         after it in the DOM and wins the tie. -->
+    <div
+      aria-hidden="true"
+      class="pointer-events-none absolute inset-x-0 bottom-0 h-[38%] bg-linear-to-b from-transparent to-[var(--color-bg)]"
+    />
 
     <!-- Figma's 44px gap between the three blocks; 2.3vw is 44/1920. Below `lg`
          the column starts at the section gutter, where there is no room to

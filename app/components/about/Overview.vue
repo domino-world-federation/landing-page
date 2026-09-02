@@ -18,7 +18,7 @@ import { OVERVIEW_COPY, OVERVIEW_PILLARS } from "~/content/about/overview"
 
 <template>
   <section
-    class="relative z-10 bg-[var(--color-surface-light)] px-5 py-16 md:px-10 lg:flex lg:justify-between lg:gap-16 lg:px-20 lg:py-[4.17vw]"
+    class="relative z-10 flex flex-col justify-center bg-[var(--color-surface-light)] px-5 py-16 md:px-10 lg:flex-row lg:items-center lg:justify-between lg:gap-16 lg:px-20 lg:py-[4.17vw]"
   >
     <!-- 362 of 1920 for the title column — narrow enough that the Bebas heading
          breaks into the four lines the design draws. -->
