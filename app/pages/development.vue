@@ -86,7 +86,7 @@ useSeoMeta({
 
          No `overflow-hidden` here: clipping on any ancestor of a sticky element
          cancels the sticking. -->
-    <div class="snap-pass relative h-[300dvh]">
+    <div class="snap-pass relative lg:h-[300dvh]">
       <!-- Markers rather than stops on the elements themselves — the picture is
            `sticky` and the band is `sticky` inside an `absolute` panel, so
            neither one's box is where it appears to be once it moves, and a snap
@@ -94,22 +94,22 @@ useSeoMeta({
            are absolutely positioned, add no layout, and never move. -->
       <div
         aria-hidden="true"
-        class="snap-stop pointer-events-none absolute inset-x-0 top-0 h-px"
+        class="snap-stop pointer-events-none absolute inset-x-0 top-0 hidden h-px lg:block"
       />
       <div
         aria-hidden="true"
-        class="snap-stop pointer-events-none absolute inset-x-0 top-[100dvh] h-px"
+        class="snap-stop pointer-events-none absolute inset-x-0 top-[100dvh] hidden h-px lg:block"
       />
       <div
         aria-hidden="true"
-        class="snap-stop pointer-events-none absolute inset-x-0 top-[200dvh] h-px"
+        class="snap-stop pointer-events-none absolute inset-x-0 top-[200dvh] hidden h-px lg:block"
       />
 
       <!-- `snap-screen` rather than a height: the band's own `44.27vw` and a
            `height: 100%` would be the same property fighting over stylesheet
            order, where a minimum simply takes the larger. -->
       <UiStickyBand
-        class="snap-screen"
+        class="lg:snap-screen"
         src="/assets/development/band-classroom-session.png"
         :alt="DEVELOPMENT_HEADER_ALT.band"
         dim
@@ -122,7 +122,7 @@ useSeoMeta({
 
            Youth Program keeps the `z-10` it carries itself, which is what
            decides that it covers the picture rather than being covered. -->
-      <div class="absolute inset-x-0 top-[158dvh] bottom-0 z-10 bg-white">
+      <div class="relative z-10 bg-white lg:absolute lg:inset-x-0 lg:top-[158dvh] lg:bottom-0">
         <DevelopmentYouthProgram
           class="min-h-[42dvh] lg:sticky lg:top-[29dvh] lg:h-[42dvh]"
         />

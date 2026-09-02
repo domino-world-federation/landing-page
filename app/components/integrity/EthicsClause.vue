@@ -55,7 +55,7 @@ const dim = computed(() =>
 <template>
   <Motion
     as="div"
-    class="flex flex-col"
+    class="column-block flex flex-col"
     :initial="{ opacity: IDLE }"
     :animate="{ opacity: focused ? 1 : IDLE, transition: dim }"
     :style="{ willChange: 'opacity' }"

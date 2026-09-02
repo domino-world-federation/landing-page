@@ -170,8 +170,7 @@ const SLOT = "min(clamp(15rem, 17.45vw, 20.94rem), 26dvh)"
              `dvh` term the column is clipped rather than pushing the picture off
              the screen. -->
         <div
-          class="relative h-[calc(var(--column-slot)*var(--ethics-window))] min-h-0 w-full shrink overflow-hidden"
-          :style="{ maskImage: COLUMN_MASK, WebkitMaskImage: COLUMN_MASK }"
+          class="column-mask relative w-full lg:h-[calc(var(--column-slot)*var(--ethics-window))] lg:min-h-0 lg:shrink lg:overflow-hidden"
         >
           <Motion
             as="div"
@@ -186,7 +185,7 @@ const SLOT = "min(clamp(15rem, 17.45vw, 20.94rem), 26dvh)"
             <div
               v-for="(clause, i) in cells"
               :key="`${clause.id}-${i}`"
-              class="flex h-[var(--column-slot)] flex-col justify-center"
+              class="flex flex-col justify-center py-8 lg:h-[var(--column-slot)] lg:py-0"
             >
               <!-- `reading` is gated on the column being on screen as well as on
                    the clause holding the slot, so the first sentence is read

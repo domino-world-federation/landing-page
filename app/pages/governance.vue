@@ -92,25 +92,25 @@ useSeoMeta({
 
          No `overflow-hidden` here: clipping on any ancestor of a sticky element
          cancels the sticking. -->
-    <div class="snap-pass relative h-[300dvh]">
+    <div class="snap-pass relative lg:h-[300dvh]">
       <!-- Markers rather than stops on the elements themselves — the picture is
            `sticky` and the band is `sticky` inside an `absolute` panel, so
            neither one's box is where it appears to be once it moves. -->
       <div
         aria-hidden="true"
-        class="snap-stop pointer-events-none absolute inset-x-0 top-0 h-px"
+        class="snap-stop pointer-events-none absolute inset-x-0 top-0 hidden h-px lg:block"
       />
       <div
         aria-hidden="true"
-        class="snap-stop pointer-events-none absolute inset-x-0 top-[100dvh] h-px"
+        class="snap-stop pointer-events-none absolute inset-x-0 top-[100dvh] hidden h-px lg:block"
       />
       <div
         aria-hidden="true"
-        class="snap-stop pointer-events-none absolute inset-x-0 top-[200dvh] h-px"
+        class="snap-stop pointer-events-none absolute inset-x-0 top-[200dvh] hidden h-px lg:block"
       />
 
       <UiStickyBand
-        class="snap-screen"
+        class="lg:snap-screen"
         src="/assets/governance/band-governance-assembly.png"
         :alt="GOVERNANCE_COPY.bandAlt"
       />
@@ -120,7 +120,7 @@ useSeoMeta({
            `bg-white` because that is what Overview itself is — this page's one
            white ground, and the two have to meet invisibly. Overview keeps the
            `z-10` it carries itself, which decides that it covers the picture. -->
-      <div class="absolute inset-x-0 top-[150dvh] bottom-0 z-10 bg-white">
+      <div class="relative z-10 bg-white lg:absolute lg:inset-x-0 lg:top-[150dvh] lg:bottom-0">
         <GovernanceOverview
           class="min-h-[50dvh] lg:sticky lg:top-[25dvh] lg:h-[50dvh]"
         />

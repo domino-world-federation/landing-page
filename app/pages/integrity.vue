@@ -87,25 +87,25 @@ useSeoMeta({
 
          No `overflow-hidden` here: clipping on any ancestor of a sticky element
          cancels the sticking. -->
-    <div class="snap-pass relative h-[300dvh]">
+    <div class="snap-pass relative lg:h-[300dvh]">
       <!-- Markers rather than stops on the elements themselves — the picture is
            `sticky` and the band is `sticky` inside an `absolute` panel, so
            neither one's box is where it appears to be once it moves. -->
       <div
         aria-hidden="true"
-        class="snap-stop pointer-events-none absolute inset-x-0 top-0 h-px"
+        class="snap-stop pointer-events-none absolute inset-x-0 top-0 hidden h-px lg:block"
       />
       <div
         aria-hidden="true"
-        class="snap-stop pointer-events-none absolute inset-x-0 top-[100dvh] h-px"
+        class="snap-stop pointer-events-none absolute inset-x-0 top-[100dvh] hidden h-px lg:block"
       />
       <div
         aria-hidden="true"
-        class="snap-stop pointer-events-none absolute inset-x-0 top-[200dvh] h-px"
+        class="snap-stop pointer-events-none absolute inset-x-0 top-[200dvh] hidden h-px lg:block"
       />
 
       <UiStickyBand
-        class="snap-screen"
+        class="lg:snap-screen"
         src="/assets/integrity/band-integrity-hall.png"
         :alt="INTEGRITY_COPY.bandAlt"
       />
@@ -116,7 +116,7 @@ useSeoMeta({
            page's one white ground, and the two have to meet invisibly. The
            section keeps the `z-10` it carries itself, which decides that it
            covers the picture. -->
-      <div class="absolute inset-x-0 top-[135dvh] bottom-0 z-10 bg-white">
+      <div class="relative z-10 bg-white lg:absolute lg:inset-x-0 lg:top-[135dvh] lg:bottom-0">
         <IntegrityPrinciples
           class="min-h-[65dvh] lg:sticky lg:top-[17.5dvh] lg:h-[65dvh]"
         />

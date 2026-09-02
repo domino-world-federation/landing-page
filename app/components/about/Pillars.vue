@@ -94,8 +94,7 @@ const { steps, cells, index, inView, trackY, trackTransition, isPad } =
          360px slots) and what gives the focused block a neighbour to fade out
          above it and one to fade in below. -->
     <div
-      class="relative h-[calc(var(--column-slot)*3)] w-full overflow-hidden lg:w-[42.71%]"
-      :style="{ maskImage: COLUMN_MASK, WebkitMaskImage: COLUMN_MASK }"
+      class="column-mask relative w-full lg:h-[calc(var(--column-slot)*3)] lg:w-[42.71%] lg:overflow-hidden"
     >
       <Motion
         as="div"
@@ -110,10 +109,18 @@ const { steps, cells, index, inView, trackY, trackTransition, isPad } =
              Each cell is one slot tall with its block centred in it: that is
              what makes a single fixed translation land every block in the same
              place, whichever of the three it is. -->
+        <!-- The padded copies are hidden below `lg`: with no turn they are
+             not neighbours waiting their turn, they are the last claim printed
+             before the first one and the first printed again after the last. -->
         <div
           v-for="(pillar, i) in cells"
           :key="`${pillar.id}-${i}`"
-          class="flex h-[var(--column-slot)] flex-col justify-center"
+          :class="
+            cn(
+              'flex flex-col justify-center py-8 lg:h-[var(--column-slot)] lg:py-0',
+              isPad(i) && 'hidden lg:flex',
+            )
+          "
         >
           <!-- `reading` is gated on the column being on screen as well as on the
                block holding the slot, so the first sentence is read when the

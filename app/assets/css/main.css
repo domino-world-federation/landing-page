@@ -688,10 +688,65 @@ html.snap-sections .snap-stop {
  * overlays, as the design draws it, and a section that needs room beneath it
  * spends its own padding on it.
  *
+ * `@utility` rather than a plain class so it can carry variants: the five pages
+ * that pin a photograph want it only from `lg`, where the snapping it is named
+ * for actually exists. Below that a band forced to a full screen is a
+ * photograph the reader has to scroll past to reach the words.
+ *
  * Named rather than left as `min-h-dvh` at nine call sites so the next change to
  * what "one screen" means happens once.
  */
-.snap-screen {
+/*
+ * The turning column's window — About's pillars (`566:13543`) and Integrity's
+ * code of ethics (`762:1323`), where a rectangle running transparent → opaque →
+ * transparent masks a column of blocks so only the middle one is fully lit.
+ *
+ * **Only from `lg`, because below it nothing turns.** The column is advanced by
+ * scrolling a track one viewport per block, and that track only exists at `lg`
+ * (a three-screen track with a pinned stage is three screens of nothing to
+ * scroll past on a phone). Without the turn the mask stops being a spotlight and
+ * becomes a permanent fade over blocks the reader can never bring into the
+ * clear — so on a phone the column is simply a list, in full.
+ *
+ * A class rather than the inline `:style` it used to be: the mask has to switch
+ * off at a breakpoint, and an inline style cannot. It is also the only way the
+ * two components can stop restating the same four declarations.
+ */
+@media (width >= 64rem) {
+  .column-mask {
+    mask-image: linear-gradient(
+      180deg,
+      transparent 0%,
+      #000 30%,
+      #000 70%,
+      transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+      180deg,
+      transparent 0%,
+      #000 30%,
+      #000 70%,
+      transparent 100%
+    );
+  }
+}
+
+/*
+ * A block in a turning column, at full strength below `lg`.
+ *
+ * The block dims itself to the design's resting opacity when it is not the one
+ * in the lit slot, and `motion` writes that as an inline style — which is why
+ * this needs `!important` to reach it. It has to: with no turn on a phone, two
+ * of the three blocks would sit at 0.4 or 0.5 forever, and body copy at 40%
+ * white on `#0E0E0E` is not text anyone should be asked to read.
+ */
+@media (width < 64rem) {
+  .column-block {
+    opacity: 1 !important;
+  }
+}
+
+@utility snap-screen {
   min-height: 100dvh;
 }
 

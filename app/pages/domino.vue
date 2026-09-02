@@ -71,7 +71,7 @@ useHead({ htmlAttrs: { class: "snap-sections" } })
 
          No `overflow-hidden` here: clipping on any ancestor of a sticky element
          cancels the sticking. -->
-    <div class="snap-pass relative h-[200dvh]">
+    <div class="snap-pass relative lg:h-[200dvh]">
       <!-- Markers rather than stops on the elements themselves — the picture is
            `sticky` and the formats are `absolute`, so neither one's box is where
            it appears to be, and a snap position attached to either would travel
@@ -79,18 +79,18 @@ useHead({ htmlAttrs: { class: "snap-sections" } })
            never move. -->
       <div
         aria-hidden="true"
-        class="snap-stop pointer-events-none absolute inset-x-0 top-0 h-px"
+        class="snap-stop pointer-events-none absolute inset-x-0 top-0 hidden h-px lg:block"
       />
       <div
         aria-hidden="true"
-        class="snap-stop pointer-events-none absolute inset-x-0 top-[100dvh] h-px"
+        class="snap-stop pointer-events-none absolute inset-x-0 top-[100dvh] hidden h-px lg:block"
       />
 
       <!-- `snap-screen` rather than a height: the band's own `44.27vw` and a
            `height: 100%` would be the same property fighting over stylesheet
            order, where a minimum simply takes the larger. -->
       <UiStickyBand
-        class="snap-screen"
+        class="lg:snap-screen"
         src="/assets/domino/band-table-match.png"
         :alt="DOMINO_HEADER_ALT.band"
       />
@@ -98,7 +98,7 @@ useHead({ htmlAttrs: { class: "snap-sections" } })
       <!-- `z-10` over the picture's `z-0` decides which covers which. The
            formats carry their own opaque gradient, so they hide the photograph
            where they land rather than veiling it. -->
-      <div class="absolute inset-x-0 bottom-0 z-10">
+      <div class="relative z-10 lg:absolute lg:inset-x-0 lg:bottom-0">
         <DominoFormatSplit class="min-h-[74dvh] lg:h-[74dvh]" />
       </div>
     </div>

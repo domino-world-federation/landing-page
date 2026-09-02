@@ -17,22 +17,6 @@ import type { ShallowRef } from "vue"
 const TURN_EASE = { duration: 1.15, ease: EASE } as const
 
 /**
- * The window's own fade — transparent → opaque → transparent down the column.
- *
- * Figma draws it as a rectangle masking a group: `566:13543` on About's pillars
- * and `762:1323` on Integrity's code of ethics, both `rgba(255,255,255,0)` →
- * white at 35% → white at 65% → nothing. Rounded to 30/70 here because the
- * column is three slots and those are the slot boundaries.
- *
- * It is a `mask-image` rather than two gradient overlays, and that is the only
- * version that works: the ground behind these sections is `--color-bg` in some
- * places and a vignette in others, so an overlay would have to know what colour
- * it is covering. A mask removes the type instead of painting over it.
- */
-export const COLUMN_MASK =
-  "linear-gradient(180deg, transparent 0%, #000 30%, #000 70%, transparent 100%)"
-
-/**
  * A column of blocks that take turns holding one lit slot, turned by the
  * reader's scroll — the construction About's pillars (`566:13542`) and
  * Integrity's code of ethics (`762:1320`) are both drawn as.

@@ -83,7 +83,7 @@ useHead({ htmlAttrs: { class: "snap-sections" } })
 
          No `overflow-hidden` here, and it matters: clipping on any ancestor of a
          sticky element cancels the sticking. -->
-    <div class="snap-pass relative h-[300dvh]">
+    <div class="snap-pass relative lg:h-[300dvh]">
       <!-- The beats. Markers rather than stops on the elements themselves, and
            the distinction is the whole reason these exist — the picture is
            `sticky` and the band is `sticky` inside an `absolute` panel, so
@@ -94,15 +94,15 @@ useHead({ htmlAttrs: { class: "snap-sections" } })
            notches. -->
       <div
         aria-hidden="true"
-        class="snap-stop pointer-events-none absolute inset-x-0 top-0 h-px"
+        class="snap-stop pointer-events-none absolute inset-x-0 top-0 hidden h-px lg:block"
       />
       <div
         aria-hidden="true"
-        class="snap-stop pointer-events-none absolute inset-x-0 top-[100dvh] h-px"
+        class="snap-stop pointer-events-none absolute inset-x-0 top-[100dvh] hidden h-px lg:block"
       />
       <div
         aria-hidden="true"
-        class="snap-stop pointer-events-none absolute inset-x-0 top-[200dvh] h-px"
+        class="snap-stop pointer-events-none absolute inset-x-0 top-[200dvh] hidden h-px lg:block"
       />
 
       <!-- `snap-screen` rather than a height: the band's own `44.27vw` and a
@@ -110,7 +110,7 @@ useHead({ htmlAttrs: { class: "snap-sections" } })
            order, where a minimum simply takes the larger. A screen is the larger
            at every window this page snaps at. -->
       <UiStickyBand
-        class="snap-screen"
+        class="lg:snap-screen"
         src="/assets/about/authority-leadership-group.png"
         :alt="ABOUT_HEADER_ALT.band"
       />
@@ -135,7 +135,7 @@ useHead({ htmlAttrs: { class: "snap-sections" } })
            `min-h` below `lg`, where the columns stack and the copy is taller
            than the 42dvh the desktop band is held to. -->
       <div
-        class="absolute inset-x-0 top-[158dvh] bottom-0 z-10 bg-[var(--color-surface-light)]"
+        class="relative z-10 bg-[var(--color-surface-light)] lg:absolute lg:inset-x-0 lg:top-[158dvh] lg:bottom-0"
       >
         <AboutOverview
           class="min-h-[42dvh] lg:sticky lg:top-[29dvh] lg:h-[42dvh]"
