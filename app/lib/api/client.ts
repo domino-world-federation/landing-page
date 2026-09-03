@@ -8,6 +8,10 @@
  */
 
 import { ofetch, type FetchOptions } from "ofetch"
+import { FAQ_ITEMS as HOME_FAQ_ITEMS } from "~/content/home/faq"
+import { DOMINO_FAQ_ITEMS } from "~/content/domino/faq"
+import { TOURNAMENT_FAQ_ITEMS } from "~/content/tournaments/faq"
+import { FAQ_PAGE_ITEMS } from "~/content/faq/items"
 
 import {
   MOCK_BOARD_MEMBERS,
@@ -50,6 +54,8 @@ import type {
   TournamentDetail,
   TournamentRegistration,
   SiteSeo,
+  Faq,
+  FaqPlacement,
 } from "./types"
 
 /**
@@ -519,4 +525,55 @@ export async function subscribeToTournament(
 export async function getSiteSeo(): Promise<SiteSeo> {
   if (useMock()) return { default: {}, pages: {} }
   return request<SiteSeo>("/seo")
+}
+
+/**
+ * The questions pinned to one page, IN THE ORDER the CMS puts them.
+ *
+ * `placement` — not `page`. `page` is the universal name for "which page of
+ * results", and the first person to add pagination here would collide with it.
+ * What this names is the placement: the backoffice screen is "FAQ per Page" and
+ * the table behind it is `faq_placements`.
+ *
+ * **The order is the whole point.** Each page keeps its own ranking, so the
+ * same question can be first on `/domino` and third on `/tournaments`. Do not
+ * sort the result — it arrives sorted, and re-sorting it here would throw away
+ * the only thing the CMS screen exists to set.
+ *
+ * Without a placement the whole list comes back, which is what the FAQ page
+ * reads before grouping it into its own drawers.
+ *
+ * Mock falls back to the copy that ships in `content/`, so a clone with no
+ * `NUXT_PUBLIC_API_BASE_URL` still renders every FAQ section.
+ */
+export async function getFaqs(placement?: FaqPlacement): Promise<Faq[]> {
+  if (useMock()) return mockFaqs(placement)
+
+  const query = placement ? `?placement=${encodeURIComponent(placement)}` : ""
+
+  return request<Faq[]>(`/faqs${query}`)
+}
+
+/**
+ * The static copy, shaped like the API's answer.
+ *
+ * Reads `content/` rather than holding a second copy in `mock/`: those files
+ * ARE the current source for these three sections, and a duplicate would drift
+ * the first time somebody corrected a typo in one of them.
+ */
+function mockFaqs(placement?: FaqPlacement): Faq[] {
+  const source =
+    placement === "home"
+      ? HOME_FAQ_ITEMS
+      : placement === "domino"
+        ? DOMINO_FAQ_ITEMS
+        : placement === "tournament"
+          ? TOURNAMENT_FAQ_ITEMS
+          : FAQ_PAGE_ITEMS
+
+  return source.map((item) => ({
+    id: item.id,
+    question: item.question,
+    answer: item.answer,
+  }))
 }

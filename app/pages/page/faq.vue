@@ -71,10 +71,16 @@ const term = computed(() => q.value?.trim().toLowerCase() ?? "")
  * been emphasised mid-sentence.
  */
 function matches(item: FaqPageItem, needle: string) {
-  return [item.question, ...item.answer.map((segment) => segment.text)]
-    .join(" ")
-    .toLowerCase()
-    .includes(needle)
+  // `answer` carries two shapes — segments for copy in this repo, sanitised
+  // HTML for anything from the CMS (see `FaqItem.answer`). Both are flattened
+  // to plain text before matching; searching HTML source would let a reader
+  // find a question by typing `strong`.
+  const answer =
+    typeof item.answer === "string"
+      ? item.answer.replace(/<[^>]*>/g, " ")
+      : item.answer.map((segment) => segment.text).join(" ")
+
+  return [item.question, answer].join(" ").toLowerCase().includes(needle)
 }
 
 // Filtered in two passes so the two controls compose: narrowing to a topic and

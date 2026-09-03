@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { FaqItem } from "~/types/faq"
+import type { FaqItem, FaqSegment } from "~/types/faq"
 
 /**
  * Seconds for a panel to open or close.
@@ -74,6 +74,17 @@ const props = withDefaults(
  * Stated here so a page added later inherits it rather than choosing again.
  */
 const openId = ref(props.defaultOpenId ?? props.items[0]?.id)
+
+/**
+ * Menyempitkan `answer` ke bentuk potongan.
+ *
+ * Ada karena `v-else` pada `v-for` tidak membawa penyempitan tipe dari `v-if`
+ * di atasnya — TypeScript tetap melihat `FaqSegment[] | string` di dalam
+ * perulangan, dan `segment.strong` jadi galat.
+ */
+function segmentsOf(item: FaqItem): readonly FaqSegment[] {
+  return typeof item.answer === "string" ? [] : item.answer
+}
 const prefersReducedMotion = useReducedMotion()
 
 const dark = computed(() => props.tone === "dark")
@@ -269,10 +280,21 @@ function toggle(id: string) {
             )
           "
         >
-          <!-- Figma bolds these phrases without linking them (`81:701`), so the
-               emphasis is the content's, not a control's — `<strong>`/`<em>`,
-               not styled spans. -->
-          <template v-for="(segment, s) in item.answer" :key="s">
+          <!-- Two shapes, branched on `typeof` — see `FaqItem.answer`.
+
+               A STRING is sanitised HTML from the CMS. `v-html` is safe here
+               and only here: the server runs every answer through `Purifier`
+               before storing it, narrowed to bold/italic/underline/strike,
+               lists and links. Sanitising again in the browser would be
+               theatre — it cannot undo what a compromised server sent, and it
+               would strip the lists the editor's own toolbar produces. -->
+          <span v-if="typeof item.answer === 'string'" v-html="item.answer" />
+
+          <!-- SEGMENTS are copy that lives in this repo. Figma bolds these
+               phrases without linking them (`81:701`), so the emphasis is the
+               content's, not a control's — `<strong>`/`<em>`, not styled
+               spans. -->
+          <template v-for="(segment, s) in segmentsOf(item)" v-else :key="s">
             <strong v-if="segment.strong" class="font-bold">{{ segment.text }}</strong>
             <em v-else-if="segment.em">{{ segment.text }}</em>
             <span v-else>{{ segment.text }}</span>

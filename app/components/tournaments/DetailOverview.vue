@@ -16,21 +16,16 @@ import { TOURNAMENT_DETAIL_COPY } from "~/content/tournaments/detail"
  * so the sections are collected first and the rule is drawn *between* whatever
  * survives, never as part of a block.
  *
- * The summary is one field split on blank lines. Figma types two paragraphs
- * (`517:2047`); storing them as an array would make the API decide where the
- * paragraph breaks go, and storing the newlines and printing them raw would set
- * both paragraphs as one wall.
+ * The summary is one field, and what is IN that field depends on who filled it:
+ * the mock writes plain text with a blank line between paragraphs, the CMS's
+ * rich editor sends markup. `ui/RichText` takes either — see its note. Figma
+ * types two paragraphs (`517:2047`); storing them as an array would make the API
+ * decide where the paragraph breaks go.
  */
 const props = defineProps<{ tournament: TournamentDetail }>()
 
 const COPY = TOURNAMENT_DETAIL_COPY.overview
 
-const paragraphs = computed(() =>
-  props.tournament.summary
-    .split(/\n\s*\n/)
-    .map((p) => p.trim())
-    .filter(Boolean),
-)
 
 /**
  * Which blocks this tournament actually has, in the design's order.
@@ -42,7 +37,11 @@ const paragraphs = computed(() =>
 const blocks = computed(() =>
   (
     [
-      { id: "overview", heading: COPY.heading, show: paragraphs.value.length > 0 },
+      {
+        id: "overview",
+        heading: COPY.heading,
+        show: Boolean(props.tournament.summary?.trim()),
+      },
       {
         id: "eligibility",
         heading: COPY.eligibility,
@@ -92,15 +91,15 @@ const FACT_GRID = "grid auto-rows-fr gap-5 menu-lg:grid-cols-2"
             <h2 :class="HEADING">{{ block.heading }}</h2>
           </MotionReveal>
 
-          <template v-if="block.id === 'overview'">
-            <p
-              v-for="paragraph in paragraphs"
-              :key="paragraph"
-              class="font-sans text-[length:var(--text-display-caption)] leading-[1.5] text-[#616161]"
-            >
-              {{ paragraph }}
-            </p>
-          </template>
+          <!-- The summary is a field an editor typed into, so it can arrive as
+               plain text with blank lines OR as the rich editor's own markup —
+               `ui/RichText` decides which and sanitises the second. It was set
+               as text either way, which printed `<p>` tags on the page. -->
+          <UiRichText
+            v-if="block.id === 'overview'"
+            :text="tournament.summary"
+            class="font-sans text-[length:var(--text-display-caption)] leading-[1.5] text-[#616161]"
+          />
 
           <div v-else-if="block.id === 'eligibility'" :class="FACT_GRID">
             <TournamentsDetailFactCard

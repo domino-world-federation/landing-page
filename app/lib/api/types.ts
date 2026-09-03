@@ -637,3 +637,25 @@ export type SiteSeo = {
   default: PageSeo
   pages: Record<string, PageSeo>
 }
+
+/** The three pages a question can be pinned to — `Faq::PAGES` on the server. */
+export type FaqPlacement = "home" | "domino" | "tournament"
+
+/**
+ * One question as `GET /faqs` sends it.
+ *
+ * `answer` is sanitised HTML, not the `FaqSegment[]` the copy files use: the
+ * federation writes these in a rich-text editor whose toolbar includes lists
+ * and links, and a flat run of segments cannot represent either. `FaqAccordion`
+ * takes both — see `FaqItem.answer` in `~/types/faq`.
+ *
+ * `category` is present so the FAQ page can build its drawers from the
+ * questions that exist rather than from a hardcoded list — a drawer with
+ * nothing in it is never drawn.
+ */
+export type Faq = {
+  id: string
+  question: string
+  answer: string | readonly { text: string; strong?: boolean; em?: boolean }[]
+  category?: { slug: string; name: string }
+}

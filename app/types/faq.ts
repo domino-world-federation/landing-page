@@ -31,5 +31,25 @@ export type FaqSegment = {
 export type FaqItem = {
   id: string
   question: string
-  answer: readonly FaqSegment[]
+  /**
+   * Two shapes, and the difference is who wrote the answer.
+   *
+   * `FaqSegment[]` — copy that lives in this repo (`content/domino/faq.ts` and
+   * the FAQ page's own list). Segments rather than markdown for the reason
+   * above: a translator moving `**` markers by hand is a parsing bug waiting to
+   * happen, and this way the compiler checks it.
+   *
+   * `string` — sanitised HTML from the CMS, which is what `GET /faqs` sends.
+   * The reasoning for segments does not reach this case: the federation writes
+   * these in a rich-text editor whose toolbar includes bulleted lists and
+   * links, and **a flat run of segments cannot represent either**. The server
+   * runs every answer through `Purifier` before storing it, so the HTML that
+   * arrives here is already narrowed to bold, italic, underline, strike, lists
+   * and links.
+   *
+   * `FaqAccordion` branches on `typeof`. Both render the same typography — the
+   * point of keeping both is that the static pages did not have to be rewritten
+   * to make the CMS work.
+   */
+  answer: readonly FaqSegment[] | string
 }
