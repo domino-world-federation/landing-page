@@ -799,32 +799,26 @@ html.snap-sections {
    */
   --nav-clearance: 7rem;
 
-  /* The scrollbar goes with it. A snapping page does not scroll the way the bar
-     says it does: the thumb jumps a section at a time rather than tracking the
-     gesture, and its length claims a proportion of the document that the reader
-     can never actually rest at. Same three declarations the carousels use — the
-     property is standard in Firefox and Chromium, and the pseudo-element is what
-     Safari still needs.
+  /* **The scrollbar stays.** It was hidden here, on the argument that a snapping
+     page does not scroll the way the bar says it does — the thumb jumps a
+     section at a time rather than tracking the gesture, and its length claims a
+     proportion of the document the reader can never rest at. All true, and none
+     of it worth what it cost: a page with no bar gives no sign of how long it
+     is or how far down it the reader has come, and eight of this site's pages
+     are long. The repo owner asked for it back, everywhere.
 
-     It costs nothing that matters here. Hiding the bar does not disable
-     scrolling: the wheel, the trackpad, Page Up/Down, Home/End, space and the
-     arrows all still drive the page, and the snap positions are what they land
-     on. On Windows and Linux it also takes back the ~15px gutter a classic
-     scrollbar reserves, which puts `100vw` and the layout's own width back in
-     agreement — the vw-based Figma measurements across this page are written
-     assuming the two are the same number. */
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+     What went with it is the ~15px gutter a classic scrollbar reserves on
+     Windows and Linux, which is why the vw-based Figma measurements across these
+     pages — written assuming `100vw` and the layout's own width are the same
+     number — can now differ from it by that much. `scrollbar-gutter: stable`
+     is the fix if that ever shows; it is not set today because it would reserve
+     the gutter on macOS too, where overlay scrollbars mean there is none. */
 }
 
 @media (min-width: 64rem) {
   html.snap-sections {
     scroll-snap-type: y mandatory;
   }
-}
-
-html.snap-sections::-webkit-scrollbar {
-  display: none;
 }
 
 /* Parallax is disabled entirely, not slowed down (RULES §12).
