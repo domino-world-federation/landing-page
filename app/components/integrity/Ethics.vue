@@ -29,10 +29,10 @@ import { ETHICS_CLAUSES } from "~/content/integrity/ethics"
  * clause being read rises to the reading line, the next comes up under it, and
  * the bite in the picture's edge moves to stand beside it.
  *
- * **It is a track, not a screen.** One viewport per clause with the stage pinned
- * inside, so reaching the technical section means having scrolled past all three
- * — the same reason the pillars stopped turning themselves, and the same reason
- * this page snaps at all.
+ * **It is a track, not a screen.** A viewport per clause plus one, with the stage
+ * pinned inside, so reaching the technical section means having scrolled past
+ * all three — the same reason the pillars stopped turning themselves, and the
+ * same reason this page snaps at all.
  */
 const COPY = INTEGRITY_COPY
 
@@ -46,7 +46,7 @@ const column = useTemplateRef<HTMLDivElement>("column")
  * a copy of the last block above the first. Here that drew `03` above `01`: a
  * list out of order, which is the one thing a numbered list may not be.
  */
-const { steps, cells, index, readingProgress, travel, scrolled, isPad } =
+const { screens, cells, index, readingProgress, travel, scrolled, isPad } =
   useTurningColumn(track, stage, ETHICS_CLAUSES, {
     pad: false,
     viewport,
@@ -82,19 +82,24 @@ const fade = computed(() => ({ duration: DURATION, ease: EASE }))
 </script>
 
 <template>
-  <!-- `snap-pass` because the track is three screens tall, and a snap area
+  <!-- A screen per clause plus one: the extra is the last clause's own reading,
+       since a track of `n` screens has `n` stops but only `n − 1` screens of
+       travel between them, and the last clause would otherwise arrive exactly as
+       the scroll ran out.
+
+       `snap-pass` because the track is several screens tall, and a snap area
        taller than the screen is a band the reader may rest ANYWHERE inside
        rather than a position — `main.css` records the rule at length. The
        notches below are the stops instead, one per clause.
 
        The track only exists from `lg`. Below it the column and the picture stack
        and the height has to come from them, and the page does not snap there at
-       all — a three-screen track with a pinned stage would be three screens of
-       nothing to scroll past. -->
+       all — a multi-screen track with a pinned stage would be that many screens
+       of nothing to scroll past. -->
   <section
     ref="track"
     aria-labelledby="ethics-heading"
-    :style="{ '--ethics-steps': steps, '--column-fade': '12%' }"
+    :style="{ '--ethics-steps': screens, '--column-fade': '12%' }"
     class="snap-pass relative lg:h-[calc(var(--ethics-steps)*100dvh)] lg:motion-reduce:h-dvh"
   >
     <!-- One snap point per notch, so a gesture turns the column exactly once.
@@ -111,7 +116,7 @@ const fade = computed(() => ({ duration: DURATION, ease: EASE }))
       class="pointer-events-none absolute inset-x-0 top-0 hidden h-full lg:block lg:motion-reduce:hidden"
     >
       <div
-        v-for="notch in steps"
+        v-for="notch in screens"
         :key="notch"
         class="h-dvh snap-start snap-always"
       />

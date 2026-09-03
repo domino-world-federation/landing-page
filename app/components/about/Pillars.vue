@@ -47,7 +47,7 @@ const column = useTemplateRef<HTMLDivElement>("column")
  * with the column opening at the top rather than centred it is simply the wrong
  * claim in the first position. See the composable.
  */
-const { steps, cells, index, readingProgress, travel, scrolled } =
+const { screens, cells, index, readingProgress, travel, scrolled } =
   useTurningColumn(track, stage, PILLARS, {
     pad: false,
     viewport,
@@ -83,23 +83,20 @@ const fade = computed(() => ({ duration: DURATION, ease: EASE }))
 </script>
 
 <template>
-  <!-- **A track, one viewport per CLAIM, with the stage pinned inside it.** The
-       scroll through this track is what advances the column, so the reader
-       cannot reach the next section without having passed all three claims.
+  <!-- **A track, a screen per claim plus one, with the stage pinned inside it.**
+       The scroll through it is what advances the column, so the reader cannot
+       reach the next section without having passed all three claims.
 
-       Per claim and not per move, and the difference is a claim that never got
-       read. A track `moves × 100dvh` tall has `moves` resting positions, and the
-       progress at them is 0 and 1 — nothing in between, because the pinned
-       travel is one screen and the first snap point is its start and the second
-       its end. With three claims that skipped the middle one entirely: it was
-       current only while a gesture was passing THROUGH it, which on a page that
-       snaps is never. `claims` viewports give `claims` places to stand, at 0,
-       ½ and 1, which is one apiece. -->
+       The extra screen is the last claim's own reading. A track of `n` screens
+       has `n` snap positions and `n − 1` screens of travel between them, so with
+       a screen per claim the last one arrives exactly as the scroll runs out and
+       is never read at all — which is the fault this pays for.
 
        `snap-pass` because the track is several screens tall, and a snap area
        taller than the screen is a band the reader may rest ANYWHERE inside
        rather than a position — `main.css` records the rule at length. The
-       notches below are the stops instead.
+       notches below are the stops instead, one per screen, so every claim has a
+       place to be arrived at and read.
 
        The track only exists from `lg`. Below it the column and the picture stack
        and the height has to come from them, and the page does not snap there at
@@ -107,7 +104,7 @@ const fade = computed(() => ({ duration: DURATION, ease: EASE }))
        of nothing to scroll past. -->
   <section
     ref="track"
-    :style="{ '--pillars-steps': steps, '--column-fade': '12%' }"
+    :style="{ '--pillars-steps': screens, '--column-fade': '12%' }"
     class="snap-pass relative lg:h-[calc(var(--pillars-steps)*100dvh)] lg:motion-reduce:h-dvh"
   >
     <!-- One snap point per claim, so every claim has a place the reader can
@@ -125,7 +122,7 @@ const fade = computed(() => ({ duration: DURATION, ease: EASE }))
       class="pointer-events-none absolute inset-x-0 top-0 hidden h-full lg:block lg:motion-reduce:hidden"
     >
       <div
-        v-for="notch in steps"
+        v-for="notch in screens"
         :key="notch"
         class="h-dvh snap-start snap-always"
       />
@@ -154,7 +151,7 @@ const fade = computed(() => ({ duration: DURATION, ease: EASE }))
              draws. -->
         <AboutPillarCounter
           :value="index + 1"
-          :total="steps"
+          :total="cells.length"
           :label="PILLARS_COPY.counterLabel"
           class="shrink-0"
         />

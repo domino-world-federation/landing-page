@@ -116,12 +116,20 @@ export function useTurningColumn<T>(
     offset: ["start start", "end end"],
   })
 
-  useMotionValueEvent(scrollYProgress, "change", (progress: number) => {
-    const turns = steps.value - 1
-    if (turns < 1 || !Number.isFinite(progress)) return
+  /**
+   * The block the section is CURRENTLY presenting — what the counter reads, what
+   * the picture shows, and which block is at full strength.
+   *
+   * It hands over halfway through the move rather than halfway through the step:
+   * the picture changing while its own sentence is still being read is the swap
+   * arriving before the words it belongs to.
+   */
+  watchEffect(() => {
+    const { block, into } = step.value
+    const handedOver = into > (1 + HOLD) / 2
+    const current = Math.min(block + (handedOver ? 1 : 0), steps.value - 1)
 
-    const notch = Math.min(Math.max(Math.round(progress * turns), 0), turns)
-    index.value = pad ? notch + 1 : notch
+    index.value = Math.max(0, pad ? current + 1 : current)
   })
 
   /**
@@ -139,33 +147,54 @@ export function useTurningColumn<T>(
     if (Number.isFinite(value)) scrolled.value = value
   })
 
-  /** How many MOVES the column makes: `n` blocks are `n − 1` steps between. */
-  const turns = computed(() => Math.max(1, steps.value - 1))
+  /**
+   * How much of a step is spent READING before the column moves on.
+   *
+   * **A block is finished before the next one arrives**, which is the whole
+   * shape of the section: the column holds still while the sentence lights, and
+   * only then travels. It used to move continuously against the scroll, so the
+   * next block was already sliding into place while the current one was two
+   * thirds read — the reader was being moved on mid-sentence.
+   *
+   * 0.65 leaves a little over a third of the step for the move, which at a
+   * screen per step is long enough to be watched and short enough not to be
+   * waited through.
+   */
+  const HOLD = 0.65
 
   /**
-   * Finishing a line at about three quarters of the block's own window rather
-   * than exactly as it hands over: a sentence that completes on the same frame
-   * it goes dim was never actually seen finished.
+   * How many screens of scroll the track is given: one per block, plus one.
+   *
+   * The extra is the last block's own reading. A track of `n` screens has `n`
+   * snap positions and `n − 1` screens of travel between them, so with a screen
+   * per block the last one arrives exactly as the scroll runs out and is never
+   * read at all.
    */
-  const READ_AHEAD = 1.35
+  const screens = computed(() => steps.value + 1)
+
+  /** Where the reader is, counted in steps: `0` at the first block, `n` at the end. */
+  const at = computed(() => scrolled.value * steps.value)
+
+  /** The block being read, and how far into its step the reader has come. */
+  const step = computed(() => {
+    const whole = Math.min(Math.floor(at.value), Math.max(0, steps.value - 1))
+
+    return { block: whole, into: at.value - whole }
+  })
 
   /**
    * How much of a block's sentence the reader has scrolled through, 0 to 1.
    *
-   * Each block owns the half-step either side of its notch — where it takes the
-   * light and where it hands it on — clamped at the track's own ends so the
-   * first starts at zero rather than half-lit and the last can finish.
+   * It runs across the HOLD and finishes with it, so a block is read to its full
+   * stop before the column begins carrying the next one in. Blocks already past
+   * stay lit and blocks not reached stay dark, which is what they would look
+   * like if the reader simply kept scrolling.
    */
   function readingProgress(i: number) {
-    const start = Math.max(0, (i - 0.5) / turns.value)
-    const end = Math.min(1, (i + 0.5) / turns.value)
-    const span = end - start
-    if (span <= 0) return 0
+    if (i < step.value.block) return 1
+    if (i > step.value.block) return 0
 
-    return Math.min(
-      1,
-      Math.max(0, ((scrolled.value - start) / span) * READ_AHEAD),
-    )
+    return Math.min(1, step.value.into / HOLD)
   }
 
   /** Where each block starts, in pixels, measured from the first. */
@@ -200,30 +229,26 @@ export function useTurningColumn<T>(
   })
 
   /**
-   * The whole journey: the last block's own position.
+   * The column's offset — held still while the block is being read, then carried
+   * to the next one over what is left of the step.
    *
-   * Exactly that and not a pixel more, so a block is read at the same height
-   * whichever one it is. It briefly carried a quarter-window of extra rise, to
-   * make each block sit higher than the last — that was in service of a notch
-   * that stood level with the block being read, and the notch does not do that
-   * any more: it marks progress ACROSS the section, top to bottom, while the
-   * words travel the other way. The two moving against each other is the whole
-   * parallax, and it was the thing the extra rise quietly cancelled.
-   */
-  const distance = computed(
-    () => offsets.value[offsets.value.length - 1] ?? 0,
-  )
-
-  /**
-   * The column's offset, spent CONTINUOUSLY against the scroll rather than in
-   * one jump per notch, so a block drifts up the window as it is read.
+   * Each block's own measured position is where the column comes to rest for it,
+   * so the words are read at the same height whichever block they belong to. The
+   * last step has nowhere further to go and simply holds.
    *
    * Zero at the top, which is why the reading line is a padding on the column
    * rather than a term here: a transform is only written after mount, so folding
    * the line into it would drop the column visibly the first time the page
    * settles, and on a phone, where nothing moves the column, it would be wrong.
    */
-  const travel = computed(() => `-${scrolled.value * distance.value}px`)
+  const travel = computed(() => {
+    const { block, into } = step.value
+    const from = offsets.value[block] ?? 0
+    const to = offsets.value[block + 1] ?? from
+    const moved = Math.min(1, Math.max(0, (into - HOLD) / (1 - HOLD)))
+
+    return `-${from + (to - from) * moved}px`
+  })
 
   // Same tree whatever the preference; only the transition is zeroed
   // (RULES §12).
@@ -243,7 +268,7 @@ export function useTurningColumn<T>(
 
   return {
     steps,
-    turns,
+    screens,
     cells,
     index,
     scrolled,
