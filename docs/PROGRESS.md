@@ -27,9 +27,13 @@ dalam folder project (D70).
 
 | ID | Blocker | Menghambat | Tindakan |
 |---|---|---|---|
-| B2 | API belum tersedia (dikerjakan tim lain) | Fase 3 | Pakai mock; minta contoh response |
+| ~~B2~~ | ~~API belum tersedia~~ — **TERBUKA 2026-09-03**. `../backend-cms` menyajikan 25 endpoint baca dan 4 endpoint tulis di `/api/v1`; referensinya di [`../../backend-cms/docs/API.md`](../../backend-cms/docs/API.md). Situs menyambung lewat `NUXT_PUBLIC_API_BASE_URL` — selama kosong ia tetap memakai mock, jadi klon baru berjalan tanpa backend | — | Yang tersisa bukan lagi ketiadaan endpoint melainkan empat getter yang belum ditulis (`getFaqs`, `getLegalPage`, `getSiteSettings`, `getHomeCopy`) dan tiga formulir yang belum menukar handler-nya |
 
 Selesai: ~~B1 MCP Figma 403~~ — tersambung 2026-08-20.
+~~B2 API belum ada~~ — tersambung 2026-09-03. Sembilan belas rute dirender ulang
+terhadap API sungguhan dan seluruhnya 200, termasuk `/news/{slug}` dan
+`/tournaments/{slug}` yang slug-nya datang dari database. Meta SEO tiap halaman
+kini juga datang dari CMS lewat `useCmsSeo()` — lihat catatannya di bawah.
 ~~B3 `feature-hq-building.png` 8.8 MB~~ — beres 2026-08-21: file 9.2 MB dihapus
 dari repo, S4 memakai `feature-hq-composite.png` 1920×1080 dari desainer (lihat
 catatan S4). File itu bernama `hq.png` sampai 2026-08-22; entri log lama menyebut

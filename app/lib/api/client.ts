@@ -49,6 +49,7 @@ import type {
   Tournament,
   TournamentDetail,
   TournamentRegistration,
+  SiteSeo,
 } from "./types"
 
 /**
@@ -133,9 +134,23 @@ export async function getFederationStats(): Promise<FederationStat[]> {
   return request<FederationStat[]>("/stats")
 }
 
+/**
+ * The partner logo strip — **STATIC, and deliberately not fetched.**
+ *
+ * The backend has a `partners` table, a CMS screen and a live `/partners`
+ * endpoint, and this function used to read it. It no longer does, by the repo
+ * owner's decision (2026-09-03): the strip is eight logos that change once a
+ * season, and the federation would rather ship them with the code than keep a
+ * screen for them. The CMS menu is hidden to match, so there is nowhere to type
+ * a partner that this would pick up.
+ *
+ * Kept as a function rather than importing `MOCK_PARTNERS` at the call site,
+ * for two reasons: the components stay unchanged either way, and turning it
+ * back on is one line here instead of an edit in every page that draws the
+ * strip. `/api/v1/partners` is still live and still tested for that day.
+ */
 export async function getPartners(): Promise<Partner[]> {
-  if (useMock()) return MOCK_PARTNERS
-  return request<Partner[]>("/partners")
+  return MOCK_PARTNERS
 }
 
 /**
@@ -490,4 +505,18 @@ export async function subscribeToTournament(
     method: "POST",
     body: { email },
   })
+}
+
+/**
+ * The site's SEO and social meta, keyed by route.
+ *
+ * **No mock.** Every other getter falls back to `mock/` so the site renders
+ * before the API exists; this one returns an EMPTY shape instead, because the
+ * pages already carry their own `useSeoMeta` as the floor. Inventing mock
+ * titles here would mean the tags differ between mock and live for no reason a
+ * reader could see — and meta is exactly the thing nobody notices is wrong.
+ */
+export async function getSiteSeo(): Promise<SiteSeo> {
+  if (useMock()) return { default: {}, pages: {} }
+  return request<SiteSeo>("/seo")
 }

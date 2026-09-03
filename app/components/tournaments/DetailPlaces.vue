@@ -16,24 +16,34 @@ import { TOURNAMENT_DETAIL_COPY } from "~/content/tournaments/detail"
  *
  * **Either block can be absent and the row still works.** An online tournament
  * has no hall to photograph, and one that has not published a purse has no
- * prize line — `flex-wrap` with a `basis` rather than a two-column grid, so one
- * block left alone fills the row instead of sitting beside a hole.
+ * prize line — a flex row rather than a two-column grid, so a block left alone
+ * grows into the whole width instead of sitting beside a hole.
  */
 defineProps<{ tournament: TournamentDetail }>()
 
 const COPY = TOURNAMENT_DETAIL_COPY
 
 /**
- * Half the row minus half the gutter — NOT `basis-[860px]`.
+ * An equal share of the row, taken by GROWTH rather than by a stated width.
  *
  * Figma's two 860s plus its 40px gutter come to exactly the 1760 the page's
- * margins leave, which is a row with nothing to spare. A basis in pixels wrapped
- * the moment the gap was a hair wider than 40, and the venue map then rendered
- * 1760 wide and 1109 tall — a map the height of the window. This is the same
- * number at the design width and cannot overflow at any other.
+ * margins leave — a row with nothing whatsoever to spare. It was written as
+ * `basis-[calc(50%-1.25rem)]` against a `gap-10`, which is that same sum to the
+ * pixel, and a row that fits exactly is a row that wraps: any sub-pixel rounding
+ * in the gap or the padding takes it over 100% and the second block drops
+ * underneath. The venue map then rendered the full 1760 wide, and since it holds
+ * a 860:542 frame, 1109 tall — a map the height of the window.
+ *
+ * `flex: 1 1 0` on both blocks asks for none of the row and splits what is left
+ * evenly, so the halves are exact at every width and there is nothing to round.
+ * `min-w-0` is what lets that hold: a flex item will not shrink below its
+ * content otherwise, and a long address would push the row wide again.
+ *
+ * Below `lg` the blocks stack, which is what `basis-full` and the row's own
+ * `flex-wrap` are for.
  */
 const COLUMN =
-  "flex min-w-0 flex-1 basis-full flex-col gap-8 lg:basis-[calc(50%-1.25rem)] lg:gap-11"
+  "flex min-w-0 flex-1 basis-full flex-col gap-8 lg:basis-0 lg:gap-11"
 
 /**
  * 542/860 — the picture's proportion, carried instead of its pixels so the block
@@ -91,9 +101,12 @@ const WASH =
 </script>
 
 <template>
+  <!-- `lg:flex-nowrap` is the belt to the columns' braces: from `lg` the two
+       blocks are a row and may not become two, whatever the arithmetic of the
+       gutter comes to. Wrapping stays below it, where stacking is the point. -->
   <section
     v-if="tournament.venue || tournament.prize"
-    class="flex flex-wrap gap-10 px-5 py-16 md:px-10 lg:px-20 lg:py-[3.13vw]"
+    class="flex flex-wrap gap-10 px-5 py-16 md:px-10 lg:flex-nowrap lg:px-20 lg:py-[3.13vw]"
   >
     <div
       v-if="tournament.venue"

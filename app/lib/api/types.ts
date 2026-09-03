@@ -605,3 +605,35 @@ export type GalleryAlbum = {
   heldOn: IsoDateString
   items: GalleryItem[]
 }
+
+/**
+ * The title, description and share image a page sends to search engines and to
+ * the messaging apps that unfurl links — Figma has no screen for this; it is
+ * the CMS's "SEO & Social" module made visible.
+ *
+ * Every field is optional. A page inherits whatever it does not set from
+ * `SiteSeo.default`, and a page with no row at all inherits all of it — which
+ * is why the fallback row exists and why it cannot be deleted.
+ */
+export type PageSeo = {
+  title?: string
+  description?: string
+  /** Absolute. Printed as `og:image`; 1200x630 is what the CMS asks for. */
+  ogImageUrl?: string
+}
+
+/**
+ * `GET /seo` — the whole site's meta in one response.
+ *
+ * One request rather than one per page: it is a handful of short strings, it is
+ * needed on every route, and fetching it per navigation would put a round trip
+ * in front of every link.
+ *
+ * `pages` is keyed by ROUTE PATH exactly as the router writes it (`/about`,
+ * `/federation-members`). Dynamic routes are absent by design — their meta is
+ * born from the record, not from a row somebody has to remember to add.
+ */
+export type SiteSeo = {
+  default: PageSeo
+  pages: Record<string, PageSeo>
+}
