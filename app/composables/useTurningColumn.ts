@@ -117,22 +117,6 @@ export function useTurningColumn<T>(
   })
 
   /**
-   * The block the section is CURRENTLY presenting — what the counter reads, what
-   * the picture shows, and which block is at full strength.
-   *
-   * It hands over halfway through the move rather than halfway through the step:
-   * the picture changing while its own sentence is still being read is the swap
-   * arriving before the words it belongs to.
-   */
-  watchEffect(() => {
-    const { block, into } = step.value
-    const handedOver = into > (1 + HOLD) / 2
-    const current = Math.min(block + (handedOver ? 1 : 0), steps.value - 1)
-
-    index.value = Math.max(0, pad ? current + 1 : current)
-  })
-
-  /**
    * The raw scroll, mirrored into a ref so templates can read it.
    *
    * A MotionValue re-renders nothing by itself, which is why the index rides on
@@ -180,6 +164,22 @@ export function useTurningColumn<T>(
     const whole = Math.min(Math.floor(at.value), Math.max(0, steps.value - 1))
 
     return { block: whole, into: at.value - whole }
+  })
+
+  /**
+   * The block the section is CURRENTLY presenting — what the counter reads, what
+   * the picture shows, and which block is at full strength.
+   *
+   * It hands over halfway through the move rather than halfway through the step:
+   * the picture changing while its own sentence is still being read is the swap
+   * arriving before the words it belongs to.
+   */
+  watchEffect(() => {
+    const { block, into } = step.value
+    const handedOver = into > (1 + HOLD) / 2
+    const current = Math.min(block + (handedOver ? 1 : 0), steps.value - 1)
+
+    index.value = Math.max(0, pad ? current + 1 : current)
   })
 
   /**
