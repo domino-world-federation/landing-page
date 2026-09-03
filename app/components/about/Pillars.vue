@@ -42,16 +42,16 @@ const NOTCH_TRAVEL_PCT =
  * opened on the SECOND block; and a full slot of travel per turn is a lot of
  * movement for a section whose only real event is a sentence lighting up.
  *
- * So the column now holds all three claims at once and creeps by exactly the
- * amount it overhangs its window — the arrangement Integrity's code of ethics
- * settled on. It opens on the first claim, at the top, where the list starts.
- * What the reader's scroll moves is mostly the LIGHT.
+ * So the column opens on the first claim, at the top, where the list starts, and
+ * each claim in turn RISES to the reading line with the next one revealed under
+ * it — the reference's own arrangement, and the reason the reader can always see
+ * what is coming.
  *
- * **The overhang is measured, not stated.** The blocks are natural height with a
+ * **The travel is measured, not stated.** The blocks are natural height with a
  * real gap between them, because the gap is the thing being asked for and a
- * fixed slot per block is what was squeezing it. That makes the column's height
- * something only the browser knows, so it is read from the DOM and the travel is
- * derived from it — nothing here restates a number that the type could change.
+ * fixed slot per block is what was squeezing it. That makes where each block
+ * starts something only the browser knows, so it is read from the DOM — nothing
+ * here restates a number that the type could change.
  *
  * **Each claim brings its own photograph**, cross-fading in place, and the bite
  * out of the picture's left edge slides down to meet the block being read.
@@ -77,16 +77,34 @@ const { steps, cells, index, inView, trackTransition } = useTurningColumn(
   { pad: false },
 )
 
-/** How far the column runs past its window, in pixels. 0 when it fits. */
-const overhang = ref(0)
+/**
+ * Where each block starts, in pixels down the column, measured from the first.
+ *
+ * **The active block RISES to the reading line and the next one comes up under
+ * it**, which is what the reference does and what the column was missing: it
+ * used to creep by the small amount it overhung its window, so the same three
+ * blocks sat in the same three places the whole way down and only the light
+ * moved. Now the column is offset by exactly the active block's own position, so
+ * the one being read climbs to the reading line and the one after it is revealed
+ * below.
+ *
+ * Measured rather than stated because the blocks are their own height — the gap
+ * between them is the design's, but what a claim comes to depends on how its
+ * title wraps. Taken relative to the FIRST block so the figure is independent of
+ * whatever the browser picked as the offset parent, which is not the same
+ * element above and below `lg`.
+ */
+const offsets = ref<number[]>([])
 
 onMounted(() => {
   function measure() {
-    const frame = viewport.value
     const inner = column.value
-    if (!frame || !inner) return
+    if (!inner) return
 
-    overhang.value = Math.max(0, inner.offsetHeight - frame.clientHeight)
+    const blocks = Array.from(inner.children) as HTMLElement[]
+    const first = blocks[0]?.offsetTop ?? 0
+
+    offsets.value = blocks.map((block) => block.offsetTop - first)
   }
 
   measure()
@@ -110,10 +128,17 @@ onMounted(() => {
  */
 const turns = computed(() => Math.max(1, steps.value - 1))
 
-/** The creep, in pixels, spread evenly across the moves. */
-const trackY = computed(
-  () => `-${(index.value / turns.value) * overhang.value}px`,
-)
+/**
+ * The column's offset: the active block's own position, negated, so that block
+ * arrives at the reading line.
+ *
+ * Zero for the first block, which is why the reading line is a PADDING on the
+ * column rather than a number added here. Adding it would mean the column starts
+ * shifted down by it, and since a transform is only written after mount that
+ * would be a visible drop the first time the page settles — and on a phone,
+ * where nothing moves the column at all, it would simply be wrong.
+ */
+const trackY = computed(() => `-${offsets.value[index.value] ?? 0}px`)
 
 /** The bite's own travel, as a fraction of the journey the notch is given. */
 const notchY = computed(
@@ -218,9 +243,15 @@ const fade = computed(() => ({ duration: DURATION, ease: EASE }))
                  per block with the block centred in it, which left whatever the
                  type did not use — about 40px once a title wrapped — and read as
                  three paragraphs run together. -->
+            <!-- `24dvh` is the reading line — where the block being read comes
+                 to rest. It is padding rather than an offset in the transform so
+                 that the first block needs no transform at all (see `trackY`),
+                 and it is roughly 30% of the window, which is where the mask
+                 finishes fading in: a block landing any higher would have its
+                 first line dimmed by the very fade meant to be below it. -->
             <div
               ref="column"
-              class="flex flex-col gap-14 lg:gap-[clamp(56px,5.2vw,100px)]"
+              class="flex flex-col gap-14 lg:gap-[clamp(56px,5.2vw,100px)] lg:pt-[24dvh]"
             >
               <!-- `reading` is gated on the column being on screen as well as on
                    the block being current, so the first sentence is read when
