@@ -22,12 +22,12 @@ import { ETHICS_ALT, ETHICS_CLAUSES } from "~/content/integrity/ethics"
  * layout below is this section's own.
  *
  * **What differs from the pillars.** This frame carries a heading, which the
- * pillars' does not, so the window has ~110px less of the screen to spend and
- * `--column-slot` is overridden to a value that fits under it — capped in `dvh`
- * as well as `vw`, because three slots sized off the viewport's WIDTH is exactly
- * the kind of number that overruns a wide, short window. The blocks are numbers
- * rather than titles, and the resting strength is the 0.4 this frame draws
- * rather than the pillars' 0.5.
+ * pillars' does not, so the window has a heading's worth less of the screen to
+ * spend and its reading line sits shallower. The blocks are numbers rather than
+ * titles, and the resting strength is the 0.4 this frame draws rather than the
+ * pillars' 0.5. Everything else is deliberately the same construction: the
+ * clause being read rises to the reading line, the next comes up under it, and
+ * the bite in the picture's edge moves to stand beside it.
  *
  * **It is a track, not a screen.** One viewport per clause with the stage pinned
  * inside, so reaching the technical section means having scrolled past all three
@@ -38,6 +38,8 @@ const COPY = INTEGRITY_COPY
 
 const track = useTemplateRef<HTMLElement>("track")
 const stage = useTemplateRef<HTMLElement>("stage")
+const viewport = useTemplateRef<HTMLDivElement>("viewport")
+const column = useTemplateRef<HTMLDivElement>("column")
 
 /**
  * `pad: false` — the clauses are NUMBERED, and the padding the pillars want puts
@@ -47,51 +49,59 @@ const stage = useTemplateRef<HTMLElement>("stage")
 const { steps, cells, index, inView, trackTransition, isPad } =
   useTurningColumn(track, stage, ETHICS_CLAUSES, { pad: false })
 
-/**
- * How many slots the window shows — 860 of a 335 pitch (`762:1322` over
- * `762:1324`), so a little over two and a half.
- *
- * Deliberately NOT three, and this is the whole difference from the pillars.
- * There the window is exactly three slots and the track jumps a full slot per
- * turn to bring each block to the middle; the blocks are unnumbered claims and
- * a slot of empty column above the first one reads as more column. Three
- * numbered clauses cannot do that — an empty slot under the heading is a list
- * that has not started, and one at the foot is a list that has ended early.
- *
- * So the window is a little SHORTER than the column and all three clauses are in
- * it at once, which is what Figma draws: `01` fading in at the top, `02` square
- * in the clear middle, `03` fading out at the foot. What the reader's scroll
- * moves is mostly the LIGHT — one clause reading itself, then the next — and the
- * column creeps the 146px of overhang underneath it.
- */
-const WINDOW_SLOTS = 2.567
+/** One move per pair of clauses: three clauses are two steps between them. */
+const turns = computed(() => Math.max(1, steps.value - 1))
 
 /**
- * The creep, as a percentage of the track's own height: the overhang divided
- * across one notch per clause. `cells.length` is the track in slots, so
- * `(cells - window) / cells` is exactly the fraction of it that is off screen —
- * 14.4% here — and the column never travels further than the amount it actually
- * overhangs by, which is what keeps a blank from opening at either end.
+ * Where each clause starts, in pixels down the column, measured from the first.
+ *
+ * **The clause being read RISES to the reading line and the next comes up under
+ * it** — the arrangement About's pillars take from the reference, and the reason
+ * the reader can always see what is coming. This section used to creep by the
+ * 146px it overhung a window sized in fixed slots, so all three clauses sat in
+ * the same three places the whole way down and only the light moved.
+ *
+ * Measured rather than stated: the clauses are their own height now, and what
+ * one comes to depends on how its sentence wraps. Taken relative to the FIRST so
+ * the figure does not depend on which element the browser picked as the offset
+ * parent, which is not the same above and below `lg`.
  */
-const trackY = computed(() => {
-  const turns = Math.max(steps.value - 1, 1)
-  const slots = cells.value.length || 1
-  const overhang = ((slots - WINDOW_SLOTS) / slots) * 100
+const offsets = ref<number[]>([])
 
-  return `-${(index.value / turns) * overhang}%`
+onMounted(() => {
+  function measure() {
+    const inner = column.value
+    if (!inner) return
+
+    const blocks = Array.from(inner.children) as HTMLElement[]
+    const first = blocks[0]?.offsetTop ?? 0
+
+    offsets.value = blocks.map((block) => block.offsetTop - first)
+  }
+
+  measure()
+
+  // Both boxes: the window is a share of the screen and the clauses are set in
+  // clamped type, so a resize changes each of them independently.
+  const observer = new ResizeObserver(measure)
+  if (viewport.value) observer.observe(viewport.value)
+  if (column.value) observer.observe(column.value)
+
+  onBeforeUnmount(() => observer.disconnect())
 })
 
 /**
- * This section's own slot, overriding the shared token.
+ * The column's offset: the active clause's own position, negated.
  *
- * 335 is the design's pitch — the column is 1006.52 tall for three clauses
- * (`762:1324`) — which is 17.45vw of the design width. The `26dvh` term is the
- * guard the width-based clamp cannot give: three slots at 17.45vw is 1005px on
- * any 1920-wide window including one 800px tall, where the window alone would be
- * taller than the screen it has to share with a heading. Whichever is smaller
- * wins, so Figma's pitch renders wherever there is room for it.
+ * Zero for the first clause, which is why the reading line is a PADDING on the
+ * column rather than a term here — a transform is only written after mount, so
+ * folding the line into it would drop the column visibly the first time the page
+ * settles, and on a phone, where nothing moves the column, it would be wrong.
  */
-const SLOT = "min(clamp(15rem, 17.45vw, 20.94rem), 26dvh)"
+const trackY = computed(() => `-${offsets.value[index.value] ?? 0}px`)
+
+/** Where the bite stands — see `utils/notch`, shared with About's pillars. */
+const notchY = computed(() => notchOffset(index.value, turns.value))
 </script>
 
 <template>
@@ -107,11 +117,7 @@ const SLOT = "min(clamp(15rem, 17.45vw, 20.94rem), 26dvh)"
   <section
     ref="track"
     aria-labelledby="ethics-heading"
-    :style="{
-      '--ethics-steps': steps,
-      '--ethics-window': WINDOW_SLOTS,
-      '--column-slot': SLOT,
-    }"
+    :style="{ '--ethics-steps': steps }"
     class="snap-pass relative lg:h-[calc(var(--ethics-steps)*100dvh)] lg:motion-reduce:h-dvh"
   >
     <!-- One snap point per notch, so a gesture turns the column exactly once.
@@ -170,11 +176,12 @@ const SLOT = "min(clamp(15rem, 17.45vw, 20.94rem), 26dvh)"
              `dvh` term the column is clipped rather than pushing the picture off
              the screen. -->
         <div
-          class="column-mask relative w-full lg:h-[calc(var(--column-slot)*var(--ethics-window))] lg:min-h-0 lg:shrink lg:overflow-hidden"
+          ref="viewport"
+          class="column-mask relative w-full lg:min-h-0 lg:flex-1 lg:overflow-hidden"
         >
           <Motion
             as="div"
-            class="absolute inset-x-0 top-0"
+            class="lg:absolute lg:inset-x-0 lg:top-0"
             :animate="{ y: trackY }"
             :transition="trackTransition"
             :style="{ willChange: 'transform' }"
@@ -182,23 +189,36 @@ const SLOT = "min(clamp(15rem, 17.45vw, 20.94rem), 26dvh)"
             <!-- Each cell is one slot tall with its block centred in it: that is
                  what makes a single fixed translation land every block in the
                  same place, whichever of the three it is. -->
+            <!-- `21dvh` is the reading line — where the clause being read comes
+                 to rest. Padding rather than a term in the transform so the
+                 first clause needs none at all (see `trackY`), and about 30% of
+                 this window, which is where the mask finishes fading in: a
+                 clause landing higher would have its number dimmed by the very
+                 fade meant to be below it. Shallower than the pillars' 24dvh
+                 because this section spends a heading's worth of screen above
+                 the window. -->
             <div
-              v-for="(clause, i) in cells"
-              :key="`${clause.id}-${i}`"
-              class="flex flex-col justify-center py-8 lg:h-[var(--column-slot)] lg:py-0"
+              ref="column"
+              class="flex flex-col gap-14 lg:gap-[clamp(56px,5.2vw,100px)] lg:pt-[21dvh]"
             >
-              <!-- `reading` is gated on the column being on screen as well as on
-                   the clause holding the slot, so the first sentence is read
-                   when the reader ARRIVES rather than while the section is still
-                   below the fold. `focused` is not: it decides the block's
-                   opacity, and the design's resting state has one clause already
-                   lit. -->
-              <IntegrityEthicsClause
-                :clause="clause"
-                :duplicate="isPad(i)"
-                :focused="i === index"
-                :reading="i === index && inView"
-              />
+              <div
+                v-for="(clause, i) in cells"
+                :key="`${clause.id}-${i}`"
+                class="flex flex-col justify-center"
+              >
+                <!-- `reading` is gated on the column being on screen as well as
+                     on the clause being current, so the first sentence is read
+                     when the reader ARRIVES rather than while the section is
+                     still below the fold. `focused` is not: it decides the
+                     block's opacity, and the design's resting state has one
+                     clause already lit. -->
+                <IntegrityEthicsClause
+                  :clause="clause"
+                  :duplicate="isPad(i)"
+                  :focused="i === index"
+                  :reading="i === index && inView"
+                />
+              </div>
             </div>
           </Motion>
         </div>
@@ -232,17 +252,23 @@ const SLOT = "min(clamp(15rem, 17.45vw, 20.94rem), 26dvh)"
              on.
 
              Placed as fractions of Figma's 760 x 960 frame — 6.32% wide, 37.6%
-             tall, 7.29% down — so it holds its place as the frame scales. The
-             file is shared with About's pillars, which draws the same bite 21px
-             lower. Decorative (RULES §12). -->
-        <img
+             tall — so it holds its place as the frame scales, and moved on `y`
+             so it can travel to meet the clause being read without laying
+             anything out. Figma's fixed 7.29% is given up for the three stops in
+             `utils/notch`: a marker that never moves cannot say which clause is
+             current, which is the job it has here. Decorative (RULES §12). -->
+        <Motion
+          as="img"
           src="/assets/global/decor-notch.svg"
           alt=""
           aria-hidden="true"
           width="48"
           height="361"
-          class="pointer-events-none absolute top-[7.29%] left-0 h-[37.6%] w-[6.32%]"
-        >
+          class="pointer-events-none absolute top-[2.5%] left-0 z-10 h-[37.6%] w-[6.32%]"
+          :animate="{ y: notchY }"
+          :transition="trackTransition"
+          :style="{ willChange: 'transform' }"
+        />
       </div>
     </div>
   </section>

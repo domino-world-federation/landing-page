@@ -372,20 +372,6 @@
      number is what renders. */
   --stat-slot: clamp(5.5rem, min(14.58vw, 27dvh), 17.5rem);
 
-  /* One step of a turning column — the pitch from a block to the next, not the
-     height of a block. Figma's mask group on About's pillars is 1080 tall
-     (`566:13543`) and shows three slots through it, so a slot is a third of
-     that: 360 at the design width, which is 18.75vw. The floor is where a
-     block's own contents stop fitting — an eyebrow, a two-line Bebas title and
-     three lines of body come to about 300px once the type steps have clamped
-     down.
-
-     Integrity's code of ethics is the only reader left, and it overrides the
-     value locally: it carries a heading above its window and so has less of the
-     screen to spend. About's pillars, where the number came from, gave up fixed
-     slots when the repo owner asked for real space between the claims — a slot
-     leaves whatever the type does not use, which is not a gap anyone chose. */
-  --column-slot: clamp(18.75rem, 18.75vw, 22.5rem);
 }
 
 /*
@@ -749,6 +735,28 @@ html.snap-sections .snap-stop {
 
 @utility snap-screen {
   min-height: 100dvh;
+}
+
+/*
+ * **The page scrollbar is given colours of its own**, on every page, because the
+ * default has none it can rely on. Left alone the browser draws its light-scheme
+ * bar — a pale thumb on a pale track — which vanishes wherever the page behind
+ * it is white, and this site has white bands on half its pages.
+ *
+ * A translucent track and a mid-grey thumb read on both grounds without knowing
+ * which one is there: over white the track resolves to about `#DADADA` and over
+ * `--color-bg` to about `#333`, and `#8A8A8A` stands clear of either.
+ *
+ * `scrollbar-color` only, deliberately — no `::-webkit-scrollbar`. Styling the
+ * pseudo-element turns macOS's overlay bar into a classic one that reserves a
+ * permanent gutter, and the vw-based Figma measurements across these pages are
+ * written assuming `100vw` and the layout's own width are the same number.
+ *
+ * On `html` rather than on the snapping pages: it is the same bar on all of
+ * them, and a bar that changed colour on navigation would be a bug.
+ */
+html {
+  scrollbar-color: #8a8a8a rgba(127, 127, 127, 0.28);
 }
 
 html.snap-sections {

@@ -2,31 +2,6 @@
 import { PILLARS, PILLARS_COPY } from "~/content/about/pillars"
 
 /**
- * How far the notch travels, as a fraction of its own height.
- *
- * **Top, middle, foot** — three claims, three places, and the marker says which
- * one is being read by standing beside it. The bite is 37.6% of the picture tall
- * (`566:13563`), so with a 2.5% margin held at each end its three stops are
- * 2.5%, 31.2% and 60.4% down: evenly spaced by construction, because the middle
- * of a frame is the middle whatever the inset is. Figma's own 9.48% rest is
- * given up for it — that number is where a marker that never moves sits, and
- * this one moves.
- *
- * The margin is not decoration either: the frame is rounded 20px, about 2% of
- * its height, and a notch flush to the corner leaves a sliver of photograph
- * outside it.
- *
- * Stated against the NOTCH rather than the picture because that is what a
- * percentage in a `transform` resolves against, and a transform is the only way
- * to move it without laying the page out again (RULES §12). Nothing here has to
- * measure the frame.
- */
-const NOTCH_HEIGHT_PCT = 37.6
-const NOTCH_INSET_PCT = 2.5
-const NOTCH_TRAVEL_PCT =
-  ((100 - NOTCH_HEIGHT_PCT - NOTCH_INSET_PCT * 2) / NOTCH_HEIGHT_PCT) * 100
-
-/**
  * Pillars — Figma node `566:13542`. The three claims, taking turns.
  *
  * The section's whole idea is the mask. Figma wraps the blocks in a group
@@ -140,10 +115,8 @@ const turns = computed(() => Math.max(1, steps.value - 1))
  */
 const trackY = computed(() => `-${offsets.value[index.value] ?? 0}px`)
 
-/** The bite's own travel, as a fraction of the journey the notch is given. */
-const notchY = computed(
-  () => `${(index.value / turns.value) * NOTCH_TRAVEL_PCT}%`,
-)
+/** Where the bite stands — see `utils/notch`, which both sections read from. */
+const notchY = computed(() => notchOffset(index.value, turns.value))
 
 // The picture cross-fades rather than cutting: the two frames are the same size
 // in the same place, so a cut would read as a glitch where a fade reads as one
@@ -317,8 +290,8 @@ const fade = computed(() => ({ duration: DURATION, ease: EASE }))
              tall — so it holds its place as the frame scales, and moved on `y`
              so it can travel to meet the block being read without laying
              anything out. It rests at the top now rather than Figma's 9.48%;
-             see `NOTCH_TRAVEL_PCT` for the three stops. Decorative: it is an
-             edge treatment and says nothing (RULES §12). -->
+             `utils/notch` has the three stops. Decorative: it is an edge
+             treatment and says nothing (RULES §12). -->
         <Motion
           as="img"
           src="/assets/global/decor-notch.svg"
