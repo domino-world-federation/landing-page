@@ -31,12 +31,16 @@ const { data: milestones } = await useAsyncData(
 /**
  * How many screens of vertical scroll the strip is given to travel across.
  *
- * One per MOVE, not one per milestone: four dates are three steps between them,
- * and a screen per date would spend a whole viewport arriving at the first one
- * before anything had moved. The floor of 1 keeps a single-milestone list from
- * asking for a zero-height track.
+ * **One per milestone, so every date has somewhere to be looked at.** It was one
+ * per MOVE, on the reasoning that four dates are three steps between them — and
+ * that is true of the travel but not of the stops. A track `n × 100dvh` tall has
+ * `n` snap positions and its pinned travel is `n − 1` screens, so with one
+ * viewport per move the strip only ever comes to rest at the very start and the
+ * very end of its journey, and the dates in between are passed through rather
+ * than arrived at. The floor of 1 keeps a single-milestone list from asking for a
+ * zero-height track.
  */
-const steps = computed(() => Math.max(1, milestones.value.length - 1))
+const steps = computed(() => Math.max(1, milestones.value.length))
 
 const track = useTemplateRef<HTMLElement>("track")
 

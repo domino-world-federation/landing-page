@@ -100,7 +100,14 @@ onMounted(() => {
   onBeforeUnmount(() => observer.disconnect())
 })
 
-/** One notch per move, not per claim: three claims are two steps between them. */
+/**
+ * How many MOVES the column makes — one fewer than the claims, since three
+ * claims are two steps between them.
+ *
+ * It is what the travel is divided by, not what the track is built from: the
+ * track needs a viewport per claim so each one has somewhere to be read (see the
+ * template), and the moves are what happen between those.
+ */
 const turns = computed(() => Math.max(1, steps.value - 1))
 
 /** The creep, in pixels, spread evenly across the moves. */
@@ -120,9 +127,18 @@ const fade = computed(() => ({ duration: DURATION, ease: EASE }))
 </script>
 
 <template>
-  <!-- **A track, one viewport per move, with the stage pinned inside it.** The
+  <!-- **A track, one viewport per CLAIM, with the stage pinned inside it.** The
        scroll through this track is what advances the column, so the reader
        cannot reach the next section without having passed all three claims.
+
+       Per claim and not per move, and the difference is a claim that never got
+       read. A track `moves × 100dvh` tall has `moves` resting positions, and the
+       progress at them is 0 and 1 — nothing in between, because the pinned
+       travel is one screen and the first snap point is its start and the second
+       its end. With three claims that skipped the middle one entirely: it was
+       current only while a gesture was passing THROUGH it, which on a page that
+       snaps is never. `claims` viewports give `claims` places to stand, at 0,
+       ½ and 1, which is one apiece. -->
 
        `snap-pass` because the track is several screens tall, and a snap area
        taller than the screen is a band the reader may rest ANYWHERE inside
@@ -135,10 +151,11 @@ const fade = computed(() => ({ duration: DURATION, ease: EASE }))
        of nothing to scroll past. -->
   <section
     ref="track"
-    :style="{ '--pillars-steps': turns }"
+    :style="{ '--pillars-steps': steps }"
     class="snap-pass relative lg:h-[calc(var(--pillars-steps)*100dvh)] lg:motion-reduce:h-dvh"
   >
-    <!-- One snap point per move, so a gesture advances the column exactly once.
+    <!-- One snap point per claim, so every claim has a place the reader can
+         come to rest on and a gesture advances the column exactly once.
          Markers rather than content: absolutely positioned, so they add nothing
          to the track's layout, and the first sits at the track's head, which is
          what gives this section the stop its siblings carry on the section
@@ -152,7 +169,7 @@ const fade = computed(() => ({ duration: DURATION, ease: EASE }))
       class="pointer-events-none absolute inset-x-0 top-0 hidden h-full lg:block lg:motion-reduce:hidden"
     >
       <div
-        v-for="notch in turns"
+        v-for="notch in steps"
         :key="notch"
         class="h-dvh snap-start snap-always"
       />
