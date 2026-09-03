@@ -288,6 +288,12 @@ function toggle(id: string) {
                lists and links. Sanitising again in the browser would be
                theatre — it cannot undo what a compromised server sent, and it
                would strip the lists the editor's own toolbar produces. -->
+          <!-- `v-html` is allowed HERE and only here. The string is sanitised
+               server-side by `Purifier` before storage, narrowed to bold,
+               italic, underline, strike, lists and links. Re-sanitising in the
+               browser cannot undo what a compromised server sent, and it would
+               strip the lists the editor's own toolbar produces. -->
+          <!-- eslint-disable-next-line vue/no-v-html -->
           <span v-if="typeof item.answer === 'string'" v-html="item.answer" />
 
           <!-- SEGMENTS are copy that lives in this repo. Figma bolds these

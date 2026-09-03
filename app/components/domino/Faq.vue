@@ -1,8 +1,22 @@
 <script setup lang="ts">
-import {
-  DOMINO_FAQ_COPY,
-  DOMINO_FAQ_ITEMS,
-} from "~/content/domino/faq"
+import { DOMINO_FAQ_COPY } from "~/content/domino/faq"
+
+import { getFaqs } from "~/lib/api/client"
+
+/**
+ * The questions and THEIR ORDER come from the CMS — the "FAQ per Page" screen
+ * ranks them per page, and this section is one of the three pages it ranks.
+ *
+ * `DOMINO_FAQ_ITEMS` is no longer read here. It is still the mock `getFaqs()`
+ * falls back to when no API base URL is set, so a clone without a backend
+ * renders exactly what it did before.
+ *
+ * No sorting here, deliberately: the list arrives in the order somebody set,
+ * and re-sorting it would throw away the only thing that screen exists to do.
+ */
+const { data: faqs } = await useAsyncData("domino-faq", () => getFaqs("domino"), {
+  default: () => [],
+})
 
 /**
  * The Domino page's FAQ — Figma node `572:14502`.
@@ -51,7 +65,7 @@ import {
     class="flex snap-screen flex-col px-5 pt-28 pb-14 md:px-10 lg:px-20 lg:pt-[max(var(--nav-clearance),4.4792vw)] lg:pb-[4.4792vw]"
   >
     <UiFaqPanel
-      :items="DOMINO_FAQ_ITEMS"
+      :items="faqs"
       :heading="DOMINO_FAQ_COPY.heading"
       heading-id="domino-faq-heading"
       tone="dark"

@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { getHeritageMilestones } from "~/lib/api/client"
-import { HERITAGE_COPY } from "~/content/about/heritage"
+import { HERITAGE_COPY, HERITAGE_MILESTONES } from "~/content/about/heritage"
 
 /**
  * Heritage — Figma node `88:1163`.
@@ -10,9 +9,10 @@ import { HERITAGE_COPY } from "~/content/about/heritage"
  * starts. The two meet with no seam because they are the same colour, not
  * because they are aligned.
  *
- * The milestones come from the API rather than from `content/` (RULES §8): each
- * one is an entity with a year, a summary and a photograph of its own, and the
- * federation keeps adding them. Only the section's framing is copy.
+ * The milestones are copy for the moment rather than a feed — see
+ * `content/about/heritage`. They are entities and belong behind the API by
+ * RULES §8; the endpoint does not exist yet, and an empty strip under a heading
+ * is worse than a strip that is right and static.
  *
  * **The section is a track now, and the strip is turned by the reader.** It used
  * to be one screen with the timeline advancing itself on a timer; the repo owner
@@ -22,11 +22,12 @@ import { HERITAGE_COPY } from "~/content/about/heritage"
  * side. Vertical scroll goes in, horizontal travel comes out, and reaching the
  * section below means having been past every date.
  */
-const { data: milestones } = await useAsyncData(
-  "about-heritage",
-  () => getHeritageMilestones(),
-  { default: () => [] },
-)
+/**
+ * Static, for now: the CMS has no `/heritage-milestones` endpoint yet, so the
+ * fetch came back empty and the section rendered a heading over nothing. See
+ * `content/about/heritage` for the note and the TODO that moves it back.
+ */
+const milestones = computed(() => HERITAGE_MILESTONES)
 
 /**
  * How many screens of vertical scroll the strip is given to travel across.

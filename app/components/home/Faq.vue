@@ -1,5 +1,22 @@
 <script setup lang="ts">
-import { FAQ_COPY, FAQ_ITEMS } from "~/content/home/faq"
+import { FAQ_COPY } from "~/content/home/faq"
+
+import { getFaqs } from "~/lib/api/client"
+
+/**
+ * The questions and THEIR ORDER come from the CMS — the "FAQ per Page" screen
+ * ranks them per page, and this section is one of the three pages it ranks.
+ *
+ * `FAQ_ITEMS` is no longer read here. It is still the mock `getFaqs()`
+ * falls back to when no API base URL is set, so a clone without a backend
+ * renders exactly what it did before.
+ *
+ * No sorting here, deliberately: the list arrives in the order somebody set,
+ * and re-sorting it would throw away the only thing that screen exists to do.
+ */
+const { data: faqs } = await useAsyncData("home-faq", () => getFaqs("home"), {
+  default: () => [],
+})
 
 /**
  * S11 — Figma node `81:690`. The FAQ.
@@ -47,7 +64,7 @@ import { FAQ_COPY, FAQ_ITEMS } from "~/content/home/faq"
     class="snap-start snap-always px-5 pt-28 pb-[max(64px,4.48vw)] md:px-10 lg:px-20 lg:pt-[max(var(--nav-clearance),4.48vw)]"
   >
     <UiFaqPanel
-      :items="FAQ_ITEMS"
+      :items="faqs"
       :heading="FAQ_COPY.heading"
       heading-id="faq-heading"
       tone="dark"

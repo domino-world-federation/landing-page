@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { getBoardMembers } from "~/lib/api/client"
-import { BOARDS_COPY } from "~/content/about/boards"
+import { BOARD_MEMBERS, BOARDS_COPY } from "~/content/about/boards"
 
 /**
  * Executive Boards — Figma node `112:3590`.
@@ -18,14 +17,15 @@ import { BOARDS_COPY } from "~/content/about/boards"
  * like once there is a page below it.
  *
  * The members come from the API rather than `content/` (RULES §8) — they take
- * office and leave it, and the strip draws however many it is handed. Only the
- * section's framing is copy.
+ * office and leave it, and the strip draws however many it is handed. The board
+ * is copy for the moment rather than a feed — see `content/about/boards`.
  */
-const { data: members } = await useAsyncData(
-  "about-board-members",
-  () => getBoardMembers(),
-  { default: () => [] },
-)
+/**
+ * Static, for now: the CMS has no `/board-members` endpoint yet, so the fetch
+ * came back empty and the carousel rendered a heading over nothing. See
+ * `content/about/boards` for the note and the TODO that moves it back.
+ */
+const members = computed(() => BOARD_MEMBERS)
 </script>
 
 <template>

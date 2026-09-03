@@ -6,6 +6,8 @@
  * Text and numbers come from the Figma design so the slice matches on sight.
  */
 
+import { HERITAGE_MILESTONES } from "~/content/about/heritage"
+import { BOARD_MEMBERS } from "~/content/about/boards"
 import type {
   BoardMember,
   Champion,
@@ -831,120 +833,13 @@ export const MOCK_SHOWCASE_EVENTS: ShowcaseEvent[] = [
   },
 ]
 
-/**
- * The About page's heritage timeline (`88:1163`).
- *
- * The years come from the axis markers (`88:1172`, `88:1181`, `88:1190`,
- * `88:1199`) and the titles and photographs from the four cards, in the order
- * Figma places them along it.
- *
- * TODO(design): the first three cards carry the SAME body text in Figma
- * (`88:1205`, `88:1210`, `88:1215` are one shared text layer) — the Geneva
- * founding paragraph, which reads as card 1's and cannot be true of the 1990
- * World Cup or the 2001 accession. It is reproduced verbatim rather than
- * invented around, because inventing federation history is a worse error than
- * showing the design's own placeholder. Replace once the copy lands (B2).
- */
-export const MOCK_HERITAGE_MILESTONES: HeritageMilestone[] = [
-  {
-    id: "h1",
-    year: "1974",
-    title: "The Foundation",
-    summary:
-      "Representatives from 12 nations gathered in Geneva to formalize the first set of international rules and establish the DWF.",
-    imageUrl: "/assets/about/heritage-card-01.webp",
-    imageAlt:
-      "Two men in early twentieth-century suits conferring across a roll-top desk in a wood-panelled office",
-  },
-  {
-    id: "h2",
-    year: "1990",
-    title: "Inaugural World Cup",
-    summary:
-      "Representatives from 12 nations gathered in Geneva to formalize the first set of international rules and establish the DWF.",
-    imageUrl: "/assets/about/heritage-card-02.webp",
-    imageAlt:
-      "A packed arena of competitors at long tables beneath World Domino Championship banners",
-  },
-  {
-    id: "h3",
-    year: "2001",
-    title: "75 Countries Joined",
-    summary:
-      "Representatives from 12 nations gathered in Geneva to formalize the first set of international rules and establish the DWF.",
-    imageUrl: "/assets/about/heritage-card-03.webp",
-    imageAlt:
-      "Delegates seated along both sides of a conference table before a row of national flags and press cameras",
-  },
-  {
-    id: "h4",
-    year: "2003",
-    title: "DWF Championship World Tour",
-    summary: "The First DWF Championship World Tour with 80 countries joined.",
-    imageUrl: "/assets/about/heritage-card-04.webp",
-    imageAlt:
-      "Supporters in team colours with their arms raised, cheering in a crowd",
-  },
-]
+/** Re-exported: the section reads this straight from `content/about/heritage`
+ *  while the CMS has no endpoint for it. See that file for why. */
+export const MOCK_HERITAGE_MILESTONES: HeritageMilestone[] = HERITAGE_MILESTONES
 
-/**
- * The executive board carousel (`112:3590`).
- *
- * Two defects carried over from the design, both left visible rather than
- * quietly repaired:
- *
- * 1. Figma gives cards THREE and FOUR the same office — "SECRETARY GENERAL"
- *    (`112:3580` and `112:3585` share one text template). The fourth is almost
- *    certainly meant to be a different post; inventing one would be worse than
- *    showing the design's own duplication and marking it, which is the same
- *    call the Pillars copy got.
- *
- * 2. TODO(design): `board-portrait-02.webp` is a stock photograph of a REAL,
- *    widely recognisable public figure, used here as a fictional vice-president.
- *    That is a licensing and misrepresentation problem, not a styling one — a
- *    federation naming a real person to an office they do not hold. It needs a
- *    replacement before this page is published; the `alt` below therefore
- *    describes only what is visible and names nobody.
- *
- * The names are the design's own placeholders and are fictional.
- */
-export const MOCK_BOARD_MEMBERS: BoardMember[] = [
-  {
-    id: "b1",
-    // The break is Figma's (`111:3566`) and is kept because the card is 540px
-    // wide with a 48px face: the two-line shape is what the design lays out.
-    name: "Dr. Salva\nLopez",
-    role: "President",
-    portraitUrl: "/assets/about/board-portrait-01.webp",
-    portraitAlt:
-      "A man in a dark suit seated in a low armchair, turning towards the camera in a dimly lit room",
-  },
-  {
-    id: "b2",
-    name: "James\nHenderson",
-    role: "Vice President",
-    portraitUrl: "/assets/about/board-portrait-02.webp",
-    portraitAlt:
-      "An older man with grey hair, a beard and round glasses in a leather jacket, resting his hand near his chin against a warm brown backdrop",
-  },
-  {
-    id: "b3",
-    name: "Elizabeth\nLi Tze",
-    role: "Secretary General",
-    portraitUrl: "/assets/about/board-portrait-03.webp",
-    portraitAlt:
-      "A woman with short grey hair and heavy black glasses in a navy blazer, seated at a wooden table in low sunlight",
-  },
-  {
-    id: "b4",
-    // TODO(design): duplicate office — `112:3585` repeats "SECRETARY GENERAL".
-    role: "Secretary General",
-    name: "Jennifer\nBachdzer",
-    portraitUrl: "/assets/about/board-portrait-04.webp",
-    portraitAlt:
-      "A woman with long dark hair in a navy blazer over a cream top, looking past the camera against a wood-panelled wall",
-  },
-]
+/** Re-exported: the carousel reads this straight from `content/about/boards`
+ *  while the CMS has no endpoint for it. See that file for why. */
+export const MOCK_BOARD_MEMBERS: BoardMember[] = BOARD_MEMBERS
 
 /**
  * The six committees of `114:3667`.
