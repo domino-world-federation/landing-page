@@ -17,10 +17,12 @@ import { PILLARS, PILLARS_COPY } from "~/content/about/pillars"
  * opened on the SECOND block; and a full slot of travel per turn is a lot of
  * movement for a section whose only real event is a sentence lighting up.
  *
- * So the column opens on the first claim, at the top, where the list starts, and
- * each claim in turn RISES to the reading line with the next one revealed under
- * it — the reference's own arrangement, and the reason the reader can always see
- * what is coming.
+ * So the column opens on the first claim, where the list starts, and travels
+ * CONTINUOUSLY against the scroll — each claim drifting up the window as it is
+ * read, with the next one revealed under it and the notch beside the picture
+ * keeping pace. That last part is what a notch in three fixed places could not
+ * do: a marker that jumps between stops points at where the list was a moment
+ * ago rather than where it is.
  *
  * **The travel is measured, not stated.** The blocks are natural height with a
  * real gap between them, because the gap is the thing being asked for and a
@@ -45,7 +47,7 @@ const column = useTemplateRef<HTMLDivElement>("column")
  * with the column opening at the top rather than centred it is simply the wrong
  * claim in the first position. See the composable.
  */
-const { steps, cells, index, inView, trackTransition } = useTurningColumn(
+const { steps, cells, index, scrolled, readingProgress } = useTurningColumn(
   track,
   stage,
   PILLARS,
@@ -94,16 +96,6 @@ onMounted(() => {
 })
 
 /**
- * How many MOVES the column makes — one fewer than the claims, since three
- * claims are two steps between them.
- *
- * It is what the travel is divided by, not what the track is built from: the
- * track needs a viewport per claim so each one has somewhere to be read (see the
- * template), and the moves are what happen between those.
- */
-const turns = computed(() => Math.max(1, steps.value - 1))
-
-/**
  * The column's offset: the active block's own position, negated, so that block
  * arrives at the reading line.
  *
@@ -113,10 +105,24 @@ const turns = computed(() => Math.max(1, steps.value - 1))
  * would be a visible drop the first time the page settles — and on a phone,
  * where nothing moves the column at all, it would simply be wrong.
  */
-const trackY = computed(() => `-${offsets.value[index.value] ?? 0}px`)
+const trackY = computed(
+  () => `-${scrolled.value * (offsets.value[offsets.value.length - 1] ?? 0)}px`,
+)
 
-/** Where the bite stands — see `utils/notch`, which both sections read from. */
-const notchY = computed(() => notchOffset(index.value, turns.value))
+/**
+ * Where the bite stands — the same fraction the column travels on, so the marker
+ * keeps pace with the list instead of arriving after it (`utils/notch`).
+ */
+const notchY = computed(() => notchOffset(scrolled.value))
+
+/**
+ * No transition at all for anything the scroll drives.
+ *
+ * The wheel is the animation; an easing on top of it is a second animation
+ * chasing the first, which shows up as the column and the notch lagging behind
+ * the words they belong to.
+ */
+const SCROLLED = { duration: 0 } as const
 
 // The picture cross-fades rather than cutting: the two frames are the same size
 // in the same place, so a cut would read as a glitch where a fade reads as one
@@ -209,36 +215,37 @@ const fade = computed(() => ({ duration: DURATION, ease: EASE }))
             as="div"
             class="lg:absolute lg:inset-x-0 lg:top-0"
             :animate="{ y: trackY }"
-            :transition="trackTransition"
+            :transition="SCROLLED"
             :style="{ willChange: 'transform' }"
           >
             <!-- The gap IS the spacing between groupings. It was a fixed slot
                  per block with the block centred in it, which left whatever the
                  type did not use — about 40px once a title wrapped — and read as
                  three paragraphs run together. -->
-            <!-- `24dvh` is the reading line — where the block being read comes
-                 to rest. It is padding rather than an offset in the transform so
-                 that the first block needs no transform at all (see `trackY`),
-                 and it is roughly 30% of the window, which is where the mask
-                 finishes fading in: a block landing any higher would have its
-                 first line dimmed by the very fade meant to be below it. -->
+            <!-- `24dvh` is where the FIRST claim starts, not a mark the others
+                 come to rest on: the column travels continuously against the
+                 scroll, so each claim drifts up the window as it is read. It is
+                 padding rather than a term in the transform so the top of the
+                 track needs no transform at all (see `trackY`), and it is about
+                 30% of the window — where the mask finishes fading in, so the
+                 opening claim is not dimmed by the very fade meant to be below
+                 it. -->
             <div
               ref="column"
               class="flex flex-col gap-14 lg:gap-[clamp(56px,5.2vw,100px)] lg:pt-[24dvh]"
             >
-              <!-- `reading` is gated on the column being on screen as well as on
-                   the block being current, so the first sentence is read when
-                   the reader ARRIVES rather than while the section is still
-                   below the fold. `focused` is not: it decides the block's
-                   opacity, and the design's resting state has one block already
-                   lit. -->
+              <!-- `progress` rather than a start signal: the sentence is lit by
+                   the scroll, so it needs no on-screen gate — at the top of the
+                   track the progress is zero, and a block below the fold is
+                   simply unread. `focused` still decides the block's opacity,
+                   and the design's resting state has one block already lit. -->
               <AboutPillarBlock
                 v-for="(pillar, i) in cells"
                 :key="pillar.id"
                 :pillar="pillar"
                 :duplicate="false"
                 :focused="i === index"
-                :reading="i === index && inView"
+                :progress="readingProgress(i)"
               />
             </div>
           </Motion>
@@ -301,7 +308,7 @@ const fade = computed(() => ({ duration: DURATION, ease: EASE }))
           height="361"
           class="pointer-events-none absolute top-[2.5%] left-0 z-10 h-[37.6%] w-[6.32%]"
           :animate="{ y: notchY }"
-          :transition="trackTransition"
+          :transition="SCROLLED"
           :style="{ willChange: 'transform' }"
         />
       </div>

@@ -33,8 +33,13 @@ const props = withDefaults(
      * on-screen state as well.
      */
     reading?: boolean
+    /**
+     * How far the reader has scrolled through this block, 0 to 1. Handed to the
+     * sentence, which lights itself from it — see `MotionReadingText`.
+     */
+    progress?: number
   }>(),
-  { focused: false, reading: false },
+  { focused: false, reading: false, progress: undefined },
 )
 
 const headingTag = computed(() => (props.duplicate ? "p" : "h3"))
@@ -77,7 +82,11 @@ const dim = computed(() =>
     <p
       class="font-sans mt-7 text-[length:var(--text-body-lg)] leading-[1.56]"
     >
-      <MotionReadingText :text="pillar.body" :active="reading" />
+      <MotionReadingText
+        :text="pillar.body"
+        :active="reading"
+        :progress="progress"
+      />
     </p>
   </Motion>
 </template>

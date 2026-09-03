@@ -46,11 +46,8 @@ const column = useTemplateRef<HTMLDivElement>("column")
  * a copy of the last block above the first. Here that drew `03` above `01`: a
  * list out of order, which is the one thing a numbered list may not be.
  */
-const { steps, cells, index, inView, trackTransition, isPad } =
+const { steps, cells, index, scrolled, readingProgress, isPad } =
   useTurningColumn(track, stage, ETHICS_CLAUSES, { pad: false })
-
-/** One move per pair of clauses: three clauses are two steps between them. */
-const turns = computed(() => Math.max(1, steps.value - 1))
 
 /**
  * Where each clause starts, in pixels down the column, measured from the first.
@@ -98,10 +95,24 @@ onMounted(() => {
  * folding the line into it would drop the column visibly the first time the page
  * settles, and on a phone, where nothing moves the column, it would be wrong.
  */
-const trackY = computed(() => `-${offsets.value[index.value] ?? 0}px`)
+const trackY = computed(
+  () => `-${scrolled.value * (offsets.value[offsets.value.length - 1] ?? 0)}px`,
+)
 
-/** Where the bite stands — see `utils/notch`, shared with About's pillars. */
-const notchY = computed(() => notchOffset(index.value, turns.value))
+/**
+ * Where the bite stands — the same fraction the column travels on, so the marker
+ * keeps pace with the list instead of arriving after it (`utils/notch`).
+ */
+const notchY = computed(() => notchOffset(scrolled.value))
+
+/**
+ * No transition at all for anything the scroll drives.
+ *
+ * The wheel is the animation; an easing on top of it is a second animation
+ * chasing the first, which shows up as the column and the notch lagging behind
+ * the words they belong to.
+ */
+const SCROLLED = { duration: 0 } as const
 
 // The pictures cross-fade rather than cutting: the frames are the same size in
 // the same place, so a cut would read as a glitch where a fade reads as one
@@ -188,45 +199,44 @@ const fade = computed(() => ({ duration: DURATION, ease: EASE }))
             as="div"
             class="lg:absolute lg:inset-x-0 lg:top-0"
             :animate="{ y: trackY }"
-            :transition="trackTransition"
+            :transition="SCROLLED"
             :style="{ willChange: 'transform' }"
           >
             <!-- Each cell is one slot tall with its block centred in it: that is
                  what makes a single fixed translation land every block in the
                  same place, whichever of the three it is. -->
-            <!-- **All three clauses have to be in view at once**, which is what
-                 this frame draws and what the reading line and the gap are set
-                 against. At 21dvh and the pillars' gap the third clause fell
-                 clean out of the bottom of the window: this section spends a
-                 heading's worth of screen above its window, so it has ~150px
-                 less to lay three blocks in than the pillars have for three.
+            <!-- `4dvh` is where the FIRST clause starts, not a mark the others
+                 come to rest on: the column travels continuously against the
+                 scroll, so each clause drifts up the window as it is read. It is
+                 padding rather than a term in the transform so the top of the
+                 track needs no transform at all (see `trackY`).
 
-                 `4dvh` and a tighter gap put the three inside it. The line is
-                 padding rather than a term in the transform so the first clause
-                 needs no transform at all (see `trackY`), and the mask's fade is
-                 turned down to 12% to match — at 30% a clause resting this high
+                 Shallower than the pillars' 24dvh because this section spends a
+                 heading's worth of screen above its window, and at 21dvh the
+                 third clause fell clean out of the bottom of it. The mask's fade
+                 comes down to 12% with it: at 30% a clause resting this high
                  would have its number dimmed by the very fade meant to be below
                  it. -->
             <div
               ref="column"
-              class="flex flex-col gap-10 lg:gap-[clamp(40px,3.4vw,64px)] lg:pt-[4dvh]"
+              class="flex flex-col gap-12 lg:gap-[clamp(56px,5.2vw,100px)] lg:pt-[4dvh]"
             >
               <div
                 v-for="(clause, i) in cells"
                 :key="`${clause.id}-${i}`"
                 class="flex flex-col justify-center"
               >
-                <!-- `reading` is gated on the column being on screen as well as
-                     on the clause being current, so the first sentence is read
-                     when the reader ARRIVES rather than while the section is
-                     still below the fold. `focused` is not: it decides the
-                     block's opacity, and the design's resting state has one
-                     clause already lit. -->
+                <!-- `progress` rather than a start signal: the sentence is lit
+                     by the scroll, so it needs no on-screen gate — at the top of
+                     the track the progress is zero, and a clause below the fold
+                     is simply unread. `focused` still decides the block's
+                     opacity, and the design's resting state has one clause
+                     already lit. -->
                 <IntegrityEthicsClause
                   :clause="clause"
                   :duplicate="isPad(i)"
                   :focused="i === index"
-                  :reading="i === index && inView"
+                  :progress="readingProgress(i)"
                 />
               </div>
             </div>
@@ -293,7 +303,7 @@ const fade = computed(() => ({ duration: DURATION, ease: EASE }))
           height="361"
           class="pointer-events-none absolute top-[2.5%] left-0 z-10 h-[37.6%] w-[6.32%]"
           :animate="{ y: notchY }"
-          :transition="trackTransition"
+          :transition="SCROLLED"
           :style="{ willChange: 'transform' }"
         />
       </div>

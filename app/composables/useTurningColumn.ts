@@ -117,6 +117,50 @@ export function useTurningColumn<T>(
     index.value = pad ? notch + 1 : notch
   })
 
+  /**
+   * The raw scroll, mirrored into a ref so templates can read it.
+   *
+   * A MotionValue re-renders nothing by itself, which is why the index rides on
+   * one. What follows the scroll CONTINUOUSLY — the column's own travel, the
+   * notch beside it, and the words lighting up — has to be rendered, so this is
+   * the one place that pays for it: a single number, feeding things that only
+   * restyle.
+   */
+  const scrolled = ref(0)
+
+  useMotionValueEvent(scrollYProgress, "change", (value: number) => {
+    if (Number.isFinite(value)) scrolled.value = value
+  })
+
+  /** How many MOVES the column makes: `n` blocks are `n − 1` steps between. */
+  const turns = computed(() => Math.max(1, steps.value - 1))
+
+  /**
+   * Finishing a line at about three quarters of the block's own window rather
+   * than exactly as it hands over: a sentence that completes on the same frame
+   * it goes dim was never actually seen finished.
+   */
+  const READ_AHEAD = 1.35
+
+  /**
+   * How much of a block's sentence the reader has scrolled through, 0 to 1.
+   *
+   * Each block owns the half-step either side of its notch — where it takes the
+   * light and where it hands it on — clamped at the track's own ends so the
+   * first starts at zero rather than half-lit and the last can finish.
+   */
+  function readingProgress(i: number) {
+    const start = Math.max(0, (i - 0.5) / turns.value)
+    const end = Math.min(1, (i + 0.5) / turns.value)
+    const span = end - start
+    if (span <= 0) return 0
+
+    return Math.min(
+      1,
+      Math.max(0, ((scrolled.value - start) / span) * READ_AHEAD),
+    )
+  }
+
   // Same tree whatever the preference; only the transition is zeroed
   // (RULES §12).
   const trackTransition = computed(() =>
@@ -151,8 +195,11 @@ export function useTurningColumn<T>(
 
   return {
     steps,
+    turns,
     cells,
     index,
+    scrolled,
+    readingProgress,
     inView,
     trackY,
     trackTransition,

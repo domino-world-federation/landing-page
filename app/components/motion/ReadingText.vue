@@ -49,13 +49,13 @@ const WORD_FADE = 0.9
  * once alongside it. What is built for the eye here is a heap of duplicated
  * words; what should be read aloud is a sentence.
  *
- * **It briefly took its position from the scroll instead, and came back.** Tying
- * each word to a scroll fraction makes the line a readout of the wheel rather
- * than a thing that happens: it moves only while the reader does, so a reader
- * who stops — which is what someone reading a sentence does — is left looking at
- * a line frozen mid-word. The reference this section is drawn after runs it as
- * an animation on the block becoming current, and that is the version that reads
- * as reading. The scroll still decides WHICH block; the clock reads it.
+ * **Two ways to run it, and the callers in scroll tracks take the scroll.** The
+ * clock came first and is still here for blocks with no scroll of their own to
+ * spend. It was then argued both ways — a line tied to the wheel was called a
+ * readout rather than a thing that happens — and the reference settled it: stop
+ * scrolling there and its words stop lighting. That is the point, not a defect.
+ * A clock keeps running whether or not anyone is still on the block, so a reader
+ * who pauses to take a sentence in watches the rest of it go by without them.
  */
 const props = withDefaults(
   defineProps<{
@@ -68,11 +68,52 @@ const props = withDefaults(
     active?: boolean
     /** Seconds to wait after `active` before the first word lights. */
     delay?: number
+    /**
+     * How far the reader has scrolled through this line, 0 to 1.
+     *
+     * **Given it, the line is read by the reader rather than to them**, and that
+     * is what the reference does: stop scrolling there and the words stop
+     * lighting, because the scroll IS the animation. A clock cannot do that — it
+     * keeps running whether or not anyone is still on the block, so a reader who
+     * pauses watches the rest of the sentence go by without them.
+     *
+     * Left `undefined` the clock stays in charge, which is what a block with no
+     * scroll of its own to spend wants.
+     */
+    progress?: number
   }>(),
-  { active: true, delay: 0 },
+  { active: true, delay: 0, progress: undefined },
 )
 
 const prefersReducedMotion = useReducedMotion()
+
+/** Whether the reader is driving. Decided by the caller, so SSR agrees. */
+const scrollLit = computed(() => props.progress !== undefined)
+
+/**
+ * How many words are part-lit at once when the scroll is driving.
+ *
+ * The same softness the clock buys with `WORD_FADE / WORD_STEP` — five words
+ * mid-brighten, so the front is a gradient a whole phrase wide and no single
+ * word is seen turning on. Stated directly here because there is no clock to
+ * divide.
+ */
+const FEATHER = 5
+
+/**
+ * A word's strength, from the scroll.
+ *
+ * The front travels `words + FEATHER` positions across the line so the last word
+ * is fully lit by the time the reader reaches the end of the block rather than
+ * only just starting to.
+ */
+function litness(index: number) {
+  if (prefersReducedMotion.value) return 1
+
+  const front = (props.progress ?? 0) * (words.value.length + FEATHER)
+
+  return Math.min(1, Math.max(0, (front - index) / FEATHER))
+}
 
 /**
  * The words, with their position in the line — the index is what staggers them,
@@ -123,7 +164,17 @@ const dimDown = computed(() =>
                arrives. -->
           <span class="text-white/40">{{ item.word }}</span>
 
+          <!-- Scroll-lit: a plain style, no transition and no motion element.
+               The scroll IS the animation, and a transition on top of it would
+               be a second one lagging behind the first. -->
+          <span
+            v-if="scrollLit"
+            class="pointer-events-none absolute inset-0 text-white"
+            :style="{ opacity: litness(item.index) }"
+          >{{ item.word }}</span>
+
           <Motion
+            v-else
             as="span"
             class="pointer-events-none absolute inset-0 text-white"
             :initial="{ opacity: 0 }"

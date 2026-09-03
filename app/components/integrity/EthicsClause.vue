@@ -36,8 +36,13 @@ const props = withDefaults(
      * already finished. The column supplies this from its own on-screen state.
      */
     reading?: boolean
+    /**
+     * How far the reader has scrolled through this block, 0 to 1. Handed to the
+     * sentence, which lights itself from it — see `MotionReadingText`.
+     */
+    progress?: number
   }>(),
-  { focused: false, reading: false },
+  { focused: false, reading: false, progress: undefined },
 )
 
 const numberTag = computed(() => (props.duplicate ? "p" : "h3"))
@@ -74,7 +79,11 @@ const dim = computed(() =>
 
     <!-- Inter 36/56 and a 40px gap above it — the frame's own `gap: 40`. -->
     <p class="font-sans mt-10 text-[length:var(--text-body-lg)] leading-[1.56]">
-      <MotionReadingText :text="clause.body" :active="reading" />
+      <MotionReadingText
+        :text="clause.body"
+        :active="reading"
+        :progress="progress"
+      />
     </p>
   </Motion>
 </template>

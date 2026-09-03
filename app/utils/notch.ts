@@ -37,7 +37,14 @@ export const NOTCH_INSET_PCT = 2.5
 export const NOTCH_TRAVEL_PCT =
   ((100 - NOTCH_HEIGHT_PCT - NOTCH_INSET_PCT * 2) / NOTCH_HEIGHT_PCT) * 100
 
-/** Where the notch stands for the block at `index`, of `turns` moves. */
-export function notchOffset(index: number, turns: number) {
-  return `${(index / Math.max(1, turns)) * NOTCH_TRAVEL_PCT}%`
+/**
+ * Where the notch stands, given how far through the section the reader is.
+ *
+ * A FRACTION rather than a step index, so the bite follows the column
+ * continuously instead of jumping between three places. The reference moves it
+ * with the list rather than in notches, and a marker that arrives after the
+ * words it marks is a marker pointing at the wrong thing.
+ */
+export function notchOffset(fraction: number) {
+  return `${Math.min(1, Math.max(0, fraction)) * NOTCH_TRAVEL_PCT}%`
 }
