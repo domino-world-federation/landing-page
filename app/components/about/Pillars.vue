@@ -4,16 +4,27 @@ import { PILLARS } from "~/content/about/pillars"
 /**
  * How far the notch travels, as a fraction of its own height.
  *
- * The bite is 37.6% of the picture tall and rests 9.48% down (`566:13563`).
- * Leaving the same margin at the foot puts its last position at 52.92%, so the
- * whole journey is 43.44% of the picture — which is 115.5% of the notch itself.
+ * **Top, middle, foot** — three claims, three places, and the marker says which
+ * one is being read by standing beside it. The bite is 37.6% of the picture tall
+ * (`566:13563`), so with a 2.5% margin held at each end its three stops are
+ * 2.5%, 31.2% and 60.4% down: evenly spaced by construction, because the middle
+ * of a frame is the middle whatever the inset is. Figma's own 9.48% rest is
+ * given up for it — that number is where a marker that never moves sits, and
+ * this one moves.
+ *
+ * The margin is not decoration either: the frame is rounded 20px, about 2% of
+ * its height, and a notch flush to the corner leaves a sliver of photograph
+ * outside it.
  *
  * Stated against the NOTCH rather than the picture because that is what a
- * percentage in a `transform` is resolved against, and a transform is the only
- * way to move it every frame without laying the page out again (RULES §12).
- * Nothing here has to measure the frame.
+ * percentage in a `transform` resolves against, and a transform is the only way
+ * to move it without laying the page out again (RULES §12). Nothing here has to
+ * measure the frame.
  */
-const NOTCH_TRAVEL_PCT = 115.5
+const NOTCH_HEIGHT_PCT = 37.6
+const NOTCH_INSET_PCT = 2.5
+const NOTCH_TRAVEL_PCT =
+  ((100 - NOTCH_HEIGHT_PCT - NOTCH_INSET_PCT * 2) / NOTCH_HEIGHT_PCT) * 100
 
 /**
  * Pillars — Figma node `566:13542`. The three claims, taking turns.
@@ -59,7 +70,7 @@ const column = useTemplateRef<HTMLDivElement>("column")
  * with the column opening at the top rather than centred it is simply the wrong
  * claim in the first position. See the composable.
  */
-const { steps, cells, index, inView, trackTransition } = useTurningColumn(
+const { steps, cells, index, trackTransition, progress } = useTurningColumn(
   track,
   stage,
   PILLARS,
@@ -101,6 +112,45 @@ const trackY = computed(
 const notchY = computed(
   () => `${(index.value / turns.value) * NOTCH_TRAVEL_PCT}%`,
 )
+
+/**
+ * The scroll through the track, mirrored into a ref so the template can read it.
+ *
+ * A MotionValue does not re-render anything by itself, which is the point of it
+ * everywhere else on this page. Here the words have to change with it, so this
+ * is the one place that pays for the re-render — one number, and the words it
+ * feeds only restyle.
+ */
+const scrolled = ref(0)
+
+useMotionValueEvent(progress, "change", (value: number) => {
+  if (Number.isFinite(value)) scrolled.value = value
+})
+
+/**
+ * How much of a claim's sentence the reader has scrolled through, 0 to 1.
+ *
+ * **The sentences used to read themselves on a clock and now the reader reads
+ * them**, which is what the repo owner asked for. Each block owns the half-step
+ * either side of its notch — where it takes the light and where it hands it on —
+ * and the reading runs across that window, clamped at the track's own ends so
+ * the first claim starts at zero rather than half-lit and the last one can
+ * finish.
+ *
+ * `1.35` finishes the line at about three quarters of the window rather than
+ * exactly as it hands over: a sentence that completes on the same frame it goes
+ * dim was never actually seen finished.
+ */
+const READ_AHEAD = 1.35
+
+function readingProgress(i: number) {
+  const start = Math.max(0, (i - 0.5) / turns.value)
+  const end = Math.min(1, (i + 0.5) / turns.value)
+  const span = end - start
+  if (span <= 0) return 0
+
+  return Math.min(1, Math.max(0, ((scrolled.value - start) / span) * READ_AHEAD))
+}
 
 // The picture cross-fades rather than cutting: the two frames are the same size
 // in the same place, so a cut would read as a glitch where a fade reads as one
@@ -178,18 +228,20 @@ const fade = computed(() => ({ duration: DURATION, ease: EASE }))
                did not use — about 40px once a title wrapped — and read as three
                paragraphs run together. -->
           <div ref="column" class="flex flex-col gap-14 lg:gap-[clamp(56px,5.2vw,100px)]">
-            <!-- `reading` is gated on the column being on screen as well as on
-                 the block holding the light, so the first sentence is read when
-                 the reader ARRIVES rather than while the section is still below
-                 the fold. `focused` is not: it decides the block's opacity, and
-                 the design's resting state has one block already lit. -->
+            <!-- `progress` rather than `reading`: the sentence is lit by the
+                 scroll, not by a clock that starts when the block takes the
+                 light. It needs no on-screen gate for the same reason — at the
+                 top of the track the progress is zero, so a block below the fold
+                 is simply unread rather than quietly finishing without anyone
+                 there. `focused` still decides the block's opacity, and the
+                 design's resting state has one block already lit. -->
             <AboutPillarBlock
               v-for="(pillar, i) in cells"
               :key="pillar.id"
               :pillar="pillar"
               :duplicate="false"
               :focused="i === index"
-              :reading="i === index && inView"
+              :progress="readingProgress(i)"
             />
           </div>
         </Motion>
@@ -237,10 +289,11 @@ const fade = computed(() => ({ duration: DURATION, ease: EASE }))
              on.
 
              Placed as fractions of Figma's 760 × 960 frame — 6.32% wide, 37.6%
-             tall, 9.48% down — so it holds its place as the frame scales, and
-             moved on `y` so it can travel to meet the block being read without
-             laying anything out. Decorative: it is an edge treatment and says
-             nothing (RULES §12). -->
+             tall — so it holds its place as the frame scales, and moved on `y`
+             so it can travel to meet the block being read without laying
+             anything out. It rests at the top now rather than Figma's 9.48%;
+             see `NOTCH_TRAVEL_PCT` for the three stops. Decorative: it is an
+             edge treatment and says nothing (RULES §12). -->
         <Motion
           as="img"
           src="/assets/global/decor-notch.svg"
@@ -248,7 +301,7 @@ const fade = computed(() => ({ duration: DURATION, ease: EASE }))
           aria-hidden="true"
           width="48"
           height="361"
-          class="pointer-events-none absolute top-[9.48%] left-0 z-10 h-[37.6%] w-[6.32%]"
+          class="pointer-events-none absolute top-[2.5%] left-0 z-10 h-[37.6%] w-[6.32%]"
           :animate="{ y: notchY }"
           :transition="trackTransition"
           :style="{ willChange: 'transform' }"

@@ -149,5 +149,23 @@ export function useTurningColumn<T>(
     return pad && (i === 0 || i === cells.value.length - 1)
   }
 
-  return { steps, cells, index, inView, trackY, trackTransition, isPad }
+  return {
+    steps,
+    cells,
+    index,
+    inView,
+    trackY,
+    trackTransition,
+    isPad,
+    /**
+     * The raw scroll through the track, 0 at its head and 1 at its foot.
+     *
+     * `index` is this rounded to a notch, which is what the column travels on.
+     * Callers that want something to follow the scroll CONTINUOUSLY — a sentence
+     * lighting up word by word as the reader comes down the page — need the
+     * unrounded value, and it is a MotionValue rather than a ref so nothing
+     * re-renders for it unless the caller asks.
+     */
+    progress: scrollYProgress,
+  }
 }

@@ -7,11 +7,15 @@ const IDLE = 0.5
 /**
  * One of the three pillars.
  *
- * The block knows whether it is the one in the focused slot, and two things
- * follow from it. The whole block dims to 50% when it is not — Figma draws the
- * third block at exactly that (`566:13556`) — and its sentence only reads itself
- * while it IS, so the reading front is always in the slot the reader is looking
- * at rather than running invisibly at the top of the column.
+ * The block knows whether it is the one holding the light, and dims to 50% when
+ * it is not — Figma draws the third block at exactly that (`566:13556`).
+ *
+ * **The sentence is lit by the scroll, not by a clock.** It used to be told when
+ * to start reading itself, which needed an on-screen gate as well as the focus
+ * flag: a timer keyed to focus alone ran the whole line while the section was
+ * still screens below the fold, so the reader arrived at a block that had
+ * already finished. A progress figure needs neither — at the top of the track it
+ * is zero, so an unread block is simply unread.
  *
  * The duplicate's headings stay out of the document outline — otherwise the page
  * reports six `<h3>`s where the design has three, and heading navigation walks
@@ -23,19 +27,13 @@ const props = withDefaults(
     duplicate: boolean
     focused?: boolean
     /**
-     * Whether the sentence should be reading itself right now.
-     *
-     * Separate from `focused`, and it has to be. `focused` is true from mount
-     * for whichever block starts in the slot, so a sentence keyed to it alone
-     * read itself while the section was still several screens below the fold —
-     * measured at a full `16/16` words lit before the reader had ever scrolled
-     * there, which meant arriving at a block that was already finished and
-     * waiting a whole turn to see the effect at all. The column supplies this
-     * from its own on-screen state instead.
+     * How far the reader has scrolled through this block, 0 to 1. Handed
+     * straight to the sentence, which lights itself from it instead of from a
+     * clock — see `MotionReadingText`.
      */
-    reading?: boolean
+    progress?: number
   }>(),
-  { focused: false, reading: false },
+  { focused: false, progress: undefined },
 )
 
 const headingTag = computed(() => (props.duplicate ? "p" : "h3"))
@@ -73,21 +71,12 @@ const dim = computed(() =>
       {{ pillar.title }}
     </component>
 
-    <!-- The sentence reads itself while the block holds the slot AND the reader
-         is there to see it.
-
-         `reading` alone, with no `!duplicate` beside it. That guard stood here
-         to stop two copies of the same words lighting up in different places at
-         once — which cannot happen: the column sets `reading` from `i === index`
-         and exactly one cell satisfies that. What it did instead was silence the
-         third turn entirely. The track holds the list twice and the cycle runs
-         index 1 → 2 → 3, so the block that lands in the slot on the last turn is
-         `cells[3]` — the SECOND copy of the first pillar. Olympic Stage was
-         therefore the one block that never read itself, every lap. -->
+    <!-- The sentence lights from the reader's own scroll through this block —
+         see `MotionReadingText`. -->
     <p
       class="font-sans mt-7 text-[length:var(--text-body-lg)] leading-[1.56]"
     >
-      <MotionReadingText :text="pillar.body" :active="reading" />
+      <MotionReadingText :text="pillar.body" :progress="progress" />
     </p>
   </Motion>
 </template>
