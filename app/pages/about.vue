@@ -111,7 +111,7 @@ useHead({ htmlAttrs: { class: "snap-sections" } })
            at every window this page snaps at. -->
       <UiStickyBand
         class="lg:snap-screen"
-        src="/assets/about/authority-leadership-group.png"
+        src="/assets/about/authority-leadership-group.webp"
         :alt="ABOUT_HEADER_ALT.band"
       />
 

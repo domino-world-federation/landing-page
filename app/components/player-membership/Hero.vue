@@ -62,7 +62,7 @@ const COPY = PLAYER_MEMBERSHIP_COPY.hero
       class="relative -z-10 w-[90vw] lg:absolute lg:top-[30.28%] lg:left-[26.67%] lg:w-[46.67%]"
     >
       <NuxtImg
-        src="/assets/player-membership/hero-dwf-id.png"
+        src="/assets/player-membership/hero-dwf-id.webp"
         :alt="PLAYER_MEMBERSHIP_ALT.card"
         :sizes="imageSizes({ xs: '90vw', lg: '47vw' })"
         preload

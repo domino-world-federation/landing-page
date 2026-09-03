@@ -45,9 +45,27 @@ export default defineNuxtConfig({
     // below x86-64-v2. sharp's prebuilt libvips refuses to load there and every
     // `/_ipx/` request answers 500, which takes down every image on the site.
     // Building sharp from source is also blocked — the box cannot install
-    // libvips-dev. With `none` the transforms are skipped and the originals are
-    // served as-is: correct, but 77 MB of raster assets go over the wire
-    // unresized. REMOVE THIS once the host exposes a modern CPU model.
+    // libvips-dev. With `none` the transforms are skipped and the files in
+    // `public/` are served as-is — so `format` and `quality` below never run,
+    // and what is on disk is exactly what goes over the wire.
+    //
+    // That used to mean 77 MB of raster. D71 answered it where the pipeline
+    // could not: every asset is pre-encoded to WebP q95 on disk and the source
+    // PNG/JPGs live outside `public/`, which took `public/assets` to 12.7 MB.
+    // What is still missing is the per-viewport RESIZE — a phone downloads the
+    // same file a 2560px monitor does. REMOVE THIS once the host exposes a
+    // modern CPU model, and the ladder below starts doing that half.
+    //
+    // WHEN YOU DO, ADD `domains` FIRST. Uploaded media is served from its own
+    // host in production (`MEDIA_URL`, e.g. `media.dwf-domino.org`). With
+    // `none` that is invisible — `<NuxtImg>` just prints the `src`. IPX
+    // FETCHES the image to resize it, and `@nuxt/image` refuses any host not
+    // listed here as an SSRF guard: every CMS image on the site 403s at once,
+    // while the ones bundled in `public/` keep working, which makes it read
+    // like a backend fault rather than this line.
+    //
+    //   domains: ["media.dwf-domino.org"],
+    //
     provider: "none",
     // The design is drawn at 1920 and the site runs full-bleed, so the ladder
     // reaches past it for 2x phones and wide monitors.

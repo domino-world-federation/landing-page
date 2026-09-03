@@ -42,7 +42,7 @@ export const ETHICS_CLAUSES: readonly EthicsClause[] = [
     id: "respect",
     number: "01",
     body: "Respect for opponents, officials, and the historical traditions of dominoes.",
-    imageUrl: "/assets/global/gallery-exhibition-match.png",
+    imageUrl: "/assets/global/gallery-exhibition-match.webp",
     imageAlt:
       "Two players facing each other across a match table, tiles laid out between them",
   },
@@ -50,7 +50,7 @@ export const ETHICS_CLAUSES: readonly EthicsClause[] = [
     id: "collusion",
     number: "02",
     body: "Total prohibition of collusion, signaling, or non-competitive behavior.",
-    imageUrl: "/assets/global/gallery-match-broadcast.png",
+    imageUrl: "/assets/global/gallery-match-broadcast.webp",
     imageAlt:
       "A match being broadcast from the hall floor, camera and monitors trained on the table",
   },
@@ -58,7 +58,7 @@ export const ETHICS_CLAUSES: readonly EthicsClause[] = [
     id: "reporting",
     number: "03",
     body: "Obligation to report any known integrity breaches through official channels.",
-    imageUrl: "/assets/global/gallery-playing-hall.png",
+    imageUrl: "/assets/global/gallery-playing-hall.webp",
     imageAlt:
       "A tournament hall seen down its rows of tables, officials standing between them",
   },

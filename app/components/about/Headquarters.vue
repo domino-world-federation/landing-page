@@ -61,7 +61,7 @@ const SETTLE = DURATION * 1.5
            frame mid-animation. -->
       <MotionReveal :scale="[1.12, 1]" :duration="SETTLE" class="size-full">
         <NuxtImg
-          src="/assets/global/feature-hq-composite.png"
+          src="/assets/global/feature-hq-composite.webp"
           :alt="HQ_ALT.building"
           :sizes="SIZES_FULL_BLEED"
           :quality="90"
@@ -70,7 +70,7 @@ const SETTLE = DURATION * 1.5
       </MotionReveal>
     </MotionParallaxLayer>
 
-    <!-- **The foot, faded to the page.** `feature-hq-composite.png` carries its
+    <!-- **The foot, faded to the page.** `feature-hq-composite.webp` carries its
          own fade to `#0E0E0E` in its bottom rows — which is why the home page's
          copy of it needs no overlay — but that only survives while the frame
          keeps the picture's 16:9. This section does not: at the design's 46.88vw

@@ -91,7 +91,7 @@ defineProps<{ event: ShowcaseEvent }>()
     >
       <div class="flex w-full justify-center">
         <NuxtImg
-          src="/assets/tournaments/hero-trophy-hand.png"
+          src="/assets/tournaments/hero-trophy-hand.webp"
           :alt="TOURNAMENTS_COPY.hero.portraitAlt"
           :width="728"
           :height="1304"

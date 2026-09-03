@@ -68,7 +68,7 @@ const [singles, doubles] = FORMATS
                hangs from `bottom-0`, which is where Figma puts it
                (80 + 600 = 680, the panel's full inner height). -->
           <DominoFormatFigure
-            src="/assets/domino/format-singles-silhouette.png"
+            src="/assets/domino/format-singles-silhouette.webp"
             :alt="FORMATS_ALT.singles"
             class="left-[58.41%] h-[88.24%] w-[42.73%]"
           />
@@ -86,7 +86,7 @@ const [singles, doubles] = FORMATS
                leans into the join from the far side. 405/880 wide, 600/680 tall,
                hung from the floor like its counterpart. -->
           <DominoFormatFigure
-            src="/assets/domino/format-doubles-silhouette.png"
+            src="/assets/domino/format-doubles-silhouette.webp"
             :alt="FORMATS_ALT.doubles"
             class="left-[-2.84%] h-[88.24%] w-[46.02%]"
           />

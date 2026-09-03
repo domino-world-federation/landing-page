@@ -22,3 +22,10 @@ logs
 .env
 .env.*
 !.env.example
+
+# Sumber raster resolusi penuh (D71)
+# PNG/JPG asli di balik tiap `.webp` di `public/assets`. Lokal saja: bobotnya
+# 77 MB dan tidak ada yang membutuhkannya saat build atau deploy. Yang pernah
+# ada di repo tetap terambil dari riwayat — file-file ini tracked sampai commit
+# konversi WebP.
+assets-source/

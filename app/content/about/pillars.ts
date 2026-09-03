@@ -32,7 +32,7 @@ export const PILLARS: readonly Pillar[] = [
     eyebrow: "Olympic Stage",
     title: "Olympic recognition",
     body: "Lobbying international sport committees to codify and integrate competitive dominoes into official global multi-sport events.",
-    imageUrl: "/assets/global/olympic-rings-facade.png",
+    imageUrl: "/assets/global/olympic-rings-facade.webp",
     imageAlt:
       "The Olympic rings mounted and lit on the facade of a white building at dusk",
   },
@@ -41,7 +41,7 @@ export const PILLARS: readonly Pillar[] = [
     eyebrow: "Cultural Connect",
     title: "Global Unity",
     body: "Bridging diverse cultural histories through a single harmonized set of rules and universally understood competitive formats.",
-    imageUrl: "/assets/global/gallery-team-delegation.png",
+    imageUrl: "/assets/global/gallery-team-delegation.webp",
     imageAlt:
       "A national team delegation standing together in matching kit before a match",
   },
@@ -50,7 +50,7 @@ export const PILLARS: readonly Pillar[] = [
     eyebrow: "Digital Pieces",
     title: "Next-gen infrastructure",
     body: "Bridging diverse cultural histories through a single harmonized set of rules and universally understood competitive formats.",
-    imageUrl: "/assets/global/gallery-match-broadcast.png",
+    imageUrl: "/assets/global/gallery-match-broadcast.webp",
     imageAlt:
       "A match being broadcast from the hall floor, camera and monitors trained on the table",
   },

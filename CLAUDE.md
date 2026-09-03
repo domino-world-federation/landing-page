@@ -60,6 +60,15 @@ Nuxt 4.5 · Vue 3.5 · TypeScript strict · Tailwind v4 · `motion-v`
   mengembalikan byte yang sama untuk SVG (RULES §7).
 - Aset: `public/assets/global/` (lintas halaman) vs `public/assets/home/`
   (khusus landing).
+- **Raster di `public/assets` seluruhnya `.webp`; PNG/JPG aslinya ada di
+  `assets-source/`** dengan struktur folder yang sama (D71). Folder itu
+  **di-gitignore dan tidak ikut ter-clone** — kalau kosong di klon kamu, itu
+  wajar; ambil aslinya dari riwayat, atau dari klon yang sudah punya. Aset baru
+  ikut alur itu: taruh aslinya di `assets-source/`, konversi
+  `cwebp -q 95 -alpha_q 100 -m 6 -metadata none`, dan yang masuk `public/` hanya
+  `.webp`-nya. Jangan menaruh PNG/JPG langsung di `public/assets` — dengan
+  `provider: "none"` tidak ada pipeline yang mengecilkannya, jadi ukuran file
+  itulah yang dikirim ke browser. SVG tetap apa adanya (RULES §7).
 - **Commit tanpa atribusi AI.** Tanpa trailer `Co-Authored-By: Claude`, tanpa
   `Generated with`, tanpa emoji bot — di pesan commit maupun deskripsi PR.
   RULES §14.

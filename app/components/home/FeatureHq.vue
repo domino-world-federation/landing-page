@@ -15,7 +15,7 @@ const SETTLE = DURATION * 1.5
  * and the picture did not change; only the copy over it did (see
  * `content/home/feature-hq.ts`).
  *
- * `feature-hq-composite.png` is the design's own composite: the photograph with
+ * `feature-hq-composite.webp` is the design's own composite: the photograph with
  * the section's three washes already baked in — the vignette along the top
  * (`31:1089`), the downward darkening that carries the text (`31:1103`), and the
  * fade to page background at the foot (`37:1848`). Measured, its top and bottom
@@ -89,7 +89,7 @@ const SETTLE = DURATION * 1.5
              a bare `100vw`, which @nuxt/image reads as the key `1px` and answers
              with a two-pixel srcset — see the note on that helper. -->
         <NuxtImg
-          src="/assets/global/feature-hq-composite.png"
+          src="/assets/global/feature-hq-composite.webp"
           :alt="FEATURE_HQ_ALT.building"
           :sizes="SIZES_FULL_BLEED"
           :quality="90"

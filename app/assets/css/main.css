@@ -862,10 +862,11 @@ html.snap-sections {
 /*
  * The dotted landmass on the members hero's globe — Figma's `401:19063`.
  *
- * The design's globe exists as a 1.6MB PNG (`decor-hero-globe.png`, kept in the
- * repo as the reference this is matched against). This is the same thing built
- * in CSS: no 1.6MB download, scalable to any width, and recolourable from the
- * theme rather than from Photoshop.
+ * The design's globe exists as a 1.6MB PNG, kept as the reference this is
+ * matched against — `assets-source/members/decor-hero-globe.png`, outside
+ * `public/` precisely because it is a reference and must never be served. This
+ * is the same thing built in CSS: no 1.6MB download, scalable to any width, and
+ * recolourable from the theme rather than from Photoshop.
  *
  * The continents are a dot grid masked to `decor-map-frame.svg`, the landmass
  * silhouette the map section already draws. `mask-image` with an SVG uses the

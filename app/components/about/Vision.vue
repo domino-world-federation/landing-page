@@ -138,7 +138,7 @@ import { VISION_ALT, VISION_COPY } from "~/content/about/vision"
         </div>
 
         <MotionSofteningImage
-          src="/assets/global/globe-tile.png"
+          src="/assets/global/globe-tile.webp"
           alt=""
           from="14px"
           to="0px"

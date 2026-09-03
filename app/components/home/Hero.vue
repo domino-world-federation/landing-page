@@ -180,7 +180,7 @@ const TILE_DELAY = HERO_RETREAT / 3
              arrived, so a lazy rock plays its 1.6s retreat as an empty box and
              pops in late. -->
         <MotionSofteningImage
-          src="/assets/global/decor-rock-top.png"
+          src="/assets/global/decor-rock-top.webp"
           alt=""
           :width="888"
           :height="361"
@@ -207,7 +207,7 @@ const TILE_DELAY = HERO_RETREAT / 3
         <!-- Same reasoning as the upper rock — which of the two is the LCP
              element depends on the viewport. -->
         <MotionSofteningImage
-          src="/assets/global/decor-rock-bottom.png"
+          src="/assets/global/decor-rock-bottom.webp"
           alt=""
           :width="970"
           :height="403"
@@ -284,7 +284,7 @@ const TILE_DELAY = HERO_RETREAT / 3
              to, and the largest key's value is the default from there on. This
              reads as the Next build's `(max-width: 1024px) 30vw, 31vw`. -->
         <MotionSofteningImage
-          src="/assets/home/hero-domino-tile.png"
+          src="/assets/home/hero-domino-tile.webp"
           :alt="HERO_ALT.dominoTile"
           fill
           :sizes='imageSizes({ xs: "30vw", lg: "31vw" })'

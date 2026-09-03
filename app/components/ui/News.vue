@@ -65,7 +65,7 @@ const GUTTER = 24
  * **The wash is CSS again, not baked into the picture.** The old asset was the
  * design's own composite — photograph and fade flattened together and cropped to
  * a 1920 × 960 frame — and re-drawing the fade over it would have darkened the
- * foot twice, which is the trap `feature-hq-composite.png` hit. The redraw
+ * foot twice, which is the trap `feature-hq-composite.webp` hit. The redraw
  * separates them: `53:3068` is the raw photograph and `561:13218` is a
  * `rgba(14,14,14,0) → rgba(14,14,14,1)` gradient over the whole frame, opaque by
  * 45%. So the picture goes in raw and the gradient is a layer here, which is
@@ -247,18 +247,19 @@ function step(direction: 1 | -1) {
            new URL, which is the only cache invalidation that needs nobody to
            remember anything.
 
-           A `.jpg`, where every other photograph on this page is a `.png` —
-           which is not a house rule, only what Figma happened to export. This
-           one exports at 6.4 MB, six times PRD R10's ceiling and by a wide
-           margin the heaviest file in the repo, and the parallax makes that the
-           section's problem rather than the network's alone. Re-encoding it as a
-           256-colour PNG got it to 838 KB and visibly posterised the wood grain
-           and the shadows, which is exactly the shortcut RULES §12 forbids.
-           Full-depth JPEG at q94 gives 747 KB with the grain intact. `NuxtImg`
-           serves webp/avif derivatives either way, so the container only ever
-           decides what the repository carries. -->
+           Figma exported this one at 6.4 MB — six times PRD R10's ceiling, and
+           the parallax makes that the section's problem rather than the
+           network's alone. Re-encoding it as a 256-colour PNG got it to 838 KB
+           and visibly posterised the wood grain and the shadows, which is
+           exactly the shortcut RULES §12 forbids. Full-depth JPEG at q94 held
+           the grain at 747 KB, and greyscaling the asset took that to 512 KB.
+           WebP at q95 now carries it at 346 KB, 51.2 dB PSNR against the JPEG it
+           replaces — past the point the eye separates them, so the grain
+           survives one more re-encode. The container only ever decides what the
+           repository carries; with `provider: "none"` that is also exactly what
+           the browser gets. -->
       <NuxtImg
-        src="/assets/home/news-domino-desk-mono.jpg"
+        src="/assets/home/news-domino-desk-mono.webp"
         :alt="NEWS_ALT.desk"
         :sizes="SIZES_FULL_BLEED"
         :quality="90"

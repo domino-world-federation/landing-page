@@ -149,9 +149,9 @@ export const MOCK_NEWS: NewsArticle[] = [
       "Sixty-four players advance to the main draw after three days of continental qualifying.",
     category: "Tournament",
     publishedAt: "2026-08-12T10:00:00Z",
-    thumbnailUrl: "/assets/home/news-thumb-01.png",
+    thumbnailUrl: "/assets/home/news-thumb-01.webp",
     isFeatured: true,
-    heroImageUrl: "/assets/news/featured-giant-tiles.png",
+    heroImageUrl: "/assets/news/featured-giant-tiles.webp",
     heroImageAlt:
       "A player crouches between six oversized black domino tiles, their pips picked out in gold.",
   },
@@ -163,7 +163,7 @@ export const MOCK_NEWS: NewsArticle[] = [
       "The updated rulebook clarifies scoring disputes and introduces a revised timing protocol.",
     category: "Governance",
     publishedAt: "2026-08-08T09:30:00Z",
-    thumbnailUrl: "/assets/home/news-thumb-02.png",
+    thumbnailUrl: "/assets/home/news-thumb-02.webp",
   },
   {
     id: "n8",
@@ -173,7 +173,7 @@ export const MOCK_NEWS: NewsArticle[] = [
       "The free tuition platform passes a hundred thousand registered learners in its first full year.",
     category: "Development",
     publishedAt: "2026-08-06T09:00:00Z",
-    thumbnailUrl: "/assets/development/news-learning-portal.png",
+    thumbnailUrl: "/assets/development/news-learning-portal.webp",
   },
   {
     id: "n3",
@@ -183,7 +183,7 @@ export const MOCK_NEWS: NewsArticle[] = [
       "Membership passes eighty-four as domino continues its expansion across three continents.",
     category: "Federation",
     publishedAt: "2026-07-29T14:15:00Z",
-    thumbnailUrl: "/assets/home/news-thumb-03.png",
+    thumbnailUrl: "/assets/home/news-thumb-03.webp",
   },
   {
     id: "n4",
@@ -193,9 +193,9 @@ export const MOCK_NEWS: NewsArticle[] = [
       "A structured pathway for players under eighteen begins in twelve member nations.",
     category: "Development",
     publishedAt: "2026-07-21T08:00:00Z",
-    thumbnailUrl: "/assets/home/news-thumb-04.png",
+    thumbnailUrl: "/assets/home/news-thumb-04.webp",
     isFeatured: true,
-    heroImageUrl: "/assets/news/news-tile-run-player.png",
+    heroImageUrl: "/assets/news/news-tile-run-player.webp",
     heroImageAlt:
       "A young player lies level with a table, setting the last tile into a standing run of dominoes.",
   },
@@ -207,9 +207,9 @@ export const MOCK_NEWS: NewsArticle[] = [
       "Delegates approved the revised statutes and confirmed the 2027 competition calendar.",
     category: "Federation",
     publishedAt: "2026-07-10T11:45:00Z",
-    thumbnailUrl: "/assets/home/news-thumb-05.png",
+    thumbnailUrl: "/assets/home/news-thumb-05.webp",
     isFeatured: true,
-    heroImageUrl: "/assets/news/news-panel-discussion.png",
+    heroImageUrl: "/assets/news/news-panel-discussion.webp",
     heroImageAlt:
       "Three delegates on a panel, one speaking into a handheld microphone.",
   },
@@ -221,9 +221,9 @@ export const MOCK_NEWS: NewsArticle[] = [
       "Points now decay over twelve months, so a title defended counts for more than a title held.",
     category: "Ranking",
     publishedAt: "2026-06-28T13:20:00Z",
-    thumbnailUrl: "/assets/home/news-thumb-06.png",
+    thumbnailUrl: "/assets/home/news-thumb-06.webp",
     isFeatured: true,
-    heroImageUrl: "/assets/news/news-podium-ceremony.png",
+    heroImageUrl: "/assets/news/news-podium-ceremony.webp",
     heroImageAlt:
       "Teams lined up on a tiered podium, holding national flags for the closing ceremony.",
   },
@@ -235,9 +235,9 @@ export const MOCK_NEWS: NewsArticle[] = [
       "Applications are open in every member federation, with the first assessments held in October.",
     category: "Officiating",
     publishedAt: "2026-06-15T07:00:00Z",
-    thumbnailUrl: "/assets/home/news-thumb-01.png",
+    thumbnailUrl: "/assets/home/news-thumb-01.webp",
     isFeatured: true,
-    heroImageUrl: "/assets/news/news-match-handshake.png",
+    heroImageUrl: "/assets/news/news-match-handshake.webp",
     heroImageAlt:
       "Two competitors shake hands across the table before the start of a match.",
   },
@@ -249,9 +249,9 @@ export const MOCK_NEWS: NewsArticle[] = [
       "Partner schools across the region report their strongest intake since the youth pathway opened.",
     category: "Development",
     publishedAt: "2026-03-06T08:00:00Z",
-    thumbnailUrl: "/assets/development/news-oceania-schools.png",
+    thumbnailUrl: "/assets/development/news-oceania-schools.webp",
     isFeatured: true,
-    heroImageUrl: "/assets/news/news-medal-flag-bearer.png",
+    heroImageUrl: "/assets/news/news-medal-flag-bearer.webp",
     heroImageAlt:
       "A national team member stands draped in their flag with a medal at their chest.",
   },
@@ -263,11 +263,11 @@ export const MOCK_NEWS: NewsArticle[] = [
       "Tile dimensions, weight tolerance and table surfaces are specified for every sanctioned event.",
     category: "Development",
     publishedAt: "2025-03-14T10:30:00Z",
-    thumbnailUrl: "/assets/development/news-equipment-standards.png",
+    thumbnailUrl: "/assets/development/news-equipment-standards.webp",
     // Photographed for the band but not flagged for it: the shelf is an
     // editorial choice and the band shows six. Left with a hero so the
     // federation can promote it without going looking for a picture.
-    heroImageUrl: "/assets/news/news-player-at-table.png",
+    heroImageUrl: "/assets/news/news-player-at-table.webp",
     heroImageAlt:
       "A competitor sits back from the table mid-match, looking across the playing hall.",
   },
@@ -279,7 +279,7 @@ export const MOCK_NEWS: NewsArticle[] = [
       "Continental referees may apply for the elite assessment, held over four days with a written exam.",
     category: "Development",
     publishedAt: "2025-02-22T09:00:00Z",
-    thumbnailUrl: "/assets/development/news-referee-seminar.png",
+    thumbnailUrl: "/assets/development/news-referee-seminar.webp",
   },
 ]
 
@@ -476,7 +476,7 @@ export const MOCK_RESOURCES: ResourceDocument[] = [
     fileUrl: "#",
     fileType: "pdf",
     fileSize: "5.2 MB",
-    coverImageUrl: "/assets/news/publication-cover-quarter-review.png",
+    coverImageUrl: "/assets/news/publication-cover-quarter-review.webp",
   },
   {
     // TODO(design): Figma draws two publication cards with byte-identical
@@ -492,7 +492,7 @@ export const MOCK_RESOURCES: ResourceDocument[] = [
     fileUrl: "#",
     fileType: "pdf",
     fileSize: "4.8 MB",
-    coverImageUrl: "/assets/news/publication-cover-quarter-review.png",
+    coverImageUrl: "/assets/news/publication-cover-quarter-review.webp",
   },
   // The tournament page's regulations shelf (`381:17593`) — three documents,
   // verbatim from the design, dates and sizes included. Their own category
@@ -615,7 +615,7 @@ export const MOCK_GALLERY: GalleryItem[] = [
   {
     id: "g1",
     title: "Inside the playing hall",
-    imageUrl: "/assets/global/gallery-playing-hall.png",
+    imageUrl: "/assets/global/gallery-playing-hall.webp",
     imageAlt:
       "Competitors seated at rows of tables in a playing hall, a red tournament backdrop behind them.",
     kind: "video",
@@ -623,7 +623,7 @@ export const MOCK_GALLERY: GalleryItem[] = [
   {
     id: "g2",
     title: "Round nine, board one",
-    imageUrl: "/assets/global/gallery-match-broadcast.png",
+    imageUrl: "/assets/global/gallery-match-broadcast.webp",
     imageAlt:
       "Two players face each other across a table while a camera operator films from behind.",
     kind: "photo",
@@ -631,7 +631,7 @@ export const MOCK_GALLERY: GalleryItem[] = [
   {
     id: "g3",
     title: "Trophy presentation",
-    imageUrl: "/assets/global/gallery-trophy-presentation.png",
+    imageUrl: "/assets/global/gallery-trophy-presentation.webp",
     imageAlt:
       "An official shakes hands with a competitor on stage beside a trophy on a plinth.",
     kind: "photo",
@@ -639,7 +639,7 @@ export const MOCK_GALLERY: GalleryItem[] = [
   {
     id: "g4",
     title: "Team delegation arrives",
-    imageUrl: "/assets/global/gallery-team-delegation.png",
+    imageUrl: "/assets/global/gallery-team-delegation.webp",
     imageAlt:
       "A national team in matching tracksuits gathers at the edge of the playing area.",
     kind: "video",
@@ -647,7 +647,7 @@ export const MOCK_GALLERY: GalleryItem[] = [
   {
     id: "g5",
     title: "Homecoming",
-    imageUrl: "/assets/global/gallery-airport-welcome.png",
+    imageUrl: "/assets/global/gallery-airport-welcome.webp",
     imageAlt:
       "A medallist in traditional dress is welcomed at an airport with a bouquet of white flowers.",
     kind: "photo",
@@ -655,7 +655,7 @@ export const MOCK_GALLERY: GalleryItem[] = [
   {
     id: "g6",
     title: "Team portrait",
-    imageUrl: "/assets/global/gallery-team-portrait.png",
+    imageUrl: "/assets/global/gallery-team-portrait.webp",
     imageAlt:
       "Three team members in blue blazers stand together in the venue between rounds.",
     kind: "photo",
@@ -663,7 +663,7 @@ export const MOCK_GALLERY: GalleryItem[] = [
   {
     id: "g7",
     title: "Exhibition match",
-    imageUrl: "/assets/global/gallery-exhibition-match.png",
+    imageUrl: "/assets/global/gallery-exhibition-match.webp",
     imageAlt:
       "Officials and spectators crowd around a table during an exhibition match.",
     kind: "video",
@@ -682,7 +682,7 @@ export const MOCK_FEATURED_EVENT: FeaturedEvent = {
   startsAt: "2026-11-14T09:00:00Z",
   location: "Mexico City",
   country: "MEX",
-  flagUrl: "/assets/global/flags/flag-mex.png",
+  flagUrl: "/assets/global/flags/flag-mex.webp",
   /**
    * "See Details" goes to the tournament of the same name. This is the one place
    * the two lists already agree — `world-championship-2026` is a real slug in
@@ -715,7 +715,7 @@ export const MOCK_HIGHLIGHTED_TOURNAMENT: ShowcaseEvent = {
   location: "Montego Bay, Jamaica",
   summary:
     "The premier regional tournament returns to Montego Bay, bringing together elite domino pairings from across the Caribbean for several days of high-level competition.",
-  imageUrl: "/assets/tournaments/highlighted-venue.jpg",
+  imageUrl: "/assets/tournaments/highlighted-venue.webp",
   imageAlt:
     "The tournament hall: long rows of playing tables under a beamed ceiling, set for competition",
   registrationLabel: "Registration ends in 3 days",
@@ -753,7 +753,7 @@ export const MOCK_SHOWCASE_EVENTS: ShowcaseEvent[] = [
     location: "Montego Bay, Jamaica",
     summary:
       "The premier regional tournament returns to Montego Bay, bringing together elite domino pairings from across the Caribbean for several days of high-level competition.",
-    imageUrl: "/assets/home/event-showcase-card.png",
+    imageUrl: "/assets/home/event-showcase-card.webp",
     imageAlt:
       "A raised gold trophy topped with two domino tiles, held aloft by the winner",
     registrationLabel: "Registration ends in 3 days",
@@ -767,7 +767,7 @@ export const MOCK_SHOWCASE_EVENTS: ShowcaseEvent[] = [
     location: "Mexico City, Mexico",
     summary:
       "Continental qualifying reaches its final stage, with the twelve highest-placed pairs earning direct entry to next season's world championship draw.",
-    imageUrl: "/assets/home/event-showcase-card.png",
+    imageUrl: "/assets/home/event-showcase-card.webp",
     imageAlt:
       "A raised gold trophy topped with two domino tiles, held aloft by the winner",
     registrationLabel: "Registration ends in 25 days",
@@ -781,7 +781,7 @@ export const MOCK_SHOWCASE_EVENTS: ShowcaseEvent[] = [
     location: "Valencia, Spain",
     summary:
       "Sixteen national champions meet in a round-robin format, played under the revised timing protocol introduced in this year's rulebook.",
-    imageUrl: "/assets/home/event-showcase-card.png",
+    imageUrl: "/assets/home/event-showcase-card.webp",
     imageAlt:
       "A raised gold trophy topped with two domino tiles, held aloft by the winner",
     registrationLabel: "Registration ends in 53 days",
@@ -795,7 +795,7 @@ export const MOCK_SHOWCASE_EVENTS: ShowcaseEvent[] = [
     location: "Jakarta, Indonesia",
     summary:
       "The region's largest open draw, with more than four hundred pairs expected across the main and amateur brackets.",
-    imageUrl: "/assets/home/event-showcase-card.png",
+    imageUrl: "/assets/home/event-showcase-card.webp",
     imageAlt:
       "A raised gold trophy topped with two domino tiles, held aloft by the winner",
     registrationLabel: "Registration closed",
@@ -809,7 +809,7 @@ export const MOCK_SHOWCASE_EVENTS: ShowcaseEvent[] = [
     location: "Accra, Ghana",
     summary:
       "A first continental title on the calendar, staged jointly by six member federations and open to every affiliated national association.",
-    imageUrl: "/assets/home/event-showcase-card.png",
+    imageUrl: "/assets/home/event-showcase-card.webp",
     imageAlt:
       "A raised gold trophy topped with two domino tiles, held aloft by the winner",
     registrationLabel: "Registration opens Jan 12",
@@ -823,7 +823,7 @@ export const MOCK_SHOWCASE_EVENTS: ShowcaseEvent[] = [
     location: "Santo Domingo, Dominican Republic",
     summary:
       "The federation's flagship event, where the season's qualified pairs play for the world title over seven days of competition.",
-    imageUrl: "/assets/home/event-showcase-card.png",
+    imageUrl: "/assets/home/event-showcase-card.webp",
     imageAlt:
       "A raised gold trophy topped with two domino tiles, held aloft by the winner",
     registrationLabel: "Registration opens Mar 2",
@@ -852,7 +852,7 @@ export const MOCK_HERITAGE_MILESTONES: HeritageMilestone[] = [
     title: "The Foundation",
     summary:
       "Representatives from 12 nations gathered in Geneva to formalize the first set of international rules and establish the DWF.",
-    imageUrl: "/assets/about/heritage-card-01.png",
+    imageUrl: "/assets/about/heritage-card-01.webp",
     imageAlt:
       "Two men in early twentieth-century suits conferring across a roll-top desk in a wood-panelled office",
   },
@@ -862,7 +862,7 @@ export const MOCK_HERITAGE_MILESTONES: HeritageMilestone[] = [
     title: "Inaugural World Cup",
     summary:
       "Representatives from 12 nations gathered in Geneva to formalize the first set of international rules and establish the DWF.",
-    imageUrl: "/assets/about/heritage-card-02.png",
+    imageUrl: "/assets/about/heritage-card-02.webp",
     imageAlt:
       "A packed arena of competitors at long tables beneath World Domino Championship banners",
   },
@@ -872,7 +872,7 @@ export const MOCK_HERITAGE_MILESTONES: HeritageMilestone[] = [
     title: "75 Countries Joined",
     summary:
       "Representatives from 12 nations gathered in Geneva to formalize the first set of international rules and establish the DWF.",
-    imageUrl: "/assets/about/heritage-card-03.png",
+    imageUrl: "/assets/about/heritage-card-03.webp",
     imageAlt:
       "Delegates seated along both sides of a conference table before a row of national flags and press cameras",
   },
@@ -881,7 +881,7 @@ export const MOCK_HERITAGE_MILESTONES: HeritageMilestone[] = [
     year: "2003",
     title: "DWF Championship World Tour",
     summary: "The First DWF Championship World Tour with 80 countries joined.",
-    imageUrl: "/assets/about/heritage-card-04.png",
+    imageUrl: "/assets/about/heritage-card-04.webp",
     imageAlt:
       "Supporters in team colours with their arms raised, cheering in a crowd",
   },
@@ -899,7 +899,7 @@ export const MOCK_HERITAGE_MILESTONES: HeritageMilestone[] = [
  *    showing the design's own duplication and marking it, which is the same
  *    call the Pillars copy got.
  *
- * 2. TODO(design): `board-portrait-02.png` is a stock photograph of a REAL,
+ * 2. TODO(design): `board-portrait-02.webp` is a stock photograph of a REAL,
  *    widely recognisable public figure, used here as a fictional vice-president.
  *    That is a licensing and misrepresentation problem, not a styling one — a
  *    federation naming a real person to an office they do not hold. It needs a
@@ -915,7 +915,7 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
     // wide with a 48px face: the two-line shape is what the design lays out.
     name: "Dr. Salva\nLopez",
     role: "President",
-    portraitUrl: "/assets/about/board-portrait-01.png",
+    portraitUrl: "/assets/about/board-portrait-01.webp",
     portraitAlt:
       "A man in a dark suit seated in a low armchair, turning towards the camera in a dimly lit room",
   },
@@ -923,7 +923,7 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
     id: "b2",
     name: "James\nHenderson",
     role: "Vice President",
-    portraitUrl: "/assets/about/board-portrait-02.png",
+    portraitUrl: "/assets/about/board-portrait-02.webp",
     portraitAlt:
       "An older man with grey hair, a beard and round glasses in a leather jacket, resting his hand near his chin against a warm brown backdrop",
   },
@@ -931,7 +931,7 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
     id: "b3",
     name: "Elizabeth\nLi Tze",
     role: "Secretary General",
-    portraitUrl: "/assets/about/board-portrait-03.png",
+    portraitUrl: "/assets/about/board-portrait-03.webp",
     portraitAlt:
       "A woman with short grey hair and heavy black glasses in a navy blazer, seated at a wooden table in low sunlight",
   },
@@ -940,7 +940,7 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
     // TODO(design): duplicate office — `112:3585` repeats "SECRETARY GENERAL".
     role: "Secretary General",
     name: "Jennifer\nBachdzer",
-    portraitUrl: "/assets/about/board-portrait-04.png",
+    portraitUrl: "/assets/about/board-portrait-04.webp",
     portraitAlt:
       "A woman with long dark hair in a navy blazer over a cream top, looking past the camera against a wood-panelled wall",
   },
@@ -1004,7 +1004,7 @@ export const MOCK_TOURNAMENTS: Tournament[] = [
     status: "upcoming",
     registration: "open",
     location: "London, United Kingdom",
-    imageUrl: "/assets/tournaments/card-champions-arena.jpg",
+    imageUrl: "/assets/tournaments/card-champions-arena.webp",
     imageAlt:
       "Tournament poster: a gold trophy topped with two domino tiles against a slate ground, lettered DWF2026.",
     dateLabel: "Sep 18 - 21, 2026",
@@ -1023,7 +1023,7 @@ export const MOCK_TOURNAMENTS: Tournament[] = [
     status: "upcoming",
     registration: "upcoming",
     location: "Dubai, UAE",
-    imageUrl: "/assets/tournaments/card-caribbean-open.jpg",
+    imageUrl: "/assets/tournaments/card-caribbean-open.webp",
     imageAlt:
       "Tournament poster: a gold trophy topped with two domino tiles against a warm gold ground, lettered DWF2026.",
     dateLabel: "Nov 5 - 9, 2026",
@@ -1042,7 +1042,7 @@ export const MOCK_TOURNAMENTS: Tournament[] = [
     status: "live",
     registration: "ongoing",
     location: "Mexico City, MX",
-    imageUrl: "/assets/tournaments/card-regional-play.jpg",
+    imageUrl: "/assets/tournaments/card-regional-play.webp",
     imageAlt:
       "Tournament poster: a gold trophy topped with two domino tiles against a magenta ground, lettered DWF2026.",
     dateLabel: "Jan 14 - 17, 2027",
@@ -1060,7 +1060,7 @@ export const MOCK_TOURNAMENTS: Tournament[] = [
     status: "upcoming",
     registration: "open",
     location: "Stockholm, SE",
-    imageUrl: "/assets/tournaments/card-champions-arena.jpg",
+    imageUrl: "/assets/tournaments/card-champions-arena.webp",
     imageAlt:
       "Tournament poster: a gold trophy topped with two domino tiles against a slate ground, lettered DWF2026.",
     dateLabel: "Mar 18 - 21, 2027",
@@ -1079,7 +1079,7 @@ export const MOCK_TOURNAMENTS: Tournament[] = [
     status: "upcoming",
     registration: "closed",
     location: "Jakarta, Indonesia",
-    imageUrl: "/assets/tournaments/card-caribbean-open.jpg",
+    imageUrl: "/assets/tournaments/card-caribbean-open.webp",
     imageAlt:
       "Tournament poster: a gold trophy topped with two domino tiles against a warm gold ground, lettered DWF2026.",
     dateLabel: "Jun 2 - 6, 2027",
@@ -1114,7 +1114,7 @@ export const MOCK_TOURNAMENTS: Tournament[] = [
     status: "upcoming",
     registration: "open",
     location: "Montego Bay, Jamaica",
-    imageUrl: "/assets/tournaments/card-caribbean-open.jpg",
+    imageUrl: "/assets/tournaments/card-caribbean-open.webp",
     imageAlt:
       "Tournament poster: a gold trophy topped with two domino tiles against a warm gold ground, lettered DWF2026.",
     dateLabel: "Oct 12 - 16, 2026",
@@ -1134,7 +1134,7 @@ export const MOCK_TOURNAMENTS: Tournament[] = [
     status: "upcoming",
     registration: "upcoming",
     location: "Online",
-    imageUrl: "/assets/tournaments/card-regional-play.jpg",
+    imageUrl: "/assets/tournaments/card-regional-play.webp",
     imageAlt:
       "Tournament poster: a gold trophy topped with two domino tiles against a magenta ground, lettered DWF2026.",
     dateLabel: "Dec 8 - 10, 2026",
@@ -1153,7 +1153,7 @@ export const MOCK_TOURNAMENTS: Tournament[] = [
     status: "upcoming",
     registration: "open",
     location: "Lagos, Nigeria",
-    imageUrl: "/assets/tournaments/card-champions-arena.jpg",
+    imageUrl: "/assets/tournaments/card-champions-arena.webp",
     imageAlt:
       "Tournament poster: a gold trophy topped with two domino tiles against a slate ground, lettered DWF2026.",
     dateLabel: "Apr 14 - 17, 2027",
@@ -1173,7 +1173,7 @@ export const MOCK_TOURNAMENTS: Tournament[] = [
     status: "live",
     registration: "ongoing",
     location: "Havana, Cuba",
-    imageUrl: "/assets/tournaments/card-caribbean-open.jpg",
+    imageUrl: "/assets/tournaments/card-caribbean-open.webp",
     imageAlt:
       "Tournament poster: a gold trophy topped with two domino tiles against a warm gold ground, lettered DWF2026.",
     dateLabel: "Sep 2 - 5, 2026",
@@ -1192,7 +1192,7 @@ export const MOCK_TOURNAMENTS: Tournament[] = [
     status: "completed",
     registration: "closed",
     location: "Madrid, Spain",
-    imageUrl: "/assets/tournaments/card-champions-arena.jpg",
+    imageUrl: "/assets/tournaments/card-champions-arena.webp",
     imageAlt:
       "Tournament poster: a gold trophy topped with two domino tiles against a slate ground, lettered DWF2026.",
     dateLabel: "Aug 28 - 30, 2025",
@@ -1212,7 +1212,7 @@ export const MOCK_TOURNAMENTS: Tournament[] = [
     status: "completed",
     registration: "closed",
     location: "Tokyo, Japan",
-    imageUrl: "/assets/tournaments/card-regional-play.jpg",
+    imageUrl: "/assets/tournaments/card-regional-play.webp",
     imageAlt:
       "Tournament poster: a gold trophy topped with two domino tiles against a magenta ground, lettered DWF2026.",
     dateLabel: "May 6 - 9, 2025",
@@ -1307,7 +1307,7 @@ const SHARED_OFFICIALS: TournamentOfficial[] = [
     name: "Elene Rodriguez",
     role: "Chief Referee",
     country: "Spain",
-    portraitUrl: "/assets/tournaments/champion-portrait-01.png",
+    portraitUrl: "/assets/tournaments/champion-portrait-01.webp",
     portraitAlt: "",
   },
   {
@@ -1315,7 +1315,7 @@ const SHARED_OFFICIALS: TournamentOfficial[] = [
     name: "Daniel Morgan",
     role: "Deputy Referee",
     country: "Jamaica",
-    portraitUrl: "/assets/tournaments/champion-portrait-02.png",
+    portraitUrl: "/assets/tournaments/champion-portrait-02.webp",
     portraitAlt: "",
   },
 ]
@@ -1356,7 +1356,7 @@ const SHARED_SCHEDULE: TournamentScheduleEntry[] = [
 const SHARED_PRIZE = {
   headline: "USD 50.000 Prize pool",
   note: "Includes medals and official DWF ranking points",
-  imageUrl: "/assets/global/gallery-trophy-presentation.png",
+  imageUrl: "/assets/global/gallery-trophy-presentation.webp",
   imageAlt:
     "A trophy being handed over on stage at the close of a federation tournament",
 }
@@ -1378,8 +1378,8 @@ const MADRID_WINNERS: TournamentWinner[] = [
     names: "Luis Ortega & Mateo Ruiz",
     country: "Spain",
     portraitUrls: [
-      "/assets/tournaments/champion-portrait-03.png",
-      "/assets/tournaments/champion-portrait-04.png",
+      "/assets/tournaments/champion-portrait-03.webp",
+      "/assets/tournaments/champion-portrait-04.webp",
     ],
   },
   {
@@ -1388,8 +1388,8 @@ const MADRID_WINNERS: TournamentWinner[] = [
     names: "Andre Clarke & Devon Reid",
     country: "Jamaica",
     portraitUrls: [
-      "/assets/tournaments/champion-portrait-01.png",
-      "/assets/tournaments/champion-portrait-02.png",
+      "/assets/tournaments/champion-portrait-01.webp",
+      "/assets/tournaments/champion-portrait-02.webp",
     ],
   },
   {
@@ -1398,8 +1398,8 @@ const MADRID_WINNERS: TournamentWinner[] = [
     names: "Kenji Sato & Haruto Mori",
     country: "Japan",
     portraitUrls: [
-      "/assets/tournaments/champion-portrait-04.png",
-      "/assets/tournaments/champion-portrait-03.png",
+      "/assets/tournaments/champion-portrait-04.webp",
+      "/assets/tournaments/champion-portrait-03.webp",
     ],
   },
 ]
@@ -1455,10 +1455,10 @@ const DETAIL_EXTRAS: Record<string, Partial<TournamentDetailExtras>> = {
       address: "Sam Sharpe Square, Montego Bay, St James, Jamaica",
       country: "Jamaica",
       coordinates: { lat: 18.4713, lng: -77.9214 },
-      imageUrl: "/assets/tournaments/highlighted-venue.jpg",
+      imageUrl: "/assets/tournaments/highlighted-venue.webp",
       imageAlt:
         "The tournament hall: long rows of playing tables under a beamed ceiling, set for competition",
-      thumbUrl: "/assets/global/gallery-playing-hall.png",
+      thumbUrl: "/assets/global/gallery-playing-hall.webp",
     },
   },
   "madrid-world-championship-2025": {
@@ -1467,10 +1467,10 @@ const DETAIL_EXTRAS: Record<string, Partial<TournamentDetailExtras>> = {
       address: "Av. de Portugal, s/n, Moncloa - Aravaca, 28011 Madrid, Spain",
       country: "Spain",
       coordinates: { lat: 40.4197, lng: -3.7443 },
-      imageUrl: "/assets/tournaments/highlighted-venue.jpg",
+      imageUrl: "/assets/tournaments/highlighted-venue.webp",
       imageAlt:
         "The tournament hall: long rows of playing tables under a beamed ceiling, set for competition",
-      thumbUrl: "/assets/global/gallery-playing-hall.png",
+      thumbUrl: "/assets/global/gallery-playing-hall.webp",
     },
     winners: MADRID_WINNERS,
   },
@@ -1480,10 +1480,10 @@ const DETAIL_EXTRAS: Record<string, Partial<TournamentDetailExtras>> = {
       address: "3-5-1 Marunouchi, Chiyoda City, Tokyo 100-0005, Japan",
       country: "Japan",
       coordinates: { lat: 35.6773, lng: 139.7635 },
-      imageUrl: "/assets/tournaments/highlighted-venue.jpg",
+      imageUrl: "/assets/tournaments/highlighted-venue.webp",
       imageAlt:
         "The tournament hall: long rows of playing tables under a beamed ceiling, set for competition",
-      thumbUrl: "/assets/global/gallery-team-portrait.png",
+      thumbUrl: "/assets/global/gallery-team-portrait.webp",
     },
     winners: MADRID_WINNERS,
   },
@@ -1493,7 +1493,7 @@ export const MOCK_TOURNAMENT_DETAILS: TournamentDetail[] = MOCK_TOURNAMENTS.map(
   (tournament) => ({
     ...tournament,
     summary: SHARED_SUMMARY,
-    heroImageUrl: "/assets/tournaments/highlighted-venue.jpg",
+    heroImageUrl: "/assets/tournaments/highlighted-venue.webp",
     heroImageAlt:
       "The tournament hall: long rows of playing tables under a beamed ceiling, set for competition",
     dateHeading: tournament.dateLabel,
@@ -1510,10 +1510,10 @@ export const MOCK_TOURNAMENT_DETAILS: TournamentDetail[] = MOCK_TOURNAMENTS.map(
             coordinates: tournament.venue
               ? HALL_COORDINATES[tournament.venue]
               : CITY_COORDINATES[tournament.location],
-            imageUrl: "/assets/tournaments/highlighted-venue.jpg",
+            imageUrl: "/assets/tournaments/highlighted-venue.webp",
             imageAlt:
               "The tournament hall: long rows of playing tables under a beamed ceiling, set for competition",
-            thumbUrl: "/assets/global/gallery-playing-hall.png",
+            thumbUrl: "/assets/global/gallery-playing-hall.webp",
           },
     prize: SHARED_PRIZE,
     eligibility: SHARED_ELIGIBILITY,
@@ -1564,7 +1564,7 @@ export const MOCK_CHAMPIONS: Champion[] = [
     id: "ch1",
     event: "2024 World Championship",
     name: "Marcus\nJohnson",
-    portraitUrl: "/assets/tournaments/champion-portrait-01.png",
+    portraitUrl: "/assets/tournaments/champion-portrait-01.webp",
     portraitAlt:
       "A player in a pale shirt sits at the board, one hand resting against their forehead mid-game.",
   },
@@ -1572,7 +1572,7 @@ export const MOCK_CHAMPIONS: Champion[] = [
     id: "ch2",
     event: "2023 World Championship",
     name: "Alicia\nBrown",
-    portraitUrl: "/assets/tournaments/champion-portrait-02.png",
+    portraitUrl: "/assets/tournaments/champion-portrait-02.webp",
     portraitAlt:
       "A person in a dark suit and headset microphone, smiling under stage lighting.",
   },
@@ -1580,7 +1580,7 @@ export const MOCK_CHAMPIONS: Champion[] = [
     id: "ch3",
     event: "2024 European",
     name: "Devon\nClarke",
-    portraitUrl: "/assets/tournaments/champion-portrait-03.png",
+    portraitUrl: "/assets/tournaments/champion-portrait-03.webp",
     portraitAlt:
       "A player in a checked jacket sits behind the board with their hands clasped in front of them.",
   },
@@ -1588,7 +1588,7 @@ export const MOCK_CHAMPIONS: Champion[] = [
     id: "ch4",
     event: "2024 Asian",
     name: "Priya\nRaman",
-    portraitUrl: "/assets/tournaments/champion-portrait-04.png",
+    portraitUrl: "/assets/tournaments/champion-portrait-04.webp",
     portraitAlt:
       "A player in a blue patterned shirt sits at the board with their palms pressed together.",
   },
@@ -1662,7 +1662,7 @@ export const MOCK_GALLERY_ALBUMS: GalleryAlbum[] = [
       {
         id: "gl-1",
         title: "Inside the playing hall",
-        imageUrl: "/assets/global/gallery-playing-hall.png",
+        imageUrl: "/assets/global/gallery-playing-hall.webp",
         imageAlt:
           "Competitors seated at rows of tables in a playing hall, a red tournament backdrop behind them.",
         kind: "video",
@@ -1670,7 +1670,7 @@ export const MOCK_GALLERY_ALBUMS: GalleryAlbum[] = [
       {
         id: "gl-2",
         title: "Round nine, board one",
-        imageUrl: "/assets/global/gallery-match-broadcast.png",
+        imageUrl: "/assets/global/gallery-match-broadcast.webp",
         imageAlt:
           "Two players face each other across a table while a camera operator films from behind.",
         kind: "photo",
@@ -1678,7 +1678,7 @@ export const MOCK_GALLERY_ALBUMS: GalleryAlbum[] = [
       {
         id: "gl-3",
         title: "Team delegation arrives",
-        imageUrl: "/assets/global/gallery-team-delegation.png",
+        imageUrl: "/assets/global/gallery-team-delegation.webp",
         imageAlt:
           "A national team in matching tracksuits gathers at the edge of the playing area.",
         kind: "video",
@@ -1686,7 +1686,7 @@ export const MOCK_GALLERY_ALBUMS: GalleryAlbum[] = [
       {
         id: "gl-4",
         title: "Homecoming",
-        imageUrl: "/assets/global/gallery-airport-welcome.png",
+        imageUrl: "/assets/global/gallery-airport-welcome.webp",
         imageAlt:
           "A medallist in traditional dress is welcomed at an airport with a bouquet of white flowers.",
         kind: "photo",
@@ -1694,7 +1694,7 @@ export const MOCK_GALLERY_ALBUMS: GalleryAlbum[] = [
       {
         id: "gl-5",
         title: "Trophy presentation",
-        imageUrl: "/assets/global/gallery-trophy-presentation.png",
+        imageUrl: "/assets/global/gallery-trophy-presentation.webp",
         imageAlt:
           "An official shakes hands with a competitor on stage beside a trophy on a plinth.",
         kind: "photo",
@@ -1702,7 +1702,7 @@ export const MOCK_GALLERY_ALBUMS: GalleryAlbum[] = [
       {
         id: "gl-6",
         title: "Team portrait",
-        imageUrl: "/assets/global/gallery-team-portrait.png",
+        imageUrl: "/assets/global/gallery-team-portrait.webp",
         imageAlt:
           "Three team members in blue blazers stand together in the venue between rounds.",
         kind: "photo",
@@ -1720,7 +1720,7 @@ export const MOCK_GALLERY_ALBUMS: GalleryAlbum[] = [
       {
         id: "gt-1",
         title: "Inside the playing hall",
-        imageUrl: "/assets/global/gallery-playing-hall.png",
+        imageUrl: "/assets/global/gallery-playing-hall.webp",
         imageAlt:
           "Competitors seated at rows of tables in a playing hall, a red tournament backdrop behind them.",
         kind: "video",
@@ -1728,7 +1728,7 @@ export const MOCK_GALLERY_ALBUMS: GalleryAlbum[] = [
       {
         id: "gt-2",
         title: "Round nine, board one",
-        imageUrl: "/assets/global/gallery-match-broadcast.png",
+        imageUrl: "/assets/global/gallery-match-broadcast.webp",
         imageAlt:
           "Two players face each other across a table while a camera operator films from behind.",
         kind: "photo",
@@ -1736,7 +1736,7 @@ export const MOCK_GALLERY_ALBUMS: GalleryAlbum[] = [
       {
         id: "gt-3",
         title: "Team delegation arrives",
-        imageUrl: "/assets/global/gallery-team-delegation.png",
+        imageUrl: "/assets/global/gallery-team-delegation.webp",
         imageAlt:
           "A national team in matching tracksuits gathers at the edge of the playing area.",
         kind: "video",
@@ -1744,7 +1744,7 @@ export const MOCK_GALLERY_ALBUMS: GalleryAlbum[] = [
       {
         id: "gt-4",
         title: "Homecoming",
-        imageUrl: "/assets/global/gallery-airport-welcome.png",
+        imageUrl: "/assets/global/gallery-airport-welcome.webp",
         imageAlt:
           "A medallist in traditional dress is welcomed at an airport with a bouquet of white flowers.",
         kind: "photo",
@@ -1752,7 +1752,7 @@ export const MOCK_GALLERY_ALBUMS: GalleryAlbum[] = [
       {
         id: "gt-5",
         title: "Trophy presentation",
-        imageUrl: "/assets/global/gallery-trophy-presentation.png",
+        imageUrl: "/assets/global/gallery-trophy-presentation.webp",
         imageAlt:
           "An official shakes hands with a competitor on stage beside a trophy on a plinth.",
         kind: "photo",
@@ -1760,7 +1760,7 @@ export const MOCK_GALLERY_ALBUMS: GalleryAlbum[] = [
       {
         id: "gt-6",
         title: "Team portrait",
-        imageUrl: "/assets/global/gallery-team-portrait.png",
+        imageUrl: "/assets/global/gallery-team-portrait.webp",
         imageAlt:
           "Three team members in blue blazers stand together in the venue between rounds.",
         kind: "photo",
@@ -1776,7 +1776,7 @@ export const MOCK_GALLERY_ALBUMS: GalleryAlbum[] = [
       {
         id: "gh-1",
         title: "Inside the playing hall",
-        imageUrl: "/assets/global/gallery-playing-hall.png",
+        imageUrl: "/assets/global/gallery-playing-hall.webp",
         imageAlt:
           "Competitors seated at rows of tables in a playing hall, a red tournament backdrop behind them.",
         kind: "video",
@@ -1784,7 +1784,7 @@ export const MOCK_GALLERY_ALBUMS: GalleryAlbum[] = [
       {
         id: "gh-2",
         title: "Round nine, board one",
-        imageUrl: "/assets/global/gallery-match-broadcast.png",
+        imageUrl: "/assets/global/gallery-match-broadcast.webp",
         imageAlt:
           "Two players face each other across a table while a camera operator films from behind.",
         kind: "photo",
@@ -1792,7 +1792,7 @@ export const MOCK_GALLERY_ALBUMS: GalleryAlbum[] = [
       {
         id: "gh-3",
         title: "Team delegation arrives",
-        imageUrl: "/assets/global/gallery-team-delegation.png",
+        imageUrl: "/assets/global/gallery-team-delegation.webp",
         imageAlt:
           "A national team in matching tracksuits gathers at the edge of the playing area.",
         kind: "video",
@@ -1800,7 +1800,7 @@ export const MOCK_GALLERY_ALBUMS: GalleryAlbum[] = [
       {
         id: "gh-4",
         title: "Homecoming",
-        imageUrl: "/assets/global/gallery-airport-welcome.png",
+        imageUrl: "/assets/global/gallery-airport-welcome.webp",
         imageAlt:
           "A medallist in traditional dress is welcomed at an airport with a bouquet of white flowers.",
         kind: "photo",
@@ -1808,7 +1808,7 @@ export const MOCK_GALLERY_ALBUMS: GalleryAlbum[] = [
       {
         id: "gh-5",
         title: "Trophy presentation",
-        imageUrl: "/assets/global/gallery-trophy-presentation.png",
+        imageUrl: "/assets/global/gallery-trophy-presentation.webp",
         imageAlt:
           "An official shakes hands with a competitor on stage beside a trophy on a plinth.",
         kind: "photo",
@@ -1816,7 +1816,7 @@ export const MOCK_GALLERY_ALBUMS: GalleryAlbum[] = [
       {
         id: "gh-6",
         title: "Team portrait",
-        imageUrl: "/assets/global/gallery-team-portrait.png",
+        imageUrl: "/assets/global/gallery-team-portrait.webp",
         imageAlt:
           "Three team members in blue blazers stand together in the venue between rounds.",
         kind: "photo",
@@ -1834,7 +1834,7 @@ export const MOCK_GALLERY_ALBUMS: GalleryAlbum[] = [
       {
         id: "gs-1",
         title: "The Silent War",
-        imageUrl: "/assets/gallery/film-global-final-arena.png",
+        imageUrl: "/assets/gallery/film-global-final-arena.webp",
         imageAlt:
           "A packed arena in black and white, players at a lit table in the round, the boards reading Domino Global Final.",
         kind: "video",
@@ -1870,7 +1870,7 @@ export const MOCK_MEMBERSHIP_STATS: FederationStat[] = [
  * neither alphabetical nor by country, so it is the federation's own and the
  * page does not re-sort it.
  *
- * Only Mexico carries a flag: `flag-mex.png` is the one flag asset in the repo,
+ * Only Mexico carries a flag: `flag-mex.webp` is the one flag asset in the repo,
  * and Figma draws every row with the same grey placeholder anyway. The rest
  * fall back to that square until the federation supplies the artwork.
  */
@@ -1966,7 +1966,7 @@ export const MOCK_MEMBER_FEDERATIONS: MemberFederation[] = [
     id: "mf5",
     name: "Federacion Mexicana de Domino",
     country: "Mexico",
-    flagUrl: "/assets/global/flags/flag-mex.png",
+    flagUrl: "/assets/global/flags/flag-mex.webp",
     tierId: "national",
     joinedYear: 2018,
     president: "Mateo Ruiz",

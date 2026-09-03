@@ -91,7 +91,7 @@ useHead({ htmlAttrs: { class: "snap-sections" } })
            order, where a minimum simply takes the larger. -->
       <UiStickyBand
         class="lg:snap-screen"
-        src="/assets/domino/band-table-match.png"
+        src="/assets/domino/band-table-match.webp"
         :alt="DOMINO_HEADER_ALT.band"
       />
 

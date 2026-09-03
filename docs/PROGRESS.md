@@ -1,6 +1,6 @@
 # Progress — DWF Website
 
-**Terakhir diperbarui:** 2026-08-26
+**Terakhir diperbarui:** 2026-09-03
 
 Legenda: `[ ]` belum · `[~]` berjalan · `[x]` selesai · `[!]` terblokir
 
@@ -53,7 +53,8 @@ nama tersebut (D31).
 - Brand sebenarnya **DWF**, bukan DFW (dari signage render HQ + tagline hero)
 - SVG partner bukan vektor: PNG base64 dalam wrapper `<svg>` (PRD R2)
 - `feature-hq-building.png` 9.2 MB, perlu optimasi (PRD R3 — file kemudian
-  dihapus; tiga aset lain masih di atas 1 MB, PRD R10)
+  dihapus; sisa aset >1 MB ditangani R10, ditutup 2026-09-03 lewat konversi
+  WebP D71)
 - Section nyata **14**, bukan 7 — Countdown, Stats, Resource Library, FAQ
   terlewat karena tanpa aset gambar khusus
 - Carousel berita **5 item**, bukan 6 — satu thumbnail tidak terpakai
@@ -894,8 +895,9 @@ Tarik node → cocokkan aset → susun markup → styling → responsif
 - [ ] Petakan kecepatan antar layer secara menyeluruh
 - [ ] `prefers-reduced-motion` mematikan parallax penuh
 - [ ] Uji parallax di perangkat nyata (60fps, cek baterai)
-- [ ] Optimasi tiga aset di atas 1 MB (PRD R10 — ditunda sampai setelah
-      presentasi atas keputusan pengguna)
+- [x] Optimasi aset di atas 1 MB (PRD R10) — selesai 2026-09-03: ke-70 aset
+      raster jadi WebP q95, aslinya diarsipkan ke `assets-source/`.
+      `public/assets` 77,14 MB → 12,69 MB, nol aset tersisa di atas 1 MB (D71)
 - [ ] Audit Lighthouse (target ≥ 90)
 - [ ] Metadata & OG tag
 - [ ] Sapuan akhir lintas breakpoint
@@ -1818,3 +1820,9 @@ Keputusan arsitektur dicatat di **PRD §7**. Ubah di sana, bukan di sini.
 | 2026-09-01 | Kartu S3 masih 52px di atas fold walau posisinya sudah persis desain **di dalam** hero (dilaporkan pengguna "kurang ke bawah"). Sebabnya bukan kartunya: **frame Figma itu layarnya** — 1920×1080 adalah satu viewport, jadi apa pun yang digantung di kaki hero digambar duduk di fold, sedangkan hero kita kotak rasio tetap yang di jendela 1800×1045 cuma setinggi 1012. Tinggi hero jadi `max(840px,56.25vw,min(100dvh,75vw))`: lantai fold dijaga `min()` ke 4:3, karena tiap layer di hero adalah persentase dari section-nya — tanpa cap itu jendela jangkung akan meregangkan komposisinya dan ubin membesar. Di 1920×1080 sukunya tetap 1080 |
 | 2026-09-01 | **Blok bawah hero juga masih di frame 1040** — terlewat oleh pass yang membagi ulang persentase, karena keduanya ditulis `vw` dan tidak terbaca sebagai aritmetika frame. Jarak CTA→copy 63 dan padding bawah 107 adalah angka 1040; frame 1080 memberi 83 dan 147 (CTA emas 630→702, baris copy mulai 785, tombol Official Rules tutup di 933). `lg:gap-[3.33vw]`→`[4.32vw]`, `lg:pb-[5.6vw]`→`[7.66vw]`, plus jarak dalam kolom kanan 16→32 (`lg:gap-8`, Figma `673:1414` tutup 837 / `673:1415` buka 869). Ongkosnya 74,5px: CTA duduk di 776 padahal desain menaruhnya di 702 — itu "explore membership nya naikkan" |
 | 2026-09-01 | Skala istirahat ubin domino jadi 0.9 — **satu-satunya angka di layer itu yang bukan Figma**. Desain menyiratkan 1 (kotak layer = 585×636 miliknya sendiri), tapi kotaknya diisi `object-contain` dari aset 1882×2267 sehingga ubinnya merender ke TINGGI kotak dan terbaca lebih berat dari crop datar Figma. 0.8 disebut terlalu kecil & tinggi, 1 disebut terlalu besar; 0.9 titik tengahnya dan itu angka yang digeser kalau diminta lagi. Rotasi istirahat tetap 0 (lean-nya sudah ada di asetnya) |
+| 2026-09-03 | **R10 ditutup.** Ke-70 aset raster `public/assets` dikonversi ke WebP q95 dan PNG/JPG aslinya diarsipkan ke `assets-source/` di luar `public/` (D71). 77,14 MB → 12,69 MB (−84%); nol aset tersisa di atas 1 MB, yang terberat kini `band-integrity-hall.webp` 562 KB. 121 referensi di `app/` ikut ditulis ulang; SVG tidak disentuh (RULES §7) |
+| 2026-09-03 | Yang membuat ini mendesak bukan cuma bobotnya: `provider: "none"` di `nuxt.config.ts` berarti `format: ["webp"]` dan `quality: 82` di config itu **tidak pernah berjalan**, jadi seluruh 77 MB terkirim mentah ke browser. Selama IPX mati karena CPU box produksi, konversi di disk satu-satunya jalan yang tersisa |
+| 2026-09-03 | q95 dipilih, bukan q82 yang tertulis di config — syaratnya tanpa penurunan kualitas, dan q95 memberi PSNR 48–55 dB sementara q82 menurunkan potret wajah close-up (`champion-portrait-03`) ke 41 dB. cwebp membuang kanal alfa pada 14 aset; diverifikasi opak penuh lewat SSIM kanal A 99.00, jadi lossless — 20 aset yang benar-benar transparan tetap membawa chunk `ALPH` |
+| 2026-09-03 | Aslinya diarsipkan ke `assets-source/` yang **di-gitignore**: 77 MB yang tidak dipakai build maupun deploy, jadi ia lokal per-klon dan di commit konversi tercatat sebagai penghapusan. Yang membutuhkan sumbernya mengambil dari riwayat (`git show <commit>^:public/assets/...`), yang menyimpan tiap aset utuh. `decor-hero-globe.webp` dihapus dari `public/`: globe-nya dibangun di CSS dan PNG-nya memang acuan desain yang didokumentasikan tidak boleh di-serve |
+| 2026-09-03 | Diverifikasi di server hasil build, bukan hanya di build: 14 rute dirender dan **274 permintaan gambar** dicek satu per satu — semuanya 200, nol referensi `.png`/`.jpg` tersisa di HTML terender. Lint, typecheck, build lolos |
+| 2026-09-03 | Belum dikerjakan, sengaja: beberapa aset masih jauh lebih besar dari slot tampilnya (`globe-tile` 1960×3865, `event-trophy-hand` 1792×2400 di slot 402×720). Me-resize menghemat lagi tapi itu benar-benar menurunkan kualitas di viewport lebar, jadi dipisah dari D71 |
