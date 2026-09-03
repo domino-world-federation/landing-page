@@ -380,10 +380,11 @@
      three lines of body come to about 300px once the type steps have clamped
      down.
 
-     Named for the construction rather than for About because Integrity's code
-     of ethics is drawn as the same one (`762:1320`); that section overrides the
-     value locally, since it carries a heading above its window and so has less
-     of the screen to spend. */
+     Integrity's code of ethics is the only reader left, and it overrides the
+     value locally: it carries a heading above its window and so has less of the
+     screen to spend. About's pillars, where the number came from, gave up fixed
+     slots when the repo owner asked for real space between the claims — a slot
+     leaves whatever the type does not use, which is not a gap anyone chose. */
   --column-slot: clamp(18.75rem, 18.75vw, 22.5rem);
 }
 
