@@ -208,7 +208,7 @@ export async function getResources(
 /** The S6 showcase — the set the card's pager steps through. */
 export async function getShowcaseEvents(): Promise<ShowcaseEvent[]> {
   if (useMock()) return MOCK_SHOWCASE_EVENTS
-  return request<ShowcaseEvent[]>("/events/showcase")
+  return request<ShowcaseEvent[]>("/tournaments/showcase")
 }
 
 /**
@@ -238,7 +238,7 @@ export async function getSubCommittees(): Promise<SubCommittee[]> {
 
 export async function getFeaturedEvent(): Promise<FeaturedEvent> {
   if (useMock()) return MOCK_FEATURED_EVENT
-  return request<FeaturedEvent>("/events/featured")
+  return request<FeaturedEvent>("/tournaments/featured")
 }
 
 /**
@@ -352,7 +352,7 @@ export async function getGalleryAlbums(slug?: string): Promise<GalleryAlbum[]> {
  */
 export async function getStandingCommittees(): Promise<StandingCommittee[]> {
   if (useMock()) return MOCK_STANDING_COMMITTEES
-  return request<StandingCommittee[]>("/committees/standing")
+  return request<StandingCommittee[]>("/standing-committees")
 }
 
 export async function getTournaments(
@@ -430,7 +430,7 @@ export async function getOlympicResults(): Promise<OlympicResult[]> {
 /** The four figures across the members hero (`404:19188`). */
 export async function getMembershipStats(): Promise<FederationStat[]> {
   if (useMock()) return MOCK_MEMBERSHIP_STATS
-  return request<FederationStat[]>("/membership/stats")
+  return request<FederationStat[]>("/stats?scope=members")
 }
 
 /**

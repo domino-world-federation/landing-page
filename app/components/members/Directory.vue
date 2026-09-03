@@ -48,9 +48,22 @@ const openId = ref<string>()
  */
 const dialogOpen = ref(false)
 
-watch(openId, (id) => {
-  if (id) dialogOpen.value = true
-})
+/**
+ * Show a federation's record.
+ *
+ * **Both refs are set here, and that is the whole point.** Opening used to be a
+ * watcher on `openId`, which fires on CHANGE — so a reader who opened a row,
+ * closed the dialog and pressed the same row again assigned it the id it already
+ * held, nothing changed, and the watcher never ran. The register still marked
+ * the row as selected, so the one row that looked like it would open was the one
+ * row that could not. Reopening the record the reader is already on is not a
+ * change of selection; it is a request to see it, and a request has to be
+ * answered every time it is made.
+ */
+function show(id: string) {
+  openId.value = id
+  dialogOpen.value = true
+}
 
 const open = computed(
   () =>
@@ -121,7 +134,7 @@ const open = computed(
         :key="federation.id"
         :federation="federation"
         :active="federation.id === openId"
-        @open="openId = federation.id"
+        @open="show(federation.id)"
       />
     </ul>
 
