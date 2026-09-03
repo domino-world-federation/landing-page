@@ -55,3 +55,11 @@ export const PILLARS: readonly Pillar[] = [
       "A match being broadcast from the hall floor, camera and monitors trained on the table",
   },
 ] as const
+
+export const PILLARS_COPY = {
+  /**
+   * Said instead of the counter, which is a picture of a number rolling.
+   * `%1` is the claim being read, `%2` how many there are.
+   */
+  counterLabel: "Claim %1 of %2",
+} as const

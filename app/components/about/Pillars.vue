@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { PILLARS } from "~/content/about/pillars"
+import { PILLARS, PILLARS_COPY } from "~/content/about/pillars"
 
 /**
  * How far the notch travels, as a fraction of its own height.
@@ -70,7 +70,7 @@ const column = useTemplateRef<HTMLDivElement>("column")
  * with the column opening at the top rather than centred it is simply the wrong
  * claim in the first position. See the composable.
  */
-const { steps, cells, index, trackTransition, progress } = useTurningColumn(
+const { steps, cells, index, inView, trackTransition } = useTurningColumn(
   track,
   stage,
   PILLARS,
@@ -112,45 +112,6 @@ const trackY = computed(
 const notchY = computed(
   () => `${(index.value / turns.value) * NOTCH_TRAVEL_PCT}%`,
 )
-
-/**
- * The scroll through the track, mirrored into a ref so the template can read it.
- *
- * A MotionValue does not re-render anything by itself, which is the point of it
- * everywhere else on this page. Here the words have to change with it, so this
- * is the one place that pays for the re-render — one number, and the words it
- * feeds only restyle.
- */
-const scrolled = ref(0)
-
-useMotionValueEvent(progress, "change", (value: number) => {
-  if (Number.isFinite(value)) scrolled.value = value
-})
-
-/**
- * How much of a claim's sentence the reader has scrolled through, 0 to 1.
- *
- * **The sentences used to read themselves on a clock and now the reader reads
- * them**, which is what the repo owner asked for. Each block owns the half-step
- * either side of its notch — where it takes the light and where it hands it on —
- * and the reading runs across that window, clamped at the track's own ends so
- * the first claim starts at zero rather than half-lit and the last one can
- * finish.
- *
- * `1.35` finishes the line at about three quarters of the window rather than
- * exactly as it hands over: a sentence that completes on the same frame it goes
- * dim was never actually seen finished.
- */
-const READ_AHEAD = 1.35
-
-function readingProgress(i: number) {
-  const start = Math.max(0, (i - 0.5) / turns.value)
-  const end = Math.min(1, (i + 0.5) / turns.value)
-  const span = end - start
-  if (span <= 0) return 0
-
-  return Math.min(1, Math.max(0, ((scrolled.value - start) / span) * READ_AHEAD))
-}
 
 // The picture cross-fades rather than cutting: the two frames are the same size
 // in the same place, so a cut would read as a glitch where a fade reads as one
@@ -213,38 +174,54 @@ const fade = computed(() => ({ duration: DURATION, ease: EASE }))
            what it shows is "as much of the column as fits", and the overhang
            measured against it is exactly what the scroll then travels. -->
       <div
-        ref="viewport"
-        class="column-mask relative w-full lg:h-full lg:w-[42.71%] lg:overflow-hidden"
+        class="flex w-full flex-col gap-8 lg:h-full lg:w-[42.71%] lg:gap-[2.08vw]"
       >
-        <Motion
-          as="div"
-          class="lg:absolute lg:inset-x-0 lg:top-0"
-          :animate="{ y: trackY }"
-          :transition="trackTransition"
-          :style="{ willChange: 'transform' }"
+        <!-- The counter sits above the column rather than beside a block: it
+             counts the SECTION's steps, and one of it is what the reference
+             draws. -->
+        <AboutPillarCounter
+          :value="index + 1"
+          :total="steps"
+          :label="PILLARS_COPY.counterLabel"
+          class="shrink-0"
+        />
+
+        <div
+          ref="viewport"
+          class="column-mask relative w-full lg:min-h-0 lg:flex-1 lg:overflow-hidden"
         >
-          <!-- The gap IS the spacing between groupings. It was a fixed slot per
-               block with the block centred in it, which left whatever the type
-               did not use — about 40px once a title wrapped — and read as three
-               paragraphs run together. -->
-          <div ref="column" class="flex flex-col gap-14 lg:gap-[clamp(56px,5.2vw,100px)]">
-            <!-- `progress` rather than `reading`: the sentence is lit by the
-                 scroll, not by a clock that starts when the block takes the
-                 light. It needs no on-screen gate for the same reason — at the
-                 top of the track the progress is zero, so a block below the fold
-                 is simply unread rather than quietly finishing without anyone
-                 there. `focused` still decides the block's opacity, and the
-                 design's resting state has one block already lit. -->
-            <AboutPillarBlock
-              v-for="(pillar, i) in cells"
-              :key="pillar.id"
-              :pillar="pillar"
-              :duplicate="false"
-              :focused="i === index"
-              :progress="readingProgress(i)"
-            />
-          </div>
-        </Motion>
+          <Motion
+            as="div"
+            class="lg:absolute lg:inset-x-0 lg:top-0"
+            :animate="{ y: trackY }"
+            :transition="trackTransition"
+            :style="{ willChange: 'transform' }"
+          >
+            <!-- The gap IS the spacing between groupings. It was a fixed slot
+                 per block with the block centred in it, which left whatever the
+                 type did not use — about 40px once a title wrapped — and read as
+                 three paragraphs run together. -->
+            <div
+              ref="column"
+              class="flex flex-col gap-14 lg:gap-[clamp(56px,5.2vw,100px)]"
+            >
+              <!-- `reading` is gated on the column being on screen as well as on
+                   the block being current, so the first sentence is read when
+                   the reader ARRIVES rather than while the section is still
+                   below the fold. `focused` is not: it decides the block's
+                   opacity, and the design's resting state has one block already
+                   lit. -->
+              <AboutPillarBlock
+                v-for="(pillar, i) in cells"
+                :key="pillar.id"
+                :pillar="pillar"
+                :duplicate="false"
+                :focused="i === index"
+                :reading="i === index && inView"
+              />
+            </div>
+          </Motion>
+        </div>
       </div>
 
       <!-- 760 × 960 in Figma — a portrait frame, not the photographs' own 3:2,

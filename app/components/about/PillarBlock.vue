@@ -10,12 +10,9 @@ const IDLE = 0.5
  * The block knows whether it is the one holding the light, and dims to 50% when
  * it is not — Figma draws the third block at exactly that (`566:13556`).
  *
- * **The sentence is lit by the scroll, not by a clock.** It used to be told when
- * to start reading itself, which needed an on-screen gate as well as the focus
- * flag: a timer keyed to focus alone ran the whole line while the section was
- * still screens below the fold, so the reader arrived at a block that had
- * already finished. A progress figure needs neither — at the top of the track it
- * is zero, so an unread block is simply unread.
+ * **The sentence reads itself when the block becomes current**, which is what
+ * the reference this section is drawn after does. It was briefly tied to the
+ * scroll position instead; see `MotionReadingText` for why that came back.
  *
  * The duplicate's headings stay out of the document outline — otherwise the page
  * reports six `<h3>`s where the design has three, and heading navigation walks
@@ -27,13 +24,17 @@ const props = withDefaults(
     duplicate: boolean
     focused?: boolean
     /**
-     * How far the reader has scrolled through this block, 0 to 1. Handed
-     * straight to the sentence, which lights itself from it instead of from a
-     * clock — see `MotionReadingText`.
+     * Whether the sentence should be reading itself right now.
+     *
+     * Separate from `focused`, and it has to be: `focused` is true from mount
+     * for whichever block starts current, so a line keyed to it alone read
+     * itself while the section was still screens below the fold — arriving at a
+     * block that had already finished. The column supplies this from its own
+     * on-screen state as well.
      */
-    progress?: number
+    reading?: boolean
   }>(),
-  { focused: false, progress: undefined },
+  { focused: false, reading: false },
 )
 
 const headingTag = computed(() => (props.duplicate ? "p" : "h3"))
@@ -71,12 +72,12 @@ const dim = computed(() =>
       {{ pillar.title }}
     </component>
 
-    <!-- The sentence lights from the reader's own scroll through this block —
-         see `MotionReadingText`. -->
+    <!-- The sentence reads itself while the block is current AND the reader is
+         there to see it. -->
     <p
       class="font-sans mt-7 text-[length:var(--text-body-lg)] leading-[1.56]"
     >
-      <MotionReadingText :text="pillar.body" :progress="progress" />
+      <MotionReadingText :text="pillar.body" :active="reading" />
     </p>
   </Motion>
 </template>
