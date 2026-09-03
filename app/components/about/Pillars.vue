@@ -47,7 +47,7 @@ const column = useTemplateRef<HTMLDivElement>("column")
  * with the column opening at the top rather than centred it is simply the wrong
  * claim in the first position. See the composable.
  */
-const { steps, cells, index, readingProgress, travel, blockTop } =
+const { steps, cells, index, readingProgress, travel, scrolled } =
   useTurningColumn(track, stage, PILLARS, {
     pad: false,
     viewport,
@@ -55,12 +55,17 @@ const { steps, cells, index, readingProgress, travel, blockTop } =
   })
 
 /**
- * Where the bite stands: level with the block being read, not at a stop of
- * its own. `blockTop` is that block's place in the window and the notch takes
- * the same fraction of its own travel, so the marker moves with the title
- * rather than arriving after it (`utils/notch`).
+ * Where the bite stands — its whole travel spent across the section, top to
+ * foot, so the first block has it at the top and the last at the bottom.
+ *
+ * It briefly followed the block being read instead. That put it wherever the
+ * reading line is, which is one place near the middle, and it barely moved: the
+ * marker lost both its ends and the section lost its parallax. The bite and the
+ * words are supposed to travel AGAINST each other — the column climbing while
+ * the marker descends — and that only happens when the marker is a measure of
+ * the section rather than a mirror of the column.
  */
-const notchY = computed(() => notchOffset(blockTop(index.value)))
+const notchY = computed(() => notchOffset(scrolled.value))
 
 /**
  * No transition at all for anything the scroll drives.
@@ -102,7 +107,7 @@ const fade = computed(() => ({ duration: DURATION, ease: EASE }))
        of nothing to scroll past. -->
   <section
     ref="track"
-    :style="{ '--pillars-steps': steps }"
+    :style="{ '--pillars-steps': steps, '--column-fade': '12%' }"
     class="snap-pass relative lg:h-[calc(var(--pillars-steps)*100dvh)] lg:motion-reduce:h-dvh"
   >
     <!-- One snap point per claim, so every claim has a place the reader can
@@ -169,17 +174,20 @@ const fade = computed(() => ({ duration: DURATION, ease: EASE }))
                  per block with the block centred in it, which left whatever the
                  type did not use — about 40px once a title wrapped — and read as
                  three paragraphs run together. -->
-            <!-- `24dvh` is where the FIRST claim starts, not a mark the others
-                 come to rest on: the column travels continuously against the
-                 scroll, so each claim drifts up the window as it is read. It is
-                 padding rather than a term in the transform so the top of the
-                 track needs no transform at all (see `trackY`), and it is about
-                 30% of the window — where the mask finishes fading in, so the
-                 opening claim is not dimmed by the very fade meant to be below
-                 it. -->
+            <!-- `12dvh` is the reading line: near the top of the window, which
+                 is where the claim being read belongs — the notch beside it
+                 starts at the top too, and the pair only reads as a pair if both
+                 begin at the same end. It was 24dvh, which sat the words halfway
+                 down and left the marker looking like it pointed at nothing.
+
+                 Padding rather than a term in the transform so the top of the
+                 track needs no transform at all (see the composable's `travel`),
+                 and the mask's fade comes down to 12% with it — at 30% a claim
+                 resting this high would be dimmed by the very fade meant to be
+                 below it. -->
             <div
               ref="column"
-              class="flex flex-col gap-14 lg:gap-[clamp(56px,5.2vw,100px)] lg:pt-[24dvh]"
+              class="flex flex-col gap-14 lg:gap-[clamp(56px,5.2vw,100px)] lg:pt-[12dvh]"
             >
               <!-- `progress` rather than a start signal: the sentence is lit by
                    the scroll, so it needs no on-screen gate — at the top of the

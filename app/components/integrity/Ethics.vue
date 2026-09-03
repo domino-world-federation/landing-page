@@ -46,7 +46,7 @@ const column = useTemplateRef<HTMLDivElement>("column")
  * a copy of the last block above the first. Here that drew `03` above `01`: a
  * list out of order, which is the one thing a numbered list may not be.
  */
-const { steps, cells, index, readingProgress, travel, blockTop, isPad } =
+const { steps, cells, index, readingProgress, travel, scrolled, isPad } =
   useTurningColumn(track, stage, ETHICS_CLAUSES, {
     pad: false,
     viewport,
@@ -54,12 +54,17 @@ const { steps, cells, index, readingProgress, travel, blockTop, isPad } =
   })
 
 /**
- * Where the bite stands: level with the block being read, not at a stop of
- * its own. `blockTop` is that block's place in the window and the notch takes
- * the same fraction of its own travel, so the marker moves with the title
- * rather than arriving after it (`utils/notch`).
+ * Where the bite stands — its whole travel spent across the section, top to
+ * foot, so the first block has it at the top and the last at the bottom.
+ *
+ * It briefly followed the block being read instead. That put it wherever the
+ * reading line is, which is one place near the middle, and it barely moved: the
+ * marker lost both its ends and the section lost its parallax. The bite and the
+ * words are supposed to travel AGAINST each other — the column climbing while
+ * the marker descends — and that only happens when the marker is a measure of
+ * the section rather than a mirror of the column.
  */
-const notchY = computed(() => notchOffset(blockTop(index.value)))
+const notchY = computed(() => notchOffset(scrolled.value))
 
 /**
  * No transition at all for anything the scroll drives.
