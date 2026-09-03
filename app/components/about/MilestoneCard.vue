@@ -30,7 +30,10 @@ defineProps<{ milestone: HeritageMilestone; index: number }>()
     data-milestone
     :class="
       cn(
-        'flex h-[calc(100%-var(--heritage-drop-max))] w-[clamp(280px,25vw,480px)] shrink-0 snap-start flex-col',
+        // The gap is the marker's clearance from the card it belongs to. It
+        // had none: the dot sat straight on the card's top edge and read as
+        // part of it rather than as a point on the rule above it.
+        'flex h-[calc(100%-var(--heritage-drop-max))] w-[clamp(280px,25vw,480px)] shrink-0 snap-start flex-col gap-5 lg:gap-[1.67vw]',
         index % 2 === 0
           ? 'mt-[var(--heritage-drop-min)]'
           : 'mt-[var(--heritage-drop-max)]',
