@@ -14,36 +14,27 @@ import { TOURNAMENT_DETAIL_COPY } from "~/content/tournaments/detail"
  * The prize photograph carries Figma's own left-to-right wash (`517:2006`)
  * across its lower third, which stops it ending on a hard edge.
  *
- * **Either block can be absent and the row still works.** An online tournament
- * has no hall to photograph, and one that has not published a purse has no
- * prize line — a flex row rather than a two-column grid, so a block left alone
- * grows into the whole width instead of sitting beside a hole.
+ * **Either block can be absent and the row still holds its shape.** An online
+ * tournament has no hall to photograph, and one that has not published a purse
+ * has no prize line. The two columns exist regardless, so the block that IS
+ * there keeps its half rather than growing across the row — the venue map at
+ * full width is not a wider map, it is a map the height of the window.
  */
 defineProps<{ tournament: TournamentDetail }>()
 
 const COPY = TOURNAMENT_DETAIL_COPY
 
 /**
- * An equal share of the row, taken by GROWTH rather than by a stated width.
+ * A block in one of the row's two columns.
  *
- * Figma's two 860s plus its 40px gutter come to exactly the 1760 the page's
- * margins leave — a row with nothing whatsoever to spare. It was written as
- * `basis-[calc(50%-1.25rem)]` against a `gap-10`, which is that same sum to the
- * pixel, and a row that fits exactly is a row that wraps: any sub-pixel rounding
- * in the gap or the padding takes it over 100% and the second block drops
- * underneath. The venue map then rendered the full 1760 wide, and since it holds
- * a 860:542 frame, 1109 tall — a map the height of the window.
+ * It states no width at all: the GRID states them, which is the point — see the
+ * section's own note for why the row stopped being a flex one.
  *
- * `flex: 1 1 0` on both blocks asks for none of the row and splits what is left
- * evenly, so the halves are exact at every width and there is nothing to round.
- * `min-w-0` is what lets that hold: a flex item will not shrink below its
- * content otherwise, and a long address would push the row wide again.
- *
- * Below `lg` the blocks stack, which is what `basis-full` and the row's own
- * `flex-wrap` are for.
+ * `min-w-0` because a grid item, like a flex item, will not shrink below its
+ * content by default, and a long venue address would otherwise push its track
+ * wider than half.
  */
-const COLUMN =
-  "flex min-w-0 flex-1 basis-full flex-col gap-8 lg:basis-0 lg:gap-11"
+const COLUMN = "flex min-w-0 flex-col gap-8 lg:gap-11"
 
 /**
  * 542/860 — the picture's proportion, carried instead of its pixels so the block
@@ -101,12 +92,30 @@ const WASH =
 </script>
 
 <template>
-  <!-- `lg:flex-nowrap` is the belt to the columns' braces: from `lg` the two
-       blocks are a row and may not become two, whatever the arithmetic of the
-       gutter comes to. Wrapping stays below it, where stacking is the point. -->
+  <!-- **Two columns from `lg`, whether or not both are filled.**
+       `grid-cols-2` rather than a flex row, and it has been all three things
+       now, so the reasoning is worth keeping:
+
+       A flex row with `basis-[calc(50%-1.25rem)]` against a `gap-10` is Figma's
+       two 860s plus its 40px gutter to the pixel, and a row that fits exactly is
+       a row that WRAPS — any sub-pixel rounding took it past 100%, the prize
+       block dropped underneath, and the map was left the full 1760 wide; holding
+       an 860:542 frame, that is 1109 tall, a map the height of the window.
+
+       `flex: 1 1 0` fixed the wrapping by asking for none of the row and
+       splitting what was left, and it was correct at two blocks and wrong at
+       one: a lone block grew into the whole width, so a tournament with no prize
+       photograph showed a full-bleed map. The repo owner asked for the halves to
+       hold either way.
+
+       A grid states its tracks instead of negotiating them: two columns exist
+       whether one or both are filled, the browser fits them and their gutter
+       into the row itself, and a missing block leaves its half empty rather than
+       handing it to the other. Below `lg` there is one column, which is the
+       stack. -->
   <section
     v-if="tournament.venue || tournament.prize"
-    class="flex flex-wrap gap-10 px-5 py-16 md:px-10 lg:flex-nowrap lg:px-20 lg:py-[3.13vw]"
+    class="grid gap-10 px-5 py-16 md:px-10 lg:grid-cols-2 lg:px-20 lg:py-[3.13vw]"
   >
     <div
       v-if="tournament.venue"
