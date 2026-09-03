@@ -167,10 +167,12 @@ const fade = computed(() => ({ duration: DURATION, ease: EASE }))
             :transition="SCROLLED"
             :style="{ willChange: 'transform' }"
           >
-            <!-- The gap IS the spacing between groupings. It was a fixed slot
-                 per block with the block centred in it, which left whatever the
-                 type did not use — about 40px once a title wrapped — and read as
-                 three paragraphs run together. -->
+            <!-- The gap IS the spacing between groupings, and it is deep on
+                 purpose: 160 at the design width. It began as whatever a fixed
+                 slot left over — about 40px once a title wrapped, which read as
+                 three paragraphs run together — and has been opened twice since,
+                 the second time because a block arriving into the window still
+                 had the last one's foot under it. -->
             <!-- `12dvh` is the reading line: near the top of the window, which
                  is where the claim being read belongs — the notch beside it
                  starts at the top too, and the pair only reads as a pair if both
@@ -184,7 +186,7 @@ const fade = computed(() => ({ duration: DURATION, ease: EASE }))
                  below it. -->
             <div
               ref="column"
-              class="flex flex-col gap-14 lg:gap-[clamp(56px,5.2vw,100px)] lg:pt-[12dvh]"
+              class="flex flex-col gap-16 lg:gap-[clamp(88px,8.33vw,160px)] lg:pt-[12dvh]"
             >
               <!-- `progress` rather than a start signal: the sentence is lit by
                    the scroll, so it needs no on-screen gate — at the top of the

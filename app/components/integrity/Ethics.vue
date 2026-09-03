@@ -185,7 +185,7 @@ const fade = computed(() => ({ duration: DURATION, ease: EASE }))
                  it. -->
             <div
               ref="column"
-              class="flex flex-col gap-12 lg:gap-[clamp(56px,5.2vw,100px)] lg:pt-[4dvh]"
+              class="flex flex-col gap-16 lg:gap-[clamp(88px,8.33vw,160px)] lg:pt-[4dvh]"
             >
               <div
                 v-for="(clause, i) in cells"

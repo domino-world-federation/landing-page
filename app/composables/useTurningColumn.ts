@@ -132,39 +132,63 @@ export function useTurningColumn<T>(
   })
 
   /**
-   * How much of a step is spent READING before the column moves on.
+   * How many screens of scroll the track is given: **two a block**.
    *
-   * **A block is finished before the next one arrives**, which is the whole
-   * shape of the section: the column holds still while the sentence lights, and
-   * only then travels. It used to move continuously against the scroll, so the
-   * next block was already sliding into place while the current one was two
-   * thirds read — the reader was being moved on mid-sentence.
+   * One to read the block and one to carry the next one in, and they are
+   * separate because a snapping page gives the reader exactly one resting place
+   * per screen. With a single screen a block it took one gesture to read a
+   * sentence AND move on from it — the reader never got to sit in front of a
+   * block they had finished, because there was no stop there to sit at.
    *
-   * 0.65 leaves a little over a third of the step for the move, which at a
-   * screen per step is long enough to be watched and short enough not to be
-   * waited through.
+   * Two screens puts a stop at the end of the reading. The sequence is: rest
+   * with the block in place and unread, one gesture to read it, rest with it
+   * finished, one gesture to bring the next one in. Reading also gets a whole
+   * screen of scroll rather than two thirds of one, which is most of what makes
+   * it slower.
    */
-  const HOLD = 0.65
+  const screens = computed(() => Math.max(2, steps.value * 2))
+
+  /** How many gestures the track holds: one fewer than its screens. */
+  const legs = computed(() => Math.max(1, screens.value - 1))
+
+  /** Where the reader is, counted in those gestures. */
+  const at = computed(() => scrolled.value * legs.value)
 
   /**
-   * How many screens of scroll the track is given: one per block, plus one.
+   * Which leg the reader is on and how far into it.
    *
-   * The extra is the last block's own reading. A track of `n` screens has `n`
-   * snap positions and `n − 1` screens of travel between them, so with a screen
-   * per block the last one arrives exactly as the scroll runs out and is never
-   * read at all.
+   * Even legs read a block; odd legs carry the column from one to the next. The
+   * last leg is clamped so the very foot of the track counts as its end rather
+   * than as the start of a leg that does not exist.
    */
-  const screens = computed(() => steps.value + 1)
+  const leg = computed(() => {
+    const whole = Math.min(Math.floor(at.value), legs.value - 1)
 
-  /** Where the reader is, counted in steps: `0` at the first block, `n` at the end. */
-  const at = computed(() => scrolled.value * steps.value)
-
-  /** The block being read, and how far into its step the reader has come. */
-  const step = computed(() => {
-    const whole = Math.min(Math.floor(at.value), Math.max(0, steps.value - 1))
-
-    return { block: whole, into: at.value - whole }
+    return { index: whole, into: at.value - whole }
   })
+
+  /** True while a block is being read, false while the column is moving. */
+  const isReading = computed(() => leg.value.index % 2 === 0)
+
+  /** The block the current leg belongs to — the one being read, or moved from. */
+  const block = computed(() =>
+    Math.min(Math.floor(leg.value.index / 2), Math.max(0, steps.value - 1)),
+  )
+
+  /**
+   * How much of a block's sentence the reader has scrolled through, 0 to 1.
+   *
+   * A reading leg spends the whole of itself on one sentence, so the block is
+   * read to its full stop before the leg that moves the column even begins.
+   * Blocks already past stay lit and blocks not reached stay dark, which is what
+   * they would look like if the reader simply kept scrolling.
+   */
+  function readingProgress(i: number) {
+    if (i < block.value) return 1
+    if (i > block.value) return 0
+
+    return isReading.value ? Math.min(1, leg.value.into) : 1
+  }
 
   /**
    * The block the section is CURRENTLY presenting — what the counter reads, what
@@ -175,27 +199,14 @@ export function useTurningColumn<T>(
    * arriving before the words it belongs to.
    */
   watchEffect(() => {
-    const { block, into } = step.value
-    const handedOver = into > (1 + HOLD) / 2
-    const current = Math.min(block + (handedOver ? 1 : 0), steps.value - 1)
+    const handedOver = !isReading.value && leg.value.into > 0.5
+    const current = Math.min(
+      block.value + (handedOver ? 1 : 0),
+      Math.max(0, steps.value - 1),
+    )
 
     index.value = Math.max(0, pad ? current + 1 : current)
   })
-
-  /**
-   * How much of a block's sentence the reader has scrolled through, 0 to 1.
-   *
-   * It runs across the HOLD and finishes with it, so a block is read to its full
-   * stop before the column begins carrying the next one in. Blocks already past
-   * stay lit and blocks not reached stay dark, which is what they would look
-   * like if the reader simply kept scrolling.
-   */
-  function readingProgress(i: number) {
-    if (i < step.value.block) return 1
-    if (i > step.value.block) return 0
-
-    return Math.min(1, step.value.into / HOLD)
-  }
 
   /** Where each block starts, in pixels, measured from the first. */
   const offsets = ref<number[]>([])
@@ -229,8 +240,8 @@ export function useTurningColumn<T>(
   })
 
   /**
-   * The column's offset — held still while the block is being read, then carried
-   * to the next one over what is left of the step.
+   * The column's offset — still for the whole of a reading leg, then carried to
+   * the next block across the leg after it.
    *
    * Each block's own measured position is where the column comes to rest for it,
    * so the words are read at the same height whichever block they belong to. The
@@ -242,12 +253,12 @@ export function useTurningColumn<T>(
    * settles, and on a phone, where nothing moves the column, it would be wrong.
    */
   const travel = computed(() => {
-    const { block, into } = step.value
-    const from = offsets.value[block] ?? 0
-    const to = offsets.value[block + 1] ?? from
-    const moved = Math.min(1, Math.max(0, (into - HOLD) / (1 - HOLD)))
+    const from = offsets.value[block.value] ?? 0
+    if (isReading.value) return `-${from}px`
 
-    return `-${from + (to - from) * moved}px`
+    const to = offsets.value[block.value + 1] ?? from
+
+    return `-${from + (to - from) * leg.value.into}px`
   })
 
   // Same tree whatever the preference; only the transition is zeroed

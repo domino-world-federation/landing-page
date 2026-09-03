@@ -93,14 +93,18 @@ const scrollLit = computed(() => props.progress !== undefined)
 /**
  * How many LETTERS are part-lit at once when the scroll is driving.
  *
- * **One, which is a hard edge**, and that is the point. It was five words, which
- * put a soft gradient a whole phrase wide across the front — smooth, and almost
- * invisible: nothing could be seen turning on because nothing ever quite did.
- * The reference splits mid-word and splits hard: "Measur|able", "dis|patch",
- * "become | more complex". Letters flipping one at a time is what makes the line
- * read as being read rather than as fading in.
+ * It was five WORDS — a gradient a whole phrase wide, smooth and almost
+ * invisible, because nothing could be seen turning on when nothing ever quite
+ * did. Then one letter, which is a hard edge and reads exactly like the
+ * reference's mid-word splits ("Measur|able", "dis|patch") but flickers: a
+ * single letter carrying the entire transition means the front jumps a whole
+ * letter at a time as the scroll ticks.
+ *
+ * Three letters is the settlement. The split still lands mid-word, so the
+ * reference's look survives, but three letters share the edge and the front
+ * slides rather than steps.
  */
-const FEATHER = 1
+const FEATHER = 3
 
 /**
  * A letter's strength, from the scroll.
