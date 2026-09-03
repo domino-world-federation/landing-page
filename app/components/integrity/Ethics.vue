@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { INTEGRITY_COPY } from "~/content/integrity"
-import { ETHICS_ALT, ETHICS_CLAUSES } from "~/content/integrity/ethics"
+import { ETHICS_CLAUSES } from "~/content/integrity/ethics"
 
 /**
  * Code of Ethics — Figma node `762:1320`.
@@ -102,6 +102,11 @@ const trackY = computed(() => `-${offsets.value[index.value] ?? 0}px`)
 
 /** Where the bite stands — see `utils/notch`, shared with About's pillars. */
 const notchY = computed(() => notchOffset(index.value, turns.value))
+
+// The pictures cross-fade rather than cutting: the frames are the same size in
+// the same place, so a cut would read as a glitch where a fade reads as one
+// picture answering the words beside it.
+const fade = computed(() => ({ duration: DURATION, ease: EASE }))
 </script>
 
 <template>
@@ -117,7 +122,7 @@ const notchY = computed(() => notchOffset(index.value, turns.value))
   <section
     ref="track"
     aria-labelledby="ethics-heading"
-    :style="{ '--ethics-steps': steps }"
+    :style="{ '--ethics-steps': steps, '--column-fade': '12%' }"
     class="snap-pass relative lg:h-[calc(var(--ethics-steps)*100dvh)] lg:motion-reduce:h-dvh"
   >
     <!-- One snap point per notch, so a gesture turns the column exactly once.
@@ -189,17 +194,22 @@ const notchY = computed(() => notchOffset(index.value, turns.value))
             <!-- Each cell is one slot tall with its block centred in it: that is
                  what makes a single fixed translation land every block in the
                  same place, whichever of the three it is. -->
-            <!-- `21dvh` is the reading line — where the clause being read comes
-                 to rest. Padding rather than a term in the transform so the
-                 first clause needs none at all (see `trackY`), and about 30% of
-                 this window, which is where the mask finishes fading in: a
-                 clause landing higher would have its number dimmed by the very
-                 fade meant to be below it. Shallower than the pillars' 24dvh
-                 because this section spends a heading's worth of screen above
-                 the window. -->
+            <!-- **All three clauses have to be in view at once**, which is what
+                 this frame draws and what the reading line and the gap are set
+                 against. At 21dvh and the pillars' gap the third clause fell
+                 clean out of the bottom of the window: this section spends a
+                 heading's worth of screen above its window, so it has ~150px
+                 less to lay three blocks in than the pillars have for three.
+
+                 `4dvh` and a tighter gap put the three inside it. The line is
+                 padding rather than a term in the transform so the first clause
+                 needs no transform at all (see `trackY`), and the mask's fade is
+                 turned down to 12% to match — at 30% a clause resting this high
+                 would have its number dimmed by the very fade meant to be below
+                 it. -->
             <div
               ref="column"
-              class="flex flex-col gap-14 lg:gap-[clamp(56px,5.2vw,100px)] lg:pt-[21dvh]"
+              class="flex flex-col gap-10 lg:gap-[clamp(40px,3.4vw,64px)] lg:pt-[4dvh]"
             >
               <div
                 v-for="(clause, i) in cells"
@@ -236,13 +246,30 @@ const notchY = computed(() => notchOffset(index.value, turns.value))
       <div
         class="relative aspect-[3/4] w-full lg:aspect-auto lg:h-full lg:w-[39.58%] lg:flex-none"
       >
-        <NuxtImg
-          src="/assets/global/olympic-rings-facade.png"
-          :alt="ETHICS_ALT.photo"
-          :sizes="imageSizes({ xs: '100vw', lg: '40vw' })"
-          :quality="85"
-          class="absolute inset-0 size-full rounded-[20px] object-cover"
-        />
+        <!-- The picture answers the clause: each one brings its own and they
+             cross-fade in place rather than cutting, because the frame does not
+             move and a cut in a frame that has not moved reads as a glitch. -->
+        <Motion
+          v-for="(clause, i) in cells"
+          :key="clause.id"
+          as="div"
+          class="absolute inset-0"
+          :initial="{ opacity: i === 0 ? 1 : 0 }"
+          :animate="{ opacity: i === index ? 1 : 0, transition: fade }"
+          :style="{ willChange: 'opacity' }"
+        >
+          <!-- Only the clause being read has its picture announced; the others
+               are the same frame waiting their turn, and a screen reader given
+               all three would hear a gallery where the page shows one. -->
+          <NuxtImg
+            :src="clause.imageUrl"
+            :alt="i === index ? clause.imageAlt : ''"
+            :aria-hidden="i === index ? undefined : 'true'"
+            :sizes="imageSizes({ xs: '100vw', lg: '40vw' })"
+            :quality="85"
+            class="absolute inset-0 size-full rounded-[20px] object-cover"
+          />
+        </Motion>
 
         <!-- The bite out of the picture's left edge — `762:1340`, a 48 x 361
              shape at `y:70` filled `#0E0E0E`. It is not a cut-out: it is the

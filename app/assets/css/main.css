@@ -701,18 +701,27 @@ html.snap-sections .snap-stop {
  */
 @media (width >= 64rem) {
   .column-mask {
+    /* How deep the fade runs at each end, as a share of the window.
+     *
+     * 30% is About's, which is Figma's 35/65 rounded to the slots the column
+     * was built on. It is a knob because a section with a heading above its
+     * window has less window to spend, and a fade that deep there eats a whole
+     * block: Integrity's code of ethics sets it shallower so all three clauses
+     * are in view at once, which is what its own frame draws. */
+    --column-fade: 30%;
+
     mask-image: linear-gradient(
       180deg,
       transparent 0%,
-      #000 30%,
-      #000 70%,
+      #000 var(--column-fade),
+      #000 calc(100% - var(--column-fade)),
       transparent 100%
     );
     -webkit-mask-image: linear-gradient(
       180deg,
       transparent 0%,
-      #000 30%,
-      #000 70%,
+      #000 var(--column-fade),
+      #000 calc(100% - var(--column-fade)),
       transparent 100%
     );
   }

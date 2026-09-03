@@ -12,6 +12,13 @@
  * rather than house style — a federation does not publish its own code of ethics
  * misspelt — so they are set right here and recorded rather than reproduced.
  *
+ * TODO(design): `762:1320` draws ONE photograph for the whole section — and it
+ * is the pillars frame's own, since this frame is a copy of it. The repo owner
+ * asked for a picture per clause, so all three are taken from the site's own
+ * library rather than invented: two players at a table, a match under broadcast,
+ * a hall seen down its rows. Placeholders for whatever the federation means each
+ * clause to be shown as.
+ *
  * TODO(design): every clause in `762:1320` carries an eyebrow above its number
  * reading "OLYMPIC STAGE" — the eyebrow from the pillars frame this was copied
  * from, left behind when the bodies were replaced. It is not dropped for being
@@ -25,6 +32,9 @@ export type EthicsClause = {
   /** `01`, `02`, `03` — Bebas 72/64 where the pillars frame puts its title. */
   number: string
   body: string
+  /** The photograph that stands beside this clause while it is being read. */
+  imageUrl: string
+  imageAlt: string
 }
 
 export const ETHICS_CLAUSES: readonly EthicsClause[] = [
@@ -32,26 +42,24 @@ export const ETHICS_CLAUSES: readonly EthicsClause[] = [
     id: "respect",
     number: "01",
     body: "Respect for opponents, officials, and the historical traditions of dominoes.",
+    imageUrl: "/assets/global/gallery-exhibition-match.png",
+    imageAlt:
+      "Two players facing each other across a match table, tiles laid out between them",
   },
   {
     id: "collusion",
     number: "02",
     body: "Total prohibition of collusion, signaling, or non-competitive behavior.",
+    imageUrl: "/assets/global/gallery-match-broadcast.png",
+    imageAlt:
+      "A match being broadcast from the hall floor, camera and monitors trained on the table",
   },
   {
     id: "reporting",
     number: "03",
     body: "Obligation to report any known integrity breaches through official channels.",
+    imageUrl: "/assets/global/gallery-playing-hall.png",
+    imageAlt:
+      "A tournament hall seen down its rows of tables, officials standing between them",
   },
 ] as const
-
-export const ETHICS_ALT = {
-  /**
-   * `762:1339` — the same photograph the pillars column stands beside, cropped
-   * harder here (1440 of it inside a 760 frame). It earns a real description
-   * rather than `alt=""`: it is the only picture in the section, and the
-   * clauses beside it are text the reader can already reach.
-   */
-  photo:
-    "The Olympic rings mounted and lit on the facade of a white building at dusk",
-} as const
