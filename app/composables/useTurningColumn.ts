@@ -52,14 +52,21 @@ const TURN_EASE = { duration: 1.15, ease: EASE } as const
  * @param options `pad` wraps a copy of the last block onto the front and the
  *   first onto the back, so the lit slot always has a real block above and below
  *   it. About's pillars want that; Integrity's clauses do not — see `cells`.
+ *   `viewport` is the masked window and `column` the padded stack inside it;
+ *   given both, the travel and each block's position on screen are measured here
+ *   rather than in each section (D32/D43).
  */
 export function useTurningColumn<T>(
   track: Readonly<ShallowRef<HTMLElement | null>>,
   stage: Readonly<ShallowRef<HTMLElement | null>>,
   items: MaybeRefOrGetter<readonly T[]>,
-  options: { pad?: boolean } = {},
+  options: {
+    pad?: boolean
+    viewport?: Readonly<ShallowRef<HTMLElement | null>>
+    column?: Readonly<ShallowRef<HTMLElement | null>>
+  } = {},
 ) {
-  const { pad = true } = options
+  const { pad = true, viewport, column } = options
   const list = computed(() => toValue(items))
 
   /** One notch per block, and therefore one viewport of track per block. */
@@ -161,26 +168,94 @@ export function useTurningColumn<T>(
     )
   }
 
+  /**
+   * How much FURTHER the column travels than the blocks are apart, as a share of
+   * the window.
+   *
+   * Without it the column moves exactly one block per notch and every block is
+   * read at the same height — the mark never moves, so a marker beside it has
+   * nothing to follow. The reference's own four steps sit progressively higher
+   * (its step number runs 62%, 47%, 41% and 13% down the screen), which is what
+   * happens when the list is scrolled a little more than one block per step.
+   *
+   * A quarter of the window across the whole section: enough that each block is
+   * plainly higher than the last, not so much that the first is read at the top
+   * of the window with nothing above it.
+   */
+  const EXTRA_RISE = 0.25
+
+  /** Where each block starts, in pixels, measured from the first. */
+  const offsets = ref<number[]>([])
+  /** The column's own top padding — where the first block is read. */
+  const lead = ref(0)
+  const windowHeight = ref(0)
+
+  onMounted(() => {
+    function measure() {
+      const frame = viewport?.value
+      const inner = column?.value
+      if (!frame || !inner) return
+
+      const blocks = Array.from(inner.children) as HTMLElement[]
+      const first = blocks[0]?.offsetTop ?? 0
+
+      offsets.value = blocks.map((block) => block.offsetTop - first)
+      lead.value = Number.parseFloat(getComputedStyle(inner).paddingTop) || 0
+      windowHeight.value = frame.clientHeight
+    }
+
+    measure()
+
+    // Both boxes: the window is a share of the screen and the blocks are set in
+    // clamped type, so a resize changes each of them independently.
+    const observer = new ResizeObserver(measure)
+    if (viewport?.value) observer.observe(viewport.value)
+    if (column?.value) observer.observe(column.value)
+
+    onBeforeUnmount(() => observer.disconnect())
+  })
+
+  /** The whole journey: the last block's own position, plus the extra rise. */
+  const distance = computed(
+    () =>
+      (offsets.value[offsets.value.length - 1] ?? 0) +
+      EXTRA_RISE * windowHeight.value,
+  )
+
+  /**
+   * The column's offset, spent CONTINUOUSLY against the scroll rather than in
+   * one jump per notch, so a block drifts up the window as it is read.
+   *
+   * Zero at the top, which is why the reading line is a padding on the column
+   * rather than a term here: a transform is only written after mount, so folding
+   * the line into it would drop the column visibly the first time the page
+   * settles, and on a phone, where nothing moves the column, it would be wrong.
+   */
+  const travel = computed(() => `-${scrolled.value * distance.value}px`)
+
+  /**
+   * Where the block at `i` sits in the window right now, 0 at its top and 1 at
+   * its foot.
+   *
+   * This is what a marker beside the column follows: the notch stands level with
+   * the block's own title rather than at a stop of its own, which is how the
+   * reference draws it. Clamped, because blocks above the window and below it
+   * both exist and neither has anywhere for a marker to be.
+   */
+  function blockTop(i: number) {
+    const height = windowHeight.value
+    if (height <= 0) return 0
+
+    const top =
+      lead.value + (offsets.value[i] ?? 0) - scrolled.value * distance.value
+
+    return Math.min(1, Math.max(0, top / height))
+  }
+
   // Same tree whatever the preference; only the transition is zeroed
   // (RULES §12).
   const trackTransition = computed(() =>
     prefersReducedMotion.value ? { duration: 0 } : TURN_EASE,
-  )
-
-  /**
-   * `1 - index`, not `-index`: the focused block belongs in the MIDDLE of the
-   * three slots, so the track sits one slot lower than a plain top-aligned
-   * offset would put it.
-   *
-   * Every cell is exactly one slot tall, so translating the track by
-   * `100 / cells` percent of its own height moves it by precisely one slot — at
-   * any viewport, without measuring anything. That is also why the blocks sit in
-   * fixed slots rather than on the design's flat gap: they are different
-   * heights, and a gap would put each one at a different place in the window as
-   * it arrived.
-   */
-  const trackY = computed(
-    () => `${((1 - index.value) * 100) / (cells.value.length || 1)}%`,
   )
 
   /**
@@ -200,8 +275,9 @@ export function useTurningColumn<T>(
     index,
     scrolled,
     readingProgress,
+    travel,
+    blockTop,
     inView,
-    trackY,
     trackTransition,
     isPad,
     /**

@@ -47,73 +47,20 @@ const column = useTemplateRef<HTMLDivElement>("column")
  * with the column opening at the top rather than centred it is simply the wrong
  * claim in the first position. See the composable.
  */
-const { steps, cells, index, scrolled, readingProgress } = useTurningColumn(
-  track,
-  stage,
-  PILLARS,
-  { pad: false },
-)
+const { steps, cells, index, readingProgress, travel, blockTop } =
+  useTurningColumn(track, stage, PILLARS, {
+    pad: false,
+    viewport,
+    column,
+  })
 
 /**
- * Where each block starts, in pixels down the column, measured from the first.
- *
- * **The active block RISES to the reading line and the next one comes up under
- * it**, which is what the reference does and what the column was missing: it
- * used to creep by the small amount it overhung its window, so the same three
- * blocks sat in the same three places the whole way down and only the light
- * moved. Now the column is offset by exactly the active block's own position, so
- * the one being read climbs to the reading line and the one after it is revealed
- * below.
- *
- * Measured rather than stated because the blocks are their own height — the gap
- * between them is the design's, but what a claim comes to depends on how its
- * title wraps. Taken relative to the FIRST block so the figure is independent of
- * whatever the browser picked as the offset parent, which is not the same
- * element above and below `lg`.
+ * Where the bite stands: level with the block being read, not at a stop of
+ * its own. `blockTop` is that block's place in the window and the notch takes
+ * the same fraction of its own travel, so the marker moves with the title
+ * rather than arriving after it (`utils/notch`).
  */
-const offsets = ref<number[]>([])
-
-onMounted(() => {
-  function measure() {
-    const inner = column.value
-    if (!inner) return
-
-    const blocks = Array.from(inner.children) as HTMLElement[]
-    const first = blocks[0]?.offsetTop ?? 0
-
-    offsets.value = blocks.map((block) => block.offsetTop - first)
-  }
-
-  measure()
-
-  // Both boxes: the window is a share of the screen and the column is set in
-  // clamped type, so a resize changes each of them independently.
-  const observer = new ResizeObserver(measure)
-  if (viewport.value) observer.observe(viewport.value)
-  if (column.value) observer.observe(column.value)
-
-  onBeforeUnmount(() => observer.disconnect())
-})
-
-/**
- * The column's offset: the active block's own position, negated, so that block
- * arrives at the reading line.
- *
- * Zero for the first block, which is why the reading line is a PADDING on the
- * column rather than a number added here. Adding it would mean the column starts
- * shifted down by it, and since a transform is only written after mount that
- * would be a visible drop the first time the page settles — and on a phone,
- * where nothing moves the column at all, it would simply be wrong.
- */
-const trackY = computed(
-  () => `-${scrolled.value * (offsets.value[offsets.value.length - 1] ?? 0)}px`,
-)
-
-/**
- * Where the bite stands — the same fraction the column travels on, so the marker
- * keeps pace with the list instead of arriving after it (`utils/notch`).
- */
-const notchY = computed(() => notchOffset(scrolled.value))
+const notchY = computed(() => notchOffset(blockTop(index.value)))
 
 /**
  * No transition at all for anything the scroll drives.
@@ -214,7 +161,7 @@ const fade = computed(() => ({ duration: DURATION, ease: EASE }))
           <Motion
             as="div"
             class="lg:absolute lg:inset-x-0 lg:top-0"
-            :animate="{ y: trackY }"
+            :animate="{ y: travel }"
             :transition="SCROLLED"
             :style="{ willChange: 'transform' }"
           >

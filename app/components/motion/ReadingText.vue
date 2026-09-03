@@ -91,26 +91,28 @@ const prefersReducedMotion = useReducedMotion()
 const scrollLit = computed(() => props.progress !== undefined)
 
 /**
- * How many words are part-lit at once when the scroll is driving.
+ * How many LETTERS are part-lit at once when the scroll is driving.
  *
- * The same softness the clock buys with `WORD_FADE / WORD_STEP` — five words
- * mid-brighten, so the front is a gradient a whole phrase wide and no single
- * word is seen turning on. Stated directly here because there is no clock to
- * divide.
+ * **One, which is a hard edge**, and that is the point. It was five words, which
+ * put a soft gradient a whole phrase wide across the front — smooth, and almost
+ * invisible: nothing could be seen turning on because nothing ever quite did.
+ * The reference splits mid-word and splits hard: "Measur|able", "dis|patch",
+ * "become | more complex". Letters flipping one at a time is what makes the line
+ * read as being read rather than as fading in.
  */
-const FEATHER = 5
+const FEATHER = 1
 
 /**
- * A word's strength, from the scroll.
+ * A letter's strength, from the scroll.
  *
- * The front travels `words + FEATHER` positions across the line so the last word
- * is fully lit by the time the reader reaches the end of the block rather than
- * only just starting to.
+ * The front travels `letters + FEATHER` positions across the line so the last
+ * letter is fully lit by the time the reader reaches the end of the block rather
+ * than only just starting to.
  */
 function litness(index: number) {
   if (prefersReducedMotion.value) return 1
 
-  const front = (props.progress ?? 0) * (words.value.length + FEATHER)
+  const front = (props.progress ?? 0) * (letterCount.value + FEATHER)
 
   return Math.min(1, Math.max(0, (front - index) / FEATHER))
 }
@@ -122,6 +124,31 @@ function litness(index: number) {
  */
 const words = computed(() =>
   props.text.split(" ").map((word, i) => ({ key: `${word}-${i}`, word, index: i })),
+)
+
+/**
+ * The same line split to LETTERS, grouped by word — what the scroll lights.
+ *
+ * Grouped rather than flat so only the spaces BETWEEN words can break: a run of
+ * bare inline-blocks would give the browser a break opportunity at every letter,
+ * and a narrow column would come apart mid-word.
+ *
+ * The index runs across the whole line and skips the spaces, so it is a position
+ * in the sentence rather than in a word — which is what the front is measured
+ * against.
+ */
+const letters = computed(() => {
+  let position = 0
+
+  return props.text.split(" ").map((word, i) => ({
+    key: `${word}-${i}`,
+    index: i,
+    chars: [...word].map((char) => ({ key: position, char, index: position++ })),
+  }))
+})
+
+const letterCount = computed(() =>
+  letters.value.reduce((total, word) => total + word.chars.length, 0),
 )
 
 // Reduced motion collapses the TRANSITION, never the rendered tree — the same
@@ -151,7 +178,29 @@ const dimDown = computed(() =>
   <span class="block">
     <span class="sr-only">{{ text }}</span>
 
-    <span aria-hidden="true">
+    <!-- Scroll-lit: letters, and a plain style with no transition on any of
+         them. The scroll IS the animation, and an easing on top of it would be a
+         second one lagging behind the first. -->
+    <span v-if="scrollLit" aria-hidden="true">
+      <span v-for="word in letters" :key="word.key">
+        <template v-if="word.index > 0">{{ " " }}</template>
+        <span class="inline-block">
+          <span
+            v-for="letter in word.chars"
+            :key="letter.key"
+            class="relative inline-block"
+          >
+            <span class="text-white/40">{{ letter.char }}</span>
+            <span
+              class="pointer-events-none absolute inset-0 text-white"
+              :style="{ opacity: litness(letter.index) }"
+            >{{ letter.char }}</span>
+          </span>
+        </span>
+      </span>
+    </span>
+
+    <span v-else aria-hidden="true">
       <span v-for="item in words" :key="item.key">
         <!-- The separator has to be an interpolation, not a literal space or a
              numeric entity: Vue's compiler drops static text nodes that hold
@@ -164,17 +213,7 @@ const dimDown = computed(() =>
                arrives. -->
           <span class="text-white/40">{{ item.word }}</span>
 
-          <!-- Scroll-lit: a plain style, no transition and no motion element.
-               The scroll IS the animation, and a transition on top of it would
-               be a second one lagging behind the first. -->
-          <span
-            v-if="scrollLit"
-            class="pointer-events-none absolute inset-0 text-white"
-            :style="{ opacity: litness(item.index) }"
-          >{{ item.word }}</span>
-
           <Motion
-            v-else
             as="span"
             class="pointer-events-none absolute inset-0 text-white"
             :initial="{ opacity: 0 }"
