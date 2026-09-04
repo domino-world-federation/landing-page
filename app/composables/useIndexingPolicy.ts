@@ -15,6 +15,21 @@
  * Karena itu robots.txt di sini menolak dengan sopan sementara tiap halaman
  * tetap membawa tagnya — yang datang lewat tautan tetap tertahan.
  */
+/**
+ * CATATAN: ini BUKAN satu-satunya yang menahan situs ini dari mesin pencari.
+ *
+ * `deploy/nginx/dwf-nuxt.conf` mengirim `X-Robots-Tag: noindex` juga, dan
+ * alasannya berbeda — bukan "belum diumumkan" melainkan isinya masih
+ * menyalahgambarkan orang sungguhan: potret tokoh publik dipakai sebagai
+ * pengurus federasi ini (R11, R16), dan foto pers atlet nyata dipasangi
+ * headline karangan (R13). Ketiganya tercatat wajib beres SEBELUM publikasi,
+ * dan URL yang terindeks adalah publikasi.
+ *
+ * Jadi menyalakan sakelar ini saat peluncuran tidak cukup, dan tidak berbahaya:
+ * nginx tetap menang. Yang berbahaya kebalikannya — mencabut header nginx
+ * karena "kita sudah rilis", padahal yang menggerbanginya R11/R13/R16, bukan
+ * tanggal.
+ */
 export function useIndexingPolicy(): void {
   const allowed = useRuntimeConfig().public.allowIndexing === true
 
