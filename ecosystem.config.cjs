@@ -67,10 +67,23 @@ module.exports = {
         // side on the same box while the port is being compared.
         NITRO_PORT: "3036",
 
-        // NUXT_PUBLIC_API_BASE_URL is deliberately absent: `lib/api/client.ts`
-        // falls back to mock data when it is unset (blocker B2), which is what
-        // this prototype serves. Unlike the Next build's `NEXT_PUBLIC_*`, this
-        // one is read at RUNTIME — setting it here would be enough, no rebuild.
+        // **The API exists now** (blocker B2 closed 2026-09-03), so this is no
+        // longer optional: `lib/api/client.ts` falls back to MOCK data when it
+        // is unset, and mock data in production looks exactly like a working
+        // site — the pages render, the content is just wrong. Nothing errors,
+        // and nothing appears in the browser's Network tab either.
+        //
+        // Read at RUNTIME, unlike the Next build's `NEXT_PUBLIC_*`: changing it
+        // here and restarting PM2 is enough, no rebuild.
+        //
+        // A boot-time warning in `server/plugins/warn-when-serving-mocks.ts`
+        // says so in the PM2 log if this is ever missing again.
+        NUXT_PUBLIC_API_BASE_URL: "https://fed-api.pborado.com/api/v1",
+
+        // Origin situs ini sendiri — dipakai `<link rel="canonical">` dan URL
+        // absolut di /sitemap.xml. Kosong berarti memakai origin permintaan,
+        // yang salah begitu ada proxy yang tidak meneruskan host aslinya.
+        NUXT_PUBLIC_SITE_URL: "https://dwf-domino.org",
       },
 
       autorestart: true,
