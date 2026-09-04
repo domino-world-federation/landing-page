@@ -128,11 +128,19 @@ export const FOOTER_COPY = {
    */
   newsletterUnavailable: "Subscriptions are not open yet — check back soon.",
   copyright: "© 2026 Domino World Federation (DWF). All rights reserved.",
+  /*
+   * Ketiganya kini punya halamannya sendiri, dan kuncinya MENGIKUTI kunci di
+   * backoffice (`legal_pages.key`) — bukan sebaliknya. Kunci itu tersimpan di
+   * database dan tercetak di rute publik, jadi memilih ejaan yang berbeda di
+   * sini berarti dua nama untuk satu dokumen dan satu di antaranya 404.
+   *
+   * `privacy` jadi `privacy-policy` karena itu. Tidak ada tautan yang patah:
+   * situsnya belum diumumkan.
+   */
   legal: [
-    // The cookie policy is still `#` — it is drawn nowhere in the design.
-    { label: "Privacy", href: "/page/privacy" },
+    { label: "Privacy", href: "/page/privacy-policy" },
     { label: "Terms", href: "/page/terms" },
-    { label: "Cookie Policy", href: "#" },
+    { label: "Cookie Policy", href: "/page/cookie-policy" },
   ],
   logoAlt: "Domino World Federation",
 } as const

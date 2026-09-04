@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { LegalSection } from "~/content/legal"
+import type { LegalSectionFromApi } from "~/lib/api/types"
 
 /**
  * The document itself — Figma node `613:24579`, the "Update 30 Aug" screen.
@@ -23,7 +23,7 @@ import type { LegalSection } from "~/content/legal"
  * drawn rather than left to the browser, because the heading and the number sit
  * on one line at 36/48 and a list marker would not.
  */
-defineProps<{ sections: readonly LegalSection[] }>()
+defineProps<{ sections: readonly LegalSectionFromApi[] }>()
 </script>
 
 <template>
@@ -49,7 +49,7 @@ defineProps<{ sections: readonly LegalSection[] }>()
             :id="section.id"
             class="font-sans scroll-mt-32 text-[length:var(--text-body-lg)] leading-[1.33] font-semibold text-white"
           >
-            {{ index + 1 }}. {{ section.heading }}
+            {{ index + 1 }}. {{ section.title }}
           </h2>
 
           <!-- `#A3A3A3` on the dark panel, where it was `#616161` on white.
@@ -60,13 +60,16 @@ defineProps<{ sections: readonly LegalSection[] }>()
           <p
             class="font-sans text-[length:var(--text-body-sm)] leading-[1.5] text-[#A3A3A3]"
           >
-            {{ section.body }}
-            <template v-if="section.email">
-              <a
-                :href="`mailto:${section.email}`"
-                class="focus-visible:ring-gold text-white underline decoration-from-font underline-offset-4 transition-colors hover:text-white/70 focus-visible:ring-2 focus-visible:outline-none"
-              >{{ section.email }}</a>.
-            </template>
+            <!-- HTML, bukan teks: klausanya ditulis di editor teks kaya
+                 backoffice, dan daftar berpoin maupun tautan `mailto:` tidak
+                 bisa dibawa string polos. Server membersihkannya dengan
+                 `Purifier` sebelum menyimpan, disempitkan ke tebal, miring,
+                 garis bawah, coret, daftar, dan tautan. Membersihkan ulang di
+                 browser tidak bisa membatalkan apa yang dikirim server yang
+                 sudah disusupi, dan justru akan membuang daftar yang dibuat
+                 toolbar-nya sendiri. -->
+            <!-- eslint-disable-next-line vue/no-v-html -->
+            <span v-html="section.description" />
           </p>
         </div>
       </li>

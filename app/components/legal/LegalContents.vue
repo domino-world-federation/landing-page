@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { LegalSection } from "~/content/legal"
+import type { LegalSectionFromApi } from "~/lib/api/types"
 
 /**
  * A legal document's contents column — Figma nodes `174:11226` (terms) and
@@ -37,7 +37,7 @@ import type { LegalSection } from "~/content/legal"
  * ever changes which existing node carries which class (RULES §12).
  */
 const props = defineProps<{
-  sections: readonly LegalSection[]
+  sections: readonly LegalSectionFromApi[]
   title: string
   label: string
 }>()
@@ -133,7 +133,7 @@ onBeforeUnmount(() => clearTimeout(release))
       <!-- The number comes from the position, never from the string — Figma
            types every heading in both documents as "1." (see the sections
            files). -->
-      {{ index + 1 }}. {{ section.heading }}
+      {{ index + 1 }}. {{ section.title }}
     </UiSideTab>
   </UiSideTabList>
 </template>

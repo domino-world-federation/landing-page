@@ -7,53 +7,27 @@
  * repo owner asked for it, a single route (D32/D43, on its second user).
  */
 
-import { PRIVACY_COPY } from "~/content/privacy"
-import { PRIVACY_SECTIONS } from "~/content/privacy/sections"
-import { TERMS_COPY } from "~/content/terms"
-import { TERMS_SECTIONS } from "~/content/terms/sections"
 
 export type LegalSection = {
   /** Anchors the clause and the contents link that points at it. */
   id: string
   heading: string
-  body: string
   /**
-   * An address the clause ends on, appended as a `mailto:` and a full stop.
+   * Sanitised HTML, not plain text.
    *
-   * Split out of `body` rather than left inside the sentence for two reasons: a
-   * link cannot be built from the middle of a plain string, and a translator
-   * handed a sentence with an email buried in it has to carry it across
-   * unchanged while moving everything around it.
+   * The clauses are written in the backoffice's basic rich-text editor, whose
+   * toolbar offers bold, italic, lists and links — and a flat string can carry
+   * none of them. The server runs every clause through `Purifier` before
+   * storing it, narrowed to that same list.
    *
-   * Both documents close on one, and both are `contact@dwf-domino.org` — well
-   * formed, unlike the footer's `community@dwf-org`, which is printed as text
-   * because a mail link to an address that cannot receive mail is worse than
-   * none.
+   * This is also where the old `email` field went. A clause that ends on an
+   * address now carries it as a `mailto:` link inside the HTML: one field
+   * fewer, and one fewer thing that can be forgotten at render.
    */
-  email?: string
+  body: string
 }
 
 /** The furniture around the clauses — everything but the document itself. */
-export type LegalDocumentCopy = {
-  title: readonly string[]
-  /** Stored ISO and formatted at render, like every other date on the site. */
-  updatedAt: string
-  /** `%s` is the formatted date. */
-  updatedLabel: string
-  back: string
-  backHref: string
-  contentsTitle: string
-  contentsLabel: string
-}
-
-/** A whole document: its furniture, its clauses, and what search engines see. */
-export type LegalDocument = {
-  copy: LegalDocumentCopy
-  sections: readonly LegalSection[]
-  /** Written here rather than in the route, which no longer knows which one. */
-  seo: { title: string; description: string }
-}
-
 /**
  * Every document `/page/[key]` can serve, keyed by the segment that names it.
  *
@@ -64,26 +38,30 @@ export type LegalDocument = {
  * changes, and nothing can be added that the route does not already know how to
  * render.
  *
- * The keys are the public URLs (`/page/terms`, `/page/privacy`), so they are
+ * The keys are the public URLs (`/page/terms`, `/page/privacy-policy`), so they are
  * part of the site's addresses and not free to rename.
  */
-export const LEGAL_DOCUMENTS: Readonly<Record<string, LegalDocument>> = {
-  terms: {
-    copy: TERMS_COPY,
-    sections: TERMS_SECTIONS,
-    seo: {
-      title: "Terms & Conditions | Domino World Federation",
-      description:
-        "The terms of engagement for the Domino World Federation portal — member federation status, intellectual property, code of conduct, tournament participation, liability and governing law.",
-    },
-  },
-  privacy: {
-    copy: PRIVACY_COPY,
-    sections: PRIVACY_SECTIONS,
-    seo: {
-      title: "Privacy Policy | Domino World Federation",
-      description:
-        "How the Domino World Federation captures, processes and preserves personal details — what is collected, how it is used, who it is shared with, and the rights registered members hold.",
-    },
-  },
+/**
+ * Perabot yang SAMA untuk tiap dokumen hukum.
+ *
+ * Dulu tiap dokumen membawa salinannya sendiri (`TERMS_COPY`,
+ * `PRIVACY_COPY`) — dan keduanya identik kecuali judulnya. Judul, tanggal
+ * revisi, dan klausanya sekarang datang dari API; yang tersisa di sini cuma
+ * label antarmuka, yang memang milik situs dan bukan milik dokumennya.
+ */
+export const LEGAL_PAGE_CHROME = {
+  /** `%s` is the formatted date. */
+  updatedLabel: "Last updated %s",
+
+  /**
+   * `174:11420`. Goes to the home page rather than `history.back()`: a reader
+   * who arrived from the footer of any page has no single "back" to return to.
+   */
+  back: "Back",
+  backHref: "/",
+
+  contentsTitle: "Contents",
+  contentsLabel: "Clauses in this document",
 } as const
+
+export type LegalPageChrome = typeof LEGAL_PAGE_CHROME

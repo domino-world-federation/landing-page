@@ -56,6 +56,7 @@ import type {
   SiteSeo,
   Faq,
   FaqPlacement,
+  LegalPage,
 } from "./types"
 
 /**
@@ -576,4 +577,29 @@ function mockFaqs(placement?: FaqPlacement): Faq[] {
     question: item.question,
     answer: item.answer,
   }))
+}
+
+/**
+ * One legal document — Privacy Policy, Terms, or the Cookie Policy.
+ *
+ * `undefined` for a key the federation has not written, so `/page/[key]` can
+ * turn it into a 404 rather than an empty document with a heading and nothing
+ * under it.
+ *
+ * **No mock.** Unlike every other getter, this one has no offline fallback: the
+ * clauses used to live in `content/privacy/` and `content/terms/`, and those
+ * files are retired now that the backoffice owns them. Keeping a copy here
+ * would mean two versions of a legal text, and the one nobody edits is the one
+ * that gets served.
+ */
+export async function getLegalPage(key: string): Promise<LegalPage | undefined> {
+  if (useMock()) return undefined
+
+  try {
+    return await request<LegalPage>(`/legal/${encodeURIComponent(key)}`)
+  } catch {
+    // 404 is the ordinary answer for an unknown key, not an exception worth
+    // propagating — the page turns it into its own `createError`.
+    return undefined
+  }
 }

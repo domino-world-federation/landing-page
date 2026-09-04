@@ -1,29 +1,34 @@
 <script setup lang="ts">
-import { LEGAL_DOCUMENTS } from "~/content/legal"
+import { getLegalPage } from "~/lib/api/client"
+import { LEGAL_PAGE_CHROME } from "~/content/legal"
 
 /**
- * `/page/[key]` — the legal documents, on one route.
+ * `/page/[key]` — dokumen hukum, satu rute untuk semuanya.
  *
- * Terms (`613:24310`) and Privacy (`613:23545`) are the same screen with
- * different clauses in it, and until now they were two page files that differed
- * only in which two constants they imported. The repo owner asked for one page,
- * which is also what the shape of the thing wanted: the key names a document in
- * `LEGAL_DOCUMENTS` and everything else — the header, the contents column, the
- * panel — comes from `LegalDocument` exactly as it did before.
+ * Terms (`613:24310`) dan Privacy (`613:23545`) adalah layar yang sama dengan
+ * klausa berbeda, dan Cookie Policy yang ketiga. Kuncinya menamai dokumennya;
+ * tidak ada satu pun berkas di `pages/` yang berubah saat federasi menambah
+ * dokumen keempat — ia cukup membuatnya di backoffice.
  *
- * **An unknown key is a 404, not an empty document.** `createError` with
- * `fatal: true` renders the error page during SSR with a real status, so a typo
- * or a stale link is reported rather than answered with a page-shaped blank at
- * 200 (D28, on a route this time).
+ * **Klausanya datang dari API sekarang**, bukan dari `content/`. Naskah hukum
+ * yang tinggal di repo berarti mengubah satu kalimat menuntut deploy, dan yang
+ * mengubahnya bukan orang yang bisa men-deploy.
+ *
+ * **Kunci yang tidak dikenal 404, bukan dokumen kosong.** `createError` dengan
+ * `fatal: true` merender halaman galat saat SSR dengan status yang benar, jadi
+ * salah ketik atau tautan basi dilaporkan — bukan dijawab halaman kosong
+ * berstatus 200 (D28, kali ini di sebuah rute).
  */
 const route = useRoute()
+const key = computed(() => String(route.params.key ?? ""))
 
-const document = computed(() => {
-  const key = route.params.key
-  return typeof key === "string" ? LEGAL_DOCUMENTS[key] : undefined
-})
+const { data: page } = await useAsyncData(
+  () => `legal-${key.value}`,
+  () => getLegalPage(key.value),
+  { watch: [key] },
+)
 
-if (!document.value) {
+if (!page.value) {
   throw createError({
     statusCode: 404,
     statusMessage: "Page not found",
@@ -31,14 +36,23 @@ if (!document.value) {
   })
 }
 
+/*
+ * Judul dan deskripsi di sini LANTAI, bukan keputusan akhir: kalau federasi
+ * mengisi barisnya di "SEO & Social", `useCmsSeo()` di `app.vue` menimpanya.
+ * Yang ditulis di sini yang dipakai selama barisnya belum ada.
+ */
 useSeoMeta({
-  title: () => document.value?.seo.title,
-  description: () => document.value?.seo.description,
+  title: () => `${page.value?.title} | Domino World Federation`,
 })
 </script>
 
 <template>
-  <main v-if="document">
-    <LegalDocument :copy="document.copy" :sections="document.sections" />
+  <main v-if="page">
+    <LegalDocument
+      :title="page.title"
+      :updated-at="page.lastUpdatedAt"
+      :sections="page.sections"
+      :chrome="LEGAL_PAGE_CHROME"
+    />
   </main>
 </template>

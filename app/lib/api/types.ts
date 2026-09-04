@@ -659,3 +659,28 @@ export type Faq = {
   answer: string | readonly { text: string; strong?: boolean; em?: boolean }[]
   category?: { slug: string; name: string }
 }
+
+/**
+ * One clause of a legal document, as `GET /legal/{key}` sends it.
+ *
+ * `description` is sanitised HTML, not plain text: the clause is written in the
+ * backoffice's basic rich-text editor, whose toolbar offers bold, italic,
+ * lists and links. A flat string cannot carry a bulleted list, and an email
+ * address in the middle of a sentence is a link there rather than a separate
+ * field the way `content/legal.ts` had to model it.
+ */
+export type LegalSectionFromApi = {
+  id: string
+  title: string
+  description: string
+}
+
+/** A whole legal document. `key` is the segment in `/page/{key}`. */
+export type LegalPage = {
+  key: string
+  title: string
+  slug: string
+  /** When the federation last revised it — its choice, not the row's mtime. */
+  lastUpdatedAt?: IsoDateString
+  sections: LegalSectionFromApi[]
+}

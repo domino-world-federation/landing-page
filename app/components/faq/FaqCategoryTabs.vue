@@ -1,10 +1,6 @@
 <script setup lang="ts">
 import { FAQ_PAGE_COPY } from "~/content/faq"
-import {
-  FAQ_CATEGORIES,
-  type FaqCategory,
-  type FaqPageItem,
-} from "~/content/faq/items"
+import type { Faq } from "~/lib/api/types"
 
 /**
  * The topic column — Figma node `173:9842`.
@@ -34,14 +30,14 @@ const props = defineProps<{
    * The whole list, not the filtered one: the column always shows the way out of
    * a filter.
    */
-  items: readonly FaqPageItem[]
+  items: readonly Faq[]
   /** The `?category=` slug, or `undefined` for "All FAQs". */
   active?: string
   /** The live `?q=`, forwarded so a tab click keeps it. */
   query?: string
 }>()
 
-function href(category?: FaqCategory) {
+function href(category?: string) {
   const params = [
     category ? `category=${category}` : "",
     props.query ? `q=${encodeURIComponent(props.query)}` : "",
@@ -50,11 +46,29 @@ function href(category?: FaqCategory) {
   return params.length ? `/page/faq?${params.join("&")}` : "/page/faq"
 }
 
-const shown = computed(() =>
-  FAQ_CATEGORIES.filter((category) =>
-    props.items.some((item) => item.category === category.id),
-  ),
-)
+/*
+ * Lacinya lahir dari PERTANYAAN yang ada, bukan dari daftar yang di-hardcode.
+ *
+ * Dulu ia menyaring `FAQ_CATEGORIES` — lima nama yang ditulis desainnya —
+ * terhadap pertanyaan yang ada. Sekarang kategorinya datang bersama tiap
+ * pertanyaan dari API, jadi backoffice bisa membuat kategori keenam dan ia
+ * muncul di sini tanpa satu baris pun berubah. Aturan yang lama tetap berlaku
+ * dan justru jadi otomatis: laci yang tidak berisi tidak pernah digambar.
+ *
+ * Urutannya urutan kemunculan pertama, yang mengikuti urutan API — dan itu
+ * urutan yang disetel federasi di layar Manage Order.
+ */
+const shown = computed(() => {
+  const seen = new Map<string, { id: string; label: string }>()
+
+  for (const item of props.items) {
+    if (item.category && !seen.has(item.category.slug)) {
+      seen.set(item.category.slug, { id: item.category.slug, label: item.category.name })
+    }
+  }
+
+  return [...seen.values()]
+})
 </script>
 
 <template>

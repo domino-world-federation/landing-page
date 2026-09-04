@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { FAQ_PAGE_COPY } from "~/content/faq"
-import { FAQ_PAGE_ITEMS, type FaqPageItem } from "~/content/faq/items"
+import { getFaqs } from "~/lib/api/client"
+import type { Faq } from "~/lib/api/types"
 
 /**
  * `/page/faq` — Figma screen `613:23161`.
@@ -52,6 +53,18 @@ useSeoMeta({
 
 const route = useRoute()
 
+/*
+ * Seluruh pertanyaan, sekali — halaman ini menyaringnya sendiri di server.
+ *
+ * Tanpa `placement`: yang tiga halaman lain tampilkan adalah SEBAGIAN yang
+ * ditempelkan ke masing-masing; yang ini arsipnya, dan lacinya lahir dari
+ * kategori pertanyaan yang benar-benar ada — laci kosong tidak pernah
+ * digambar.
+ */
+const { data: items } = await useAsyncData("faq-page", () => getFaqs(), {
+  default: () => [] as Faq[],
+})
+
 const category = computed(() =>
   typeof route.query.category === "string" ? route.query.category : undefined,
 )
@@ -70,7 +83,7 @@ const term = computed(() => q.value?.trim().toLowerCase() ?? "")
  * typographic, not semantic — a phrase must not become unfindable for having
  * been emphasised mid-sentence.
  */
-function matches(item: FaqPageItem, needle: string) {
+function matches(item: Faq, needle: string) {
   // `answer` carries two shapes — segments for copy in this repo, sanitised
   // HTML for anything from the CMS (see `FaqItem.answer`). Both are flattened
   // to plain text before matching; searching HTML source would let a reader
@@ -88,8 +101,8 @@ function matches(item: FaqPageItem, needle: string) {
 // and the forwarded `q` in `FaqCategoryTabs` both assume.
 const shown = computed(() => {
   const inCategory = category.value
-    ? FAQ_PAGE_ITEMS.filter((item) => item.category === category.value)
-    : FAQ_PAGE_ITEMS
+    ? items.value.filter((item) => item.category?.slug === category.value)
+    : items.value
 
   return term.value
     ? inCategory.filter((item) => matches(item, term.value))
@@ -123,7 +136,7 @@ const clearHref = computed(() =>
         <!-- The whole list, not the filtered one: a filter that hides the way
              back to the other topics is a dead end. -->
         <FaqCategoryTabs
-          :items="FAQ_PAGE_ITEMS"
+          :items="items"
           :active="category"
           :query="q"
         />

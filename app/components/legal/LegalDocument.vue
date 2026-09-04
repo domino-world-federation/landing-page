@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { LegalDocumentCopy, LegalSection } from "~/content/legal"
+import type { LegalPageChrome } from "~/content/legal"
+import type { LegalSectionFromApi } from "~/lib/api/types"
 
 /**
  * A whole legal page, minus the navbar and the footer — Figma screens
@@ -13,25 +14,43 @@ import type { LegalDocumentCopy, LegalSection } from "~/content/legal"
  * document, so `/faq` shares `PageHeader`, `SideTabLayout` and `SupportCard` and
  * stops there (D57's line, applied).
  */
-defineProps<{
-  copy: LegalDocumentCopy
-  sections: readonly LegalSection[]
+const props = defineProps<{
+  /** Judul dokumen, dari API — bukan dari naskah di repo. */
+  title: string
+  /**
+   * Tanggal revisi PILIHAN REDAKSI, bukan `updated_at` barisnya. Opsional
+   * karena dokumen yang baru dibuat belum tentu sudah punya tanggalnya.
+   */
+  updatedAt?: string
+  sections: readonly LegalSectionFromApi[]
+  /** Label antarmuka yang sama untuk tiap dokumen. */
+  chrome: LegalPageChrome
 }>()
+
+/*
+ * `UiPageHeader` menerima larik baris — desainnya memutus judul panjang
+ * sendiri. API mengirim satu string, jadi ia dibungkus di sini alih-alih
+ * memaksa setiap pemanggil mengingatnya.
+ */
+const titleLines = computed(() => [props.title])
 </script>
 
 <template>
   <UiPageHeader
-    :title="copy.title"
-    :back="{ label: copy.back, href: copy.backHref }"
+    :title="titleLines"
+    :back="{ label: chrome.back, href: chrome.backHref }"
   >
     <template #meta>
       <!-- Inter Medium 24/32 in `#AAAAAA`. A `<time>` because it is one — the
            machine-readable value is the ISO string the copy file stores. -->
+      <!-- Dicetak hanya kalau tanggalnya ada: "Last updated" tanpa tanggal
+           lebih buruk daripada tidak ada baris sama sekali. -->
       <time
-        :datetime="copy.updatedAt"
+        v-if="updatedAt"
+        :datetime="updatedAt"
         class="font-sans text-[length:var(--text-body-sm)] leading-8 font-medium text-[#aaaaaa]"
       >
-        {{ copy.updatedLabel.replace("%s", formatShortDate(copy.updatedAt)) }}
+        {{ chrome.updatedLabel.replace("%s", formatShortDate(updatedAt)) }}
       </time>
     </template>
   </UiPageHeader>
@@ -40,8 +59,8 @@ defineProps<{
     <template #sidebar>
       <LegalContents
         :sections="sections"
-        :title="copy.contentsTitle"
-        :label="copy.contentsLabel"
+        :title="chrome.contentsTitle"
+        :label="chrome.contentsLabel"
       />
       <UiSupportCard />
     </template>

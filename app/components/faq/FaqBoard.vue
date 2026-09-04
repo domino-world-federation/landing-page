@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { FaqPageItem } from "~/content/faq/items"
+import type { Faq } from "~/lib/api/types"
 
 /**
  * The question list on `/faq` — Figma node `613:23255`.
@@ -22,7 +22,7 @@ import type { FaqPageItem } from "~/content/faq/items"
  * list IS the content area, and dropping its one visible edge makes the page
  * look broken rather than filtered.
  */
-defineProps<{ items: readonly FaqPageItem[] }>()
+defineProps<{ items: readonly Faq[] }>()
 
 defineSlots<{
   /** What to say when the filter or the search matched nothing. */
