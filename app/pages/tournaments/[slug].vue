@@ -45,10 +45,27 @@ if (!tournament.value) {
 // both read the record. `computed` rather than `tournament.value!` at each use.
 const event = computed(() => tournament.value!)
 
+/*
+ * Sama seperti `/news/[slug]`: rute dinamis tidak punya baris di "SEO &
+ * Social", jadi `useCmsSeo()` tidak menyentuhnya dan tag bagikannya ditulis
+ * dari record-nya sendiri.
+ */
 useSeoMeta({
   title: () => `${event.value.name} | Domino World Federation`,
   description: () =>
     `${event.value.dateLabel} — ${event.value.location}. ${event.value.formatLabel}.`,
+
+  ogTitle: () => event.value.name,
+  ogDescription: () =>
+    `${event.value.dateLabel} — ${event.value.location}. ${event.value.formatLabel}.`,
+  ogImage: () => event.value.imageUrl,
+  ogType: "website",
+
+  twitterCard: () => (event.value.imageUrl ? "summary_large_image" : "summary"),
+  twitterTitle: () => event.value.name,
+  twitterDescription: () =>
+    `${event.value.dateLabel} — ${event.value.location}.`,
+  twitterImage: () => event.value.imageUrl,
 })
 </script>
 

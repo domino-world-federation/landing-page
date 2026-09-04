@@ -124,6 +124,20 @@ export default defineNuxtConfig({
 
     public: {
       apiBaseUrl: "",
+
+      /**
+       * The site's own public origin, without a trailing slash.
+       *
+       * Used for `<link rel="canonical">` and for the absolute URLs a sitemap
+       * has to carry. Empty falls back to the origin of the incoming request,
+       * which is right in development and right in production too — UNTIL the
+       * app sits behind a proxy that does not forward the original host, at
+       * which point every canonical would announce the internal address.
+       * Setting it removes that whole class of question.
+       *
+       * Override at deploy time with `NUXT_PUBLIC_SITE_URL`.
+       */
+      siteUrl: "",
     },
   },
 

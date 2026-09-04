@@ -1,2 +1,9 @@
 User-Agent: *
 Disallow:
+
+# Dibangkitkan `server/routes/sitemap.xml.ts` dari API, bukan berkas statis —
+# artikel yang terbit hari ini masuk hari ini, tanpa deploy.
+#
+# Hostnya ditulis lengkap karena robots.txt tidak menerima path relatif untuk
+# baris ini. Ganti saat domain produksinya ditetapkan.
+Sitemap: https://dwf-domino.org/sitemap.xml

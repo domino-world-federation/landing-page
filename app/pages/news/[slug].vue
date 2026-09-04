@@ -50,9 +50,32 @@ if (!article.value) {
 // every use, which is the pattern the tournament detail page settled on.
 const story = computed(() => article.value!)
 
+/*
+ * Meta halaman ini lahir dari RECORD-nya, bukan dari CMS.
+ *
+ * "SEO & Social" di backoffice memetakan rute ke baris; rute dinamis sengaja
+ * tidak ada di sana, karena satu baris akan mengklaim ribuan artikel yang
+ * semuanya berbeda. `useCmsSeo()` di `app.vue` karena itu tidak menyentuh
+ * halaman ini sama sekali — dan itulah kenapa tag bagikannya harus ditulis di
+ * sini: tanpa mereka, artikel yang dibagikan ke WhatsApp tampil tanpa judul,
+ * tanpa ringkasan, dan tanpa gambar.
+ */
 useSeoMeta({
   title: () => `${story.value.title} | Domino World Federation`,
   description: () => story.value.excerpt,
+
+  ogTitle: () => story.value.title,
+  ogDescription: () => story.value.excerpt,
+  ogImage: () => story.value.thumbnailUrl,
+  // `article`, bukan `website` — ia tulisan bertanggal dengan penulis, dan
+  // itu yang membedakan kartu bagikannya di sebagian platform.
+  ogType: "article",
+  articlePublishedTime: () => story.value.publishedAt,
+
+  twitterCard: () => (story.value.thumbnailUrl ? "summary_large_image" : "summary"),
+  twitterTitle: () => story.value.title,
+  twitterDescription: () => story.value.excerpt,
+  twitterImage: () => story.value.thumbnailUrl,
 })
 </script>
 
