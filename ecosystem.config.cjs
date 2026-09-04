@@ -83,7 +83,7 @@ module.exports = {
         // Origin situs ini sendiri — dipakai `<link rel="canonical">` dan URL
         // absolut di /sitemap.xml. Kosong berarti memakai origin permintaan,
         // yang salah begitu ada proxy yang tidak meneruskan host aslinya.
-        NUXT_PUBLIC_SITE_URL: "https://dwf-domino.org",
+        NUXT_PUBLIC_SITE_URL: "https://fed-web.pborado.com",
       },
 
       autorestart: true,
