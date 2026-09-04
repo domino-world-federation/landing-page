@@ -6,6 +6,12 @@
  * a row exists. See `useCmsSeo`.
  */
 useCmsSeo()
+
+/**
+ * Selama situsnya belum diumumkan, tiap halaman membawa `noindex` — termasuk
+ * yang metanya lahir dari record dan tidak disentuh `useCmsSeo`.
+ */
+useIndexingPolicy()
 </script>
 
 <template>

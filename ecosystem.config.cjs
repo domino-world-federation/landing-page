@@ -84,6 +84,14 @@ module.exports = {
         // absolut di /sitemap.xml. Kosong berarti memakai origin permintaan,
         // yang salah begitu ada proxy yang tidak meneruskan host aslinya.
         NUXT_PUBLIC_SITE_URL: "https://fed-web.pborado.com",
+
+        // Mesin pencari: DITUTUP sampai situsnya siap diumumkan. Tiap halaman
+        // membawa `noindex` dan /robots.txt menolak semuanya.
+        //
+        // Ubah jadi "true" saat peluncuran — dan itu SATU-SATUNYA yang perlu
+        // diubah; server mengingatkan di log setiap restart selama masih
+        // tertutup.
+        NUXT_PUBLIC_ALLOW_INDEXING: "false",
       },
 
       autorestart: true,

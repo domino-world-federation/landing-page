@@ -138,6 +138,21 @@ export default defineNuxtConfig({
        * Override at deploy time with `NUXT_PUBLIC_SITE_URL`.
        */
       siteUrl: "",
+
+      /**
+       * Whether search engines may index this site.
+       *
+       * **Closed by default, and that is the safe direction.** Forgetting to
+       * open it costs traffic, which Search Console shows within days and which
+       * recovers fully. Forgetting to close it lets unfinished content and
+       * placeholder copy into the index, and getting it back out takes removal
+       * requests and weeks.
+       *
+       * Open at launch with `NUXT_PUBLIC_ALLOW_INDEXING=true`. Until then every
+       * page carries `noindex` and `/robots.txt` refuses everything — and the
+       * server says so in its boot log, so nobody has to remember unprompted.
+       */
+      allowIndexing: false,
     },
   },
 

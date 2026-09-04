@@ -18,9 +18,24 @@
 export default defineNitroPlugin(() => {
   const config = useRuntimeConfig()
 
-  if (config.public.apiBaseUrl) return
-
   if (import.meta.dev) return
+
+  /*
+   * Situs yang ditutup dari mesin pencari juga diumumkan di log.
+   *
+   * Bukan galat — ia keadaan yang benar sebelum peluncuran. Tapi ia keadaan
+   * yang MUDAH TERLUPAKAN, dan yang melupakannya baru tahu berbulan-bulan
+   * kemudian saat bertanya kenapa tidak ada yang menemukan situsnya. Satu
+   * baris di tiap restart jauh lebih murah daripada percakapan itu.
+   */
+  if (config.public.allowIndexing !== true) {
+    console.warn(
+      "  [dwf] Situs DITUTUP dari mesin pencari (noindex + robots.txt Disallow).\n" +
+        "        Buka dengan NUXT_PUBLIC_ALLOW_INDEXING=true saat siap diumumkan.\n",
+    )
+  }
+
+  if (config.public.apiBaseUrl) return
 
   console.warn(
     [
