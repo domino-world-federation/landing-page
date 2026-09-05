@@ -9,29 +9,30 @@ import { FEATURE_HQ_ALT, FEATURE_HQ_COPY } from "~/content/home/feature-hq"
 const SETTLE = DURATION * 1.5
 
 /**
- * S4 — Figma node `31:1085`. The headquarters picture, now carrying a join call.
+ * S4 — Figma node `31:1085`. The join call, on a picture of the game itself.
  *
- * The component keeps its name because the picture is what it is built around
- * and the picture did not change; only the copy over it did (see
- * `content/home/feature-hq.ts`).
+ * **The picture changed on 2026-09-05** — it was `feature-hq-composite.webp`,
+ * the headquarters building, and it is now a black-and-white photograph of a
+ * table mid-game. The component keeps its name: it is built around a full-bleed
+ * photograph with a copy column over it, and that is still what it is. The About
+ * page keeps the building shot (`117:3846`), so the composite is still in use —
+ * this section simply no longer shares it.
  *
- * `feature-hq-composite.webp` is the design's own composite: the photograph with
- * the section's three washes already baked in — the vignette along the top
- * (`31:1089`), the downward darkening that carries the text (`31:1103`), and the
- * fade to page background at the foot (`37:1848`). Measured, its top and bottom
- * rows are exactly `#0e0e0e`, so it meets `--color-bg` with no seam and needs no
- * overlay of its own. Reproducing those washes in CSS on top of it would darken
- * the picture twice.
+ * ── The three washes moved from the file into CSS ──
  *
- * It lives in `global/` rather than `home/` because the About page's own
- * headquarters section (`117:3846`) is built on the same `imageRef` — one file
- * used by two pages (RULES §2).
+ * The composite had them painted in: the vignette along the top (`31:1089`), the
+ * downward darkening that carries the text (`31:1103`), and the fade to page
+ * background at the foot (`37:1848`). The replacement is an unretouched
+ * photograph and carries none of them, so they are reproduced below the image —
+ * with numbers measured off both files rather than chosen, see the note there.
  *
- * That bake is also why the image is NOT `object-cover` at an arbitrary crop:
- * the fades are painted at fixed positions, so cropping them off the top or
- * bottom would put a hard edge back. The section carries the image's own 16:9
- * ratio from `lg` up, and the crop only tightens on narrow screens where some
- * loss is unavoidable.
+ * That also relaxes a constraint this section used to carry. The baked fades
+ * were horizontal bands at fixed positions, so `object-cover` was only ever safe
+ * cropping LEFT and RIGHT: a wider box would have eaten the top and bottom bands
+ * and put a hard edge back. The CSS wash is painted on the SECTION, so it stays
+ * whole at any crop, and the picture can be cropped in either direction now.
+ * The ratio below is kept anyway — it is the design's frame, and the crop only
+ * tightens on narrow screens where some loss is unavoidable.
  *
  * This is the first section with real scroll above it, so unlike the hero it
  * gets true scroll-linked parallax — S2 had none, there was nothing to scroll.
@@ -89,14 +90,40 @@ const SETTLE = DURATION * 1.5
              a bare `100vw`, which @nuxt/image reads as the key `1px` and answers
              with a two-pixel srcset — see the note on that helper. -->
         <NuxtImg
-          src="/assets/global/feature-hq-composite.webp"
-          :alt="FEATURE_HQ_ALT.building"
+          src="/assets/home/table-dwf-bw.webp"
+          :alt="FEATURE_HQ_ALT.table"
           :sizes="SIZES_FULL_BLEED"
           :quality="90"
           class="absolute inset-0 size-full object-cover"
         />
       </MotionReveal>
     </MotionParallaxLayer>
+
+    <!-- **The three washes, in CSS — because this photograph does not carry
+         them.** `feature-hq-composite.webp` had them painted in: measured, its
+         top and bottom rows were exactly `#0e0e0e`, so it met the page with no
+         seam, and its brightest pixels behind the copy reached only 109. The
+         replacement is an unretouched photograph — its top and bottom rows
+         average 52 with peaks at 213, which puts a hard horizontal edge across
+         the page at both ends, and its brightest pixels behind the copy reach
+         240, which is white text on near-white domino tiles.
+
+         The numbers here are read off those two measurements rather than
+         chosen. 0.62 across the middle takes a 240 highlight to 100, just under
+         the 110 that white body text needs for 4.5:1 — and 109 is what the
+         composite itself measured, so this matches the design rather than
+         guessing at it. The ends close to full `--color-bg`, which is what
+         removes the seam.
+
+         **Outside the parallax layer, not inside it.** The old fades travelled
+         with the picture because they were part of it; these are fixed to the
+         section, so the ends stay welded to the page background no matter where
+         the parallax has pushed the photograph. That is strictly safer than the
+         baked-in version, which relied on the scale never dropping below 1. -->
+    <div
+      aria-hidden="true"
+      class="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(180deg,var(--color-bg)_0%,rgba(14,14,14,0.55)_10%,rgba(14,14,14,0.62)_50%,rgba(14,14,14,0.72)_85%,var(--color-bg)_100%)]"
+    />
 
     <!-- Node `31:1105`: **913px wide at `x:503.5`** — a column left of centre,
          clear of the signage on the building's right face. The redraw widened it

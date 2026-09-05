@@ -38,12 +38,18 @@ export const FEATURE_HQ_COPY = {
 
 export const FEATURE_HQ_ALT = {
   /**
-   * Still described rather than left decorative, though the redraw weakened the
-   * case: the copy no longer claims a global federation with the building as its
-   * evidence. It is kept because the photograph is of a real place the sentence
-   * is asking the reader to join, which is information a reader who cannot see
-   * it would otherwise lose entirely.
+   * Described rather than left decorative, and the picture change strengthened
+   * the case rather than weakening it. The headquarters photograph showed the
+   * building the federation works from; this one shows the thing the sentence
+   * beside it is actually asking about — people at a table, mid-game, under the
+   * federation's mark. A reader who cannot see it would otherwise lose the only
+   * evidence on the page that this is a game played by people.
+   *
+   * Named `table` rather than kept as `building`: the key says what the picture
+   * IS, so a stale name would be the next reader's wrong assumption. The About
+   * page keeps the building shot and its own `HQ_ALT.building` — different
+   * picture, different page, untouched.
    */
-  building:
-    "The DWF headquarters, a concrete and glass building carrying the federation emblem above its entrance",
+  table:
+    "Players seated around a domino table mid-game, the federation emblem above them",
 } as const
