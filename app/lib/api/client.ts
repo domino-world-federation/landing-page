@@ -57,6 +57,9 @@ import type {
   Faq,
   FaqPlacement,
   LegalPage,
+  ContactSubmission,
+  NewsletterSubmission,
+  IntegrityReportSubmission,
 } from "./types"
 
 /**
@@ -514,6 +517,80 @@ export async function subscribeToTournament(
   })
 }
 
+/* ------------------------------------------------------- The other three forms
+ *
+ * `subscribeToTournament` above was the first write in this file and set the
+ * pattern all three follow: reject under the mock rather than resolve, discard
+ * the response, and let the caller tell the failures apart by `ApiError.status`.
+ *
+ * **What each caller must do with a failure**, because getting this wrong is
+ * how a form starts lying:
+ *
+ *   - not an `ApiError` — there is no base URL, so nothing was sent anywhere.
+ *     Say the channel is not live. This is the state the whole site runs in
+ *     when `NUXT_PUBLIC_API_BASE_URL` is empty, and it must stay reachable.
+ *   - `ApiError` with 429 — the throttle. The reader did nothing wrong and
+ *     waiting fixes it, so say that rather than "something went wrong".
+ *   - any other `ApiError` — it did not arrive. Never say it did.
+ *
+ * These are also the first calls this site makes from the BROWSER rather than
+ * from the server: every getter above runs during SSR, where CORS does not
+ * apply. `CORS_ALLOWED_ORIGINS` in the API's `.env` has to name this site's
+ * origin or all three fail at the preflight, with nothing in the network tab
+ * but a blocked request.
+ */
+
+/**
+ * Send a message from `/contact` — `POST /contact`, throttled 5/minute.
+ *
+ * The response is a bare 204: there is nothing to show the reader that they did
+ * not just type. Anything the server sent back here would be an id, and a
+ * public endpoint has no business handing out sequential ids.
+ */
+export async function submitContact(submission: ContactSubmission): Promise<void> {
+  if (useMock()) {
+    throw new Error("no-backend")
+  }
+  await request<unknown>("/contact", { method: "POST", body: submission })
+}
+
+/**
+ * Subscribe to the newsletter from the footer — `POST /newsletter`, 5/minute.
+ *
+ * **An address already on the list answers 204, exactly like a new one, and the
+ * caller must not tell them apart.** A distinct "you are already subscribed"
+ * would let anyone type an address and learn whether it is on the list — the
+ * field is in the footer of every page, so that is a membership oracle open to
+ * the whole internet. One success message for both.
+ */
+export async function subscribeToNewsletter(
+  submission: NewsletterSubmission,
+): Promise<void> {
+  if (useMock()) {
+    throw new Error("no-backend")
+  }
+  await request<unknown>("/newsletter", { method: "POST", body: submission })
+}
+
+/**
+ * File an integrity report — `POST /integrity-reports`, throttled 10/minute.
+ *
+ * Ten a minute rather than five, and the difference is deliberate at the source:
+ * one incident can be several reports written in one sitting, and a limit tight
+ * enough to stop that is a report that never gets filed. That is a far more
+ * expensive failure than a few junk rows.
+ *
+ * The body is two fields and stays two fields — see `IntegrityReportSubmission`.
+ */
+export async function submitIntegrityReport(
+  submission: IntegrityReportSubmission,
+): Promise<void> {
+  if (useMock()) {
+    throw new Error("no-backend")
+  }
+  await request<unknown>("/integrity-reports", { method: "POST", body: submission })
+}
+
 /**
  * The site's SEO and social meta, keyed by route.
  *
@@ -527,6 +604,7 @@ export async function getSiteSeo(): Promise<SiteSeo> {
   if (useMock()) return { default: {}, pages: {} }
   return request<SiteSeo>("/seo")
 }
+
 
 /**
  * The questions pinned to one page, IN THE ORDER the CMS puts them.

@@ -54,11 +54,31 @@ export const CONTACT_COPY = {
   messageLabel: "Message",
   messagePlaceholder: "How can we help?",
   submit: "Send message",
+  /** Replaces the button's label while the request is in flight. */
+  sending: "Sending…",
 
   /**
-   * Said out loud on submit. There is no endpoint (B2), so the form refuses in
-   * the open rather than swallowing the message — D28, and the same wording
-   * pattern the grant form and the newsletter field use.
+   * The four things that can be true after a submit.
+   *
+   * They are four rather than two because "it did not work" is not one event.
+   * The throttle is the reader having done nothing wrong and waiting fixing it;
+   * a failed request is the message not having arrived and needing another
+   * route; no endpoint at all is the channel not being live yet. Collapsing
+   * them into one "something went wrong" would leave someone retrying a form
+   * that will refuse them for the next fifty seconds, or worse, walking away
+   * believing the federation has a message it never received.
+   */
+  success:
+    "Thank you — your message has reached us. We reply to the address you gave.",
+  throttled:
+    "That is several messages in quick succession. Give it a minute, then send again.",
+  failed: "Your message did not go through. Try again in a moment, or email us at",
+
+  /**
+   * Said out loud on submit while there is no `NUXT_PUBLIC_API_BASE_URL` — the
+   * state the site runs in with no backend behind it. The form refuses in the
+   * open rather than swallowing the message: D28, and the same wording pattern
+   * the grant form and the newsletter field use.
    */
   unavailable:
     "Messages are not being received yet. In the meantime, email us directly at",

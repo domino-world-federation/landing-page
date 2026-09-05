@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ApiError, submitIntegrityReport } from "~/lib/api/client"
 import { INTEGRITY_COPY } from "~/content/integrity"
 
 /**
@@ -7,30 +8,51 @@ import { INTEGRITY_COPY } from "~/content/integrity"
  * A gold heading and two paragraphs on the left (452 of the design's 1920), the
  * form on the right in a white 1136 card.
  *
- * **This form refuses, and of everything on this site it is the one that must.**
- * There is no reporting endpoint (B2). A submit that appeared to succeed would
- * leave someone believing they had filed a report about match-fixing or abuse
- * when nothing had been filed at all — which is worse than being told to come
- * back later, because they would stop looking for another way to report it. So
- * it says plainly that the channel is not live and names the address that is.
- * D28's rule, with the stakes that make it a rule.
+ * **This form files a report now** — `POST /integrity-reports`, into the
+ * backoffice's Integrity Reports module. Until 2026-09-05 it refused in the
+ * open, and of everything on this site it was the one that had to: a submit
+ * that appeared to succeed would leave someone believing they had filed a
+ * report about match-fixing or abuse when nothing had been filed at all.
  *
- * The client-side checks still run, and they are not theatre: they are the ones
- * the form itself can make — a type was chosen, the description is long enough
- * to be worth reading — and they will be the same checks the day there is a
- * server behind it.
+ * That reasoning did not go away when the endpoint arrived, it moved:
+ *
+ *   - **success is said only after the server has taken it.** Nothing optimistic,
+ *     no "we have got this" written before the response;
+ *   - **the two failure states never hedge.** "Nothing was filed" is stated,
+ *     because someone who half-believes it went through will not send it again;
+ *   - **the body is two fields and stays two.** The table behind it has no name,
+ *     no email and no IP — the page promises confidentiality, and an address is
+ *     an identity. Nothing here may be added "so we can follow up".
+ *
+ * The client-side checks still run and are not theatre: they are the ones the
+ * form itself can make — a type was chosen, the description is long enough to be
+ * worth reading — and they are the same two the server enforces.
  */
 const COPY = INTEGRITY_COPY.report
 
-type Status = "idle" | "invalid-type" | "too-short" | "unavailable"
+type Status =
+  | "idle"
+  | "invalid-type"
+  | "too-short"
+  | "sending"
+  | "sent"
+  | "throttled"
+  | "failed"
+  | "unavailable"
 
 const type = ref("")
 const description = ref("")
+
+/** Empty means a human — see `UiHoneypotField`. */
+const website = ref("")
+
 const status = ref<Status>("idle")
 
 const MIN_DESCRIPTION = 20
 
-function submit() {
+async function submit() {
+  if (status.value === "sending") return
+
   if (!type.value) {
     status.value = "invalid-type"
     return
@@ -39,23 +61,62 @@ function submit() {
     status.value = "too-short"
     return
   }
-  status.value = "unavailable"
+
+  status.value = "sending"
+
+  try {
+    await submitIntegrityReport({
+      type: type.value,
+      description: description.value.trim(),
+      website: website.value,
+    })
+
+    status.value = "sent"
+
+    // Cleared on success, and here that is about the reporter rather than about
+    // tidiness: an account of harassment or match-fixing left sitting on screen
+    // is readable by whoever walks past next. It has been transmitted, and the
+    // message above says so. On a FAILURE it stays — the one thing worse than
+    // leaving it on screen is discarding a report that never arrived.
+    type.value = ""
+    description.value = ""
+  } catch (error) {
+    // Anything that is not an `ApiError` never left the browser: the client
+    // rejects before sending when there is no base URL.
+    if (error instanceof ApiError) {
+      status.value = error.status === 429 ? "throttled" : "failed"
+    } else {
+      status.value = "unavailable"
+    }
+  }
 }
 
 // Typing clears a verdict about what was typed before it. Without this the
 // message sits under a field the reader has already corrected, which reads as
-// the correction having been rejected too.
+// the correction having been rejected too. A success is left standing: it is
+// about a report that is already filed, not about what is in the fields now.
 watch([type, description], () => {
-  if (status.value === "invalid-type" || status.value === "too-short") {
-    status.value = "idle"
-  }
+  if (status.value === "sending" || status.value === "sent") return
+  status.value = "idle"
 })
 
 const message = computed(() => {
-  if (status.value === "invalid-type") return COPY.needsType
-  if (status.value === "too-short") return COPY.tooShort
-  if (status.value === "unavailable") return COPY.unavailable
-  return ""
+  switch (status.value) {
+    case "invalid-type":
+      return COPY.needsType
+    case "too-short":
+      return COPY.tooShort
+    case "sent":
+      return COPY.success
+    case "throttled":
+      return COPY.throttled
+    case "failed":
+      return COPY.failed
+    case "unavailable":
+      return COPY.unavailable
+    default:
+      return ""
+  }
 })
 
 const FIELD_LABEL =
@@ -141,20 +202,31 @@ const FIELD =
           </label>
         </div>
 
-        <!-- 64px gold, full width (`601:17735`). -->
+        <UiHoneypotField id="integrity-website" v-model="website" />
+
+        <!-- 64px gold, full width (`601:17735`). Disabled only in flight: a
+             second press during a submit files the same incident twice, and a
+             button that stayed disabled afterwards would strand a reporter whose
+             submission failed. -->
         <button
           type="submit"
-          class="rounded-btn font-display bg-gold focus-visible:ring-gold flex h-16 w-full items-center justify-center px-5 text-[length:var(--text-display-caption)] leading-[1.25] text-black uppercase transition-colors hover:bg-[var(--color-gold-btn-light)] focus-visible:ring-2 focus-visible:outline-none"
+          :disabled="status === 'sending'"
+          class="rounded-btn font-display bg-gold focus-visible:ring-gold flex h-16 w-full items-center justify-center px-5 text-[length:var(--text-display-caption)] leading-[1.25] text-black uppercase transition-colors hover:bg-[var(--color-gold-btn-light)] focus-visible:ring-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-gold"
         >
-          {{ COPY.submit }}
+          {{ status === "sending" ? COPY.sending : COPY.submit }}
         </button>
 
         <!-- Always in the DOM and empty until there is something to say: a live
              region inserted at the same moment as its text is routinely missed
              by screen readers, which need it present in order to watch it. -->
+        <!-- Red is for everything that did NOT get filed. A report that WAS
+             filed must not be announced in the colour of a rejection — that is
+             the whole point of this form telling the truth about its own
+             state. -->
         <p
           role="status"
-          class="font-sans text-center text-[length:var(--text-body-sm)] leading-6 font-medium text-[#FF1D34] empty:hidden"
+          class="font-sans text-center text-[length:var(--text-body-sm)] leading-6 font-medium empty:hidden"
+          :class="status === 'sent' ? 'text-[#0F7A3D]' : 'text-[#FF1D34]'"
         >
           {{ message }}
         </p>

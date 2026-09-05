@@ -68,14 +68,33 @@ export const INTEGRITY_COPY = {
     descriptionHint: "min. 20 characters",
     descriptionPlaceholder: "Provide as much detail as possible",
     submit: "Submit Securely",
+    /** Replaces the button's label while the request is in flight. */
+    sending: "Submitting…",
     confidentiality:
       "Your identity will be kept strictly confidential and will not be disclosed without your consent, except where required by law.",
+
     /**
-     * There is no reporting endpoint (B2), and this is the one form on the site
-     * where pretending otherwise would be a real harm: a person who believes
-     * they have filed a report and has not is worse off than one who was told to
-     * come back later. So the submit refuses in the open and names the channel
-     * that does exist.
+     * **This is the one form on the site where a wrong message does real
+     * harm**, and it cuts both ways. Someone who believes they have filed a
+     * report about match-fixing or abuse and has not is worse off than someone
+     * told to come back later — they stop looking for another way to report it.
+     * So `success` is said only after the server has taken it, and the two
+     * failures below never imply it might have got through anyway.
+     *
+     * `success` does not promise a reply. Nothing identifying is stored — no
+     * name, no email, no IP — so there is no one to reply to, and saying "we
+     * will be in touch" would be inventing a channel that does not exist.
+     */
+    success:
+      "Your report has been received and is now with the integrity unit. Nothing identifying you was stored with it.",
+    throttled:
+      "That is several reports in a short time. Give it a minute, then submit the next one.",
+    failed:
+      "Your report did not reach us — nothing was filed. Try again, or email integrity@dwf-domino.org, which is monitored.",
+    /**
+     * Shown when there is no `NUXT_PUBLIC_API_BASE_URL`: nothing was sent
+     * anywhere. The form refuses in the open and names the channel that does
+     * exist rather than swallowing a report.
      */
     unavailable:
       "The secure reporting channel is not live yet. Until it is, email integrity@dwf-domino.org — that address is monitored.",

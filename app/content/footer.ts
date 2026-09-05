@@ -122,9 +122,23 @@ export const FOOTER_COPY = {
   /** Read on the field itself; the design shows a placeholder and no label. */
   newsletterLabel: "Email address",
   newsletterSubmit: "Subscribe",
+
   /**
-   * Shown after a submit. There is no subscription endpoint yet, and a form
-   * that silently swallows an address would be a lie — so it says so.
+   * The four things that can be true after a submit.
+   *
+   * **`newsletterSuccess` is said for a new address AND for one already on the
+   * list**, because the endpoint answers the same 204 to both and the field
+   * must not tell them apart. A distinct "you are already subscribed" would let
+   * anyone type an address and learn whether it is on the list — and this field
+   * sits in the footer of every page, so that oracle would be open to everyone.
+   */
+  newsletterSuccess: "You are on the list. Thank you.",
+  newsletterThrottled: "That is a few tries in a row. Give it a minute.",
+  newsletterFailed: "That did not go through. Try again in a moment.",
+  /**
+   * Shown when there is no `NUXT_PUBLIC_API_BASE_URL` — nothing was sent
+   * anywhere. A form that silently swallowed an address would be a lie, so it
+   * says so instead.
    */
   newsletterUnavailable: "Subscriptions are not open yet — check back soon.",
   copyright: "© 2026 Domino World Federation (DWF). All rights reserved.",

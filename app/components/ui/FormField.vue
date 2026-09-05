@@ -22,6 +22,14 @@ withDefaults(
     placeholder: string
     type?: "text" | "email"
     autocomplete?: string
+    /**
+     * The shortest value worth submitting, when the server has an opinion.
+     *
+     * Present so the browser can say it before the request rather than the API
+     * saying it after — a 422 for "too short" arrives looking like a fault of
+     * the reader's, and by then they have already waited for it.
+     */
+    minlength?: number
     /** Renders a `<textarea>` instead — a message is paragraphs, not a line. */
     multiline?: boolean
   }>(),
@@ -56,6 +64,7 @@ const CONTROL =
       v-model="value"
       required
       rows="4"
+      :minlength="minlength"
       :placeholder="placeholder"
       :class="`${CONTROL} resize-y`"
     />
@@ -65,6 +74,7 @@ const CONTROL =
       v-model="value"
       :type="type"
       required
+      :minlength="minlength"
       :autocomplete="autocomplete"
       :placeholder="placeholder"
       :class="CONTROL"

@@ -684,3 +684,66 @@ export type LegalPage = {
   lastUpdatedAt?: IsoDateString
   sections: LegalSectionFromApi[]
 }
+
+/* -------------------------------------------------------------- Submissions
+ *
+ * The bodies the three public forms POST. Everything above this line is what
+ * the API SENDS; these are the only shapes it RECEIVES, and they are here
+ * rather than beside their components because the server is the one that
+ * decides them — `SubmissionController` validates against exactly these fields.
+ *
+ * All three endpoints answer `204` with no body, so none of these has a
+ * response type. Success is the absence of a throw.
+ */
+
+/**
+ * The trap field every submission carries.
+ *
+ * Empty means a human. It is `required` in the type on purpose: a form can be
+ * wired to an endpoint without one, and the mistake would be invisible —
+ * the honeypot is only missed when it is missing, never when it is wrong.
+ *
+ * The name is the server's (`SubmissionController::HONEYPOT`), so it cannot be
+ * renamed on this side alone.
+ */
+type Honeypot = { website: string }
+
+/**
+ * `POST /contact`.
+ *
+ * `topic` is sent in the sentence case the site writes it in — the server
+ * canonicalises it against `ContactMessage::TOPICS` before validating, so
+ * `CONTACT_TOPICS` must NOT be retyped in the backoffice's title case to
+ * "match". They already match; the translation is the server's job and it is
+ * done in one place.
+ *
+ * `country` and `subject` are nullable on the server because this form does not
+ * ask for them. That is the reason, not an oversight to be filled in.
+ */
+export type ContactSubmission = Honeypot & {
+  name: string
+  email: string
+  topic: string
+  message: string
+}
+
+/** `POST /newsletter`. An address already on the list answers 204 too — see the client. */
+export type NewsletterSubmission = Honeypot & {
+  email: string
+}
+
+/**
+ * `POST /integrity-reports`.
+ *
+ * **Two fields, and no third is ever added.** The table behind it carries no
+ * name, no email and no IP, because the page it belongs to promises
+ * confidentiality and an address is an identity. Anything that would let a
+ * report be traced back to a person does not belong in this type.
+ *
+ * `type` must be one of `IntegrityReport::TYPES` spelled exactly — the six
+ * strings in `content/integrity` are those six strings.
+ */
+export type IntegrityReportSubmission = Honeypot & {
+  type: string
+  description: string
+}
