@@ -39,8 +39,6 @@ export const GOVERNANCE_COPY = {
     heading: "Statutes & Constitution",
     intro:
       "The fundamental legal documents that define the DWF's structure, powers, and procedures.",
-    /** The shelf these two documents are filed under. */
-    category: "Statutes",
   },
 
   strategy: {
@@ -58,8 +56,6 @@ export const GOVERNANCE_COPY = {
   repository: {
     eyebrow: "Library",
     heading: "Governance Repository",
-    /** The shelf these six documents are filed under. */
-    category: "Governance",
   },
 
   /** `%1` is the document title, `%2` its printed file description. */

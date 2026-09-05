@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { getResources } from "~/lib/api/client"
+import { DOCUMENT_CATEGORY } from "~/lib/api/categories"
 import { NEWS_PRESS_COPY } from "~/content/news/documents"
 
 /**
@@ -21,7 +22,7 @@ import { NEWS_PRESS_COPY } from "~/content/news/documents"
 // had to state a count because its four documents share no shelf (D45).
 const { data: releases } = await useAsyncData(
   "news-press-releases",
-  () => getResources("Press Release"),
+  () => getResources(DOCUMENT_CATEGORY.press),
   { default: () => [] },
 )
 </script>

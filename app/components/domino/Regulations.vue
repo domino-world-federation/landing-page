@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { getResources } from "~/lib/api/client"
+import { DOCUMENT_CATEGORY } from "~/lib/api/categories"
 import { REFEREE_DUTIES, REGULATIONS_COPY } from "~/content/domino/regulations"
 
 /**
@@ -24,13 +25,22 @@ import { REFEREE_DUTIES, REGULATIONS_COPY } from "~/content/domino/regulations"
  *
  * The documents still come from `getResources(category)` (RULES §8) — a rulebook
  * and two regulations are files with a size and a type, not prose.
+ *
+ * **One category now, where there were two.** This asked for "Rulebook" and
+ * "Regulations" separately, and the backoffice offered neither — so this shelf
+ * has been empty since it was built. The federation files both under
+ * `Rules & Regulations`, so the split has to happen here instead: the most
+ * recently published document takes the featured card, the rest fill the list
+ * beside it.
+ *
+ * That makes the hero card whichever rulebook or regulation was published last,
+ * rather than one chosen by hand. It is the honest reading of a single shelf,
+ * and the alternative — a second category existing only to mark one document as
+ * the important one — would put a layout decision in the CMS.
  */
 const { data } = await useAsyncData("domino-regulations", async () => {
-  const [rulebooks, regulations] = await Promise.all([
-    getResources("Rulebook"),
-    getResources("Regulations"),
-  ])
-  return { rulebook: rulebooks[0], regulations }
+  const [featured, ...rest] = await getResources(DOCUMENT_CATEGORY.rules)
+  return { rulebook: featured, regulations: rest }
 }, { default: () => ({ rulebook: undefined, regulations: [] }) })
 </script>
 

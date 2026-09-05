@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { getResources } from "~/lib/api/client"
+import { DOCUMENT_CATEGORY } from "~/lib/api/categories"
 import { TOURNAMENTS_COPY } from "~/content/tournaments"
 
 /**
@@ -27,7 +28,24 @@ import { TOURNAMENTS_COPY } from "~/content/tournaments"
  */
 const { data: documents } = await useAsyncData(
   "tournament-regulations",
-  () => getResources("Tournament Regulations"),
+  /*
+   * TWO categories, concatenated. The tournament page is the only place that
+   * shows both: the federation's standing rules (which apply to every event)
+   * and the paperwork for running one (schedules, participant guides, results).
+   * They are separate categories because they appear in different places —
+   * `Rules & Regulations` is also on `/domino`, `Tournament Documents` is here
+   * and nowhere else — but a reader on this page wants one shelf, not two.
+   *
+   * Rules first, then the event paperwork: the order is the argument, same as
+   * everywhere else on this site.
+   */
+  async () => {
+    const [rules, documents] = await Promise.all([
+      getResources(DOCUMENT_CATEGORY.rules),
+      getResources(DOCUMENT_CATEGORY.tournament),
+    ])
+    return [...rules, ...documents]
+  },
   { default: () => [] },
 )
 </script>
