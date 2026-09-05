@@ -685,6 +685,73 @@ export type LegalPage = {
   sections: LegalSectionFromApi[]
 }
 
+/**
+ * Kontak dan tautan sosial federasi, sebagaimana `GET /settings` mengirimnya.
+ *
+ * **Setiap field opsional, dan itu aturan bukan kelalaian.** §5.4: nilai kosong
+ * DIHILANGKAN dari response, bukan dikirim sebagai string kosong — jadi
+ * pemakainya cukup menulis `?? cadangan` sekali, alih-alih memeriksa dua
+ * keadaan yang berbeda untuk hal yang sama. Konsekuensinya setiap pemakai WAJIB
+ * punya cadangan; situs harus tetap tergambar utuh tanpa API sama sekali.
+ *
+ * Dua alamat, dan keduanya bukan salinan satu sama lain — layar backoffice yang
+ * membedakannya:
+ *   - `footerAddressLabel` — "alamat pendek yang tampil di footer global",
+ *     satu baris, satu input;
+ *   - `headquartersAddress` — "alamat kantor pusat lengkap", sebuah textarea,
+ *     jadi ia boleh berbaris-baris dan `/contact` yang menampilkannya.
+ *
+ * Field `social*` berisi **nama pengguna, bukan URL** ("dominoworldfederation"),
+ * persis seperti yang diminta placeholder di layarnya. Yang merakit alamatnya
+ * `utils/social.ts` — dan itu memang tempatnya: pola URL tiap jejaring adalah
+ * pengetahuan tentang jejaring itu, bukan data federasi.
+ */
+export type SiteSettings = {
+  primaryEmail?: string
+  footerAddressLabel?: string
+  headquartersAddress?: string
+  socialInstagram?: string
+  socialTiktok?: string
+  socialX?: string
+  socialFacebook?: string
+  socialYoutube?: string
+}
+
+/** Naskah hero halaman depan — `home.hero` di `GET /home`. */
+export type HomeHeroCopy = {
+  tagline?: string
+  headline?: string
+  mission?: string
+  accountability?: string
+  primaryCta?: string
+  primaryCtaUrl?: string
+  secondaryCta?: string
+  secondaryCtaUrl?: string
+}
+
+/**
+ * Band ajakan penutup halaman depan — `home.closing`.
+ *
+ * `headline` LARIK, dan itu keputusan yang disengaja di kedua sisi: Figma
+ * (`56:4683`) memutus barisnya menjadi dua baris berbobot sama, dan putusan
+ * baris itu bagian dari komposisinya. Server menyimpannya sebagai satu kolom
+ * teks dan memecahnya pada baris baru sebelum mengirim, jadi yang sampai ke
+ * sini sudah berbentuk baris-baris. Merangkainya kembali dengan `join(" ")`
+ * membuang keputusan desain yang sengaja disimpan.
+ */
+export type HomeClosingCopy = {
+  headline?: string[]
+  body?: string
+  cta?: string
+  ctaUrl?: string
+}
+
+/** Seluruh naskah yang bisa disunting di layar Home Page. */
+export type HomeCopy = {
+  hero: HomeHeroCopy
+  closing: HomeClosingCopy
+}
+
 /* -------------------------------------------------------------- Submissions
  *
  * The bodies the three public forms POST. Everything above this line is what

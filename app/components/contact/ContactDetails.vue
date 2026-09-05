@@ -1,23 +1,52 @@
 <script setup lang="ts">
 import { CONTACT_COPY } from "~/content/contact"
-import { FOOTER_SOCIALS } from "~/content/footer"
+import { socialLinks } from "~/utils/social"
 
 /**
  * Where the federation is and how to reach it.
  *
- * Everything printed here is drawn from somewhere real: the postal address from
- * `content/federation.ts` (the footer's, promoted when this page became its
- * second reader), and the address from the terms' closing clause. The headings
- * around them are extrapolated — see the copy file and R14.
+ * **Everything printed here comes from the CMS since 2026-09-05** — `GET
+ * /settings`, the same request the footer makes and the same one it is deduped
+ * against. Each field falls back to the copy this page shipped with, so it
+ * still renders whole with no API behind it.
  *
- * The social marks are the footer's own list, imported rather than re-declared:
- * `content/footer.ts` sits at the root of `content/` because it belongs to a
- * layout component rather than to a page, so reading it here is not the
- * cross-page dependency D32 forbids. Their `href`s are still `#` — the
- * federation's accounts are not known — and they keep their `aria-label`s for
- * the same reason the footer gives: a social icon with nothing behind it says
- * nothing, so the name has to be spoken.
+ * The address is the FULL one (`headquartersAddress`), not the footer's short
+ * label: the backoffice draws them as two different fields, one an input and
+ * one a textarea, described as "shown in the global footer" and "used on
+ * detailed contact/about content". This is the detailed content.
+ *
+ * The social marks are the same list the footer renders, through the same
+ * `socialLinks` — `content/footer.ts` sits at the root of `content/` because it
+ * belongs to a layout component rather than to a page, so reading it here is
+ * not the cross-page dependency D32 forbids. Their `href`s are real now
+ * wherever the federation has named an account.
+ *
+ * **The two email addresses have become one, and that is the point.** The
+ * design gave a malformed one in the footer (`56:4977`) and a well-formed one
+ * in the terms (`174:11543`), and `content/federation.ts` recorded that merging
+ * them was the designer's call to make. It is not any more: the backoffice has a
+ * single Primary Email, so whoever fills it in decides — which is a better
+ * answer than either file could have held.
  */
+const settings = useSiteSettings()
+
+/**
+ * The full postal address, as lines.
+ *
+ * Split on newlines because the backoffice field is a TEXTAREA — a postal
+ * address is one of the few places a line break carries meaning, and the screen
+ * that captures it lets one be typed. Figma breaks its own into two for the
+ * same reason.
+ */
+const addressLines = computed<readonly string[]>(() => {
+  const fromCms = settings.value.headquartersAddress?.trim()
+
+  return fromCms ? fromCms.split(/\r?\n/) : CONTACT_COPY.address
+})
+
+const email = computed(() => settings.value.primaryEmail ?? CONTACT_COPY.email)
+
+const socials = computed(() => socialLinks(settings.value))
 </script>
 
 <template>
@@ -39,11 +68,7 @@ import { FOOTER_SOCIALS } from "~/content/footer"
         <!-- The address is two lines because Figma breaks it, and a postal
              address is one of the few places a line break carries meaning. -->
         <dd class="font-sans text-[length:var(--text-body-sm)] leading-8 text-white">
-          <span
-            v-for="line in CONTACT_COPY.address"
-            :key="line"
-            class="block"
-          >{{ line }}</span>
+          <span v-for="line in addressLines" :key="line" class="block">{{ line }}</span>
         </dd>
       </div>
 
@@ -60,9 +85,9 @@ import { FOOTER_SOCIALS } from "~/content/footer"
                well formed, which is exactly the condition the footer's own note
                names for when its address becomes a link. -->
           <a
-            :href="`mailto:${CONTACT_COPY.email}`"
+            :href="`mailto:${email}`"
             class="focus-visible:ring-gold underline decoration-from-font underline-offset-4 transition-colors hover:text-white/70 focus-visible:ring-2 focus-visible:outline-none"
-          >{{ CONTACT_COPY.email }}</a>
+          >{{ email }}</a>
         </dd>
       </div>
 
@@ -74,7 +99,7 @@ import { FOOTER_SOCIALS } from "~/content/footer"
         </dt>
         <dd>
           <ul class="flex flex-wrap items-center gap-4">
-            <li v-for="social in FOOTER_SOCIALS" :key="social.id">
+            <li v-for="social in socials" :key="social.id">
               <a
                 :href="social.href"
                 :aria-label="social.label"

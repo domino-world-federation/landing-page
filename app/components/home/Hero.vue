@@ -2,6 +2,44 @@
 import { HERO_ALT, HERO_COPY } from "~/content/home/hero"
 
 /**
+ * The hero's words, from the CMS where the federation has typed them.
+ *
+ * Fetched during the server render (see `useHomeCopy`) — this is the first
+ * screen of the site, and a headline that arrives a beat after the page is the
+ * worst possible first impression.
+ *
+ * Every field falls back to `HERO_COPY`, which is Figma's own wording
+ * (`22:789`). `HERO_ALT` stays in the repo and is not fetched: it describes the
+ * artwork that ships with this component, so it belongs beside it.
+ */
+const homeCopy = useHomeCopy()
+
+const copy = computed(() => {
+  const hero = homeCopy.value.hero
+
+  return {
+    tagline: hero.tagline ?? HERO_COPY.tagline,
+    headline: hero.headline ?? HERO_COPY.headline,
+    mission: hero.mission ?? HERO_COPY.mission,
+    accountability: hero.accountability ?? HERO_COPY.accountability,
+    primaryCta: hero.primaryCta ?? HERO_COPY.primaryCta,
+    primaryCtaUrl: hero.primaryCtaUrl ?? HERO_COPY.primaryCtaUrl,
+    secondaryCta: hero.secondaryCta ?? HERO_COPY.secondaryCta,
+
+    /*
+     * The one destination the design never decided.
+     *
+     * It was written `to="#"` straight into the markup below, so it could not
+     * be fixed without a deploy — and the CMS seeds it as `#` too, deliberately:
+     * guessing where "Official Rules" points would be the backoffice deciding
+     * something nobody has decided. Reading it from the copy is what turns
+     * settling that question into typing a URL into a form.
+     */
+    secondaryCtaUrl: hero.secondaryCtaUrl ?? "#",
+  }
+})
+
+/**
  * Seconds. How long the rocks take to retreat, and how long their softening
  * takes — the two are one move and must be given the same number or the blur
  * lands before the scale does.
@@ -350,7 +388,7 @@ const TILE_DELAY = HERO_RETREAT / 3
     <p
       class="font-sans relative z-50 mt-auto pt-28 bg-linear-to-r from-white via-[var(--color-silver-mid)] to-white bg-clip-text px-5 text-center text-base font-semibold tracking-[0.24em] text-transparent uppercase lg:absolute lg:inset-x-0 lg:top-[35.3%] lg:mx-auto lg:mt-0 lg:w-fit lg:px-0 lg:pt-0 lg:text-2xl"
     >
-      {{ HERO_COPY.tagline }}
+      {{ copy.tagline }}
     </p>
 
     <!-- z-0 — behind every image, per the Figma child order. `w-fit`/`mx-auto`
@@ -366,7 +404,7 @@ const TILE_DELAY = HERO_RETREAT / 3
     <h1
       class="font-display relative z-0 mt-3 bg-linear-to-r from-white via-[var(--color-silver-mid)] to-white bg-clip-text px-5 text-center text-[length:var(--text-display-lg)] leading-none text-transparent uppercase lg:absolute lg:inset-x-0 lg:top-[42.6%] lg:mx-auto lg:mt-0 lg:w-fit lg:px-0"
     >
-      {{ HERO_COPY.headline }}
+      {{ copy.headline }}
     </h1>
 
     <!-- Anchored to the bottom (`mt-auto`), so both the gap and the bottom
@@ -403,10 +441,10 @@ const TILE_DELAY = HERO_RETREAT / 3
            wide it can go before the capsule reads as a rounded rectangle. From
            `sm` the screen is wide enough for Figma's own 340. -->
       <UiGoldCta
-        :href="HERO_COPY.primaryCtaUrl"
+        :href="copy.primaryCtaUrl"
         class="mx-auto w-full max-w-70 sm:max-w-85"
       >
-        {{ HERO_COPY.primaryCta }}
+        {{ copy.primaryCta }}
       </UiGoldCta>
 
       <!-- Figma sets the two copy blocks against opposite edges. That reads as a
@@ -425,7 +463,7 @@ const TILE_DELAY = HERO_RETREAT / 3
         <p
           class="font-sans max-w-108 text-center text-base leading-[26px] text-white lg:text-left lg:text-lg menu:max-w-72 menu-lg:max-w-108"
         >
-          {{ HERO_COPY.mission }}
+          {{ copy.mission }}
         </p>
 
         <!-- `lg:gap-8` is Figma's 32 (`673:1414` ends at 837, `673:1415` opens
@@ -436,13 +474,13 @@ const TILE_DELAY = HERO_RETREAT / 3
           <p
             class="font-sans max-w-79 text-center text-base leading-[26px] text-white lg:text-right lg:text-lg"
           >
-            {{ HERO_COPY.accountability }}
+            {{ copy.accountability }}
           </p>
           <NuxtLink
-            to="#"
+            :to="copy.secondaryCtaUrl"
             class="rounded-btn font-display focus-visible:ring-gold flex items-center justify-center bg-white/20 px-5 py-4 text-[length:var(--text-display-btn)] leading-none text-white uppercase focus-visible:ring-2 focus-visible:outline-none lg:w-73"
           >
-            {{ HERO_COPY.secondaryCta }}
+            {{ copy.secondaryCta }}
           </NuxtLink>
         </div>
       </div>

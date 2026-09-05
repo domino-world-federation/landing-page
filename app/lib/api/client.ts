@@ -60,6 +60,8 @@ import type {
   ContactSubmission,
   NewsletterSubmission,
   IntegrityReportSubmission,
+  SiteSettings,
+  HomeCopy,
 } from "./types"
 
 /**
@@ -605,6 +607,40 @@ export async function getSiteSeo(): Promise<SiteSeo> {
   return request<SiteSeo>("/seo")
 }
 
+/**
+ * The federation's contact details and social handles — `GET /settings`.
+ *
+ * **No mock, and an EMPTY object rather than invented values.** Every getter
+ * above falls back to `mock/` so the site renders before the API exists; this
+ * one returns nothing at all, and the components fall back to the copy in
+ * `content/` that they have always printed.
+ *
+ * That is the cheaper arrangement by one whole code path. The response omits
+ * blank values by contract (§5.4), so every consumer already has to write
+ * `?? fallback` for a key the federation has not filled in — and an empty
+ * object simply makes that the same path the mock takes. A mock full of
+ * plausible-looking addresses would instead be a second version of the same
+ * facts, free to drift from the copy files, and wrong in the one way nobody
+ * checks: quietly.
+ */
+export async function getSiteSettings(): Promise<SiteSettings> {
+  if (useMock()) return {}
+  return request<SiteSettings>("/settings")
+}
+
+/**
+ * The home page's editable copy — `GET /home`.
+ *
+ * Same arrangement as `getSiteSettings` and for the same reason: empty under
+ * the mock, and `home/Hero` and `home/Join` fall back to `content/home/*`.
+ *
+ * The two keys are always present even when their contents are not, so callers
+ * can write `copy.hero.headline ?? …` without checking `hero` itself.
+ */
+export async function getHomeCopy(): Promise<HomeCopy> {
+  if (useMock()) return { hero: {}, closing: {} }
+  return request<HomeCopy>("/home")
+}
 
 /**
  * The questions pinned to one page, IN THE ORDER the CMS puts them.

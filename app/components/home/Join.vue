@@ -26,7 +26,36 @@ import { JOIN_COPY } from "~/content/home/join"
  *
  * The three enter in sequence on the page's shared stagger, headline first. That
  * order is the section's argument: the claim, then the terms, then the way in.
+ *
+ * ── The words come from the CMS since 2026-09-05 ──
+ *
+ * `GET /home`, the same request `home/Hero` makes at the other end of the page
+ * and the same one it is deduped against. Every field falls back to
+ * `JOIN_COPY`, which is Figma's own wording.
+ *
+ * **`headline` stays a list of lines.** The server stores it as one text column
+ * and splits it on newlines before sending, precisely so the break survives:
+ * Figma (`56:4683`) sets two lines of equal weight, centred, and that break is
+ * the composition rather than a line that happened to wrap. Rendering it as one
+ * string would throw away a decision that both sides went out of their way to
+ * keep.
+ *
+ * `ctaUrl` was `#` in the repo with a note that no contact page existed. One
+ * does now, and the CMS seeds this button pointing at it — so the fallback is
+ * the copy file's `#` and the live answer comes from the backoffice.
  */
+const homeCopy = useHomeCopy()
+
+const copy = computed(() => {
+  const closing = homeCopy.value.closing
+
+  return {
+    headline: closing.headline?.length ? closing.headline : JOIN_COPY.headline,
+    body: closing.body ?? JOIN_COPY.body,
+    cta: closing.cta ?? JOIN_COPY.cta,
+    ctaUrl: closing.ctaUrl ?? JOIN_COPY.ctaUrl,
+  }
+})
 </script>
 
 <template>
@@ -59,7 +88,7 @@ import { JOIN_COPY } from "~/content/home/join"
                `lg` the measure is released and a line may wrap further, which is
                fine — the design's own break is never lost. -->
           <span
-            v-for="line in JOIN_COPY.headline"
+            v-for="line in copy.headline"
             :key="line"
             class="block"
           >{{ line }}</span>
@@ -76,7 +105,7 @@ import { JOIN_COPY } from "~/content/home/join"
         <p
           class="font-sans mx-auto max-w-[56.61vw] text-base leading-7 text-white/60 text-balance max-lg:max-w-none lg:text-xl lg:leading-8"
         >
-          {{ JOIN_COPY.body }}
+          {{ copy.body }}
         </p>
       </MotionReveal>
     </div>
@@ -97,7 +126,7 @@ import { JOIN_COPY } from "~/content/home/join"
       :delay="STAGGER * 2"
       class="w-fit max-w-full min-w-[min(100%,13.75vw)]"
     >
-      <UiSilverCta :href="JOIN_COPY.ctaUrl">{{ JOIN_COPY.cta }}</UiSilverCta>
+      <UiSilverCta :href="copy.ctaUrl">{{ copy.cta }}</UiSilverCta>
     </MotionReveal>
   </section>
 </template>

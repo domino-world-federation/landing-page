@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { FOOTER_COPY, FOOTER_GROUPS, FOOTER_SOCIALS } from "~/content/footer"
+import { FOOTER_COPY, FOOTER_GROUPS } from "~/content/footer"
+import { socialLinks } from "~/utils/social"
 
 /**
  * S14 — Figma node `56:5159`. The site footer.
@@ -24,7 +25,52 @@ import { FOOTER_COPY, FOOTER_GROUPS, FOOTER_SOCIALS } from "~/content/footer"
  * (`alignItems: flex-end`). That only reads as a composition while the five are
  * actually in a row — stacked, everything hard-right is just ragged, so the
  * right-alignment is scoped to `menu-lg` too.
+ *
+ * ── The address, the email and the marks come from the CMS ──
+ *
+ * Since 2026-09-05, via `GET /settings`. `FOOTER_GROUPS` does NOT, and that is
+ * the line: the link columns are the site's own route map, and putting them in
+ * a CMS opens the door to a menu pointing at a page that does not exist. What
+ * the federation edits is what the federation knows — where it is, how to reach
+ * it, which accounts are its own.
+ *
+ * Each falls back to the copy this footer has always printed, so the site still
+ * renders whole with no API behind it.
  */
+const settings = useSiteSettings()
+
+/**
+ * The postal address, as lines.
+ *
+ * `footerAddressLabel` is the backoffice's short one-line field — "Headquarters,
+ * Lausanne, CH" — so from the CMS this is one line, where the repo's own copy is
+ * two. That is not a regression: Figma's two lines were a Singapore address
+ * nobody had confirmed, and which line an address breaks on is the federation's
+ * to decide now. It is still rendered through `<address>` and still a list of
+ * lines, so a longer address typed with a break renders with that break.
+ */
+const addressLines = computed<readonly string[]>(() => {
+  const fromCms = settings.value.footerAddressLabel?.trim()
+
+  return fromCms ? fromCms.split(/\r?\n/) : FOOTER_COPY.address
+})
+
+const email = computed(() => settings.value.primaryEmail ?? FOOTER_COPY.contactEmail)
+
+/**
+ * Whether the address can actually receive mail.
+ *
+ * The design's own is `community@dwf-org` (`56:4977`) — no top-level domain —
+ * and it has been printed as TEXT ever since, because a `mailto:` to somewhere
+ * undeliverable is worse than none. `content/footer.ts` named the condition for
+ * lifting that: "swap it for the real address and it becomes a link". This is
+ * that condition, written down rather than assumed — the backoffice validates
+ * the field as an email, but this component is also the one that renders the
+ * placeholder when there is no backoffice at all.
+ */
+const emailIsReachable = computed(() => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value))
+
+const socials = computed(() => socialLinks(settings.value))
 </script>
 
 <template>
@@ -63,8 +109,10 @@ import { FOOTER_COPY, FOOTER_GROUPS, FOOTER_SOCIALS } from "~/content/footer"
            of 960.
 
            A bare `1fr`, NOT `minmax(0,1fr)`. The two differ only in the track's
-           floor, and that floor is the whole point here: the email
-           `community@dwf-org` is one unbreakable token needing 245px against the
+           floor, and that floor is the whole point here: the email —
+           whichever one the federation has typed into the CMS, and the design's
+           `community@dwf-org` before there was one — is an unbreakable token,
+           and the design's own needs 245px against the
            244 an equal share allows, so a zero floor forced it to wrap mid-word
            and cost the column a second line. A bare `1fr` keeps its implicit
            `auto` minimum, and grid resolves the shortfall the way the spec says
@@ -140,11 +188,7 @@ import { FOOTER_COPY, FOOTER_GROUPS, FOOTER_SOCIALS } from "~/content/footer"
             <address
               class="font-sans text-[length:var(--text-footer-link)] leading-[1.3333] font-medium text-white not-italic"
             >
-              <span
-                v-for="line in FOOTER_COPY.address"
-                :key="line"
-                class="block"
-              >{{ line }}</span>
+              <span v-for="line in addressLines" :key="line" class="block">{{ line }}</span>
             </address>
           </div>
         </div>
@@ -185,7 +229,12 @@ import { FOOTER_COPY, FOOTER_GROUPS, FOOTER_SOCIALS } from "~/content/footer"
           <p
             class="font-sans w-0 min-w-full text-[length:var(--text-footer-link)] leading-[1.3333] font-medium whitespace-nowrap text-white menu-lg:text-right"
           >
-            {{ FOOTER_COPY.contactEmail }}
+            <a
+              v-if="emailIsReachable"
+              :href="`mailto:${email}`"
+              class="focus-visible:ring-gold underline decoration-from-font underline-offset-4 transition-colors hover:text-white/70 focus-visible:ring-2 focus-visible:outline-none"
+            >{{ email }}</a>
+            <template v-else>{{ email }}</template>
           </p>
 
           <!-- Figma's `56:5011` — the newsletter label and its box are their own
@@ -216,7 +265,7 @@ import { FOOTER_COPY, FOOTER_GROUPS, FOOTER_SOCIALS } from "~/content/footer"
                that cannot shrink. The cap is kept above `menu-lg` so the row
                keeps the design's shape once there is space for it to spread. -->
           <ul class="flex flex-wrap gap-2 menu-lg:max-w-[206px] menu-lg:justify-end">
-            <li v-for="social in FOOTER_SOCIALS" :key="social.id">
+            <li v-for="social in socials" :key="social.id">
               <a
                 :href="social.href"
                 :aria-label="social.label"
