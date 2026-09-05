@@ -18,10 +18,17 @@ import { NEWS_ARTICLE_COPY } from "~/content/news/article"
  * is what sits under that band.
  *
  * **`body` is not rendered as an empty state.** `NewsArticle` carries it as
- * optional and no mock story has one (B2), so today the excerpt is the whole of
- * the text. A placeholder paragraph saying the article is coming would be copy
- * nobody wrote appearing as though an editor had — the page prints what exists
- * and stops, and grows a body the moment the feed carries one.
+ * optional and no mock story has one, so without the API the excerpt is the
+ * whole of the text. A placeholder paragraph saying the article is coming would
+ * be copy nobody wrote appearing as though an editor had — the page prints what
+ * exists and stops.
+ *
+ * **It goes through `ui/RichText`, not into an interpolation.** The field is
+ * filled with the backoffice's rich editor, so it arrives as sanitised markup;
+ * printing it as text put `<p>` on the page in front of every reader. The same
+ * mistake was made and fixed on the tournament overview first — see that
+ * component, and `ui/RichText` itself, which already named this field as one of
+ * the two it exists for.
  *
  * No snapping, like the other document pages: mandatory snapping over prose is
  * a reader fighting the page.
@@ -128,12 +135,21 @@ useSeoMeta({
         {{ story.excerpt }}
       </p>
 
-      <p
+      <!-- The body is a field an editor typed into, so it arrives as the rich
+           editor's own markup — `<p>…</p><p>…</p>` — or, from the mock and from
+           a plain field, as text with blank lines between paragraphs.
+           `ui/RichText` decides which and sanitises the first. It was set as
+           TEXT either way, which printed the tags on the page for every article
+           the federation had actually written.
+
+           `whitespace-pre-line` goes with it: it was how the plain-text case
+           kept its paragraph breaks, and `RichText` now makes real `<p>`
+           elements for both cases instead. -->
+      <UiRichText
         v-if="story.body"
-        class="font-sans mt-6 text-base leading-8 whitespace-pre-line text-white/80"
-      >
-        {{ story.body }}
-      </p>
+        :text="story.body"
+        class="font-sans mt-6 text-base leading-8 text-white/80"
+      />
     </article>
   </main>
 </template>
