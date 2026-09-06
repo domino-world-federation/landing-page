@@ -19,6 +19,27 @@ const COPY = TOURNAMENT_DETAIL_COPY.support
 
 const HEADING =
   "font-display text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
+
+/**
+ * The two letters an official's avatar falls back to.
+ *
+ * First letters of the first two words — "Maria Lopez" is ML — because that is
+ * how a name is abbreviated out loud. A single-word name gives its first two
+ * letters instead of one, so the block never holds a lonely character.
+ *
+ * `Intl.Segmenter` is not reached for: these are Latin-script names typed into
+ * the backoffice, and `[...name]` already iterates code points, so an accented
+ * initial survives. A script where the first code point is not a letter would
+ * need more than this, and would need it in the design too.
+ */
+function initials(name: string): string {
+  const words = name.trim().split(/\s+/).filter(Boolean)
+
+  if (words.length === 0) return ""
+  if (words.length === 1) return [...words[0]!].slice(0, 2).join("")
+
+  return (words[0]![0] ?? "") + (words[1]![0] ?? "")
+}
 </script>
 
 <template>
@@ -114,6 +135,25 @@ const HEADING =
             :sizes="imageSizes({ xs: '108px' })"
             class="size-[108px] shrink-0 rounded-[var(--radius-glass)] object-cover"
           />
+
+          <!-- **A portrait is optional, so the row must hold without one.**
+               It used to draw nothing at all, which left the name sitting flush
+               against the card's edge while the officials beside it kept their
+               108px block — a list that lines up only when every person happens
+               to have been photographed.
+
+               Initials rather than a silhouette: a generic head says "no
+               picture" and nothing else, where two letters say WHOSE row this
+               is, which is the one thing the space can still carry.
+
+               `aria-hidden`, because the name is printed beside it already —
+               a screen reader reading "ML, Maria Lopez" says the same thing
+               twice, the second time badly. -->
+          <span
+            v-else
+            aria-hidden="true"
+            class="font-display flex size-[108px] shrink-0 items-center justify-center rounded-[var(--radius-glass)] bg-white/12 text-[length:var(--text-display-label)] leading-none text-white/70 uppercase"
+          >{{ initials(official.name) }}</span>
 
           <div class="flex min-w-0 flex-col gap-3">
             <p
