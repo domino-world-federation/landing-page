@@ -18,9 +18,9 @@
  * of a box nobody thought to scroll.
  *
  * Both of those come from pinning the whole column. What is pinned now is the
- * `sidebar` slot alone; anything in `sidebarFooter` stays in normal flow below
- * it, so the support card is never inside the box and can never be clipped by
- * one. The cap is `overflow-y: auto` rather than `scroll`, so on a window tall
+ * `sidebar` slot alone; anything in `sidebarFooter` is sent to the FOOT of the
+ * column, so the support card is never inside the box, can never be clipped by
+ * one, and never travels up across the pinned index on its way past. The cap is `overflow-y: auto` rather than `scroll`, so on a window tall
  * enough for the tabs — which is most of them — no scrollbar is drawn at all.
  * It appears only where the alternative is tabs the reader cannot reach.
  *
@@ -68,7 +68,19 @@ defineSlots<{
         <slot name="sidebar" />
       </div>
 
-      <slot name="sidebarFooter" />
+      <!-- **Pushed to the foot of the column, and that is not decoration.**
+           The column is stretched to the article's height so the index can stay
+           pinned across it; anything left in normal flow beside the index sits
+           near the TOP of that column and travels up past it as the reader
+           scrolls — and being later in the DOM it paints straight over the
+           pinned index. That is what happened the first time this was built.
+           `mt-auto` sends it to the end of the column instead, where it meets
+           the reader as the document runs out, which is also where a "need
+           help?" card belongs. Below `lg` there is no free space in the column,
+           so `auto` resolves to nothing and the card simply follows the tabs. -->
+      <div :class="sticky && 'lg:mt-auto'">
+        <slot name="sidebarFooter" />
+      </div>
     </div>
 
     <div class="min-w-0 flex-1">
