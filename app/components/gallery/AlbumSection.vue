@@ -36,7 +36,11 @@ const feature = computed(() =>
   <section :aria-labelledby="headingId" class="flex flex-col gap-6 lg:gap-10">
     <div class="flex flex-col gap-4">
       <!-- Inter Medium 24/32 in `#616161` (`156:7237`). -->
+      <!-- Dicetak hanya kalau tanggalnya ada: `<time>` tanpa `datetime` bukan
+           `<time>`, dan baris kosong di atas judul album membaca seperti sesuatu
+           yang gagal dimuat. -->
       <time
+        v-if="album.heldOn"
         :datetime="album.heldOn"
         class="font-sans text-muted text-[length:var(--text-body-sm)] leading-8 font-medium"
       >

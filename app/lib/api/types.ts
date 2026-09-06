@@ -601,8 +601,16 @@ export type GalleryAlbum = {
   /** Addresses the album in `?event=`. */
   slug: string
   title: string
-  /** When the event took place — not when the pictures were filed. */
-  heldOn: IsoDateString
+  /**
+   * When the event took place — not when the pictures were filed.
+   *
+   * **Optional, because the backoffice can leave it empty.** The column is
+   * nullable and the screen that creates an album has no field for it, so the
+   * API omits the key (§5.4). It was typed as required, and on 2026-09-06 that
+   * lie took `/gallery` down: the date formatter was handed `undefined` and
+   * threw `Invalid time value` during the server render.
+   */
+  heldOn?: IsoDateString
   items: GalleryItem[]
 }
 

@@ -36,9 +36,27 @@ const LONG_DATE_FORMAT = new Intl.DateTimeFormat("en-US", {
   timeZone: "UTC",
 })
 
-/** e.g. "March 14, 2025". */
-export function formatLongDate(iso: IsoDateString): string {
-  return LONG_DATE_FORMAT.format(new Date(iso))
+/**
+ * e.g. "March 14, 2025", or an empty string when there is no usable date.
+ *
+ * **Total on purpose, and it took a production outage to make it so.**
+ * `Intl.DateTimeFormat.format()` throws `RangeError: Invalid time value` on an
+ * invalid `Date`, and `new Date(undefined)` is exactly that. A gallery album
+ * whose event carried no date reached this function as `undefined` and took
+ * `/gallery` down with a 500 — one nullable column in the backoffice against a
+ * whole page.
+ *
+ * The API omits empty values by contract (§5.4), so ANY optional date field
+ * arrives as `undefined` some of the time. A formatter that throws on that is a
+ * page that falls over whenever an editor leaves a field blank, which is a
+ * thing editors are entitled to do.
+ *
+ * Empty string rather than a placeholder: the caller decides whether a missing
+ * date deserves words. Printing "unknown" here would put that word on every
+ * page that ever omits one.
+ */
+export function formatLongDate(iso: IsoDateString | null | undefined): string {
+  return formatWith(LONG_DATE_FORMAT, iso)
 }
 
 /**
@@ -64,8 +82,27 @@ const SHORT_DATE_FORMAT = new Intl.DateTimeFormat("en-US", {
 })
 
 /** e.g. "Aug 12, 2026". */
-export function formatShortDate(iso: IsoDateString): string {
-  return SHORT_DATE_FORMAT.format(new Date(iso))
+/** e.g. "Mar 14, 2025", or an empty string — see `formatLongDate`. */
+export function formatShortDate(iso: IsoDateString | null | undefined): string {
+  return formatWith(SHORT_DATE_FORMAT, iso)
+}
+
+/**
+ * The one place a date is turned into text, and the one place it can fail.
+ *
+ * `Number.isNaN(getTime())` rather than a `try`/`catch`: an invalid `Date` is a
+ * value to test, not an exception to catch, and catching would also swallow a
+ * genuine bug in the formatter itself.
+ */
+function formatWith(
+  formatter: Intl.DateTimeFormat,
+  iso: IsoDateString | null | undefined,
+): string {
+  if (iso === null || iso === undefined || iso === "") return ""
+
+  const date = new Date(iso)
+
+  return Number.isNaN(date.getTime()) ? "" : formatter.format(date)
 }
 
 export type Remaining = {
