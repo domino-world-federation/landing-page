@@ -85,22 +85,31 @@ const feature = computed(() =>
         class="absolute inset-0 size-full object-cover"
       />
       <!-- The play disc, on the same terms as a collage tile's: decoration,
-           because there is nothing to play (B2). -->
-      <span
-        aria-hidden
-        class="pointer-events-none absolute top-1/2 left-1/2 flex size-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white lg:size-24"
-      >
-        <img
-          src="/assets/news/icon-play.svg"
-          alt=""
-          width="47"
-          height="47"
-          class="size-6 translate-x-0.5 lg:size-12"
+           because there is nothing to play (B2).
+
+           **Only on a video.** This was drawn on whatever the album's single
+           item happened to be, so a one-photograph album got a play button over
+           a still — and the line under it told a screen reader it was a video.
+           Figma draws this frame with a film in it (`156:7330`), which is what
+           put the badge here unconditionally; `gallery/GalleryTile` and
+           `news/MediaTile` both branch on `kind` and this one did not. -->
+      <template v-if="feature.kind === 'video'">
+        <span
+          aria-hidden
+          class="pointer-events-none absolute top-1/2 left-1/2 flex size-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white lg:size-24"
         >
-      </span>
-      <p class="sr-only">
-        {{ GALLERY_COPY.videoLabel.replace("%s", feature.title) }}
-      </p>
+          <img
+            src="/assets/news/icon-play.svg"
+            alt=""
+            width="47"
+            height="47"
+            class="size-6 translate-x-0.5 lg:size-12"
+          >
+        </span>
+        <p class="sr-only">
+          {{ GALLERY_COPY.videoLabel.replace("%s", feature.title) }}
+        </p>
+      </template>
     </div>
 
     <!-- Four columns, two rows, 16px gutters (`156:7243`). A video tile spans
