@@ -18,9 +18,10 @@
  * of a box nobody thought to scroll.
  *
  * Both of those come from pinning the whole column. What is pinned now is the
- * `sidebar` slot alone; anything in `sidebarFooter` is sent to the FOOT of the
- * column, so the support card is never inside the box, can never be clipped by
- * one, and never travels up across the pinned index on its way past. The cap is `overflow-y: auto` rather than `scroll`, so on a window tall
+ * `sidebar` slot alone; anything in `sidebarFooter` sits at the FOOT of the
+ * column, below the box the pin travels inside, so the support card is never
+ * inside the pinned box, can never be clipped by one, and the pin can never
+ * reach it. The cap is `overflow-y: auto` rather than `scroll`, so on a window tall
  * enough for the tabs — which is most of them — no scrollbar is drawn at all.
  * It appears only where the alternative is tabs the reader cannot reach.
  *
@@ -55,32 +56,37 @@ defineSlots<{
         sticky && 'lg:self-stretch',
       ]"
     >
-      <!-- `top` and the cap both read `--anchor-offset`, the same value an
-           anchor jump stops at, so the pinned index sits exactly where a heading
-           would — one number for both, in the stylesheet. -->
-      <div
-        :class="
-          sticky
-            ? 'lg:sticky lg:top-[var(--anchor-offset)] lg:max-h-[calc(100dvh-var(--anchor-offset)-2rem)] lg:overflow-y-auto'
-            : undefined
-        "
-      >
-        <slot name="sidebar" />
+      <!-- **This wrapper is the pin's containing block, and it is the whole
+           fix.** `position: sticky` is bounded by its containing block and by
+           nothing else — not by its siblings — so with the index sitting
+           directly in the stretched column it slid all the way down to the
+           column's foot at the end of the document and landed on top of the
+           support card. `flex-1` makes this box take exactly the free space
+           above the card, so the pin can travel the length of the article and
+           stops where the card begins.
+
+           `min-h-0` beside it: a flex item's default `min-height: auto` refuses
+           to shrink below its content, which would push the box past the card
+           again on a short window.
+
+           It also puts the card at the foot of the column without asking for it
+           — this wrapper absorbs the space, so the card lands after it. -->
+      <div :class="sticky && 'lg:min-h-0 lg:flex-1'">
+        <!-- `top` and the cap both read `--anchor-offset`, the same value an
+             anchor jump stops at, so the pinned index sits exactly where a
+             heading would — one number for both, in the stylesheet. -->
+        <div
+          :class="
+            sticky
+              ? 'lg:sticky lg:top-[var(--anchor-offset)] lg:max-h-[calc(100dvh-var(--anchor-offset)-2rem)] lg:overflow-y-auto'
+              : undefined
+          "
+        >
+          <slot name="sidebar" />
+        </div>
       </div>
 
-      <!-- **Pushed to the foot of the column, and that is not decoration.**
-           The column is stretched to the article's height so the index can stay
-           pinned across it; anything left in normal flow beside the index sits
-           near the TOP of that column and travels up past it as the reader
-           scrolls — and being later in the DOM it paints straight over the
-           pinned index. That is what happened the first time this was built.
-           `mt-auto` sends it to the end of the column instead, where it meets
-           the reader as the document runs out, which is also where a "need
-           help?" card belongs. Below `lg` there is no free space in the column,
-           so `auto` resolves to nothing and the card simply follows the tabs. -->
-      <div :class="sticky && 'lg:mt-auto'">
-        <slot name="sidebarFooter" />
-      </div>
+      <slot name="sidebarFooter" />
     </div>
 
     <div class="min-w-0 flex-1">
