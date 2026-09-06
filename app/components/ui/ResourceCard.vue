@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ResourceDocument } from "~/lib/api/types"
+import { DOCUMENT_LINK_COPY } from "~/content/documents"
 
 /**
  * A document card — one white tile with a meta line, a title, and a bordered
@@ -93,7 +94,9 @@ withDefaults(
              whole tile while the accessible name stays the document title. -->
         <a
           :href="doc.fileUrl"
-          :aria-label="downloadLabel.replace('%s', doc.title)"
+          target="_blank"
+          rel="noopener"
+          :aria-label="`${downloadLabel.replace('%s', doc.title)} (${DOCUMENT_LINK_COPY.newTab})`"
           class="after:absolute after:inset-0 after:content-[''] focus-visible:outline-none"
         >
           {{ doc.title }}

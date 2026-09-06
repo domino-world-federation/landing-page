@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { ResourceDocument } from "~/lib/api/types"
 import { REGULATIONS_COPY } from "~/content/domino/regulations"
+import { DOCUMENT_LINK_COPY } from "~/content/documents"
 
 /**
  * The rulebook panel — wireframe `119:4583`.
@@ -62,7 +63,9 @@ const cta = computed(() =>
            rulebook it is — "Download PDF (4.2 MB)" alone names no document. -->
       <a
         :href="doc.fileUrl"
-        :aria-label="REGULATIONS_COPY.downloadLabel.replace('%s', doc.title)"
+        target="_blank"
+        rel="noopener"
+        :aria-label="`${REGULATIONS_COPY.downloadLabel.replace('%s', doc.title)} (${DOCUMENT_LINK_COPY.newTab})`"
         class="after:absolute after:inset-0 after:content-[''] focus-visible:outline-none"
       >
         {{ doc.title }}

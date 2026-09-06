@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ResourceDocument } from "~/lib/api/types"
+import { DOCUMENT_LINK_COPY } from "~/content/documents"
 
 /**
  * The file pill on a document card — Figma node `168:8542`.
@@ -55,8 +56,10 @@ const rootClass = computed(() =>
   <a
     :href="document.fileUrl"
     v-bind="passThrough"
+    target="_blank"
+    rel="noopener"
     :aria-label="
-      label.replace('%1', document.title).replace('%2', description)
+      `${label.replace('%1', document.title).replace('%2', description)} (${DOCUMENT_LINK_COPY.newTab})`
     "
     :class="rootClass"
   >

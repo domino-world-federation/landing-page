@@ -2,6 +2,7 @@
 import { getResources } from "~/lib/api/client"
 import { DOCUMENT_CATEGORY } from "~/lib/api/categories"
 import { REFEREE_DUTIES, REGULATIONS_COPY } from "~/content/domino/regulations"
+import { DOCUMENT_LINK_COPY } from "~/content/documents"
 
 /**
  * Referee guidelines and the documents behind them — Figma node `359:15793` in
@@ -152,7 +153,9 @@ const { data } = await useAsyncData("domino-regulations", async () => {
         <li v-for="doc in data.regulations" :key="doc.id">
           <a
             :href="doc.fileUrl"
-            :aria-label="REGULATIONS_COPY.openLabel.replace('%s', doc.title)"
+            target="_blank"
+            rel="noopener"
+            :aria-label="`${REGULATIONS_COPY.openLabel.replace('%s', doc.title)} (${DOCUMENT_LINK_COPY.newTab})`"
             class="rounded-btn font-display focus-visible:ring-gold flex h-16 items-center justify-center gap-6 bg-white/20 px-5 text-[length:var(--text-display-btn)] leading-10 text-white transition-colors hover:bg-white/30 focus-visible:ring-2 focus-visible:outline-none"
           >
             {{ doc.title }}
