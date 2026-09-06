@@ -28,9 +28,33 @@ export default <RouterConfig>{
     if (savedPosition) return savedPosition
 
     if (to.hash) {
-      // `scroll-mt` on the target clears the `fixed` navbar, so no offset is
-      // applied here — otherwise the two would be subtracted twice.
-      return { el: to.hash, behavior: "smooth" }
+      /*
+       * **The offset is applied HERE, and `scroll-mt` alone never did it.**
+       *
+       * This used to return the element with no offset, on the reasoning that
+       * the target's own `scroll-margin-top` would keep it clear of the `fixed`
+       * navbar and applying both would subtract twice. That was wrong about the
+       * mechanism: `scroll-margin` is honoured by `scrollIntoView()` and by the
+       * browser's own fragment navigation, and by nothing else. These links are
+       * `NuxtLink`s, so the router scrolls instead — and it computes the target
+       * from `getBoundingClientRect()`, which knows nothing about scroll margin.
+       * Every contents link landed its heading at y=0, underneath the bar.
+       *
+       * The number is still not written here. It is read back off the target's
+       * own `scroll-margin-top`, so the stylesheet stays the one place that
+       * decides it — `--anchor-offset` in `main.css` — and any element given a
+       * `scroll-mt-*` is handled without this file learning about it.
+       *
+       * `getElementById`, not `querySelector`: the legal documents' ids are the
+       * API's row ids, so `#3` is a real target and an invalid CSS selector.
+       */
+      const id = decodeURIComponent(to.hash.slice(1))
+      const target = import.meta.client ? document.getElementById(id) : null
+      const offset = target
+        ? Number.parseFloat(getComputedStyle(target).scrollMarginTop) || 0
+        : 0
+
+      return { el: to.hash, top: offset, behavior: "smooth" }
     }
 
     // Same route, different query: a filter was applied. Stay put.

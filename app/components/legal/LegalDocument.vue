@@ -55,13 +55,24 @@ const titleLines = computed(() => [props.title])
     </template>
   </UiPageHeader>
 
-  <UiSideTabLayout>
+  <!-- Pinned here and nowhere else. A legal document is the one page on this
+       site where the reader moves between clauses constantly — the contents
+       column IS the navigation — and it is also the longest. `/gallery` and
+       `/news/all` share this layout and keep the column in flow: their tabs are
+       a filter set once, not a place the reader keeps returning to. -->
+  <UiSideTabLayout sticky>
     <template #sidebar>
       <LegalContents
         :sections="sections"
         :title="chrome.contentsTitle"
         :label="chrome.contentsLabel"
       />
+    </template>
+
+    <!-- Outside the pinned box on purpose: inside it, a window shorter than the
+         contents list would clip the card, which is exactly what was asked to be
+         undone last time this column was pinned. -->
+    <template #sidebarFooter>
       <UiSupportCard />
     </template>
 
