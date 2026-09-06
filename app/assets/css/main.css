@@ -379,6 +379,39 @@
  * would turn them into utilities — they would only ever be read through var().
  */
 :root {
+  /*
+   * Tinggi bar navigasi yang `fixed`, dan jarak aman di bawahnya.
+   *
+   * **Keduanya di `:root`, bukan di `html.snap-sections`.** Sampai 2026-09-06
+   * `--nav-clearance` hanya hidup di dalam blok itu, yang cuma menyala di
+   * layout `home` — jadi di halaman yang TIDAK menyalakannya (`/news`,
+   * `/gallery`, `/contact`, `/page/*`) tokennya tidak ada sama sekali, dan tiap
+   * `padding-top: max(var(--nav-clearance), …)` di 38 komponen jatuh menjadi
+   * deklarasi tidak sah: paddingnya hilang, dan judul section duduk di bawah
+   * bar. `var()` tanpa nilai tidak berbunyi apa-apa — tidak ada galat, tidak ada
+   * gaya, hanya jarak yang lenyap.
+   *
+   * 7rem adalah bar di `lg` (36 + 60 + 16 = 112px) dibulatkan ke atas — sengaja
+   * yang LEBIH BESAR dari dua tinggi yang dipakai header: beberapa piksel
+   * berlebih tidak terlihat, beberapa piksel kurang memotong huruf.
+   */
+  --nav-clearance: 7rem;
+
+  /*
+   * Ke mana sebuah lompatan anchor berhenti.
+   *
+   * Bukan `--nav-clearance` mentah: berhenti PERSIS setinggi bar menempelkan
+   * judulnya ke tepi bawah bar, dan kaca bar itu buram — judulnya terbaca
+   * seperti tenggelam. 2rem tambahan adalah udara yang membuatnya terbaca
+   * sebagai judul yang berdiri sendiri.
+   *
+   * Diturunkan, bukan diketik: sebelumnya dua tempat memakai angka ajaib yang
+   * harus mengikuti bar tanpa pernah menyebutnya — `scroll-mt-32` (128px, sisa
+   * 16px) di dokumen hukum dan `scroll-mt-28` (112px, sisa NOL) di arsip berita.
+   * Keduanya benar hanya selama tidak ada yang mengubah tinggi bar.
+   */
+  --anchor-offset: calc(var(--nav-clearance) + 2rem);
+
   --gradient-countdown-stroke: linear-gradient(
     161deg,
     rgb(255 255 255 / 0.6) 4%,
@@ -813,8 +846,9 @@ html.snap-sections {
    * lost its foot to it. A page does not owe the header a slice of the section
    * before it; a section that needs room under the bar takes it out of its OWN
    * padding, which is what the tournament rail does.
+   *
+   * The token itself lives on `:root`, not here — see the note beside it.
    */
-  --nav-clearance: 7rem;
 
   /* **The scrollbar stays.** It was hidden here, on the argument that a snapping
      page does not scroll the way the bar says it does — the thumb jumps a

@@ -81,7 +81,7 @@ const allHref = computed(() =>
   <section
     :id="ANCHOR"
     aria-labelledby="archive-heading"
-    class="flex scroll-mt-28 flex-col gap-8 bg-linear-to-b from-[#1e1e1e] to-[#0e0e0e] px-5 py-10 md:px-10 lg:gap-8 lg:px-20 lg:py-[3.125vw]"
+    class="flex scroll-mt-[var(--anchor-offset)] flex-col gap-8 bg-linear-to-b from-[#1e1e1e] to-[#0e0e0e] px-5 py-10 md:px-10 lg:gap-8 lg:px-20 lg:py-[3.125vw]"
   >
     <h2 id="archive-heading" class="sr-only">
       {{ NEWS_ARCHIVE_COPY.heading }}

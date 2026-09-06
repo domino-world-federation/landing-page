@@ -47,7 +47,7 @@ defineProps<{ sections: readonly LegalSectionFromApi[] }>()
                viewport. -->
           <h2
             :id="section.id"
-            class="font-sans scroll-mt-32 text-[length:var(--text-body-lg)] leading-[1.33] font-semibold text-white"
+            class="font-sans scroll-mt-[var(--anchor-offset)] text-[length:var(--text-body-lg)] leading-[1.33] font-semibold text-white"
           >
             {{ index + 1 }}. {{ section.title }}
           </h2>
