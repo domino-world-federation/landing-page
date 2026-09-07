@@ -48,6 +48,14 @@ export const GALLERY_COPY = {
    * out. This names the tile in the accessible listing instead.
    */
   videoLabel: "Video: %s",
+  /**
+   * The name of the button covering a photograph in the collage.
+   *
+   * "Open" rather than "View": the press opens a viewer over the page, and a
+   * reader who cannot see the dialog appear needs the verb to say a thing
+   * happened rather than describing what is already on screen.
+   */
+  openImage: "Open %s at full size",
 
   /** Shown when `?event=` names something the archive does not hold. */
   empty: "No album matches that event.",

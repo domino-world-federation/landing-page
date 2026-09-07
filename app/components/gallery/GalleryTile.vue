@@ -6,11 +6,12 @@ import { GALLERY_COPY } from "~/content/gallery"
  * One picture in a collage — Figma nodes `156:7244` (a video column) and
  * `156:7261` (a photograph).
  *
- * A video takes both rows of the grid and carries a 96px play disc; a photograph
- * takes one. **The play badge is decoration** — there is nothing to play (B2),
- * so the tile is a `<figure>` rather than a control, because a play button that
- * does nothing is the silent no-op D28 ruled out. The caption tells a screen
- * reader the tile stands for a video without promising it a button.
+ * A video takes both rows of the grid; a photograph takes one.
+ *
+ * **The two kinds are opened differently, and that is the point.** A photograph
+ * is too small to read in a collage, so pressing it opens the viewer. A video
+ * carries its own controls and is played where it sits — putting it behind a
+ * dialog would mean pressing play to get a dialog, then pressing play again.
  *
  * `more` marks the one tile Figma overlays with a round arrow (`156:7263`) — the
  * affordance that opens the album.
@@ -20,6 +21,9 @@ const props = defineProps<{
   /** The album this tile's "more" badge opens, when it carries one. */
   more?: { href: string; label: string }
 }>()
+
+/** Pressed on a photograph — the album opens its viewer at this tile. */
+const emit = defineEmits<{ press: [] }>()
 
 const isVideo = computed(() => props.item.kind === "video")
 </script>
@@ -70,6 +74,21 @@ const isVideo = computed(() => props.item.kind === "video")
     <figcaption v-if="isVideo" class="sr-only">
       {{ GALLERY_COPY.videoLabel.replace("%s", item.title) }}
     </figcaption>
+
+    <!-- **An overlay, not the tile itself.** The tile can also carry the round
+         "open the album" link below, and a button wrapping a link is invalid
+         markup that browsers resolve by guessing. Two absolutely positioned
+         controls in source order resolve it without guessing: this one covers
+         the frame, the link paints over it and wins the clicks it lands on.
+
+         Only on a photograph. A video already answers a press by playing. -->
+    <button
+      v-if="!isVideo"
+      type="button"
+      :aria-label="GALLERY_COPY.openImage.replace('%s', item.title)"
+      class="focus-visible:ring-gold absolute inset-0 cursor-pointer focus-visible:ring-2 focus-visible:ring-inset focus-visible:outline-none"
+      @click="emit('press')"
+    />
 
     <!-- `156:7263`: a 72px white disc with a 36px arrow, offset centre. Unlike
          the play badge this one IS a control — it opens the album — so it is a

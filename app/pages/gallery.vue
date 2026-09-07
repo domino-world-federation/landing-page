@@ -54,6 +54,41 @@ const { data: shown } = await useAsyncData(
 const unknown = computed(
   () => event.value !== undefined && shown.value.length === 0,
 )
+
+const results = useTemplateRef<HTMLElement>("results")
+
+/**
+ * Choosing an event carries the reader to what they chose.
+ *
+ * The filter lives in the URL so it can be shared (D50), and the router is told
+ * to stay put on a query-only change — jumping to the top of the document to
+ * swap a list in place reads as a reload. That is right for the news archive,
+ * where the list is already under the eye. It is wrong here: the event column is
+ * `order-first` above `lg` and BELOW the pictures on a phone, so tapping an
+ * event on a phone swaps a column the reader cannot see and leaves them looking
+ * at the last album they scrolled past. Nothing appears to have happened.
+ *
+ * `scrollIntoView` rather than an offset computed here — it honours the
+ * target's own `scroll-margin-top`, so the navbar clearance is the same
+ * `--anchor-offset` every other jump on the site stops at, declared once in the
+ * stylesheet.
+ *
+ * Only on a CHANGE, never on first render: arriving at `/gallery?event=…` from
+ * a shared link should open at the top of the page like any other, not scroll
+ * itself the moment it appears.
+ */
+watch(event, async (value, previous) => {
+  if (value === previous) return
+
+  await nextTick()
+
+  const target = results.value
+  if (!target) return
+
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+
+  target.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" })
+})
 </script>
 
 <template>
@@ -72,14 +107,20 @@ const unknown = computed(
              4827px tall at the design width. `top` clears the navbar; `max-h`
              with its own scroll keeps the column usable on a short window. -->
         <div
-          class="flex flex-col gap-10 lg:sticky lg:top-32 lg:max-h-[calc(100vh-10rem)] lg:overflow-y-auto"
+          class="flex flex-col gap-10 lg:sticky lg:top-[var(--anchor-offset)] lg:max-h-[calc(100dvh-var(--anchor-offset)-2rem)] lg:overflow-y-auto"
         >
           <GalleryEventTabs :albums="albums" :active="event" />
           <UiSupportCard />
         </div>
       </div>
 
-      <div class="flex min-w-0 flex-1 flex-col gap-16 lg:gap-24">
+      <!-- `scroll-mt` is what keeps the heading clear of the `fixed` navbar when
+           the column is scrolled to; `scrollIntoView` reads it, unlike the
+           router's own scrolling. -->
+      <div
+        ref="results"
+        class="flex min-w-0 flex-1 scroll-mt-[var(--anchor-offset)] flex-col gap-16 lg:gap-24"
+      >
         <p
           v-if="unknown"
           class="font-sans text-[length:var(--text-eyebrow)] leading-8 text-white/60"

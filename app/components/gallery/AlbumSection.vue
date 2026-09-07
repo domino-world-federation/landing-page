@@ -27,6 +27,22 @@ const openLabel = computed(() =>
   GALLERY_COPY.openAlbum.replace("%s", props.album.title),
 )
 
+const viewerOpen = ref(false)
+const viewerIndex = ref(0)
+
+/**
+ * Opens the viewer on one picture.
+ *
+ * The index is the tile's position in the album, so the arrows carry on from
+ * where the reader entered rather than from the first picture — which is the
+ * difference between a viewer and a slideshow that has to be scrubbed back to
+ * the place you already were.
+ */
+function openViewer(index: number): void {
+  viewerIndex.value = index
+  viewerOpen.value = true
+}
+
 const feature = computed(() =>
   props.album.items.length === 1 ? props.album.items[0] : undefined,
 )
@@ -111,6 +127,16 @@ const feature = computed(() =>
       <p v-if="feature.kind === 'video'" class="sr-only">
         {{ GALLERY_COPY.videoLabel.replace("%s", feature.title) }}
       </p>
+
+      <!-- The single-picture album opens the same viewer as a collage tile.
+           Photographs only: a video answers a press by playing. -->
+      <button
+        v-else
+        type="button"
+        :aria-label="GALLERY_COPY.openImage.replace('%s', feature.title)"
+        class="focus-visible:ring-gold absolute inset-0 cursor-pointer focus-visible:ring-2 focus-visible:ring-inset focus-visible:outline-none"
+        @click="openViewer(0)"
+      />
     </div>
 
     <!-- Four columns, two rows, 16px gutters (`156:7243`). A video tile spans
@@ -146,7 +172,22 @@ const feature = computed(() =>
         :key="item.id"
         :item="item"
         :more="showOpen && index === 1 ? { href, label: openLabel } : undefined"
+        @press="openViewer(index)"
       />
     </div>
+
+    <!-- **The album owns its viewer, not the page.** The arrows step through
+         THIS album's pictures; one viewer per page would step across album
+         boundaries, so pressing the last photograph of 2024 and then Next would
+         land in 2026 with no sign that anything changed but the pictures.
+
+         `NewsMediaLightbox` already holds the native `<dialog>`, the focus trap,
+         the arrows, the counter and Escape — it wants a list of pictures, which
+         is exactly what an album is. Same reuse `ChampionsHall` makes. -->
+    <NewsMediaLightbox
+      v-model:open="viewerOpen"
+      v-model:index="viewerIndex"
+      :items="album.items"
+    />
   </section>
 </template>
