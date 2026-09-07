@@ -223,12 +223,23 @@ const enter = computed(() =>
                backend to hold one, and neither is any more. `object-contain`
                for the same reason the still uses it: a landscape film fills the
                width and a portrait one the height, and neither is cropped. -->
+          <!-- `autoplay`, because the reader pressed a play button to get here.
+               The tiles carry a play disc and no controls of their own, so the
+               press that opened this dialog was a press on "play" — the film
+               starting itself is the answer to it, not a second button to find.
+
+               Browsers block autoplay with sound unless the site has earned the
+               engagement to be trusted with it, and this one has not. A blocked
+               attempt leaves the film paused with its controls showing, which is
+               where it would have been anyway, so this is a film that usually
+               plays and never fails loudly. -->
           <video
             v-if="current.kind === 'video'"
             :key="current.id"
             :src="current.imageUrl"
             class="size-full object-contain"
             controls
+            autoplay
             playsinline
             preload="metadata"
           />

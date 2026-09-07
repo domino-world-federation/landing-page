@@ -46,6 +46,23 @@ function openViewer(index: number): void {
 const feature = computed(() =>
   props.album.items.length === 1 ? props.album.items[0] : undefined,
 )
+
+/**
+ * Names the button over a single-picture album.
+ *
+ * "Play" for a film and "Open" for a photograph — the press does the same thing
+ * either way, but a reader who cannot see the dialog appear needs the verb to
+ * describe what they will actually get.
+ */
+const featureLabel = computed(() => {
+  const item = feature.value
+  if (!item) return ""
+
+  const template =
+    item.kind === "video" ? GALLERY_COPY.playVideo : GALLERY_COPY.openImage
+
+  return template.replace("%s", item.title)
+})
 </script>
 
 <template>
@@ -98,14 +115,15 @@ const feature = computed(() =>
       v-if="feature"
       class="relative aspect-[1292/726] w-full overflow-hidden rounded-[var(--radius-glass)]"
     >
-      <!-- Same split as the collage tile: a film is played, not printed. See
-           `gallery/GalleryTile` for why the play disc goes with the controls. -->
+      <!-- Same split as the collage tile: a film shows its first frame here and
+           is played in the viewer. See `gallery/GalleryTile` for why the disc
+           replaced the controls. -->
       <video
         v-if="feature.kind === 'video'"
         :src="feature.imageUrl"
-        class="absolute inset-0 size-full object-cover"
-        controls
+        class="pointer-events-none absolute inset-0 size-full object-cover"
         playsinline
+        muted
         preload="metadata"
       />
       <NuxtImg
@@ -115,28 +133,38 @@ const feature = computed(() =>
         :sizes="imageSizes({ xs: '100vw', lg: '68vw' })"
         class="absolute inset-0 size-full object-cover"
       />
-      <!-- The play disc, on the same terms as a collage tile's: decoration,
-           because there is nothing to play (B2).
 
-           **Only on a video.** This was drawn on whatever the album's single
-           item happened to be, so a one-photograph album got a play button over
-           a still — and the line under it told a screen reader it was a video.
-           Figma draws this frame with a film in it (`156:7330`), which is what
-           put the badge here unconditionally; `gallery/GalleryTile` and
-           `news/MediaTile` both branch on `kind` and this one did not. -->
-      <p v-if="feature.kind === 'video'" class="sr-only">
-        {{ GALLERY_COPY.videoLabel.replace("%s", feature.title) }}
-      </p>
-
-      <!-- The single-picture album opens the same viewer as a collage tile.
-           Photographs only: a video answers a press by playing. -->
+      <!-- The single-picture album opens the same viewer as a collage tile,
+           whichever kind it holds. -->
       <button
-        v-else
         type="button"
-        :aria-label="GALLERY_COPY.openImage.replace('%s', feature.title)"
-        class="focus-visible:ring-gold absolute inset-0 cursor-pointer focus-visible:ring-2 focus-visible:ring-inset focus-visible:outline-none"
+        :aria-label="featureLabel"
+        class="focus-visible:ring-gold group absolute inset-0 cursor-pointer focus-visible:ring-2 focus-visible:ring-inset focus-visible:outline-none"
         @click="openViewer(0)"
-      />
+      >
+        <!-- The play disc, decoration inside the button that does the opening —
+             the same arrangement as a collage tile's.
+
+             **Only on a video.** This was drawn on whatever the album's single
+             item happened to be, so a one-photograph album got a play button
+             over a still. Figma draws this frame with a film in it
+             (`156:7330`), which is what put the badge here unconditionally;
+             `gallery/GalleryTile` and `news/MediaTile` both branch on `kind`
+             and this one did not. -->
+        <span
+          v-if="feature.kind === 'video'"
+          aria-hidden
+          class="absolute top-1/2 left-1/2 flex size-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white shadow-[0_8px_32px_rgba(0,0,0,0.35)] transition-transform duration-200 group-hover:scale-105 lg:size-24"
+        >
+          <img
+            src="/assets/news/icon-play.svg"
+            alt=""
+            width="47"
+            height="47"
+            class="size-8 translate-x-0.5 lg:size-12"
+          >
+        </span>
+      </button>
     </div>
 
     <!-- Four columns, two rows, 16px gutters (`156:7243`). A video tile spans

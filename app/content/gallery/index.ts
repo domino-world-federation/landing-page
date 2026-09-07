@@ -42,12 +42,17 @@ export const GALLERY_COPY = {
   openAlbum: "View all photos from %s",
 
   /**
-   * Video tiles carry a play badge in the design. There is nothing to play
-   * (B2), so the badge stays the decoration it is drawn as and the tile is not
-   * a control — a play button that does nothing is the silent no-op D28 ruled
-   * out. This names the tile in the accessible listing instead.
+   * The name of the button covering a video, in the collage and on a
+   * single-film album alike.
+   *
+   * This was `videoLabel: "Video: %s"` — a description, because there was
+   * nothing to play (B2) and the tile was not a control. Both halves of that
+   * have changed: the films are real and the tile opens them. "Play" rather
+   * than "Open" because the press starts the film as well as the viewer, and
+   * the verb a reader gets should be the one that says what they will hear
+   * happen, not the dialog it happens inside.
    */
-  videoLabel: "Video: %s",
+  playVideo: "Play %s",
   /**
    * The name of the button covering a photograph in the collage.
    *
