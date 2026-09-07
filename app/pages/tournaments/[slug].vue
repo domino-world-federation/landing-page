@@ -105,11 +105,15 @@ useSeoMeta({
             >
               {{ TOURNAMENTS_COPY.rail.registration[event.registration] }}
             </span>
-            <span
-              class="font-sans rounded-[var(--radius-glass)] bg-white/12 px-3 py-1 text-[length:var(--text-eyebrow)] leading-8 font-medium text-white uppercase"
-            >
-              {{ event.attendance }}
-            </span>
+            <!-- No attendance pill. Figma draws one beside the registration
+                 chip (`592:16886`), and it printed "OFFLINE" on every
+                 tournament: the federation plays them all in person, so the
+                 backoffice stopped asking 2026-09-07 and pinned the value. A
+                 chip that always says the same word is not telling a reader
+                 anything, and one drawn only when it says "Online" would be a
+                 chip that appears for reasons nobody could infer. The field is
+                 still in the record and still in the API — putting the pill
+                 back is this element, not a migration. -->
           </div>
 
           <p

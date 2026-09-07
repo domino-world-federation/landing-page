@@ -60,15 +60,18 @@ export const TOURNAMENTS_COPY = {
   },
 
   rail: {
-    /** `373:17422`. Figma types "ALL TOURNAMENT"; the plural is a typo of the
-     *  kind D40 fixes — the rail lists several. */
     /**
-     * "Featured Tournaments" in the redraw (`581:14650`), where it read "All
-     * Tournaments" before. Not a typo fix this time — the rail shows three of
-     * five and has a "View all" button beside it, so "All" was the claim that
-     * was wrong.
+     * "All Tournaments" — `373:17422`, where Figma types "ALL TOURNAMENT" and
+     * the missing plural is the kind of typo D40 fixes.
+     *
+     * The redraw (`581:14650`) relabels it "Featured Tournaments" and it was
+     * followed, on the argument that a rail showing three of five with a "View
+     * all" button beside it is not showing all of them. The repo owner put it
+     * back 2026-09-07: the section is the page's tournament list, and what the
+     * "View all" button opens is the archive — the rail is not a curated pick
+     * that "Featured" would promise, it is the top of the same list.
      */
-    heading: "Featured Tournaments",
+    heading: "All Tournaments",
     viewAll: "View all",
     /** `/tournaments/all` (`517:2487`) — the archive the rail is three of five
      *  of. It went nowhere until that screen was drawn. */

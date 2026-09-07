@@ -132,14 +132,16 @@ useSeoMeta({
     <DevelopmentCertifications />
     <DevelopmentLibrary />
     <DevelopmentGrassroots />
+    <!-- Back on the page 2026-09-07. It was taken off on the repo owner's call
+         because its application form had nothing to submit to (B2); the
+         endpoint exists now and the application reaches the backoffice's
+         Contact Messages, so the reason for removing it is gone. -->
+    <DevelopmentSupportPrograms />
+
     <!-- The landing page's news strip, not a second one. Development drew its
          own three-card row from the same `getLatestNews` feed; the two were the
          same block in two shapes, and the strip moved to `ui/` on this second
-         user (D32/D43) the way `RailArrow` and the featured-event band did.
-
-         Federation Support Programs is gone with it, on the repo owner's call —
-         its form had nothing to submit to (B2), and `DevelopmentSupportForm`
-         went with the section rather than being left behind unrendered. -->
+         user (D32/D43) the way `RailArrow` and the featured-event band did. -->
     <UiNews :backdrop="false" />
     <DevelopmentCta />
   </main>

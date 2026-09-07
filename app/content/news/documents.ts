@@ -18,15 +18,33 @@ export const NEWS_PRESS_COPY = {
    *  CSS, so the string keeps its own case (D40). */
   heading: "Press releases",
 
-  /** `168:8478` — reads to the full press archive, which does not exist yet
-   *  (B2), so it points at `#` the way the unbuilt nav entries do. */
+  /** `168:8478` — the link under the heading, to the full archive. It pointed
+   *  at `#` while that page did not exist. */
   archiveLink: "View press archive",
-  archiveHref: "#",
+  archiveHref: "/news/press-releases",
 
   /** The download pill's accessible name. `%1` is the title, `%2` the file
    *  type and size — "PDF (5.2 MB)" is printed, but a screen reader landing on
    *  four identical pills needs to hear which document each one is. */
   downloadLabel: "Download %1, %2",
+} as const
+
+/**
+ * `/news/press-releases` — the archive the shelf's link opens.
+ *
+ * Not a screen in the file. The news page draws the shelf and a link out of it
+ * (`168:8478`) and stops there, so this page follows the shape the site already
+ * uses for "the full list of what a section shows four of": the header band
+ * with a back link, then the same cards the shelf draws, unbounded.
+ */
+export const NEWS_PRESS_ARCHIVE_COPY = {
+  title: ["Press Release Archive"],
+  back: "Back",
+  backHref: "/news",
+  /** Shown before the federation has filed any press release. */
+  empty: "No press release has been published yet.",
+  description:
+    "Every press release the Domino World Federation has published — statements, announcements and media notes, newest first.",
 } as const
 
 export const NEWS_PUBLICATIONS_COPY = {
