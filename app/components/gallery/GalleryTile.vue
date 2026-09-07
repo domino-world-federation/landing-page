@@ -20,14 +20,12 @@ import { GALLERY_COPY } from "~/content/gallery"
  * design's answer and it is a better one — the second press is the film
  * starting itself, not the reader pressing again.
  *
- * `more` marks the one tile Figma overlays with a round arrow (`156:7263`) — the
- * affordance that opens the album.
+ * Figma overlays one tile with a round arrow that opens the album
+ * (`156:7263`). NOT drawn: the heading above every album already carries that
+ * arrow, and a second one sitting on a photograph reads as belonging to the
+ * photograph — the badge was taken off at the owner's request 2026-09-07.
  */
-const props = defineProps<{
-  item: GalleryItem
-  /** The album this tile's "more" badge opens, when it carries one. */
-  more?: { href: string; label: string }
-}>()
+const props = defineProps<{ item: GalleryItem }>()
 
 /** Pressed on any tile — the album opens its viewer here. */
 const emit = defineEmits<{ press: [] }>()
@@ -86,11 +84,9 @@ const pressLabel = computed(() =>
       class="absolute inset-0 size-full object-cover"
     />
 
-    <!-- **An overlay, not the tile itself.** The tile can also carry the round
-         "open the album" link below, and a button wrapping a link is invalid
-         markup that browsers resolve by guessing. Two absolutely positioned
-         controls in source order resolve it without guessing: this one covers
-         the frame, the link paints over it and wins the clicks it lands on. -->
+    <!-- **An overlay, not the tile itself.** The `<figure>` stays a figure so
+         the picture keeps its own element; the press is this button's, laid
+         over the whole frame. -->
     <button
       type="button"
       :aria-label="pressLabel"
@@ -100,11 +96,9 @@ const pressLabel = computed(() =>
 
     <!-- `156:7246`: a white disc dead centre with a play glyph inside it.
          Hidden from assistive tech — the button's own label already says this
-         is a film, and the disc is not a second control. It sits ABOVE the
-         button so a press lands on the disc's own transparent parent and
-         travels no further, which is why it is `pointer-events-none`: the
-         button underneath keeps every press, including the one aimed at the
-         disc itself. -->
+         is a film, and the disc is not a second control. `pointer-events-none`
+         because it is painted OVER the button: without it the press aimed at
+         the disc would land on the disc and stop there. -->
     <span
       v-if="isVideo"
       aria-hidden
@@ -121,39 +115,5 @@ const pressLabel = computed(() =>
         class="size-8 translate-x-0.5 lg:size-12"
       >
     </span>
-
-    <!-- `156:7263`: a 72px white disc with a 36px arrow, offset centre. Unlike
-         the play badge this one IS a control — it opens the album — so it is a
-         real link with a name, not decoration.
-
-         Pushed to the bottom-right corner when it lands on a video, because the
-         play disc holds the centre there. Figma never draws the two together —
-         it puts the badge on a photograph — so there is no design position for
-         the pair to follow, and two discs stacked on one point is the only
-         answer that is certainly wrong. -->
-    <NuxtLink
-      v-if="more"
-      :to="more.href"
-      :aria-label="more.label"
-      :class="
-        cn(
-          'focus-visible:ring-gold absolute flex size-12 items-center justify-center rounded-full bg-white transition-transform duration-200 group-hover:scale-105 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none lg:size-18',
-          isVideo
-            ? 'right-4 bottom-4'
-            : 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
-        )
-      "
-    >
-      <!-- The shared glyph points LEFT; +135° turns it up-and-right, the "opens
-           something" arrow. Drawn dark already, and this sits on the white
-           disc. -->
-      <img
-        src="/assets/global/icon-arrow-left.svg"
-        alt=""
-        width="36"
-        height="36"
-        class="size-5 rotate-135 lg:size-9"
-      >
-    </NuxtLink>
   </figure>
 </template>

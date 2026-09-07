@@ -191,15 +191,16 @@ const featureLabel = computed(() => {
       v-else
       class="grid grid-cols-2 gap-4 [grid-auto-rows:clamp(7rem,15.2vw,292px)] lg:grid-cols-4"
     >
-      <!-- Figma draws the badge once, on the second tile of the first album
-           (`156:7263`). The other two collages are pastes that dropped it along
-           with their titles and dates, so it is drawn for every album rather
-           than for one. -->
+      <!-- No "open the album" badge over a tile. Figma draws one on the second
+           tile of the first album (`156:7263`), but the arrow beside the
+           heading says the same thing without sitting on top of somebody's
+           photograph — and a round arrow over a picture reads as belonging to
+           the picture, not to the album. Taken off at the owner's request
+           2026-09-07; `showOpen` still governs the heading's arrow. -->
       <GalleryTile
         v-for="(item, index) in album.items"
         :key="item.id"
         :item="item"
-        :more="showOpen && index === 1 ? { href, label: openLabel } : undefined"
         @press="openViewer(index)"
       />
     </div>
