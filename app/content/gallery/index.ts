@@ -64,4 +64,21 @@ export const GALLERY_COPY = {
 
   /** Shown when `?event=` names something the archive does not hold. */
   empty: "No album matches that event.",
+
+  /**
+   * The album's own page — Figma screen `523:9831`.
+   *
+   * A header with a back link and the album's title over the whole collage, no
+   * event column beside it. The index filters in place with `?event=`; this is
+   * the screen for looking at one event's pictures and nothing else, which is
+   * where the heading arrow has always pointed.
+   */
+  detail: {
+    /** The link above the title (`523:9837`), back to the archive. */
+    back: "Back",
+    backHref: "/gallery",
+    /** `%s` is the album's title. */
+    description:
+      "Photographs and films from %s, filed by the Domino World Federation.",
+  },
 } as const

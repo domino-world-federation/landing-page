@@ -37,10 +37,25 @@ const COPY = TOURNAMENT_DETAIL_COPY.winners
       </h2>
     </MotionReveal>
 
-    <!-- `auto-rows-fr` so all three cards match whatever a name does to its own
-         height — the country line has to sit on one baseline across the row. -->
-    <ul class="grid auto-rows-fr list-none gap-5 md:grid-cols-3">
-      <li v-for="(winner, i) in winners" :key="winner.id">
+    <!-- **Centred, not left-packed.** Figma draws three cards and a three-column
+         grid draws them correctly — but a tournament that recorded only a
+         winner and a runner-up got two cards hard against the left edge with a
+         third column of empty space beside them, under a heading that is itself
+         centred. A wrapping flex row with `justify-center` places one, two or
+         three the same way the heading is placed, and lands on the design's
+         exact layout at three.
+
+         The width is the grid's arithmetic written out: three tracks and the two
+         20px gutters between them. Flex items stretch by default, which is what
+         `auto-rows-fr` was doing — all cards match whatever a long name does to
+         its own height, so the country line sits on one baseline across the
+         row. -->
+    <ul class="flex list-none flex-wrap justify-center gap-5">
+      <li
+        v-for="(winner, i) in winners"
+        :key="winner.id"
+        class="w-full md:w-[calc((100%-2.5rem)/3)]"
+      >
         <MotionReveal :y="24" :delay="i * 0.08" class="h-full [&>*]:h-full">
           <!-- `aria-label` carries the whole card as one sentence: the ribbon,
                the names and the country are three separate elements, and read

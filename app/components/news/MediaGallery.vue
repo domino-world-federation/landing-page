@@ -6,13 +6,26 @@ import { NEWS_GALLERY_COPY } from "~/content/news/gallery"
 /**
  * The media collage — Figma node `168:8680`.
  *
- * A gold-free, full-width picture desk: tall video columns alternating with
- * pairs of stacked photographs, running off the right edge of the page. The
- * bleed is the design's — the section is padded `80px 0 0 80px`, with nothing on
- * the right — and five 400px columns with four 16px gutters come to 2064 against
- * the 1840 the left margin leaves, so the last column is cut by the viewport at
- * the design's own width. Reproduced as a scroller rather than a crop: the same
- * picture at the same size, with the rest reachable.
+ * A gold-free picture desk: tall video tiles among photographs.
+ *
+ * **A wrapping grid, not a horizontal scroller.** Figma pads the section
+ * `80px 0 0 80px` and lets five 400px columns run past the right edge, which was
+ * reproduced as a sideways scroller so the cut-off pictures stayed reachable.
+ * Two things were wrong with it and the owner named both: a rail that scrolls
+ * sideways inside a page that scrolls down hides most of the collage behind a
+ * gesture nobody makes, and the hand-built columns left a hole.
+ *
+ * The hole was the columns themselves. Pictures were paired into columns of two
+ * here in script, so a video — or a photograph that arrived after one — started
+ * a fresh column and any column that never got its second picture stayed half
+ * empty with the collage carrying on to the right of it. `grid-auto-flow: dense`
+ * is the same arrangement without the bookkeeping: a video takes two rows, a
+ * photograph one, and a later picture backfills a gap an earlier one left
+ * instead of the gap staying open.
+ *
+ * A short LAST row is left alone. That is a grid ending, not a hole — every
+ * picture before it is placed, and trimming the feed to a whole number of rows
+ * would drop pictures to tidy a corner.
  *
  * **Pressing a tile opens it.** The collage crops every picture into a 400px
  * column, so without a viewer there is no way to see one whole; `MediaLightbox`
@@ -51,39 +64,12 @@ const { data: items } = await useAsyncData(
 )
 
 /**
- * Groups the flat feed into the collage's columns: a video takes a column to
- * itself, photographs pair up two to a column.
- *
- * Done here rather than asked of the API, because it is a fact about this layout
- * and no other — the same pictures on a phone, or on the gallery page the
- * heading links to, group differently. A trailing photograph with no partner
- * simply gets a short column; the alternative, padding the feed to an even
- * count, would mean inventing a picture.
- */
-const columns = computed<GalleryItem[][]>(() => {
-  const out: GalleryItem[][] = []
-
-  for (const item of items.value) {
-    const last = out.at(-1)
-    const canPair =
-      item.kind === "photo" &&
-      last !== undefined &&
-      last.length === 1 &&
-      last[0]!.kind === "photo"
-
-    if (canPair) last!.push(item)
-    else out.push([item])
-  }
-
-  return out
-})
-
-/**
  * The viewer's state.
  *
- * `index` is into the FLAT feed, not into a column: the arrows walk the
- * pictures in the order the API sent them, which is the order the collage reads
- * in, and the columns are a layout the viewer knows nothing about.
+ * `index` is into the feed as the API sent it, which is the order the collage
+ * reads in. Dense packing can move a picture into an earlier gap on screen; the
+ * arrows still walk the feed's own order, because a viewer that followed the
+ * grid's backfilling would step in an order nobody can predict from looking.
  */
 const viewerOpen = ref(false)
 const viewerIndex = ref(0)
@@ -103,7 +89,11 @@ function openViewer(item: GalleryItem) {
     aria-labelledby="gallery-heading"
     :class="
       cn(
-        'flex flex-col gap-8 py-10 pl-5 md:pl-10 lg:gap-10 lg:py-[4.1667vw] lg:pl-20',
+        // Padded on both sides now. The missing right padding was the bleed —
+        // it existed so the collage could run off the edge into the scroller,
+        // and a grid that ends inside the page wants the same margin the rest
+        // of the site keeps.
+        'flex flex-col gap-8 px-5 py-10 md:px-10 lg:gap-10 lg:px-20 lg:py-[4.1667vw]',
         // A snap stop buys its own clearance, the way the rail above it does.
         // The heading is 76px of Bebas sitting at the top of the section, and
         // the navbar is fixed 112px of it — without this it opens underneath the
@@ -117,7 +107,7 @@ function openViewer(item: GalleryItem) {
          travels with it instead of sitting still while the title moves. -->
     <MotionReveal
       :y="40"
-      class="flex flex-wrap items-center gap-6 pr-5 md:pr-10 lg:gap-8 lg:pr-[8.3333vw]"
+      class="flex flex-wrap items-center gap-6 lg:gap-8"
     >
       <h2
         id="gallery-heading"
@@ -151,29 +141,28 @@ function openViewer(item: GalleryItem) {
       </NuxtLink>
     </MotionReveal>
 
-    <!-- The scroller. `pr-5` on the track so the last column has a margin to
-         come to rest against instead of touching the viewport edge. -->
-    <ul class="flex snap-x snap-mandatory gap-4 overflow-x-auto pr-5 md:pr-10 lg:pr-20">
-      <!-- 400 of the design's 1920, with a floor so a tile stays a picture
-           rather than a stripe on a phone. Never a share of the viewport: the
-           collage is meant to run past the edge, and a percentage width would
-           fit it inside instead. -->
-      <li
-        v-for="column in columns"
-        :key="column[0]!.id"
-        class="flex w-[min(70vw,400px)] shrink-0 snap-start flex-col gap-4"
-      >
-        <!-- A lone video fills the column; a pair of photographs splits it. Both
-             come to the design's 600. -->
-        <NewsMediaTile
-          v-for="item in column"
-          :key="item.id"
-          :item="item"
-          :tall="item.kind === 'video'"
-          @press="openViewer(item)"
-        />
-      </li>
-    </ul>
+    <!-- Four columns and a row height, the design's 400 × 292 written as a grid
+         (`168:8696`); a video takes two rows and comes to the 600 Figma draws
+         (`168:8689`). Two columns below `lg`, where four 400px tracks would be
+         stripes.
+
+         `dense` is what closes the holes: a photograph that cannot follow a
+         video without leaving a gap is placed INTO the gap instead. It reorders
+         what the eye sees against what the API sent, which is the trade — and
+         for a collage of undated pictures under a "see all" arrow, an
+         arrangement with no holes is worth more than an order nobody can read
+         off the page anyway. -->
+    <div
+      class="grid grid-cols-2 gap-4 [grid-auto-flow:row_dense] [grid-auto-rows:clamp(7rem,15.2vw,292px)] lg:grid-cols-4"
+    >
+      <NewsMediaTile
+        v-for="item in items"
+        :key="item.id"
+        :item="item"
+        :tall="item.kind === 'video'"
+        @press="openViewer(item)"
+      />
+    </div>
 
     <NewsMediaLightbox
       v-model:open="viewerOpen"

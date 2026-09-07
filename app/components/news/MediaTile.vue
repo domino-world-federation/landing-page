@@ -7,7 +7,11 @@ import { NEWS_GALLERY_COPY } from "~/content/news/gallery"
  * (photograph).
  *
  * Both are 400 wide; the video is the column's full 600 and a photograph is 292,
- * so two of them plus the 16px gutter come to the same height.
+ * so two of them plus the 16px gutter come to the same height. That ratio is
+ * the GRID's now, not the tile's: the collage sets a row height and a video
+ * takes two rows, so the tile fills whatever cell it lands in. It used to set
+ * its own `aspect-ratio`, which is the same picture until the grid decides to
+ * backfill a hole and the two answers disagree.
  *
  * **It is a button now, and it was a `<figure>` before.** The earlier note here
  * said a tile could not be a control because there is nothing to play (B2) and a
@@ -23,7 +27,11 @@ import { NEWS_GALLERY_COPY } from "~/content/news/gallery"
  * `aria-label`. Assistive tech gets the same sentence either way, and now it
  * also gets told the thing is pressable.
  */
-defineProps<{ item: GalleryItem; tall: boolean }>()
+defineProps<{
+  item: GalleryItem
+  /** A video takes both rows of the collage; a photograph takes one. */
+  tall: boolean
+}>()
 
 const emit = defineEmits<{ press: [] }>()
 </script>
@@ -38,8 +46,8 @@ const emit = defineEmits<{ press: [] }>()
     "
     :class="
       cn(
-        'group focus-visible:ring-gold relative w-full cursor-pointer overflow-hidden rounded-[var(--radius-glass)] focus-visible:ring-2 focus-visible:outline-none',
-        tall ? 'aspect-[400/600]' : 'aspect-[400/292]',
+        'group focus-visible:ring-gold relative size-full cursor-pointer overflow-hidden rounded-[var(--radius-glass)] focus-visible:ring-2 focus-visible:outline-none',
+        tall && 'row-span-2',
       )
     "
     @click="emit('press')"

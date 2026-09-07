@@ -128,10 +128,7 @@ watch(event, async (value, previous) => {
           {{ GALLERY_COPY.empty }}
         </p>
 
-        <!-- Nothing to open once the page IS the album: the arrow and the tile
-             badge would both link to where the reader already is (D28).
-
-             The `v-else` sits on a `<template>` rather than on the section
+        <!-- The `v-else` sits on a `<template>` rather than on the section
              itself: `v-if` outranks `v-for` in Vue 3, so the two on one element
              work but read backwards, and the linter rejects the pair. -->
         <template v-else>
@@ -139,7 +136,6 @@ watch(event, async (value, previous) => {
             v-for="album in shown"
             :key="album.id"
             :album="album"
-            :show-open="event === undefined"
           />
         </template>
       </div>

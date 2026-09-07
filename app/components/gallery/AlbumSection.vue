@@ -11,18 +11,16 @@ import { GALLERY_COPY } from "~/content/gallery"
  * (`156:7330`). Derived from the count, because a layout name in the API would
  * be the backend deciding how a page looks.
  *
- * The arrow and the round badge over the second tile both open the album, and
- * both are hidden once the page is already filtered to it — a link to the page
- * you are standing on is the silent no-op D28 ruled out.
+ * The arrow beside the heading opens the album's own page (`523:9831`). It used
+ * to point at `?event=` — this page, filtered — and was therefore hidden once
+ * the page WAS filtered, because a link to where you are standing is the silent
+ * no-op D28 ruled out. There is a real album page now, so the arrow always has
+ * somewhere to go and is always drawn.
  */
-const props = defineProps<{
-  album: GalleryAlbum
-  /** False once `?event=` has narrowed the page to this album. */
-  showOpen: boolean
-}>()
+const props = defineProps<{ album: GalleryAlbum }>()
 
 const headingId = computed(() => `album-${props.album.slug}`)
-const href = computed(() => `/gallery?event=${props.album.slug}`)
+const href = computed(() => `/gallery/${props.album.slug}`)
 const openLabel = computed(() =>
   GALLERY_COPY.openAlbum.replace("%s", props.album.title),
 )
@@ -91,7 +89,6 @@ const featureLabel = computed(() => {
         </h2>
 
         <NuxtLink
-          v-if="showOpen"
           :to="href"
           :aria-label="openLabel"
           class="focus-visible:ring-gold group flex size-12 shrink-0 items-center justify-center rounded-[var(--radius-btn)] focus-visible:ring-2 focus-visible:outline-none"
@@ -182,6 +179,11 @@ const featureLabel = computed(() => {
          292/1920 = 15.2vw is the design's row height; the floor keeps a tile a
          picture rather than a stripe on a phone.
 
+         `dense`, so a photograph that cannot follow a video without leaving a
+         gap is placed into the gap instead. Plain auto-placement leaves that
+         gap open with the album carrying on to the right of it, which is a hole
+         in the middle of a collage rather than an ending.
+
          A plain grid of figures rather than a `<ul>`: each tile would have to be
          a `<li display:contents>` for the figure inside it to be the grid item,
          and `display:contents` has a long history of dropping list semantics
@@ -189,14 +191,14 @@ const featureLabel = computed(() => {
          the list adds nothing here. -->
     <div
       v-else
-      class="grid grid-cols-2 gap-4 [grid-auto-rows:clamp(7rem,15.2vw,292px)] lg:grid-cols-4"
+      class="grid grid-cols-2 gap-4 [grid-auto-flow:row_dense] [grid-auto-rows:clamp(7rem,15.2vw,292px)] lg:grid-cols-4"
     >
       <!-- No "open the album" badge over a tile. Figma draws one on the second
            tile of the first album (`156:7263`), but the arrow beside the
            heading says the same thing without sitting on top of somebody's
            photograph — and a round arrow over a picture reads as belonging to
            the picture, not to the album. Taken off at the owner's request
-           2026-09-07; `showOpen` still governs the heading's arrow. -->
+           2026-09-07. -->
       <GalleryTile
         v-for="(item, index) in album.items"
         :key="item.id"

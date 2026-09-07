@@ -25,7 +25,18 @@ import { GALLERY_COPY } from "~/content/gallery"
  * arrow, and a second one sitting on a photograph reads as belonging to the
  * photograph — the badge was taken off at the owner's request 2026-09-07.
  */
-const props = defineProps<{ item: GalleryItem }>()
+const props = defineProps<{
+  item: GalleryItem
+  /**
+   * The one tile the album's own page opens with, drawn at 872 × 642
+   * (`523:9901`) — two columns and two rows of the same grid.
+   *
+   * A prop rather than "the first item is always big": the collage on the
+   * gallery index has no hero, and a tile that decided its own size from its
+   * position would grow whichever picture happened to sort first there.
+   */
+  feature?: boolean
+}>()
 
 /** Pressed on any tile — the album opens its viewer here. */
 const emit = defineEmits<{ press: [] }>()
@@ -48,6 +59,7 @@ const pressLabel = computed(() =>
       cn(
         'group relative overflow-hidden rounded-[var(--radius-glass)]',
         isVideo && 'row-span-2',
+        props.feature && 'col-span-2 row-span-2',
       )
     "
   >
