@@ -217,7 +217,23 @@ const enter = computed(() =>
                No radius: `object-contain` letterboxes inside the element, so a
                corner rounded on the BOX would be rounding empty space beside the
                picture rather than the picture itself. -->
+          <!-- **The film is real now, so the viewer plays it.** This drew
+               `<img src="…mp4">` for a video and a line underneath saying the
+               film was not published — both were true while there was no
+               backend to hold one, and neither is any more. `object-contain`
+               for the same reason the still uses it: a landscape film fills the
+               width and a portrait one the height, and neither is cropped. -->
+          <video
+            v-if="current.kind === 'video'"
+            :key="current.id"
+            :src="current.imageUrl"
+            class="size-full object-contain"
+            controls
+            playsinline
+            preload="metadata"
+          />
           <NuxtImg
+            v-else
             :src="current.imageUrl"
             :alt="current.imageAlt"
             :sizes="imageSizes({ xs: '90vw', lg: '1600px' })"
@@ -227,16 +243,6 @@ const enter = computed(() =>
         </Motion>
 
         <div class="flex shrink-0 flex-col items-center gap-2">
-          <!-- The film's still is real and the film is not (B2), so the viewer
-               says so instead of carrying a play control that would promise
-               one. -->
-          <p
-            v-if="current.kind === 'video'"
-            class="font-sans text-center text-[length:var(--text-body-sm)] leading-6 text-white/60"
-          >
-            {{ COPY.videoUnavailable }}
-          </p>
-
           <!-- Spoken as well as shown: the picture changes without the dialog
                re-announcing itself, so a screen-reader user pressing an arrow
                would otherwise get no confirmation that anything moved. -->

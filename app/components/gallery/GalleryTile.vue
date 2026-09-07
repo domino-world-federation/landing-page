@@ -35,36 +35,41 @@ const isVideo = computed(() => props.item.kind === "video")
       )
     "
   >
+    <!-- **A video tile plays the film; it does not print a picture of one.**
+         `imageUrl` carries whatever file the federation filed, and for a video
+         that is an `.mp4` or `.webm` — so this was `<img src="…mp4">` and drew
+         a broken-image icon on the collage. The name is the API's and stays as
+         it is; what changes is that the tile asks what KIND it is before
+         choosing an element.
+
+         `controls`, and therefore no painted play disc: Figma draws one
+         (`156:7246`) because the design had no film to play, and two play
+         buttons over one frame — one real, one decoration — is worse than the
+         design being followed exactly.
+
+         `preload="metadata"` so the tile shows the first frame and its length
+         without pulling the whole file; a gallery is a page of many, and
+         `preload="auto"` on twelve tiles is twelve films downloaded by someone
+         who came to look at photographs. -->
+    <video
+      v-if="isVideo"
+      :src="item.imageUrl"
+      class="absolute inset-0 size-full object-cover"
+      controls
+      playsinline
+      preload="metadata"
+    />
     <NuxtImg
+      v-else
       :src="item.imageUrl"
       :alt="item.imageAlt"
       :sizes="imageSizes({ xs: '50vw', lg: '25vw' })"
       class="absolute inset-0 size-full object-cover"
     />
 
-    <template v-if="isVideo">
-      <!-- `156:7246`: a 96px white disc dead centre with a 47px play glyph
-           inside it. Hidden from assistive tech — the caption below says what it
-           means, and this is not something that can be pressed. -->
-      <span
-        aria-hidden
-        class="pointer-events-none absolute top-1/2 left-1/2 flex size-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white lg:size-24"
-      >
-        <!-- Drawn in `#0E0E0E`, and this sits on the white disc, so no
-             `invert`. -->
-        <img
-          src="/assets/news/icon-play.svg"
-          alt=""
-          width="47"
-          height="47"
-          class="size-6 translate-x-0.5 lg:size-12"
-        >
-      </span>
-
-      <figcaption class="sr-only">
-        {{ GALLERY_COPY.videoLabel.replace("%s", item.title) }}
-      </figcaption>
-    </template>
+    <figcaption v-if="isVideo" class="sr-only">
+      {{ GALLERY_COPY.videoLabel.replace("%s", item.title) }}
+    </figcaption>
 
     <!-- `156:7263`: a 72px white disc with a 36px arrow, offset centre. Unlike
          the play badge this one IS a control — it opens the album — so it is a

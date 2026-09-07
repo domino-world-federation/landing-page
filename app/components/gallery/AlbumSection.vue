@@ -82,7 +82,18 @@ const feature = computed(() =>
       v-if="feature"
       class="relative aspect-[1292/726] w-full overflow-hidden rounded-[var(--radius-glass)]"
     >
+      <!-- Same split as the collage tile: a film is played, not printed. See
+           `gallery/GalleryTile` for why the play disc goes with the controls. -->
+      <video
+        v-if="feature.kind === 'video'"
+        :src="feature.imageUrl"
+        class="absolute inset-0 size-full object-cover"
+        controls
+        playsinline
+        preload="metadata"
+      />
       <NuxtImg
+        v-else
         :src="feature.imageUrl"
         :alt="feature.imageAlt"
         :sizes="imageSizes({ xs: '100vw', lg: '68vw' })"
@@ -97,23 +108,9 @@ const feature = computed(() =>
            Figma draws this frame with a film in it (`156:7330`), which is what
            put the badge here unconditionally; `gallery/GalleryTile` and
            `news/MediaTile` both branch on `kind` and this one did not. -->
-      <template v-if="feature.kind === 'video'">
-        <span
-          aria-hidden
-          class="pointer-events-none absolute top-1/2 left-1/2 flex size-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white lg:size-24"
-        >
-          <img
-            src="/assets/news/icon-play.svg"
-            alt=""
-            width="47"
-            height="47"
-            class="size-6 translate-x-0.5 lg:size-12"
-          >
-        </span>
-        <p class="sr-only">
-          {{ GALLERY_COPY.videoLabel.replace("%s", feature.title) }}
-        </p>
-      </template>
+      <p v-if="feature.kind === 'video'" class="sr-only">
+        {{ GALLERY_COPY.videoLabel.replace("%s", feature.title) }}
+      </p>
     </div>
 
     <!-- Four columns, two rows, 16px gutters (`156:7243`). A video tile spans

@@ -47,7 +47,22 @@ const emit = defineEmits<{ press: [] }>()
     <!-- The lift on hover is a `scale` on the picture inside a box that already
          clips, so nothing reflows and only the composited layer moves
          (RULES §12). -->
+    <!-- **The tile is a button that opens the viewer, so the film shows its
+         first frame and nothing else.** `controls` here would put a play button
+         inside a button: pressing it would either open the viewer instead of
+         playing, or play a film inside a 400px tile that the reader asked to
+         open. `pointer-events-none` makes the whole frame the button's, and
+         `preload="metadata"` fetches the frame without the film. -->
+    <video
+      v-if="item.kind === 'video'"
+      :src="item.imageUrl"
+      class="pointer-events-none absolute inset-0 size-full object-cover transition-transform duration-300 group-hover:scale-105"
+      playsinline
+      muted
+      preload="metadata"
+    />
     <NuxtImg
+      v-else
       :src="item.imageUrl"
       :alt="item.imageAlt"
       :sizes="imageSizes({ xs: '70vw', lg: '400px' })"

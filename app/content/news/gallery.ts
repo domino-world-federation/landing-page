@@ -33,11 +33,5 @@ export const NEWS_GALLERY_COPY = {
     next: "Next picture",
     /** `%1` is the position, `%2` the total. */
     position: (current: number, total: number) => `${current} of ${total}`,
-    /**
-     * Said under a film's still. The stills are real; the films have nowhere to
-     * be streamed from (B2), and a viewer that opened with a play control on it
-     * would be promising one.
-     */
-    videoUnavailable: "Film not published yet — this is the still.",
   },
 } as const
