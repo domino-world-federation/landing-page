@@ -18,12 +18,25 @@ import { ALL_TOURNAMENTS_COPY } from "~/content/tournaments/all"
  * has nowhere to go should also leave the tab order, the same call `ui/RailArrow`
  * makes at the ends of a row.
  */
-const props = defineProps<{
-  page: number
-  totalPages: number
-  /** Where a given page lives — the caller keeps the rest of the query. */
-  hrefFor: (page: number) => string
-}>()
+const props = withDefaults(
+  defineProps<{
+    page: number
+    totalPages: number
+    /** Where a given page lives — the caller keeps the rest of the query. */
+    hrefFor: (page: number) => string
+    /**
+     * What the pager is paging, for the `<nav>` label.
+     *
+     * The all-tournaments grid is what this was built for and stays the
+     * default. `/tournaments/olympics` pages a results table with the same
+     * arrows and the same URL contract, and a second pager that differed only
+     * in one word would be two of them to keep in step (D32/D43) — so the word
+     * is a prop.
+     */
+    label?: string
+  }>(),
+  { label: ALL_TOURNAMENTS_COPY.listLabel },
+)
 
 const atStart = computed(() => props.page <= 1)
 const atEnd = computed(() => props.page >= props.totalPages)
@@ -35,7 +48,7 @@ const BOX =
 <template>
   <nav
     v-if="totalPages > 1"
-    :aria-label="ALL_TOURNAMENTS_COPY.listLabel"
+    :aria-label="props.label"
     class="flex items-center justify-center gap-5"
   >
     <!-- `aria-current` is bound OFF on both links, and it has to be. These point

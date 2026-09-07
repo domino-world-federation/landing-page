@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { getOlympicResults } from "~/lib/api/client"
 import { TOURNAMENTS_COPY } from "~/content/tournaments"
+import { OLYMPICS_COPY } from "~/content/tournaments/olympics"
 
 /**
  * Olympic Results — Figma node `385:17860`.
@@ -30,6 +31,20 @@ const { data: results } = await useAsyncData(
   () => getOlympicResults(),
   { default: () => [] },
 )
+
+/**
+ * Five rows, and the button under them for the rest.
+ *
+ * Figma draws five (`385:17838`) and a "More Olympic Results" button, which is
+ * a full table on one screen only while the federation has recorded five
+ * results. This band is a snap stop a screen tall; the twentieth result would
+ * push the button off the bottom of it and the section would scroll inside a
+ * page that scrolls by screens.
+ *
+ * The same number the full table pages by, taken from its copy rather than
+ * written twice — five here and five there is one decision.
+ */
+const shown = computed(() => results.value.slice(0, OLYMPICS_COPY.perPage))
 
 const columns = TOURNAMENTS_COPY.results.columns
 
@@ -75,7 +90,7 @@ const TD =
         </thead>
 
         <tbody>
-          <tr v-for="result in results" :key="result.id">
+          <tr v-for="result in shown" :key="result.id">
             <!-- `rounded-l`/`rounded-r` on the end cells: the row's 12px radius
                  belongs to the band, and `border-separate` means the row itself
                  cannot carry a background. -->

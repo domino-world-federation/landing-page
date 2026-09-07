@@ -337,6 +337,23 @@ export type OlympicResult = {
   winners: string
   /** The right-hand column — a country or a national federation. */
   federation: string
+
+  /**
+   * What a row opens to on `/tournaments/olympics` (`648:30591`).
+   *
+   * All optional, and the page prints only what it is given: these columns
+   * arrived after the table did, so a row filed before them opens with fewer
+   * facts rather than with empty labels.
+   *
+   * A label, not a date — Figma writes "Aug 14-17, 2025", a span, and a date
+   * type would force a choice about which end to keep.
+   */
+  eventDate?: string
+  location?: string
+  format?: string
+  /** The champion card beside the facts (`648:30605`). */
+  championPhotoUrl?: string
+  championPhotoAlt?: string
 }
 
 export type RankingEntry = {

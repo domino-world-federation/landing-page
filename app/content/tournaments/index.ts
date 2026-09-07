@@ -162,7 +162,7 @@ export const TOURNAMENTS_COPY = {
     },
     more: "More Olympic Results",
     /** No results archive is drawn (B2). */
-    moreHref: "#",
+    moreHref: "/tournaments/olympics",
   },
 
   faq: {
