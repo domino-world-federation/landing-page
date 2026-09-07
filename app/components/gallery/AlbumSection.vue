@@ -113,15 +113,15 @@ const featureLabel = computed(() => {
     <!-- `156:7330` — 1292 × 726, the only album drawn as one picture. -->
     <div
       v-if="feature"
-      class="relative aspect-[1292/726] w-full overflow-hidden rounded-[var(--radius-glass)]"
+      class="group relative aspect-[1292/726] w-full overflow-hidden rounded-[var(--radius-glass)]"
     >
       <!-- Same split as the collage tile: a film shows its first frame here and
            is played in the viewer. See `gallery/GalleryTile` for why the disc
-           replaced the controls. -->
+           replaced the controls, and for the hover zoom this shares with it. -->
       <video
         v-if="feature.kind === 'video'"
         :src="feature.imageUrl"
-        class="pointer-events-none absolute inset-0 size-full object-cover"
+        class="pointer-events-none absolute inset-0 size-full object-cover transition-transform duration-300 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
         playsinline
         muted
         preload="metadata"
@@ -131,7 +131,7 @@ const featureLabel = computed(() => {
         :src="feature.imageUrl"
         :alt="feature.imageAlt"
         :sizes="imageSizes({ xs: '100vw', lg: '68vw' })"
-        class="absolute inset-0 size-full object-cover"
+        class="absolute inset-0 size-full object-cover transition-transform duration-300 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
       />
 
       <!-- The single-picture album opens the same viewer as a collage tile,
@@ -154,7 +154,7 @@ const featureLabel = computed(() => {
         <span
           v-if="feature.kind === 'video'"
           aria-hidden
-          class="absolute top-1/2 left-1/2 flex size-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white shadow-[0_8px_32px_rgba(0,0,0,0.35)] transition-transform duration-200 group-hover:scale-105 lg:size-24"
+          class="absolute top-1/2 left-1/2 flex size-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white shadow-[0_8px_32px_rgba(0,0,0,0.35)] transition-transform duration-200 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100 lg:size-24"
         >
           <img
             src="/assets/news/icon-play.svg"

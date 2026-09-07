@@ -51,6 +51,11 @@ const pressLabel = computed(() =>
       )
     "
   >
+    <!-- The lift on hover is a `scale` on the picture inside a box that
+         already clips, so nothing reflows and only the composited layer moves
+         (RULES §12) — the same zoom `news/MediaTile` gives its tiles. The
+         reduced-motion pair kills the animation AND the end state: a scale that
+         still happens instantly is not a smaller animation, it is a jump. -->
     <!-- **A video tile shows the film's first frame; it does not print a
          picture of one.** `imageUrl` carries whatever file the federation
          filed, and for a video that is an `.mp4` or `.webm` — so this was
@@ -71,7 +76,7 @@ const pressLabel = computed(() =>
     <video
       v-if="isVideo"
       :src="item.imageUrl"
-      class="pointer-events-none absolute inset-0 size-full object-cover"
+      class="pointer-events-none absolute inset-0 size-full object-cover transition-transform duration-300 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
       playsinline
       muted
       preload="metadata"
@@ -81,7 +86,7 @@ const pressLabel = computed(() =>
       :src="item.imageUrl"
       :alt="item.imageAlt"
       :sizes="imageSizes({ xs: '50vw', lg: '25vw' })"
-      class="absolute inset-0 size-full object-cover"
+      class="absolute inset-0 size-full object-cover transition-transform duration-300 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
     />
 
     <!-- **An overlay, not the tile itself.** The `<figure>` stays a figure so
@@ -102,7 +107,7 @@ const pressLabel = computed(() =>
     <span
       v-if="isVideo"
       aria-hidden
-      class="pointer-events-none absolute top-1/2 left-1/2 flex size-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white shadow-[0_8px_32px_rgba(0,0,0,0.35)] transition-transform duration-200 group-hover:scale-105 lg:size-24"
+      class="pointer-events-none absolute top-1/2 left-1/2 flex size-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white shadow-[0_8px_32px_rgba(0,0,0,0.35)] transition-transform duration-200 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100 lg:size-24"
     >
       <!-- Drawn in `#0E0E0E`, and this sits on the white disc, so no `invert`.
            Nudged right by half a pixel: a triangle's optical centre is left of
