@@ -466,7 +466,8 @@ export const MOCK_RESOURCES: ResourceDocument[] = [
     fileType: "pdf",
     fileSize: "3.1 MB",
   },
-  // The publications shelf (`168:8590`) — the same entity with a cover.
+  // The publications shelf (`1010:2745`) — the same entity, and now the same
+  // card: the cover tile it used to draw is gone from the design (D77).
   {
     // "Dqf quarter 1 review" in Figma (`168:8594`). `Dqf` is the brand
     // mistyped, and the brand is a word that is spelled the same everywhere
@@ -478,23 +479,18 @@ export const MOCK_RESOURCES: ResourceDocument[] = [
     fileUrl: "#",
     fileType: "pdf",
     fileSize: "5.2 MB",
-    coverImageUrl: "/assets/news/publication-cover-quarter-review.webp",
   },
   {
-    // TODO(design): Figma draws two publication cards with byte-identical
-    // contents (`168:8591` and `183:12333`) — the second is a paste that was
-    // never filled in. A shelf that prints the same document twice is worse
-    // than one that prints a sequel, so the quarter is stepped on; the words
-    // are the design's own, only the number moves. The cover is shared because
-    // the design shares it: both cards carry the same `imageRef`.
+    // The old revision pasted the first card twice and never filled the copy
+    // in, so this one printed a stepped-on quarter under a TODO. The redraw
+    // names it (`1010:2757`), which is the design answering that TODO.
     id: "r17",
     category: "Publication",
-    title: "DWF Quarter 2 Review",
+    title: "International Rulebook v4.2",
     publishedAt: "2026-07-21T09:00:00Z",
     fileUrl: "#",
     fileType: "pdf",
     fileSize: "4.8 MB",
-    coverImageUrl: "/assets/news/publication-cover-quarter-review.webp",
   },
   // The tournament page's regulations shelf (`381:17593`) — three documents,
   // verbatim from the design, dates and sizes included. Their own category

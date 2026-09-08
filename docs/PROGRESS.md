@@ -1285,7 +1285,7 @@ sudah memuatnya sejak S14, jadi membangunnya lagi berarti menggandakan kontrol.
 | Featured band | `156:7584` | `[x]` | Carousel 1920×850, **tidak** berjalan sendiri; cross-fade `opacity` saja, hanya cerita aktif yang di-mount |
 | Arsip | `163:8233` | `[x]` | Tab = tautan `?category=`, difilter di server; label tab dari feed, bukan dari desain (D50) |
 | Press Releases | `168:8475` | `[x]` | `getResources("Press Release")` — `ResourceDocument` dipakai ulang (D51) |
-| Publications | `168:8582` | `[x]` | Kartu 560×488 bersampul; `coverImageUrl` satu-satunya field baru |
+| Publications | `1010:2742` | `[x]` | Kartu 560 ringkas, sama dengan rak press (`UiDocumentCard`). Sampul dicabut menyusul desain berubah — D77 |
 | Media Gallery | `168:8680` | `[x]` | Collage 5 kolom yang sengaja meluber ke kanan; badge play **dekorasi**, bukan kontrol (B2) |
 
 **Catatan featured band.** Ia **tidak berpindah sendiri**, dan itu keputusan

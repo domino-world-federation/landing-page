@@ -471,13 +471,6 @@ export type ResourceDocument = {
   fileType: "pdf" | "doc" | "zip"
   /** Already formatted for display, e.g. "2.4 MB" — the API owns the units. */
   fileSize?: string
-  /**
-   * The document's cover, printed behind the news page's publication card
-   * (`168:8636`). Only that shelf draws one: every other list in the site shows
-   * documents as a title and a download pill, so requiring a cover would
-   * invalidate every document already filed without one.
-   */
-  coverImageUrl?: string
 }
 
 /**
