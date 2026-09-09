@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { getResources } from "~/lib/api/client"
+import { getSectionResources } from "~/lib/api/client"
+import { DOCUMENT_SECTION } from "~/lib/api/categories"
 import { RESOURCES_COPY } from "~/content/home/resources"
 
 /**
@@ -24,17 +25,25 @@ import { RESOURCES_COPY } from "~/content/home/resources"
  * `2,2,1,2`, which is what the design draws. Below that they stack, one per row,
  * where every title fits on a single line.
  *
- * **Four documents, asked for as four.** The library holds more than this
- * section draws — the Domino page files three shelves of its own and the
- * Development page four more — and this grid is a fixed 2×2 rather than a feed,
- * so the count belongs in the request. Without it the grid quietly grew to seven
- * cards the first time another page filed a document. Not sliced from a full
- * fetch: the real endpoint takes `?limit=`, and slicing here would keep
- * downloading the whole library to show four of it (RULES §8).
+ * **Asked for as a shelf, and the shelf is the backoffice's.** The library
+ * holds more than this section draws — the Domino page files shelves of its own
+ * and the Development page more — and this grid is a fixed composition rather
+ * than a feed, so something has to bound it. That bound used to be a `limit: 4`
+ * written here; it now lives beside every other shelf's, in
+ * `config('dwf.document_sections')`, and the count is six.
+ *
+ * This is the one shelf that draws from the WHOLE library rather than one
+ * category, which is the design's doing: its cards each print a different
+ * category, so there is no single shelf to name. That is expressed as
+ * `category: null` on the section rather than as a special case here.
+ *
+ * Which six is now a choice somebody makes in the CMS instead of an accident of
+ * publication order. A shelf nobody has curated still answers with the six
+ * newest, so this section never had an empty day.
  */
 const { data: documents } = await useAsyncData(
   "home-resources",
-  () => getResources(undefined, 4),
+  () => getSectionResources(DOCUMENT_SECTION.homeResources),
   { default: () => [] },
 )
 </script>

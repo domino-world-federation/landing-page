@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { getSectionResources } from "~/lib/api/client"
+import { DOCUMENT_SECTION } from "~/lib/api/categories"
 import { YOUTH_COPY, YOUTH_STATS } from "~/content/development/youth"
 
 /**
@@ -28,7 +30,24 @@ import { YOUTH_COPY, YOUTH_STATS } from "~/content/development/youth"
  * round it — again Domino's arrangement. It is what decides that this band
  * covers the photograph above it rather than the other way round, and that fact
  * belongs to the section that does the covering.
+ *
+ * **The curriculum button now downloads a real document.** Its `href` was `#`
+ * for as long as this section existed — blocker B2, no files to point at — and
+ * the copy still carries the label and the accessible name, because those are
+ * words about the button rather than about the file. What it lacked was a file,
+ * and `development.youth` is a shelf of exactly one: whichever document the
+ * federation files as the curriculum.
+ *
+ * The button is drawn only when that shelf has something, the same rule every
+ * document shelf on this site follows. A button that visibly does nothing
+ * teaches people that some of the page is decorative, and after that the ones
+ * that do work stop being pressed either.
  */
+const { data: curriculum } = await useAsyncData(
+  "development-youth-curriculum",
+  async () => (await getSectionResources(DOCUMENT_SECTION.developmentYouth))[0] ?? null,
+  { default: () => null },
+)
 </script>
 
 <template>
@@ -118,9 +137,11 @@ import { YOUTH_COPY, YOUTH_STATS } from "~/content/development/youth"
                resource cards' pill this one IS the control — there is no card
                behind it to stretch an anchor over — so it is a real link with a
                real focus ring. -->
-          <MotionReveal :y="24" :delay="STAGGER * 3">
+          <MotionReveal v-if="curriculum" :y="24" :delay="STAGGER * 3">
             <a
-              :href="YOUTH_COPY.downloadHref"
+              :href="curriculum.fileUrl"
+              target="_blank"
+              rel="noopener"
               :aria-label="YOUTH_COPY.downloadLabel"
               class="group rounded-btn flex w-fit items-center gap-3 border border-[var(--color-border-light)] bg-white px-6 py-4 transition-colors hover:border-[var(--color-silver-mid)] focus-visible:ring-2 focus-visible:ring-black focus-visible:outline-none"
             >

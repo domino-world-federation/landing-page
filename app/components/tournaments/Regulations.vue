@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { getResources } from "~/lib/api/client"
-import { DOCUMENT_CATEGORY } from "~/lib/api/categories"
+import { getSectionResources } from "~/lib/api/client"
+import { DOCUMENT_SECTION } from "~/lib/api/categories"
 import { TOURNAMENTS_COPY } from "~/content/tournaments"
 
 /**
@@ -18,9 +18,8 @@ import { TOURNAMENTS_COPY } from "~/content/tournaments"
  * this is the third page to file documents under a gold heading, and three of
  * them looking alike is the point (D32/D43).
  *
- * Asked for by category rather than by count: this is a shelf holding however
- * many documents the federation files under it, unlike S10's 2×2 grid which had
- * to state a number because its four documents share no shelf (D45).
+ * Asked for as a shelf, and which documents are on it is chosen in the
+ * backoffice ("Documents per Page") rather than derived from publication order.
  *
  * A snap stop with its own navbar clearance, like the rest of the page: the gold
  * heading sits at the top of the band and the bar is fixed over the first 112px,
@@ -29,23 +28,20 @@ import { TOURNAMENTS_COPY } from "~/content/tournaments"
 const { data: documents } = await useAsyncData(
   "tournament-regulations",
   /*
-   * TWO categories, concatenated. The tournament page is the only place that
-   * shows both: the federation's standing rules (which apply to every event)
-   * and the paperwork for running one (schedules, participant guides, results).
-   * They are separate categories because they appear in different places —
-   * `Rules & Regulations` is also on `/domino`, `Tournament Documents` is here
-   * and nowhere else — but a reader on this page wants one shelf, not two.
+   * ONE shelf now, where there were two categories concatenated.
    *
-   * Rules first, then the event paperwork: the order is the argument, same as
-   * everywhere else on this site.
+   * This used to fetch `Rules & Regulations` and `Tournament Documents` and
+   * join them, on the argument that a reader on this page wants one shelf
+   * rather than two. The second half of that has moved: `Tournament Documents`
+   * is the category a document must carry to be ATTACHABLE to an event, and it
+   * shows on that event's own page. Concatenating it here printed the paperwork
+   * for every tournament on the page that lists them all.
+   *
+   * What is left is the federation's standing rules, which is what this heading
+   * says. The order inside the shelf is the backoffice's now, not publication
+   * date.
    */
-  async () => {
-    const [rules, documents] = await Promise.all([
-      getResources(DOCUMENT_CATEGORY.rules),
-      getResources(DOCUMENT_CATEGORY.tournament),
-    ])
-    return [...rules, ...documents]
-  },
+  () => getSectionResources(DOCUMENT_SECTION.tournamentRegulations),
   { default: () => [] },
 )
 </script>

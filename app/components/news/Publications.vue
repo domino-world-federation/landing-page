@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { getResources } from "~/lib/api/client"
-import { DOCUMENT_CATEGORY } from "~/lib/api/categories"
+import { getSectionResources } from "~/lib/api/client"
+import { DOCUMENT_SECTION } from "~/lib/api/categories"
 import { NEWS_PUBLICATIONS_COPY } from "~/content/news/documents"
 
 /**
@@ -18,7 +18,7 @@ import { NEWS_PUBLICATIONS_COPY } from "~/content/news/documents"
  */
 const { data: publications } = await useAsyncData(
   "news-publications",
-  () => getResources(DOCUMENT_CATEGORY.reports),
+  () => getSectionResources(DOCUMENT_SECTION.newsPublications),
   { default: () => [] },
 )
 </script>

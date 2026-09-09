@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { getResources } from "~/lib/api/client"
-import { DOCUMENT_CATEGORY } from "~/lib/api/categories"
+import { getSectionResources } from "~/lib/api/client"
+import { DOCUMENT_SECTION } from "~/lib/api/categories"
 import { GOVERNANCE_COPY } from "~/content/governance"
 
 /**
@@ -16,7 +16,7 @@ import { GOVERNANCE_COPY } from "~/content/governance"
  */
 const { data: documents } = await useAsyncData(
   "governance-statutes",
-  () => getResources(DOCUMENT_CATEGORY.governance),
+  () => getSectionResources(DOCUMENT_SECTION.governanceStatutes),
   { default: () => [] },
 )
 </script>

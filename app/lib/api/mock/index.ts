@@ -8,6 +8,7 @@
 
 import { HERITAGE_MILESTONES } from "~/content/about/heritage"
 import { BOARD_MEMBERS } from "~/content/about/boards"
+import type { DocumentSection } from "~/lib/api/categories"
 import type {
   BoardMember,
   Champion,
@@ -292,15 +293,24 @@ export const MOCK_NEWS: NewsArticle[] = [
  *
  * The rest belong to other pages — three to Domino (`119:4583`, `119:4624`,
  * `119:4629`) and four to the Development page's library (`192:14833`) — and
- * they are the reason `getResources` takes a category: each page draws its own
- * shelf, so the shelf has to be askable-for rather than sliced by position.
+ * they are the reason a shelf has to be askable-for rather than sliced by
+ * position: each page draws its own.
  *
- * S10 is the exception, and it is the reason `getResources` also takes a
- * `limit`. Its four documents have four DIFFERENT categories (the card prints
- * them), so there is no shelf to name — it is the landing page's selection from
- * the whole library, and what bounds it is the 2×2 grid it draws. Without that
- * bound the grid quietly grew to seven cards the moment the Domino documents
- * landed, and would have reached eleven with these.
+ * S10 is the exception. Its documents carry several different categories (the
+ * card prints them), so there is no single category to name — it is the landing
+ * page's selection from the whole library, and what bounds it is the grid it
+ * draws. Without that bound the grid quietly grew to seven cards the moment the
+ * Domino documents were filed, and would have reached eleven with these. That
+ * bound now lives in `MOCK_SECTIONS` below, beside every other shelf's.
+ *
+ * **The `category` values were wrong here until 2026-09-09, and it cost the
+ * whole library.** They were the site's own invented vocabulary — "Rulebook",
+ * "Statutes", "Press Release" — while `DOCUMENT_CATEGORY` had already been
+ * corrected to the backoffice's names on 2026-09-05. Not one name overlapped,
+ * so in mock mode every document shelf on the site was empty, and every one of
+ * them hides itself when empty: the site looked finished and simply had no
+ * documents in it. The exact failure the comment at the top of
+ * `lib/api/categories.ts` was written about, repeated in the mock a day later.
  *
  * `fileUrl` is `#` throughout: there are no actual PDFs yet, and pointing at
  * files that do not exist would give links that 404 rather than links that
@@ -309,7 +319,7 @@ export const MOCK_NEWS: NewsArticle[] = [
 export const MOCK_RESOURCES: ResourceDocument[] = [
   {
     id: "r1",
-    category: "The law of domino",
+    category: "Rules & Regulations",
     title: "Standard International Rulebook v1.0",
     fileUrl: "#",
     fileType: "pdf",
@@ -317,7 +327,7 @@ export const MOCK_RESOURCES: ResourceDocument[] = [
   },
   {
     id: "r2",
-    category: "Legal",
+    category: "Governance Documents",
     title: "Federation Statutes & Governance",
     fileUrl: "#",
     fileType: "pdf",
@@ -325,7 +335,7 @@ export const MOCK_RESOURCES: ResourceDocument[] = [
   },
   {
     id: "r3",
-    category: "Competition",
+    category: "Rules & Regulations",
     title: "Anti-Doping Policy",
     fileUrl: "#",
     fileType: "pdf",
@@ -333,7 +343,7 @@ export const MOCK_RESOURCES: ResourceDocument[] = [
   },
   {
     id: "r4",
-    category: "Members",
+    category: "Governance Documents",
     title: "Membership Application Guidelines",
     fileUrl: "#",
     fileType: "pdf",
@@ -341,7 +351,7 @@ export const MOCK_RESOURCES: ResourceDocument[] = [
   },
   {
     id: "r5",
-    category: "Rulebook",
+    category: "Rules & Regulations",
     title: "Official Rulebook v4.0",
     description:
       "Download the comprehensive international guidelines for dominoes officiating and tournament conduct.",
@@ -355,14 +365,14 @@ export const MOCK_RESOURCES: ResourceDocument[] = [
   // nobody has written would put words in the federation's mouth.
   {
     id: "r6",
-    category: "Regulations",
+    category: "Rules & Regulations",
     title: "Code of Conduct & Ethics",
     fileUrl: "#",
     fileType: "pdf",
   },
   {
     id: "r7",
-    category: "Regulations",
+    category: "Rules & Regulations",
     title: "Equipment Standardization (DWF-ES1)",
     fileUrl: "#",
     fileType: "pdf",
@@ -378,7 +388,7 @@ export const MOCK_RESOURCES: ResourceDocument[] = [
   // second-guessing it.
   {
     id: "r8",
-    category: "Development",
+    category: "Development Resources",
     title: "Technical Manual v4.0",
     publishedAt: "2025-05-12T09:00:00Z",
     fileUrl: "#",
@@ -387,7 +397,7 @@ export const MOCK_RESOURCES: ResourceDocument[] = [
   },
   {
     id: "r9",
-    category: "Development",
+    category: "Development Resources",
     title: "Opening Gambits Video Series",
     publishedAt: "2025-03-22T09:00:00Z",
     fileUrl: "#",
@@ -400,7 +410,7 @@ export const MOCK_RESOURCES: ResourceDocument[] = [
     // guessing at a word nobody typed — but the sentence case is normalised the
     // way every other title here is, since the card sets its own capitals.
     id: "r10",
-    category: "Development",
+    category: "Development Resources",
     title: "Tournament Org. Toolkit",
     publishedAt: "2025-12-25T09:00:00Z",
     fileUrl: "#",
@@ -409,7 +419,7 @@ export const MOCK_RESOURCES: ResourceDocument[] = [
   },
   {
     id: "r11",
-    category: "Development",
+    category: "Development Resources",
     title: "2026 Rulebook (Simplified)",
     publishedAt: "2026-08-23T09:00:00Z",
     fileUrl: "#",
@@ -429,7 +439,7 @@ export const MOCK_RESOURCES: ResourceDocument[] = [
   // present instead.
   {
     id: "r12",
-    category: "Press Release",
+    category: "Press Releases",
     title: "DWF Announces Partnership with Global Sports",
     publishedAt: "2026-07-30T09:00:00Z",
     fileUrl: "#",
@@ -438,7 +448,7 @@ export const MOCK_RESOURCES: ResourceDocument[] = [
   },
   {
     id: "r13",
-    category: "Press Release",
+    category: "Press Releases",
     title: "Annual Integrity Report 2023 Published",
     publishedAt: "2026-06-18T09:00:00Z",
     fileUrl: "#",
@@ -450,7 +460,7 @@ export const MOCK_RESOURCES: ResourceDocument[] = [
     // digit is a certain typo, not a fact in dispute, so it is corrected the
     // way "Sub-Commitees" was (D40).
     id: "r14",
-    category: "Press Release",
+    category: "Press Releases",
     title: "Candidate Cities for 2026 World Cup Shortlisted",
     publishedAt: "2026-05-12T09:00:00Z",
     fileUrl: "#",
@@ -459,7 +469,7 @@ export const MOCK_RESOURCES: ResourceDocument[] = [
   },
   {
     id: "r15",
-    category: "Press Release",
+    category: "Press Releases",
     title: "New Statutes Regarding Player Eligibility Approved",
     publishedAt: "2026-04-09T09:00:00Z",
     fileUrl: "#",
@@ -502,7 +512,7 @@ export const MOCK_RESOURCES: ResourceDocument[] = [
   // foot of the page (`613:24962`).
   {
     id: "r21",
-    category: "Statutes",
+    category: "Governance Documents",
     title: "DWF Constitution 2025",
     publishedAt: "2025-05-12T09:00:00Z",
     fileUrl: "#",
@@ -511,7 +521,7 @@ export const MOCK_RESOURCES: ResourceDocument[] = [
   },
   {
     id: "r22",
-    category: "Statutes",
+    category: "Governance Documents",
     title: "Electoral Regulation",
     publishedAt: "2026-01-30T09:00:00Z",
     fileUrl: "#",
@@ -520,7 +530,7 @@ export const MOCK_RESOURCES: ResourceDocument[] = [
   },
   {
     id: "r23",
-    category: "Governance",
+    category: "Governance Documents",
     title: "Anti-Doping Code",
     publishedAt: "2025-05-12T09:00:00Z",
     fileUrl: "#",
@@ -529,7 +539,7 @@ export const MOCK_RESOURCES: ResourceDocument[] = [
   },
   {
     id: "r24",
-    category: "Governance",
+    category: "Governance Documents",
     title: "Financial Regulations",
     publishedAt: "2025-03-22T09:00:00Z",
     fileUrl: "#",
@@ -538,7 +548,7 @@ export const MOCK_RESOURCES: ResourceDocument[] = [
   },
   {
     id: "r25",
-    category: "Governance",
+    category: "Governance Documents",
     title: "Athlete Commission Bylaws",
     publishedAt: "2025-12-25T09:00:00Z",
     fileUrl: "#",
@@ -547,7 +557,7 @@ export const MOCK_RESOURCES: ResourceDocument[] = [
   },
   {
     id: "r26",
-    category: "Governance",
+    category: "Governance Documents",
     title: "Member Association Audit Guide",
     publishedAt: "2026-08-23T09:00:00Z",
     fileUrl: "#",
@@ -556,7 +566,7 @@ export const MOCK_RESOURCES: ResourceDocument[] = [
   },
   {
     id: "r27",
-    category: "Governance",
+    category: "Governance Documents",
     title: "Regional Federation Guidelines",
     publishedAt: "2026-08-23T09:00:00Z",
     fileUrl: "#",
@@ -565,7 +575,7 @@ export const MOCK_RESOURCES: ResourceDocument[] = [
   },
   {
     id: "r28",
-    category: "Governance",
+    category: "Governance Documents",
     title: "Code of Ethics",
     publishedAt: "2026-08-23T09:00:00Z",
     fileUrl: "#",
@@ -574,7 +584,7 @@ export const MOCK_RESOURCES: ResourceDocument[] = [
   },
   {
     id: "r18",
-    category: "Tournament Regulations",
+    category: "Tournament Documents",
     title: "Ethics & Fair Play Code",
     publishedAt: "2025-05-12T09:00:00Z",
     fileUrl: "#",
@@ -583,7 +593,7 @@ export const MOCK_RESOURCES: ResourceDocument[] = [
   },
   {
     id: "r19",
-    category: "Tournament Regulations",
+    category: "Tournament Documents",
     title: "Official Scrutineering Guide",
     publishedAt: "2025-03-22T09:00:00Z",
     fileUrl: "#",
@@ -592,7 +602,7 @@ export const MOCK_RESOURCES: ResourceDocument[] = [
   },
   {
     id: "r20",
-    category: "Tournament Regulations",
+    category: "Tournament Documents",
     title: "Visa Support Document",
     publishedAt: "2026-08-23T09:00:00Z",
     fileUrl: "#",
@@ -600,6 +610,40 @@ export const MOCK_RESOURCES: ResourceDocument[] = [
     fileSize: "2.1 MB",
   },
 ]
+
+/**
+ * The shelves, and what the mock puts in each.
+ *
+ * A mirror of `config('dwf.document_sections')` in the backoffice, carrying
+ * only the two fields the mock needs to compose a shelf without a CMS to
+ * curate one: the category it draws from, and how many it draws. It is the
+ * FALLBACK branch of `DocumentSections::documents()`, which is exactly what the
+ * real API answers for a shelf nobody has curated yet — so the page looks the
+ * same offline as it does on the day the API is switched on.
+ *
+ * `category: null` is Home, and only Home: its Resource Library deliberately
+ * draws from the whole library rather than one shelf's worth.
+ *
+ * This is a THIRD copy of a cross-repo fact, and it is the weakest of them —
+ * nothing fails if it drifts, the shelf just shows a different number of cards
+ * offline than online. Kept anyway, because the alternative is a mock that
+ * composes shelves differently from the API, which is the kind of mock that
+ * makes a page look right until the day it is switched over.
+ */
+export const MOCK_SECTIONS: Record<
+  DocumentSection,
+  { category: string | null; max: number }
+> = {
+  "home.resources": { category: null, max: 6 },
+  "domino.rulebook": { category: "Rules & Regulations", max: 1 },
+  "governance.statutes": { category: "Governance Documents", max: 6 },
+  "governance.repository": { category: "Governance Documents", max: 6 },
+  "development.library": { category: "Development Resources", max: 6 },
+  "development.youth": { category: "Development Resources", max: 1 },
+  "tournaments.regulations": { category: "Rules & Regulations", max: 6 },
+  "news.press": { category: "Press Releases", max: 6 },
+  "news.publications": { category: "Publication", max: 6 },
+}
 
 /**
  * The news page's media collage (`168:8688`).

@@ -12,6 +12,7 @@ import { FAQ_ITEMS as HOME_FAQ_ITEMS } from "~/content/home/faq"
 import { DOMINO_FAQ_ITEMS } from "~/content/domino/faq"
 import { TOURNAMENT_FAQ_ITEMS } from "~/content/tournaments/faq"
 import { FAQ_PAGE_ITEMS } from "~/content/faq/items"
+import type { DocumentSection } from "./categories"
 
 import {
   MOCK_BOARD_MEMBERS,
@@ -28,6 +29,7 @@ import {
   MOCK_OLYMPIC_RESULTS,
   MOCK_PARTNERS,
   MOCK_RESOURCES,
+  MOCK_SECTIONS,
   MOCK_STATS,
   MOCK_STANDING_COMMITTEES,
   MOCK_SUB_COMMITTEES,
@@ -230,6 +232,47 @@ export async function getResources(
   if (limit !== undefined) params.set("limit", String(limit))
   const query = params.size > 0 ? `?${params}` : ""
   return request<ResourceDocument[]>(`/resources${query}`)
+}
+
+/**
+ * One document shelf, as the backoffice has curated it.
+ *
+ * The shelf's category and its size live in the backoffice now
+ * (`config('dwf.document_sections')`), not at the call site, because two
+ * shelves can draw the same category — Statutes & Constitution and Governance
+ * Repository are both `Governance Documents` — and asking by category means
+ * they print the same documents.
+ *
+ * A shelf nobody has curated yet answers with the newest documents in its
+ * category, so a call site switching from `getResources(category)` to this does
+ * not empty itself while it waits for someone to open the CMS.
+ *
+ * An unknown key is a 422, not an empty array. That matters here more than it
+ * looks: every shelf on this site hides itself when it has nothing, so a typo
+ * answered with `[]` would be invisible on every page at once.
+ */
+export async function getSectionResources(
+  section: DocumentSection,
+): Promise<ResourceDocument[]> {
+  if (useMock()) return mockSection(section)
+  return request<ResourceDocument[]>(`/resources?section=${encodeURIComponent(section)}`)
+}
+
+/**
+ * The mock's stand-in for the backoffice's curation.
+ *
+ * There is nothing to curate WITH offline, so this is the fallback branch of
+ * `DocumentSections::documents()` written out: the newest documents in the
+ * shelf's category, capped at the shelf's size. Keeping the two in step is the
+ * point — a mock that composes shelves differently from the API is a mock that
+ * makes the page look right until the day it is switched over.
+ */
+function mockSection(section: DocumentSection): ResourceDocument[] {
+  const { category, max } = MOCK_SECTIONS[section]
+  const shelf = category
+    ? MOCK_RESOURCES.filter((d) => d.category.toLowerCase() === category.toLowerCase())
+    : MOCK_RESOURCES
+  return shelf.slice(0, max)
 }
 
 /** The S6 showcase — the set the card's pager steps through. */

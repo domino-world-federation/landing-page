@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { getResources } from "~/lib/api/client"
-import { DOCUMENT_CATEGORY } from "~/lib/api/categories"
+import { getSectionResources } from "~/lib/api/client"
+import { DOCUMENT_SECTION } from "~/lib/api/categories"
 import { LIBRARY_COPY } from "~/content/development/library"
 
 /**
@@ -20,7 +20,7 @@ import { LIBRARY_COPY } from "~/content/development/library"
  */
 const { data: documents } = await useAsyncData(
   "development-library",
-  () => getResources(DOCUMENT_CATEGORY.development),
+  () => getSectionResources(DOCUMENT_SECTION.developmentLibrary),
   { default: () => [] },
 )
 </script>

@@ -1830,3 +1830,45 @@ Keputusan arsitektur dicatat di **PRD §7**. Ubah di sana, bukan di sini.
 | 2026-09-03 | Aslinya diarsipkan ke `assets-source/` yang **di-gitignore**: 77 MB yang tidak dipakai build maupun deploy, jadi ia lokal per-klon dan di commit konversi tercatat sebagai penghapusan. Yang membutuhkan sumbernya mengambil dari riwayat (`git show <commit>^:public/assets/...`), yang menyimpan tiap aset utuh. `decor-hero-globe.webp` dihapus dari `public/`: globe-nya dibangun di CSS dan PNG-nya memang acuan desain yang didokumentasikan tidak boleh di-serve |
 | 2026-09-03 | Diverifikasi di server hasil build, bukan hanya di build: 14 rute dirender dan **274 permintaan gambar** dicek satu per satu — semuanya 200, nol referensi `.png`/`.jpg` tersisa di HTML terender. Lint, typecheck, build lolos |
 | 2026-09-03 | Belum dikerjakan, sengaja: beberapa aset masih jauh lebih besar dari slot tampilnya (`globe-tile` 1960×3865, `event-trophy-hand` 1792×2400 di slot 402×720). Me-resize menghemat lagi tapi itu benar-benar menurunkan kualitas di viewport lebar, jadi dipisah dari D71 |
+
+## 2026-09-09 — Rak dokumen dikelola dari backoffice
+
+Sembilan rak berhenti bertanya "kategori apa" dan mulai bertanya "rak mana":
+`getSectionResources(DOCUMENT_SECTION.…)`. Yang menentukan isinya sekarang layar
+"Documents per Halaman" di backoffice; rak yang belum dikurasi dijawab N terbaru
+dari kategorinya, jadi tidak ada halaman yang menunggu admin (D78).
+
+| Rak | Section | Sebelumnya |
+|---|---|---|
+| Home — Resource Library | `home.resources` | `getResources(undefined, 4)`, sekarang 6 |
+| Domino — Official Rulebook | `domino.rulebook` | dokumen pertama kategori `rules` |
+| Governance — Statutes & Constitution | `governance.statutes` | `governance` |
+| Governance — Repository | `governance.repository` | `reports` |
+| Development — Educational Resources | `development.library` | `development` |
+| Development — Youth curriculum | `development.youth` | `href: "#"` di `content/` |
+| Tournaments — Regulations | `tournaments.regulations` | `rules` + `tournament` digabung |
+| News — Press Releases | `news.press` | `press` |
+| News — Publications | `news.publications` | `reports` |
+
+Yang berubah bentuknya, bukan cuma panggilannya:
+
+- **`/domino`** — kartu Official Rulebook dulu diambil posisional (dokumen
+  terbaru kategori itu), yang menjadikan tanggal terbit sebagai keputusan tata
+  letak. Sekarang dipilih; dua tombol regulasi di sampingnya tetap "sisa
+  kategori", disaring **berdasarkan id** supaya dokumen yang jadi kartu tidak
+  tercetak dua kali sebagai tombol.
+- **`/tournaments`** — berhenti menggabungkan `Tournament Documents`. Kategori
+  itu sekarang syarat untuk bisa DILAMPIRKAN ke sebuah event, dan tayang di
+  halaman event-nya; menggabungkannya di sini berarti mencetak berkas kerja
+  setiap turnamen di halaman yang mendaftar semuanya.
+- **`/development` Youth** — tombol "Download curriculum PDF" `href`-nya `#`
+  sejak section itu dibuat (blocker B2). Sekarang ia dokumen sungguhan, dan
+  tombolnya digambar hanya kalau raknya berisi — aturan yang sama dengan tiap
+  rak lain di situs ini.
+
+**Bug terpisah yang ikut tertutup:** nilai `category` di `app/lib/api/mock/`
+masih kosakata lama sejak rename 2026-09-05, jadi tidak satu pun cocok dengan
+`DOCUMENT_CATEGORY`. Akibatnya seluruh rak dokumen KOSONG di mode mock, dan
+karena tiap rak menyembunyikan diri saat kosong, situsnya terlihat selesai dan
+sekadar tidak berisi dokumen. 28 baris dipetakan ke kosakata baru (D79).
+

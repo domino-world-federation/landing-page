@@ -32,12 +32,6 @@ export const YOUTH_COPY = {
    * curriculum PDF" gives no clue which programme's curriculum it is.
    */
   downloadLabel: "Download the youth development curriculum (PDF)",
-  /**
-   * `#` while blocker B2 stands. The curriculum PDF does not exist, and
-   * pointing at a path that will 404 is worse than a button that visibly does
-   * nothing — the same call `MOCK_RESOURCES` makes for every `fileUrl`.
-   */
-  downloadHref: "#",
 } as const
 
 export type YouthStat = {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { getResources } from "~/lib/api/client"
-import { DOCUMENT_CATEGORY } from "~/lib/api/categories"
+import { getResources, getSectionResources } from "~/lib/api/client"
+import { DOCUMENT_CATEGORY, DOCUMENT_SECTION } from "~/lib/api/categories"
 import { REFEREE_DUTIES, REGULATIONS_COPY } from "~/content/domino/regulations"
 import { DOCUMENT_LINK_COPY } from "~/content/documents"
 
@@ -27,21 +27,38 @@ import { DOCUMENT_LINK_COPY } from "~/content/documents"
  * The documents still come from `getResources(category)` (RULES §8) — a rulebook
  * and two regulations are files with a size and a type, not prose.
  *
- * **One category now, where there were two.** This asked for "Rulebook" and
- * "Regulations" separately, and the backoffice offered neither — so this shelf
- * has been empty since it was built. The federation files both under
- * `Rules & Regulations`, so the split has to happen here instead: the most
- * recently published document takes the featured card, the rest fill the list
- * beside it.
+ * **The featured card is now chosen, not inferred.** Both halves come from
+ * `Rules & Regulations` — the federation files rulebooks and competition
+ * regulations under one category — so the split had to happen here, and it used
+ * to be positional: whichever document was published last took the hero card.
+ * That made a layout decision out of a publication date, and nobody could
+ * override it.
  *
- * That makes the hero card whichever rulebook or regulation was published last,
- * rather than one chosen by hand. It is the honest reading of a single shelf,
- * and the alternative — a second category existing only to mark one document as
- * the important one — would put a layout decision in the CMS.
+ * The `domino.rulebook` shelf holds exactly one document (`max: 1`), and it is
+ * the Official Rulebook. The two glass buttons beside it are the rest of the
+ * category, minus whatever the shelf is holding — the design draws three slots
+ * and the request named only the first, so the other two keep drawing
+ * themselves.
+ *
+ * Curating nothing still works: an untouched shelf answers with the newest
+ * document in the category, which is exactly the old behaviour.
  */
 const { data } = await useAsyncData("domino-regulations", async () => {
-  const [featured, ...rest] = await getResources(DOCUMENT_CATEGORY.rules)
-  return { rulebook: featured, regulations: rest }
+  const [rulebook, all] = await Promise.all([
+    getSectionResources(DOCUMENT_SECTION.dominoRulebook),
+    getResources(DOCUMENT_CATEGORY.rules),
+  ])
+
+  const featured = rulebook[0]
+
+  return {
+    rulebook: featured,
+    // Excluded by id rather than by position: the featured document is no
+    // longer guaranteed to be the first of the category, and printing it twice
+    // — once as the hero, once as a button under it — is what dropping this
+    // filter would look like.
+    regulations: all.filter((document) => document.id !== featured?.id),
+  }
 }, { default: () => ({ rulebook: undefined, regulations: [] }) })
 </script>
 
