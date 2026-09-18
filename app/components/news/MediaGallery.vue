@@ -38,8 +38,15 @@ import { NEWS_GALLERY_COPY } from "~/content/news/gallery"
  * are the only things this takes as props: forking the component to change a
  * class would give the site two picture desks that have to be kept in step by
  * hand (D32/D43).
+ *
+ * **A third page narrows it.** `/tournaments/[slug]` passes `tournamentId`, and
+ * the collage shows only that tournament's pictures. It used to show the whole
+ * desk under one event's name. `/news` and `/tournaments` pass nothing and keep
+ * showing everything, which is what those pages are for. A tournament with no
+ * pictures gets an empty feed and the section hides itself, like every other
+ * empty block on this site — it does not fall back to the whole desk.
  */
-withDefaults(
+const props = withDefaults(
   defineProps<{
     /**
      * The news page sets the heading in white; the tournament page uses the gold
@@ -53,14 +60,28 @@ withDefaults(
      * whole screen there would put a gap in a page that has none.
      */
     snap?: boolean
+    /**
+     * Narrows the collage to one tournament's pictures. Left out, it shows the
+     * whole picture desk.
+     */
+    tournamentId?: string
   }>(),
-  { headingTone: "white", snap: false },
+  { headingTone: "white", snap: false, tournamentId: undefined },
 )
 
+/*
+ * The key carries the tournament, and it has to. `useAsyncData` caches by key
+ * across client-side navigation: with one fixed key, going from `/tournaments`
+ * to a tournament's page would serve the whole desk from cache, and going
+ * between two tournaments would show the first one's pictures on the second.
+ */
 const { data: items } = await useAsyncData(
-  "news-gallery-items",
-  () => getGalleryItems(),
-  { default: () => [] },
+  () =>
+    props.tournamentId === undefined
+      ? "news-gallery-items"
+      : `tournament-gallery-items-${props.tournamentId}`,
+  () => getGalleryItems({ tournament: props.tournamentId }),
+  { default: () => [], watch: [() => props.tournamentId] },
 )
 
 /**

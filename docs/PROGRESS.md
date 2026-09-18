@@ -1872,3 +1872,24 @@ masih kosakata lama sejak rename 2026-09-05, jadi tidak satu pun cocok dengan
 karena tiap rak menyembunyikan diri saat kosong, situsnya terlihat selesai dan
 sekadar tidak berisi dokumen. 28 baris dipetakan ke kosakata baru (D79).
 
+## 2026-09-18 — Galeri turnamen hanya milik turnamennya
+
+- **`/tournaments/[slug]`** — kolase di kaki halaman menampilkan aset milik
+  turnamen itu saja (`getGalleryItems({ tournament })` → `?tournament=<id>`).
+  Sebelumnya ia seluruh galeri, di bawah judul satu turnamen. Turnamen tanpa
+  aset tidak menggambar kolasenya sama sekali. `/tournaments` dan `/news` tidak
+  berubah — keduanya memang menampilkan semua.
+- **Kunci `useAsyncData` kolase kini membawa id turnamennya.** Dengan satu kunci
+  tetap, pindah dari `/tournaments` ke sebuah turnamen lewat navigasi klien akan
+  menyajikan seluruh galeri dari cache, dan pindah antar dua turnamen akan
+  memperlihatkan foto yang pertama di halaman yang kedua.
+- **Bug terpisah yang ikut tertutup:** `getGalleryAlbums(slug)` mengirim
+  `?event=` ke `/gallery/albums`, parameter yang TIDAK PERNAH dibaca API
+  (`?slug=`). API menjawab dengan seluruh album, dan `/gallery/[slug]` mengambil
+  yang pertama — di API nyata setiap halaman album menampilkan album yang sama,
+  dan slug ngawur tidak pernah sampai ke 404-nya. Tidak terlihat di mode mock,
+  karena cabang mock menyaring sendiri.
+- Mock: `MOCK_TOURNAMENT_ALBUMS` menautkan SATU turnamen ke satu album (London ↔
+  London 2026). Yang lain sengaja dibiarkan tanpa foto, sama seperti API nyata
+  untuk turnamen yang belum pernah dipotret.
+

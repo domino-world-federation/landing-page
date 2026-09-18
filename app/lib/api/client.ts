@@ -21,6 +21,7 @@ import {
   MOCK_FEATURED_EVENT,
   MOCK_GALLERY,
   MOCK_GALLERY_ALBUMS,
+  MOCK_TOURNAMENT_ALBUMS,
   MOCK_HERITAGE_MILESTONES,
   MOCK_HIGHLIGHTED_TOURNAMENT,
   MOCK_MEMBERSHIP_STATS,
@@ -336,13 +337,44 @@ export async function getFeaturedNews(limit = 6): Promise<NewsArticle[]> {
  * pairs of photographs, and it can only do that by trusting the sequence it is
  * handed — sorting here would mean the page deciding which pictures are worth
  * the tall slot, which is an editorial call it has no basis for.
+ *
+ * **`tournament` narrows it to ONE tournament's pictures.** The tournament
+ * detail page used to call this with nothing, so the collage under one event's
+ * name showed the whole desk — other tournaments, other events. The link is the
+ * backoffice's (`gallery_events.tournament_id`); the filter is the API's, for
+ * the reason RULES §8 gives everywhere: sifting here would download every
+ * picture the federation has to show one tournament's. A tournament with no
+ * pictures answers `[]`, and the collage hides itself — it does NOT fall back
+ * to the whole desk, which is the bug this parameter exists to fix.
+ *
+ * `/tournaments` itself still calls this with no filter and shows everything,
+ * which is what that page is for.
  */
-export async function getGalleryItems(limit?: number): Promise<GalleryItem[]> {
+export async function getGalleryItems(
+  options: { limit?: number; tournament?: string } = {},
+): Promise<GalleryItem[]> {
+  const { limit, tournament } = options
+
   if (useMock()) {
-    return limit === undefined ? MOCK_GALLERY : MOCK_GALLERY.slice(0, limit)
+    const pool = tournament === undefined ? MOCK_GALLERY : mockTournamentGallery(tournament)
+    return limit === undefined ? pool : pool.slice(0, limit)
   }
-  const query = limit === undefined ? "" : `?limit=${limit}`
+
+  const params = new URLSearchParams()
+  if (limit !== undefined) params.set("limit", String(limit))
+  if (tournament !== undefined) params.set("tournament", tournament)
+  const query = params.size > 0 ? `?${params}` : ""
   return request<GalleryItem[]>(`/gallery${query}`)
+}
+
+/**
+ * The mock's stand-in for `gallery_events.tournament_id`: the album linked to
+ * a tournament, or nothing. See `MOCK_TOURNAMENT_ALBUMS`.
+ */
+function mockTournamentGallery(tournament: string): GalleryItem[] {
+  const slug = MOCK_TOURNAMENT_ALBUMS[tournament]
+  if (slug === undefined) return []
+  return MOCK_GALLERY_ALBUMS.find((album) => album.slug === slug)?.items ?? []
 }
 
 /**
@@ -393,7 +425,7 @@ export async function getNewsCategories(): Promise<string[]> {
  * at which event".
  *
  * `slug` filters to one album, and the filtering happens here for the reason
- * RULES §8 gives everywhere else: the real endpoint takes `?event=`, whereas a
+ * RULES §8 gives everywhere else: the real endpoint takes `?slug=`, whereas a
  * page sifting the archive itself would download every photograph the
  * federation has ever filed in order to show one tournament's. Matched on the
  * slug rather than the title — the title is display copy and carries an em
@@ -404,7 +436,16 @@ export async function getGalleryAlbums(slug?: string): Promise<GalleryAlbum[]> {
     if (!slug) return MOCK_GALLERY_ALBUMS
     return MOCK_GALLERY_ALBUMS.filter((album) => album.slug === slug)
   }
-  const query = slug ? `?event=${encodeURIComponent(slug)}` : ""
+  /*
+   * `?slug=`, and it was `?event=` until 2026-09-18 — a parameter the API has
+   * never read. The endpoint ignored it and answered with EVERY album, and
+   * `/gallery/[slug]` takes the first of whatever comes back: every album page
+   * showed the same album, and a slug naming nothing never reached its 404.
+   * Invisible offline, because the mock branch above filters on its own. The
+   * PAGE's query string is still `?event=` (the archive's filter); only this
+   * request to the API was wrong.
+   */
+  const query = slug ? `?slug=${encodeURIComponent(slug)}` : ""
   return request<GalleryAlbum[]>(`/gallery/albums${query}`)
 }
 

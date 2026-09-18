@@ -1609,6 +1609,25 @@ export const MOCK_OLYMPIC_RESULTS: OlympicResult[] = [
 ]
 
 /**
+ * Which album belongs to which tournament — the mock's copy of
+ * `gallery_events.tournament_id`.
+ *
+ * The real link is made in the backoffice when a tournament's pictures are
+ * uploaded as tournament assets; the mock has no such screen, and none of its
+ * tournaments and albums share a slug, so the pairing is written down here.
+ * ONE pairing, and deliberately so: the London album goes with the London
+ * tournament (same city, same year). Inventing links for the rest would make
+ * every tournament page look populated offline, which is the opposite of what
+ * the real API does for a tournament nobody has photographed.
+ *
+ * Every other tournament answers `[]`, and its detail page draws no collage —
+ * the same thing production shows for a tournament without assets.
+ */
+export const MOCK_TOURNAMENT_ALBUMS: Record<string, string> = {
+  t1: "world-championship-london-2026",
+}
+
+/**
  * The gallery archive, newest event first (`156:7234`).
  *
  * **The three tournament albums carry byte-identical picture sets.** That is

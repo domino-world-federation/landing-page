@@ -137,7 +137,10 @@ useSeoMeta({
     <TournamentsDetailOverview :tournament="event" />
 
     <!-- The page closes on the picture desk (`586:15695`), under this page's own
-         gold heading — the same collage `/news` and `/tournaments` draw. -->
-    <NewsMediaGallery heading-tone="gold" />
+         gold heading — the same collage `/news` and `/tournaments` draw, but
+         narrowed to THIS tournament's pictures. It showed the whole desk until
+         2026-09-18. No pictures, no section: the collage hides itself rather
+         than fall back to everyone else's. -->
+    <NewsMediaGallery heading-tone="gold" :tournament-id="event.id" />
   </main>
 </template>
