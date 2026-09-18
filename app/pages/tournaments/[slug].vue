@@ -141,6 +141,10 @@ useSeoMeta({
          narrowed to THIS tournament's pictures. It showed the whole desk until
          2026-09-18. No pictures, no section: the collage hides itself rather
          than fall back to everyone else's. -->
-    <NewsMediaGallery heading-tone="gold" :tournament-id="event.id" />
+    <NewsMediaGallery
+      heading-tone="gold"
+      :tournament-id="event.id"
+      :album-slug="event.gallerySlug"
+    />
   </main>
 </template>

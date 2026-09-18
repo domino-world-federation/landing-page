@@ -283,6 +283,13 @@ export type TournamentDetailExtras = {
   contact?: { email: string; phone: string }
   /** Present only once the tournament has been played (`517:2179`). */
   winners?: TournamentWinner[]
+  /**
+   * The slug of this tournament's gallery album — `/gallery/{gallerySlug}`.
+   * Sent by the API because it cannot be derived: the album is named after the
+   * tournament's NAME, not its slug. Absent when there is no album, or none of
+   * its pictures are live yet (that album page would 404).
+   */
+  gallerySlug?: string
 }
 
 /**

@@ -1905,4 +1905,9 @@ sekadar tidak berisi dokumen. 28 baris dipetakan ke kosakata baru (D79).
   boleh mengaku tempat di podium. Peringkatnya diambil dari POSISI kartu, bukan
   dari labelnya: label diketik bebas di backoffice, sedangkan urutannya dijamin
   `Tournament::winners()` (`orderBy('position')`).
-
+- **Panah "See all media" di halaman detail turnamen menuju album turnamen itu**
+  (`/gallery/{gallerySlug}`), bukan seluruh arsip `/gallery`. Kolasenya sudah
+  hanya berisi foto turnamen itu, jadi panah ke semua foto federasi tidak
+  nyambung. Slug-nya dari API (`TournamentDetail.gallerySlug`) — tidak bisa
+  ditebak, karena album dinamai dari NAMA turnamen. Tanpa album, panahnya tetap
+  ke `/gallery`. `/tournaments` dan `/news` tidak berubah.

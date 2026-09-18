@@ -65,8 +65,21 @@ const props = withDefaults(
      * whole picture desk.
      */
     tournamentId?: string
+    /**
+     * Sends the "see all" arrow to this album (`/gallery/{albumSlug}`) instead
+     * of the whole archive. The tournament detail page passes its own album:
+     * its collage holds only that tournament's pictures, so the arrow beside it
+     * taking the reader to every picture the federation has was a non sequitur.
+     */
+    albumSlug?: string
   }>(),
-  { headingTone: "white", snap: false, tournamentId: undefined },
+  { headingTone: "white", snap: false, tournamentId: undefined, albumSlug: undefined },
+)
+
+const seeAllHref = computed(() =>
+  props.albumSlug
+    ? `/gallery/${encodeURIComponent(props.albumSlug)}`
+    : NEWS_GALLERY_COPY.seeAllHref,
 )
 
 /*
@@ -145,7 +158,7 @@ function openViewer(item: GalleryItem) {
       </h2>
 
       <NuxtLink
-        :to="NEWS_GALLERY_COPY.seeAllHref"
+        :to="seeAllHref"
         :aria-label="NEWS_GALLERY_COPY.seeAll"
         class="focus-visible:ring-gold group flex size-12 items-center justify-center rounded-[var(--radius-btn)] focus-visible:ring-2 focus-visible:outline-none"
       >
