@@ -1916,4 +1916,11 @@ sekadar tidak berisi dokumen. 28 baris dipetakan ke kosakata baru (D79).
   36/44 (`561:13323`) — permintaan pemilik repo: dua tombol setinggi dan selebar
   sama yang ditumpuk terbaca tidak serasi kalau hurufnya beda ukuran. Komponennya
   `ui/EventActions`, dipakai juga oleh Featured Event di Home.
+- **Detail turnamen tanpa hadiah: peta di kiri, nama venue dan alamatnya di
+  kanan** (`tournaments/DetailPlaces`). Baris venue + hadiah selalu dua kolom
+  supaya peta tidak melebar selayar penuh, dan itu meninggalkan separuh kanan
+  kosong untuk turnamen tanpa hadiah. Atas permintaan pemilik repo, dalam kasus
+  itu blok venue mengambil seluruh baris dan membaginya sendiri — peta tetap di
+  separuh kiri dengan ukuran yang sama, teksnya pindah ke separuh kanan. Di bawah
+  `lg` tetap tumpukan biasa. Diperiksa lewat screenshot di 1600px.
 

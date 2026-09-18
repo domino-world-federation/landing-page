@@ -20,9 +20,25 @@ import { TOURNAMENT_DETAIL_COPY } from "~/content/tournaments/detail"
  * there keeps its half rather than growing across the row — the venue map at
  * full width is not a wider map, it is a map the height of the window.
  */
-defineProps<{ tournament: TournamentDetail }>()
+const props = defineProps<{ tournament: TournamentDetail }>()
 
 const COPY = TOURNAMENT_DETAIL_COPY
+
+/**
+ * A venue with no prize beside it — the row lays the venue out ACROSS itself.
+ *
+ * The halves hold (see the section note), which left a tournament without a
+ * prize with its map in the left half and the whole right half empty: a block
+ * of dark page the width of a map, under nothing. On the owner's request
+ * (2026-09-18) the venue now takes the full row in that case and splits it:
+ * the map stays in the left half, exactly the size it was, and its name and
+ * address sit in the right half beside it instead of under it.
+ *
+ * The map does NOT grow — that was the full-bleed map the grid exists to
+ * prevent. Only the text moves. Below `lg` nothing changes; it is a stack
+ * either way.
+ */
+const venueOnly = computed(() => Boolean(props.tournament.venue) && !props.tournament.prize)
 
 /**
  * A block in one of the row's two columns.
@@ -120,7 +136,11 @@ const WASH =
     <div
       v-if="tournament.venue"
       :aria-label="COPY.venue.label"
-      :class="COLUMN"
+      :class="
+        venueOnly
+          ? cn(COLUMN, 'lg:col-span-2 lg:grid lg:grid-cols-2 lg:items-center lg:gap-10')
+          : COLUMN
+      "
     >
       <!-- The map (`517:1987`), not a picture of the building — see
            `VenueMap`. No wash over it: the gradient exists to keep the pin card
