@@ -1911,3 +1911,9 @@ sekadar tidak berisi dokumen. 28 baris dipetakan ke kosakata baru (D79).
   nyambung. Slug-nya dari API (`TournamentDetail.gallerySlug`) — tidak bisa
   ditebak, karena album dinamai dari NAMA turnamen. Tanpa album, panahnya tetap
   ke `/gallery`. `/tournaments` dan `/news` tidak berubah.
+- **Tombol DETAILS dan REGISTER FOR EVENT di Featured Event kini satu ukuran**
+  (`display-btn`, Bebas 32/40). Menyimpang dari Figma, yang memberi REGISTER
+  36/44 (`561:13323`) — permintaan pemilik repo: dua tombol setinggi dan selebar
+  sama yang ditumpuk terbaca tidak serasi kalau hurufnya beda ukuran. Komponennya
+  `ui/EventActions`, dipakai juga oleh Featured Event di Home.
+

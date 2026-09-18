@@ -55,7 +55,14 @@ const detailsHref = computed(
       <!-- 72px tall in Figma, both of them (`561:13320`, `561:13322`), and
            unchanged by the redraw. The secondary is the page's divider grey; the
            primary is the brand gold — the only place on this white band the gold
-           appears. -->
+           appears.
+
+           ONE type size for both, on the owner's request (2026-09-18). Figma
+           sets them apart — DETAILS in Bebas 32/40, REGISTER FOR EVENT in 36/44
+           (`561:13321`, `561:13323`) — and two stacked buttons of the same
+           height and width read as a mismatch when their words are not the same
+           size. Both now take `display-btn`, the site's standard button size;
+           colour is what marks the primary. -->
       <NuxtLink
         :to="detailsHref"
         class="rounded-btn font-display focus-visible:ring-gold flex h-18 items-center justify-center bg-[var(--color-surface-grey)] px-5 text-[length:var(--text-display-btn)] leading-10 text-black uppercase transition-colors hover:bg-[#c8c8c8] focus-visible:ring-2 focus-visible:outline-none"
@@ -65,7 +72,7 @@ const detailsHref = computed(
 
       <NuxtLink
         :to="event.registerUrl ?? REGISTER_FALLBACK"
-        class="rounded-btn font-display focus-visible:ring-gold bg-gold flex h-18 items-center justify-center px-5 text-[length:var(--text-display-cta)] leading-11 text-black uppercase transition-colors hover:bg-[var(--color-gold-btn-light)] focus-visible:ring-2 focus-visible:outline-none"
+        class="rounded-btn font-display focus-visible:ring-gold bg-gold flex h-18 items-center justify-center px-5 text-[length:var(--text-display-btn)] leading-10 text-black uppercase transition-colors hover:bg-[var(--color-gold-btn-light)] focus-visible:ring-2 focus-visible:outline-none"
       >
         {{ FEATURED_EVENT_COPY.register }}
       </NuxtLink>
