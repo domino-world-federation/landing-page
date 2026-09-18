@@ -21,6 +21,31 @@ import { TOURNAMENT_DETAIL_COPY } from "~/content/tournaments/detail"
 defineProps<{ winners: TournamentWinner[] }>()
 
 const COPY = TOURNAMENT_DETAIL_COPY.winners
+
+/**
+ * The ribbon for a placing — one file per place, and the reason there are four.
+ *
+ * Figma draws three ribbons, not one (`517:2181`, `517:2193`, `517:2206`): gold
+ * with a single Roman "I" for the champion, grey with "II" for the runner-up,
+ * bronze with "III" for third. Until 2026-09-18 every card drew ONE file,
+ * exported from the whole champion group — laurels, the gold "I" AND the word
+ * "CHAMPION" already converted to outlines. The card then set its own label
+ * over that, so the champion read "CHAMPION" twice, slightly out of register,
+ * and the runner-up and third cards carried a gold "I" and a buried "CHAMPION"
+ * under their own words.
+ *
+ * The placing is the card's POSITION, not something read from the label: the
+ * label is free text typed in the backoffice ("Champion", "Winner", "1st"),
+ * while the order is guaranteed — `Tournament::winners()` sorts by `position`
+ * and the Results screen rewrites it densely on every save. A tournament may
+ * record up to twenty; from fourth on there is no design, so those get the
+ * laurel alone rather than a numeral that would claim a podium place.
+ */
+function ribbonFor(index: number): string {
+  const place = index + 1
+  const variant = place <= 3 ? String(place) : "plain"
+  return `/assets/tournaments/decor-winner-ribbon-${variant}.svg`
+}
 </script>
 
 <template>
@@ -69,13 +94,13 @@ const COPY = TOURNAMENT_DETAIL_COPY.winners
             "
             class="flex h-full flex-col items-center gap-6 rounded-[var(--radius-card)] bg-[linear-gradient(180deg,rgba(255,255,255,0.12)_0%,rgba(255,255,255,0.04)_100%)] p-6"
           >
-            <!-- The laurel ribbon (`517:2181`), the design's own artwork. The
-                 placing is real text set over it rather than baked into the SVG:
-                 the shape is the same for all three cards and only the word
-                 changes. -->
+            <!-- The laurel ribbon, the design's own artwork. The placing's WORD
+                 is real text set over it, and the file behind it carries no
+                 text at all — see `ribbonFor()` for what happened when it did.
+                 Colour and numeral come from the file, per place. -->
             <p class="relative h-[70px] w-48 shrink-0">
               <img
-                src="/assets/tournaments/decor-winner-ribbon.svg"
+                :src="ribbonFor(i)"
                 alt=""
                 aria-hidden="true"
                 width="192"

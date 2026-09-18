@@ -1892,4 +1892,17 @@ sekadar tidak berisi dokumen. 28 baris dipetakan ke kosakata baru (D79).
 - Mock: `MOCK_TOURNAMENT_ALBUMS` menautkan SATU turnamen ke satu album (London ↔
   London 2026). Yang lain sengaja dibiarkan tanpa foto, sama seperti API nyata
   untuk turnamen yang belum pernah dipotret.
+- **Pita juara tidak lagi mencetak "CHAMPION" dua kali.**
+  `decor-winner-ribbon.svg` diekspor dari SELURUH grup pita kartu juara
+  (`517:2181`) — daun salam, angka "I", dan kata "CHAMPION" yang sudah dijadikan
+  outline. Kartu lalu menumpuk labelnya sendiri di atasnya, jadi "CHAMPION"
+  tercetak dua kali sedikit bergeser. Dan karena ketiga kartu memakai file yang
+  sama, Runner-up dan Third ikut emas dengan "I" dan "CHAMPION" terkubur di
+  belakang labelnya — desainnya abu dengan "II" (`517:2193`) dan perunggu dengan
+  "III" (`517:2206`). Sekarang empat file tanpa teks, dibangkitkan dari aslinya:
+  `-1` (emas, I), `-2` (abu, II), `-3` (perunggu, III), dan `-plain` (daun salam
+  saja) untuk peringkat keempat ke bawah, yang tidak punya desain dan tidak
+  boleh mengaku tempat di podium. Peringkatnya diambil dari POSISI kartu, bukan
+  dari labelnya: label diketik bebas di backoffice, sedangkan urutannya dijamin
+  `Tournament::winners()` (`orderBy('position')`).
 
