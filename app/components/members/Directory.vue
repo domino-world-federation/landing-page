@@ -41,10 +41,20 @@ const { data: federations } = await useAsyncData(
 const openId = ref<string>()
 
 /**
- * Whether the record is showing. Separate from `openId`, which survives the
- * dialog closing: a reader who opens Indonesia, reads it and closes the dialog
- * should find Indonesia still marked in the register rather than the selection
- * thrown away with the window.
+ * Whether the record is showing — and, with `openId`, what makes a row gold.
+ *
+ * The register used to KEEP the row marked after the dialog closed, on the
+ * reasoning that a reader who had opened Indonesia should find it still marked.
+ * The federation asked for the opposite: closing the record clears the
+ * register. A mark that outlives the window it belongs to reads as a filter
+ * still in force, and the next reader down the list has to work out that it is
+ * only a memory of someone else's click.
+ *
+ * **`openId` is NOT cleared to do it, and that is the whole point.** It is what
+ * `open` resolves the dialog's contents from, and it falls back to the first
+ * federation when unset — so clearing it on close would flip the record to
+ * another country for the length of the closing animation, in full view. The
+ * mark is derived from this flag INSTEAD, which is already false by then.
  */
 const dialogOpen = ref(false)
 
@@ -133,7 +143,7 @@ const open = computed(
         v-for="federation in federations"
         :key="federation.id"
         :federation="federation"
-        :active="federation.id === openId"
+        :active="dialogOpen && federation.id === openId"
         @open="show(federation.id)"
       />
     </ul>

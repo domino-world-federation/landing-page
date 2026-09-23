@@ -24,7 +24,16 @@ const emit = defineEmits<{ open: [] }>()
 
 <template>
   <li>
-    <!-- The selected row takes the gold wash and a gold edge (`405:28410`).
+    <!-- The selected row takes the gold wash and a gold edge (`405:28410`),
+         and hovering an unselected one previews it at half strength — the same
+         gradient, the same direction, every stop halved. Hover used to be a
+         flat white lift, which said "this is pressable" without saying what
+         pressing it does; the half-gold says both, and lands the reader on the
+         full wash rather than on a different colour.
+
+         **No gold edge on hover.** The edge is what marks the row the record
+         belongs to, and drawing it under the pointer would put two rows in the
+         register wearing the selected mark at once. -->
 
          **The wash runs dark-to-gold, left to right.** It was the other way
          round at first — bright at the flag, fading out toward the chevron —
@@ -51,7 +60,7 @@ const emit = defineEmits<{ open: [] }>()
           'focus-visible:ring-gold relative flex w-full items-center gap-4 rounded-[var(--radius-glass)] p-2 text-left transition-colors focus-visible:ring-2 focus-visible:outline-none',
           active
             ? 'row-gold-edge bg-[linear-gradient(90deg,rgba(225,183,98,0.02)_0%,rgba(225,183,98,0.10)_45%,rgba(225,183,98,0.30)_100%)]'
-            : 'bg-white/[0.07] hover:bg-white/12',
+            : 'bg-white/[0.07] hover:bg-[linear-gradient(90deg,rgba(225,183,98,0.01)_0%,rgba(225,183,98,0.05)_45%,rgba(225,183,98,0.15)_100%)]',
         )
       "
       @click="emit('open')"
