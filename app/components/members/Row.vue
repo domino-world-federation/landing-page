@@ -33,7 +33,7 @@ const emit = defineEmits<{ open: [] }>()
 
          **No gold edge on hover.** The edge is what marks the row the record
          belongs to, and drawing it under the pointer would put two rows in the
-         register wearing the selected mark at once. -->
+         register wearing the selected mark at once.
 
          **The wash runs dark-to-gold, left to right.** It was the other way
          round at first — bright at the flag, fading out toward the chevron —
