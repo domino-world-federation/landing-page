@@ -88,7 +88,23 @@ useSeoMeta({
 
     <HomeFeatureHq />
     <HomeStats />
-    <UiFeaturedEvent :events="showcaseEvents" />
+    <!-- Absent rather than empty when nothing is coming up — the same call
+         `/tournaments` makes about its own hero, and for a sharper reason here.
+         The band is `snap-screen` (100dvh) and `snap-always`, so with no events
+         it is not a small gap that scrolls past: it is a full screen of white
+         carrying the word "FEATURED EVENT" and nothing under it, and the snap
+         PARKS the reader there. `data-nav-contrast` would darken the header for
+         that empty screen too.
+
+         `getShowcaseEvents` answers with every tournament that has not ended
+         yet, so the list is empty exactly when there is neither a match being
+         played nor one scheduled — which is the condition to hide on, and why
+         this is a length check rather than a filter on a status the payload
+         does not carry. -->
+    <UiFeaturedEvent
+      v-if="showcaseEvents.length > 0"
+      :events="showcaseEvents"
+    />
     <!-- One section, not two: the photograph, the sentence over it and the card
          strip are a single 1920 × 1080 frame in the redraw (`53:3067`), so the
          `UiNewsIntro` that used to stand here is inside `UiNews` now. -->
