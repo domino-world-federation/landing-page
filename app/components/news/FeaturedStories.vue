@@ -1,9 +1,26 @@
 <script setup lang="ts">
+import {
+  useDocumentVisibility,
+  useElementHover,
+  useFocusWithin,
+  useIntervalFn,
+} from "@vueuse/core"
 import type { NewsArticle } from "~/lib/api/types"
 import { NEWS_FEATURED_COPY } from "~/content/news/featured"
 
 /** Seconds. Short: this is a swap the reader asked for, not an entrance. */
 const FADE = 0.35
+
+/**
+ * Seconds a story holds the band before the next one takes it.
+ *
+ * Seven, not the three or four a picture carousel usually runs at, because what
+ * has to be finished here is a SENTENCE: an eyebrow, a headline that wraps to
+ * two lines at the design width, and a button. Timed against reading the
+ * longest headline in the mock rather than against the photograph, which needs
+ * no time at all.
+ */
+const DWELL = 7
 
 /**
  * The featured band — Figma node `156:7584`, 1920 × 850 full bleed.
@@ -12,11 +29,30 @@ const FADE = 0.35
  * eyebrow, its headline and a gold button, and a pager in the corner stepping
  * through the federation's featured stories.
  *
- * **It does not advance by itself.** The design draws prev/next controls and a
- * counter and nothing else, so the band moves when the reader moves it. That is
- * worth stating because the stats wheel two pages over does the opposite: a
- * figure is a glance and can be shown in turn, but a headline is a sentence, and
- * copy that slides away mid-read is copy nobody finishes.
+ * **It advances by itself, and stops the moment anyone is reading it.** It did
+ * not until the federation asked for it, and the objection recorded here then
+ * still stands on its own terms: a headline is a sentence, and copy that slides
+ * away mid-read is copy nobody finishes. So the timer is not simply switched
+ * on — it yields, in four ways:
+ *
+ *   - `prefers-reduced-motion` stops it dead. Not slowed: an animation the
+ *     reader has asked not to see does not get a longer version (RULES §12).
+ *   - Hovering the band or focusing anything inside it pauses it. Both, because
+ *     a mouse reader and a keyboard reader hold their attention differently and
+ *     neither should have to race the clock.
+ *   - A hidden tab pauses it, so a band left open in the background is not
+ *     still turning when the reader comes back to it.
+ *   - Pressing prev/next restarts the dwell, so a story the reader chose gets
+ *     the full seven seconds rather than the remainder of someone else's.
+ *
+ * `DWELL` is the other half of the answer: seven seconds is set against reading
+ * the headline, not against looking at the photograph.
+ *
+ * The counter's `aria-live` is switched OFF while the timer is what moved the
+ * band. Announcing "2 of 6" every seven seconds, forever, is not information —
+ * it is a screen reader talking over whatever the reader is actually doing. It
+ * comes back the instant a reader presses a button, which is the case it was
+ * added for.
  *
  * The picture cross-fades rather than sliding. Only `opacity` animates
  * (RULES §12), and only the active story is mounted — six 1920-wide photographs
@@ -45,10 +81,62 @@ const transition = computed(() =>
 
 // Wraps in both directions: the pager is two buttons and a count, with no
 // disabled state drawn, so running off either end returns to the other.
-function step(delta: number) {
+function advance(delta: number) {
   const total = props.stories.length
   if (total === 0) return
   index.value = (index.value + delta + total) % total
+}
+
+/**
+ * The band's own element, so the pause can be measured on what the reader is
+ * actually pointing at rather than on the page.
+ */
+const band = useTemplateRef<HTMLElement>("band")
+
+const hovered = useElementHover(band)
+const { focused } = useFocusWithin(band)
+const visibility = useDocumentVisibility()
+
+/**
+ * Whether the reader, rather than the clock, moved the band last.
+ *
+ * Drives the counter's `aria-live` and nothing else — see the note above on why
+ * an auto-advancing carousel must not keep announcing itself.
+ */
+const steppedByReader = ref(false)
+
+/**
+ * One story is not a carousel: with nothing to turn to, a timer would fire
+ * every seven seconds to set the index to the value it already holds.
+ */
+const canAutoplay = computed(
+  () =>
+    props.stories.length > 1 &&
+    !prefersReducedMotion.value &&
+    !hovered.value &&
+    !focused.value &&
+    visibility.value === "visible",
+)
+
+const { pause, resume } = useIntervalFn(() => advance(1), DWELL * 1000, {
+  // The interval is started by the watcher below, never on mount: on the server
+  // and before the first paint there is no preference, no hover and no
+  // visibility to read, and a timer begun there would be one the conditions
+  // never got a say in.
+  immediate: false,
+})
+
+watchEffect(() => (canAutoplay.value ? resume() : pause()))
+
+/** The pager's own handler: the reader's press restarts the dwell. */
+function step(delta: number) {
+  steppedByReader.value = true
+  advance(delta)
+
+  // `resume()` on a running interval starts the count again from now. Without
+  // it, a story chosen one second before the timer fired would be shown for
+  // that one second.
+  if (canAutoplay.value) resume()
 }
 </script>
 
@@ -58,6 +146,7 @@ function step(delta: number) {
        fills whatever that leaves. -->
   <section
     v-if="story"
+    ref="band"
     :aria-label="NEWS_FEATURED_COPY.regionLabel"
     aria-roledescription="carousel"
     class="relative isolate min-h-[520px] w-full overflow-hidden lg:aspect-[1920/850] lg:min-h-0"
@@ -181,7 +270,7 @@ function step(delta: number) {
                labels — without it, a reader pressing "next" hears nothing at all
                happen. -->
           <p
-            aria-live="polite"
+            :aria-live="steppedByReader ? 'polite' : 'off'"
             class="font-display text-[length:var(--text-display-caption)] leading-none text-white"
           >
             {{
