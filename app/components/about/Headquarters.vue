@@ -2,6 +2,49 @@
 import { HQ_ALT, HQ_CONTACT, HQ_COPY } from "~/content/about/headquarters"
 
 /**
+ * The office's address and email come from the CMS, not from this file.
+ *
+ * The footer has read them from `GET /settings` since 2026-09-05; this panel
+ * did not, and that was the defect behind the federation's note that the two
+ * places disagreed. They did not hold different ADDRESSES so much as different
+ * kinds of address: the footer printed whatever the backoffice last said, and
+ * this panel printed what a developer typed into `content/about/headquarters.ts`
+ * months ago. Editing Settings → Contact & Social moved one of them and left
+ * the other, silently, with no screen anywhere admitting it.
+ *
+ * `headquartersAddress` is the backoffice's long field and `primaryEmail` its
+ * one address — the same record the footer reads, so the two cannot drift again
+ * without someone changing the record they now share.
+ *
+ * `HQ_CONTACT` stays as the fallback for each line, unchanged in shape: the
+ * phone number has no CMS field yet and still comes from there, so this maps
+ * over the copy rather than replacing it.
+ */
+const settings = useSiteSettings()
+
+const contactLines = computed(() =>
+  HQ_CONTACT.map((line) => {
+    if (line.id === "address") {
+      const fromCms = settings.value.headquartersAddress?.trim()
+
+      return fromCms ? { ...line, label: fromCms } : line
+    }
+
+    if (line.id === "email") {
+      const fromCms = settings.value.primaryEmail?.trim()
+
+      // `href` is rebuilt rather than kept: a row carrying the CMS's address as
+      // its text and the copy file's as its `mailto:` is a link that lies, and
+      // it lies in the one direction nobody checks — the part you only find out
+      // about after the mail has gone somewhere else.
+      return fromCms ? { ...line, label: fromCms, href: `mailto:${fromCms}` } : line
+    }
+
+    return line
+  }),
+)
+
+/**
  * Seconds. The building settles more slowly than the copy on it — the same
  * reasoning S4 records: it is the larger, further object, and an equal duration
  * would have it moving at a visibly higher speed than the words in front.
@@ -113,7 +156,7 @@ const SETTLE = DURATION * 1.5
       <MotionReveal :y="40" :delay="STAGGER" blur-from="8px">
         <ul class="flex list-none flex-col gap-4 lg:gap-[1.46vw]">
           <AboutContactRow
-            v-for="line in HQ_CONTACT"
+            v-for="line in contactLines"
             :key="line.id"
             :line="line"
           />
