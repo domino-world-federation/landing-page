@@ -141,8 +141,16 @@ export type Tournament = {
   /** Whether the tournament is played in person or online — the pill beside the
    *  category (`592:16886`). */
   attendance: "Offline" | "Online"
-  /** The formats and scoring, as one line: "Single 101, Double 101, 3 Round,
-   *  Best of 3" (`592:16893`). */
+  /**
+   * The mode and the rules, as one line: "Single · 101", "Double · Double Win"
+   * (`592:16893`).
+   *
+   * The backoffice asks them as two fields — who is playing, and how a match is
+   * won — and joins them for this. A MIDDLE DOT rather than a space, because
+   * joined with one "Single Double Win" reads as a single rule name that does
+   * not exist. Printed as it arrives: the separator is the API's business and
+   * this side never splits the string back apart.
+   */
   formatLabel: string
   startsAt: IsoDateString
   endsAt?: IsoDateString
