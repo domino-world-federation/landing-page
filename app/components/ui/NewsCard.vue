@@ -111,10 +111,26 @@ const rootClass = computed(() =>
          side padding that place it. Scaled down below `lg` because 24px around
          an 18px title on a phone-width tile leaves little room. -->
     <div class="absolute inset-x-0 bottom-0 flex flex-col gap-2 p-4 lg:p-6">
+      <!-- The story's OWN category and date, not the word "News".
+           Every tile used to print the same literal, which on a page whose
+           section is already headed NEWS & UPDATES told the reader something
+           they had just read — and told them the same thing seven times over.
+           The archive grid has printed the pair since it was built; this is the
+           mosaic catching up with it.
+
+           `flex-wrap` because the two square tiles are 258px in Figma, less
+           than half the width of the others: the pair fits on one line on the
+           big tiles and drops to two on the small ones rather than being cut
+           off. The bullet is punctuation between two labels, not content, so it
+           is hidden — otherwise a screen reader reads "bullet" between them. -->
       <p
-        class="font-sans text-[length:var(--text-news-eyebrow)] leading-[1.4] text-white/70 uppercase"
+        class="font-sans flex flex-wrap items-center gap-x-2 text-[length:var(--text-news-eyebrow)] leading-[1.4] text-white/70 uppercase"
       >
-        {{ NEWS_COPY.eyebrow }}
+        <span>{{ article.category }}</span>
+        <span aria-hidden>&bull;</span>
+        <time :datetime="article.publishedAt">
+          {{ formatShortDate(article.publishedAt) }}
+        </time>
       </p>
       <!-- Clamped to two lines. Figma writes each headline short enough to fit
            in two, but these titles come from the API and nothing guarantees the

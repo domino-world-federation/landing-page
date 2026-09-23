@@ -65,7 +65,7 @@ defineProps<{ events: ShowcaseEvent[] }>()
          labels the whole band rather than standing beside the first column.
          Inter Medium 20/28 in black (`561:13282`), and uppercased in CSS rather
          than in the data so a translation with no uppercase form is not mangled
-         — the same call `NEWS_COPY.eyebrow` makes. -->
+         — the same call `NEWS_FEATURED_COPY.eyebrow` makes. -->
     <p
       aria-hidden="true"
       class="font-sans text-xl leading-7 font-medium text-black uppercase"
