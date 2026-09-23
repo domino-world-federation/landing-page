@@ -119,14 +119,26 @@ const canAutoplay = computed(
 )
 
 const { pause, resume } = useIntervalFn(() => advance(1), DWELL * 1000, {
-  // The interval is started by the watcher below, never on mount: on the server
-  // and before the first paint there is no preference, no hover and no
-  // visibility to read, and a timer begun there would be one the conditions
-  // never got a say in.
+  // Started by the watcher below, never on creation: before the first paint
+  // there is no preference, no hover and no visibility to read, and a timer
+  // begun there would be one the conditions never got a say in.
   immediate: false,
 })
 
-watchEffect(() => (canAutoplay.value ? resume() : pause()))
+/**
+ * **`onMounted`, and that is not tidiness.** `watchEffect` alone runs during
+ * SSR too, so every render of `/news` on the server would call `resume()` and
+ * leave a `setInterval` running in the Nitro process — advancing an index no
+ * one will ever see, once per visitor, on a page that is on the site's main
+ * navigation. The band cannot turn before it exists, so the clock starts when
+ * it does.
+ *
+ * Registered inside the mount hook but still owned by the component's scope, so
+ * it is torn down with the component like any other effect.
+ */
+onMounted(() => {
+  watchEffect(() => (canAutoplay.value ? resume() : pause()))
+})
 
 /** The pager's own handler: the reader's press restarts the dwell. */
 function step(delta: number) {
