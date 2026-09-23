@@ -39,9 +39,8 @@ export const FORMATS: readonly Format[] = [
     heading: "Singles Format",
     body: "The purest test of individual tactical depth. Players must track all 28 tiles while managing a private hand of 7, calculating remaining possibilities with absolute accuracy.",
     stats: [
-      { id: "players", label: "Players", value: "1 vs 1" },
+      { id: "players", label: "Players", value: "1 vs 3" },
       { id: "hand-size", label: "Hand Size", value: "7 tiles" },
-      { id: "winning-score", label: "Winning Score", value: "100 / 150 pts" },
     ],
   },
   {
@@ -52,7 +51,6 @@ export const FORMATS: readonly Format[] = [
     stats: [
       { id: "players", label: "Players", value: "2 vs 2" },
       { id: "hand-size", label: "Hand Size", value: "7 tiles" },
-      { id: "winning-score", label: "Winning Score", value: "200 pts" },
     ],
   },
 ] as const

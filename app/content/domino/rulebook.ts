@@ -75,8 +75,8 @@ export const RULE_SETS: readonly RuleSet[] = [
   },
   {
     id: "best-of-3",
-    tab: "Best of 3",
-    title: "Best of Three Matches",
+    tab: "Double Win",
+    title: "Double Win Matches",
     body: "A tie is decided over three games, and a side takes the match on the first two it wins. The third is played only where the first two are split, so a match is as long as it needs to be and no longer.",
     quote: {
       text: "Where the first two games are shared, the third is played to the same ceiling and decides the match outright.",

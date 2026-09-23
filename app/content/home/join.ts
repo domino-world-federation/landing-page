@@ -11,8 +11,8 @@ export const JOIN_COPY = {
    * renders as its own line — the same treatment S4's headline gets, rather
    * than a `<br>` a translation would have to carry (RULES §9).
    */
-  headline: ["Bring Your Nation", "To The World Stage"],
-  body: "We are currently accepting applications for new associate and full member federations. Benefit from technical support, sanctioned event hosting, and global ranking integration.",
+  headline: ["Join DWF Through", "Your National Federation"],
+  body: "Contact your country's national federation to apply for DWF membership and obtain your DWF ID.",
   cta: "Get In Touch",
   /** Still `#` — no contact page exists yet (blocker B2). */
   ctaUrl: "#",
