@@ -22,8 +22,25 @@ export const FEATURED_EVENT_COPY = {
   dateLabel: "Date",
   locationLabel: "Location",
 
-  details: "Details",
-  register: "Register for event",
+  /**
+   * The four button labels, and which pair is drawn depends on where the
+   * tournament is — see `EventActions`. Figma only ever drew the middle case
+   * (entries open), so the other three are named here for the first time.
+   */
+  details: "View details",
+  detailsLabel: "View details of %s",
+  register: "Register for tournament",
+  registerLabel: "Register for %s",
+  notify: "Notify me",
+  notifyLabel: "Get reminders about %s",
+  watchLive: "Watch live",
+  watchLiveLabel: "Watch %s live",
+  /**
+   * There is no stream and no field to hold its address, so the control
+   * refuses in the open rather than linking nowhere (D28) — the same answer the
+   * tournaments hero gives, in the same words.
+   */
+  watchLiveUnavailable: "The live stream opens when the tournament does.",
 
   /**
    * The brand half of the wordmark across the card's foot (`52:3047`). The

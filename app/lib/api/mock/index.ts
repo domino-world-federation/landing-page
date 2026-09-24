@@ -753,6 +753,8 @@ export const MOCK_HIGHLIGHTED_TOURNAMENT: ShowcaseEvent = {
   id: "e1-highlighted",
   slug: "caribbean-domino-open-2026",
   name: "Caribbean Domino Open 2026",
+  status: "upcoming",
+  registration: "open",
   dateLabel: "Oct 12 - Oct 16, 2026",
   location: "Montego Bay, Jamaica",
   summary:
@@ -791,6 +793,8 @@ export const MOCK_SHOWCASE_EVENTS: ShowcaseEvent[] = [
     id: "e1",
     slug: "caribbean-domino-open-2026",
     name: "Caribbean Domino Open 2026",
+    status: "upcoming",
+    registration: "open",
     dateLabel: "Oct 12 - Oct 15, 2026",
     location: "Montego Bay, Jamaica",
     summary:
@@ -805,6 +809,8 @@ export const MOCK_SHOWCASE_EVENTS: ShowcaseEvent[] = [
     id: "e2",
     slug: "pan-american-championship-2026",
     name: "Pan American Championship 2026",
+    status: "upcoming",
+    registration: "open",
     dateLabel: "Nov 3 - Nov 7, 2026",
     location: "Mexico City, Mexico",
     summary:
@@ -819,6 +825,8 @@ export const MOCK_SHOWCASE_EVENTS: ShowcaseEvent[] = [
     id: "e3",
     slug: "european-masters-2026",
     name: "European Masters 2026",
+    status: "upcoming",
+    registration: "open",
     dateLabel: "Dec 1 - Dec 4, 2026",
     location: "Valencia, Spain",
     summary:
@@ -833,6 +841,8 @@ export const MOCK_SHOWCASE_EVENTS: ShowcaseEvent[] = [
     id: "e4",
     slug: "asia-pacific-open-2027",
     name: "Asia Pacific Open 2027",
+    status: "upcoming",
+    registration: "closed",
     dateLabel: "Feb 9 - Feb 13, 2027",
     location: "Jakarta, Indonesia",
     summary:
@@ -847,6 +857,8 @@ export const MOCK_SHOWCASE_EVENTS: ShowcaseEvent[] = [
     id: "e5",
     slug: "african-cup-of-dominoes-2027",
     name: "African Cup of Dominoes 2027",
+    status: "upcoming",
+    registration: "upcoming",
     dateLabel: "Apr 6 - Apr 10, 2027",
     location: "Accra, Ghana",
     summary:
@@ -861,6 +873,8 @@ export const MOCK_SHOWCASE_EVENTS: ShowcaseEvent[] = [
     id: "e6",
     slug: "world-championship-2027",
     name: "World Championship 2027",
+    status: "upcoming",
+    registration: "upcoming",
     dateLabel: "Jul 19 - Jul 25, 2027",
     location: "Santo Domingo, Dominican Republic",
     summary:

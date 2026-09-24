@@ -498,6 +498,21 @@ export type ShowcaseEvent = {
   id: string
   slug: string
   name: string
+  /**
+   * What the band's BUTTONS are chosen from, and it takes both.
+   *
+   * Five states the design names, and two of them are the same `registration`
+   * with different `status`: a tournament being played whose entries have
+   * closed offers "Watch live", and one that has not started whose entries have
+   * closed offers nothing but its page. `registration` alone cannot tell them
+   * apart — see `EventActions`.
+   *
+   * Same two fields `Tournament` carries, and read from the same place on the
+   * server, so a tournament cannot be in one state on a card and another in the
+   * band.
+   */
+  status: TournamentStatus
+  registration: TournamentRegistration
   /** Already formatted as a span, e.g. "Oct 12 - Oct 15, 2026". The API owns
    *  the range; the page has no second date to reason about. */
   dateLabel: string

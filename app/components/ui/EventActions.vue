@@ -38,6 +38,56 @@ const props = defineProps<{ event: ShowcaseEvent }>()
 const detailsHref = computed(
   () => props.event.detailsUrl ?? `/tournaments/${props.event.slug}`,
 )
+
+const notifyOpen = ref(false)
+
+/**
+ * The gold button's dress, shared by the three controls that take it.
+ *
+ * A constant rather than three copies: they are one button in the design and
+ * only their label and their behaviour differ, so a change to the shape that
+ * reached two of the three would be the kind of drift nobody notices until the
+ * states are seen side by side — which they never are, because only one is on
+ * screen at a time.
+ */
+const GOLD_BUTTON =
+  "rounded-btn font-display focus-visible:ring-gold bg-gold flex h-18 w-full items-center justify-center px-5 text-[length:var(--text-display-btn)] leading-10 text-black uppercase transition-colors hover:bg-[var(--color-gold-btn-light)] focus-visible:ring-2 focus-visible:outline-none"
+
+const named = (template: string) => template.replace("%s", props.event.name)
+
+/**
+ * Which action stands beside "View details", and there are five answers.
+ *
+ * **`status` is read FIRST, and that ordering is the whole rule.** A tournament
+ * being played has one thing to offer whatever its entries are doing, and a
+ * tournament that is over has none. Only once neither applies does the question
+ * become "can this reader still enter", which is what `registration` answers:
+ *
+ *   status `completed`                     → details alone
+ *   status `live`                          → Watch live
+ *   status `upcoming`, entries `upcoming`  → Notify me
+ *   status `upcoming`, entries `open`      → Register
+ *   status `upcoming`, entries `closed`    → details alone
+ *
+ * Reading `registration` first is the mistake this is written to avoid: a
+ * tournament in its final day whose entries shut a month ago is `closed`, and
+ * on that reading the band would offer nothing while the match was actually
+ * being played.
+ *
+ * `null` is a state, not a fallthrough — two of the five have no second button,
+ * and "View details" standing alone is the design's answer for both.
+ */
+const action = computed<"watch" | "notify" | "register" | null>(() => {
+  const { status, registration } = props.event
+
+  if (status === "completed") return null
+  if (status === "live") return "watch"
+
+  if (registration === "upcoming") return "notify"
+  if (registration === "open") return "register"
+
+  return null
+})
 </script>
 
 <template>
@@ -63,19 +113,61 @@ const detailsHref = computed(
            height and width read as a mismatch when their words are not the same
            size. Both now take `display-btn`, the site's standard button size;
            colour is what marks the primary. -->
+      <!-- Always drawn, and always first: it is the one thing every state can
+           offer, and Figma puts the grey above the gold. The second button is
+           what changes — see `action`. -->
       <NuxtLink
         :to="detailsHref"
+        :aria-label="named(FEATURED_EVENT_COPY.detailsLabel)"
         class="rounded-btn font-display focus-visible:ring-gold flex h-18 items-center justify-center bg-[var(--color-surface-grey)] px-5 text-[length:var(--text-display-btn)] leading-10 text-black uppercase transition-colors hover:bg-[#c8c8c8] focus-visible:ring-2 focus-visible:outline-none"
       >
         {{ FEATURED_EVENT_COPY.details }}
       </NuxtLink>
 
       <NuxtLink
+        v-if="action === 'register'"
         :to="event.registerUrl ?? REGISTER_FALLBACK"
-        class="rounded-btn font-display focus-visible:ring-gold bg-gold flex h-18 items-center justify-center px-5 text-[length:var(--text-display-btn)] leading-10 text-black uppercase transition-colors hover:bg-[var(--color-gold-btn-light)] focus-visible:ring-2 focus-visible:outline-none"
+        :aria-label="named(FEATURED_EVENT_COPY.registerLabel)"
+        :class="GOLD_BUTTON"
       >
         {{ FEATURED_EVENT_COPY.register }}
       </NuxtLink>
+
+      <!-- A real dialog against a real endpoint, unlike the two controls on the
+           tournaments hero: the reminder list exists, so this one does the
+           thing rather than apologising for it. -->
+      <button
+        v-else-if="action === 'notify'"
+        type="button"
+        :aria-label="named(FEATURED_EVENT_COPY.notifyLabel)"
+        :class="GOLD_BUTTON"
+        @click="notifyOpen = true"
+      >
+        {{ FEATURED_EVENT_COPY.notify }}
+      </button>
+
+      <!-- No stream, and no field anywhere to hold its address. A link to
+           nowhere is a lie and a disabled button takes the design's shape off
+           the page, so the button stays a button and says why when pressed
+           (D28). `notice` is dark here because this band is the site's one
+           white ground. -->
+      <TournamentsUnavailableButton
+        v-else-if="action === 'watch'"
+        block
+        :notice="FEATURED_EVENT_COPY.watchLiveUnavailable"
+        notice-class="text-black/60"
+        :aria-label="named(FEATURED_EVENT_COPY.watchLiveLabel)"
+        :class="GOLD_BUTTON"
+      >
+        {{ FEATURED_EVENT_COPY.watchLive }}
+      </TournamentsUnavailableButton>
     </div>
+
+    <TournamentsNotifyDialog
+      v-if="action === 'notify'"
+      v-model="notifyOpen"
+      :tournament-id="event.id"
+      :event-name="event.name"
+    />
   </div>
 </template>
