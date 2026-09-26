@@ -30,18 +30,29 @@ withDefaults(
 <template>
   <!-- The hairline between rows (`174:11231`). On the item and skipped on the
        first, so a list of n rows carries n−1 rules and none at its head. -->
-  <li class="border-t border-[#353535] first:border-t-0">
+  <li
+    class="shrink-0 snap-start border-[#353535] lg:shrink lg:border-t lg:first:border-t-0"
+  >
     <NuxtLink
       :to="href"
       :aria-current="active ? current : undefined"
       :class="
         cn(
-          'font-display focus-visible:ring-gold flex items-center gap-3 py-6 text-[length:var(--text-display-caption)] leading-[1.25] transition-colors focus-visible:ring-2 focus-visible:outline-none',
-          active ? 'text-gold' : 'text-muted hover:text-white/80 pl-4',
+          'font-display focus-visible:ring-gold flex items-center gap-3 whitespace-nowrap border-b-2 py-4 text-[length:var(--text-display-caption)] leading-[1.25] transition-colors focus-visible:ring-2 focus-visible:outline-none lg:border-b-0 lg:py-6',
+          active
+            ? 'text-gold border-gold'
+            : 'text-muted hover:text-white/80 border-transparent lg:pl-4',
         )
       "
     >
-      <span v-if="active" aria-hidden class="bg-gold h-9 w-1 shrink-0" />
+      <!-- The margin bar is the WIDE layout's marker only. Side by side the
+           underline above says it, and a bar between two tabs would read as
+           belonging to neither. -->
+      <span
+        v-if="active"
+        aria-hidden
+        class="bg-gold hidden h-9 w-1 shrink-0 lg:block"
+      />
       <span><slot /></span>
     </NuxtLink>
   </li>

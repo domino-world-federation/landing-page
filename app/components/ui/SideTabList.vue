@@ -19,6 +19,50 @@ defineProps<{
    */
   heading?: string
 }>()
+
+/**
+ * ── Below `lg` the column is a ROW ──
+ *
+ * A stack of six Bebas rows costs most of a phone screen before the content it
+ * filters has started, and on the FAQ page it pushed the answers below the
+ * fold entirely. Wide screens keep the column the design draws; narrow ones get
+ * the horizontal strip every other filter on this site already uses.
+ *
+ * The marker moves with it. A 4px bar in the left margin only reads as "this
+ * one" while the rows are stacked; laid side by side it sits between two tabs
+ * and belongs to neither, so the row wears an underline instead — see
+ * `SideTab`.
+ */
+const list = useTemplateRef<HTMLOListElement>("list")
+const route = useRoute()
+
+/**
+ * Put the current tab at the strip's left edge.
+ *
+ * A reader arriving on a filtered URL — `/news?category=tournament`, a legal
+ * page scrolled to a clause — would otherwise land on a strip showing the FIRST
+ * tab, with the one they are actually on somewhere off the right edge and no
+ * sign it exists.
+ *
+ * Measured off bounding boxes rather than `offsetLeft`, which is relative to
+ * whichever ancestor happens to be positioned and is not this element on every
+ * page that uses the list. Only `scrollLeft` is touched, so the page itself
+ * never moves — `scrollIntoView` would have dragged the whole document.
+ */
+function bringActiveIntoView() {
+  const el = list.value
+  const active = el?.querySelector<HTMLElement>("[aria-current]")
+  if (!el || !active) return
+
+  el.scrollLeft += active.getBoundingClientRect().left - el.getBoundingClientRect().left
+}
+
+onMounted(bringActiveIntoView)
+
+// The active row is decided by the route on every one of these lists, so the
+// route changing is when it moves. `nextTick` because the new tab has to BE
+// marked before it can be scrolled to.
+watch(() => route.fullPath, () => nextTick(bringActiveIntoView))
 </script>
 
 <template>
@@ -29,7 +73,13 @@ defineProps<{
     >
       {{ heading }}
     </p>
-    <ol class="flex flex-col">
+    <!-- The scrollbar is hidden, not removed: the strip still scrolls by drag,
+         wheel and keyboard. Same treatment the news rail and the heritage
+         timeline give their own horizontal tracks. -->
+    <ol
+      ref="list"
+      class="flex snap-x gap-2 overflow-x-auto scroll-smooth [scrollbar-width:none] lg:flex-col lg:gap-0 lg:overflow-visible [&::-webkit-scrollbar]:hidden"
+    >
       <slot />
     </ol>
   </nav>

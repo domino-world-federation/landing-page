@@ -130,8 +130,17 @@ const socials = computed(() => socialLinks(settings.value))
            block is much taller than the link columns, and stretched they would
            spread their rows to match it. -->
       <div
-        class="grid gap-10 md:grid-cols-2 menu-lg:grid-cols-[1fr_1fr_22.92vw_1fr_1fr] menu-lg:items-start menu-lg:gap-[3.65vw]"
+        class="grid grid-cols-2 gap-x-6 gap-y-10 md:gap-10 menu-lg:grid-cols-[1fr_1fr_22.92vw_1fr_1fr] menu-lg:items-start menu-lg:gap-[3.65vw]"
       >
+        <!-- **Quick Links and Resources sit side by side from the narrowest
+             width up**, on the federation's request. Stacked, the two lists ran
+             to most of a phone screen of nothing but link text before the
+             address and the newsletter came into view. They are short labels in
+             two short columns, so they pair without wrapping.
+
+             Only these two. The centre block, the contact column and the social
+             column keep the whole row until `md` — an address split down a
+             155px column breaks in the middle of a street name. -->
         <nav
           v-for="group in FOOTER_GROUPS"
           :key="group.title"
@@ -159,11 +168,11 @@ const socials = computed(() => socialLinks(settings.value))
           </ul>
         </nav>
 
-        <!-- The centre block: emblem, mission, address. Spans both columns in
-             the two-up layout — it is the widest of the five and would leave a
-             link column stranded beside it. -->
+        <!-- The centre block: emblem, mission, address. Spans both columns at
+             every width below the five-up — it is the widest of the five and
+             would leave a link column stranded beside it. -->
         <div
-          class="flex flex-col items-center gap-6 text-center md:col-span-2 menu-lg:col-span-1"
+          class="col-span-2 flex flex-col items-center gap-6 text-center menu-lg:col-span-1"
         >
           <!-- 196px in Figma (`56:4885`), written as a fraction of the design
                width with a floor. Decorative: the federation's name is read out
@@ -193,7 +202,9 @@ const socials = computed(() => socialLinks(settings.value))
           </div>
         </div>
 
-        <div class="flex flex-col gap-4 menu-lg:items-end lg:gap-[1.88vw]">
+        <div
+          class="col-span-2 flex flex-col gap-4 md:col-span-1 menu-lg:items-end lg:gap-[1.88vw]"
+        >
           <h2
             class="font-sans text-base leading-6 font-medium text-[var(--color-dim)] menu-lg:text-right"
           >
@@ -252,7 +263,9 @@ const socials = computed(() => socialLinks(settings.value))
           </div>
         </div>
 
-        <div class="flex flex-col gap-4 menu-lg:items-end lg:gap-[1.88vw]">
+        <div
+          class="col-span-2 flex flex-col gap-4 md:col-span-1 menu-lg:items-end lg:gap-[1.88vw]"
+        >
           <h2
             class="font-sans text-base leading-6 font-medium text-[var(--color-dim)] menu-lg:text-right"
           >
