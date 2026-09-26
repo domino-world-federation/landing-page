@@ -19,6 +19,61 @@ import type { BoardMember } from "~/lib/api/types"
  * with a portrait of their own, and the carousel draws however many it is given.
  */
 
+/**
+ * The Executive Committee as About now prints it — **names and offices, no
+ * portraits.**
+ *
+ * The federation asked for the faces to come off this page (2026-09-26), and
+ * that request happens to close a defect recorded below: one of the four
+ * portraits still in `BOARD_MEMBERS` is a stock photograph of a real, widely
+ * recognisable public figure, captioned here as a fictional vice-president.
+ * Nothing on About carries a face any more.
+ *
+ * `BOARD_MEMBERS` is NOT deleted, and that is deliberate — it is re-exported as
+ * `MOCK_BOARD_MEMBERS` and still feeds the carousel on `/tournaments` through
+ * `getBoardMembers`. Removing it here would empty a second page that nobody
+ * asked to change. The licensing note therefore still stands for that page.
+ *
+ * Copy rather than a feed, for the same reason the old array was: there is no
+ * `/board-members` data behind the endpoint yet. These are real people in real
+ * offices, so they belong in the CMS the day it can hold them — the TODO below
+ * covers both.
+ */
+export const EXECUTIVE_COMMITTEE = {
+  intro:
+    "The organisation is led by an experienced and internationally represented Executive Committee, bringing together leaders from across the global sports community.",
+
+  /** The named offices, in the order the federation listed them. */
+  officers: [
+    { role: "President", name: "Jacqueline Wong" },
+    { role: "General Secretary", name: "Piotre Klima" },
+    { role: "Vice President", name: "Raja Sapta Oktohari" },
+    { role: "Treasurer", name: "Umar Faheem" },
+    { role: "Athlete Chair", name: "Shannon Damsteegt" },
+  ],
+
+  /**
+   * The members who sit on the committee without a named office. One heading
+   * over a list rather than five rows repeating the same title, which is how
+   * the federation wrote it and how it reads.
+   */
+  membersLabel: "Executive Committee Members",
+  members: [
+    "Daria Ratoblyska",
+    "Li Ming",
+    "Daniel Loy",
+    "Elena Morales Rodríguez",
+    "Nosimo Kekan",
+  ],
+
+  /**
+   * The full stop is ours. The sentence arrived without one, and a paragraph
+   * that stops mid-air reads as truncated rather than as a style.
+   */
+  closing:
+    "Together, the Executive Committee will support the organisation’s strategic direction, strengthen international cooperation and contribute to the continued development and promotion of its activities worldwide.",
+} as const
+
 export const BOARDS_COPY = {
   heading: "Executive Boards",
   /** The strip has no visible label in the design, so it needs one spoken. */

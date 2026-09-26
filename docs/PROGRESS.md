@@ -1924,3 +1924,18 @@ sekadar tidak berisi dokumen. 28 baris dipetakan ke kosakata baru (D79).
   separuh kiri dengan ukuran yang sama, teksnya pindah ke separuh kanan. Di bawah
   `lg` tetap tumpukan biasa. Diperiksa lewat screenshot di 1600px.
 
+- **Halaman About tidak lagi memuat foto wajah orang** — permintaan tim DWF
+  (2026-09-26), dua tempat. (1) Pita foto di bawah header dicabut beserta
+  komposisi scroll tiga layarnya: pita itu potret formal para ofisial, dan yang
+  mengelilinginya — pembungkus `300dvh`, tiga penanda snap, panel putih yang
+  memanjat menutupinya — dibangun khusus untuk foto itu. Bingkai `sticky` tanpa
+  isi cuma tiga layar kosong yang harus dilewati, jadi semuanya ikut keluar dan
+  `AboutOverview` langsung menyusul header. Asetnya dihapus, begitu juga
+  `ABOUT_HEADER_ALT` yang satu-satunya kuncinya menjelaskan foto itu. (2)
+  Carousel Executive Boards diganti daftar nama: naskah pembuka, lima jabatan
+  (`<dl>`, jabatan sebagai `<dt>`), lima anggota komite di bawah satu judul, dan
+  naskah penutup. Isinya dari tim DWF dan menggantikan empat nama fiktif desain —
+  termasuk potret yang dicatat bermasalah lisensi karena memakai foto tokoh publik
+  nyata sebagai wakil presiden fiktif. **`AboutBoardCarousel` dan `AboutBoardCard`
+  TIDAK dihapus**: `/tournaments` masih menggambar strip pimpinannya sendiri dengan
+  keduanya, dari API — dan catatan lisensi itu masih berlaku untuk halaman itu.

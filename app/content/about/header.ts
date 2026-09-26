@@ -18,12 +18,3 @@ export const ABOUT_HEADER_COPY = {
   intro:
     "The Domino World Federation (DWF) stands as the definitive international governing body for the sport of dominoes. Established to standardize competitive play and foster global community, we represent over 80 national member associations across five continents.",
 } as const
-
-export const ABOUT_HEADER_ALT = {
-  /**
-   * The full-bleed band below the header (`79:616`). Not decorative: the
-   * heading claims a global authority and the photograph is the people who
-   * hold it — the same relationship S4's building has to its headline.
-   */
-  band: "The federation's officials in formal dress, arranged in two rows against a plain grey backdrop",
-} as const
