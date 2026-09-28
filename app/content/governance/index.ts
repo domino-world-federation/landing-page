@@ -11,11 +11,9 @@ export const GOVERNANCE_COPY = {
    *  sweeps each line on its own, so the break has to be stated. */
   headerTitle: ["Transparency", "& Integrity"],
   /** `613:24835` — the line above the intro, at the title's baseline. */
-  headerEyebrow: "Institutional Framework",
+  headerEyebrow: "Our Approach",
   headerIntro:
     "The Domino World Federation (DWF) operates under a rigorous framework of accountability, ensuring the sport's global expansion is managed with the highest ethical standards.",
-  /** Figma types "Instituional Framework". The spelling is a typo of the kind
-   *  D40 fixes — the word is "Institutional". */
   bandAlt:
     "Delegates seated in the federation's general assembly hall during a session",
 

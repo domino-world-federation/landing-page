@@ -7,10 +7,9 @@
  * the copy swapped, down to the same photograph and the same bite out of its
  * left edge.
  *
- * **Two typos corrected from the design** (D40): `762:1329` reads "Respect fot
- * opponents" and `762:1333` "colusion". Both are slips in a Figma text layer
- * rather than house style — a federation does not publish its own code of ethics
- * misspelt — so they are set right here and recorded rather than reproduced.
+ * The copy is the federation's revision of `762:1320` ("Our Standards of
+ * Conduct"): each clause now has a name after its number, and the bodies are the
+ * federation's own wording rather than the design's.
  *
  * TODO(design): `762:1320` draws ONE photograph for the whole section — and it
  * is the pillars frame's own, since this frame is a copy of it. The repo owner
@@ -31,6 +30,8 @@ export type EthicsClause = {
   id: string
   /** `01`, `02`, `03` — Bebas 72/64 where the pillars frame puts its title. */
   number: string
+  /** Set after the number on the same line: "01 — Respect Others". */
+  title: string
   body: string
   /** The photograph that stands beside this clause while it is being read. */
   imageUrl: string
@@ -41,23 +42,26 @@ export const ETHICS_CLAUSES: readonly EthicsClause[] = [
   {
     id: "respect",
     number: "01",
-    body: "Respect for opponents, officials, and the historical traditions of dominoes.",
+    title: "Respect Others",
+    body: "Treat players, opponents, coaches, officials, and everyone involved in dominoes with fairness and respect.",
     imageUrl: "/assets/global/gallery-exhibition-match.webp",
     imageAlt:
       "Two players facing each other across a match table, tiles laid out between them",
   },
   {
-    id: "collusion",
+    id: "fair-competition",
     number: "02",
-    body: "Total prohibition of collusion, signaling, or non-competitive behavior.",
+    title: "Protect Fair Competition",
+    body: "Compete honestly and reject cheating, corruption, and match manipulation.",
     imageUrl: "/assets/global/gallery-match-broadcast.webp",
     imageAlt:
       "A match being broadcast from the hall floor, camera and monitors trained on the table",
   },
   {
-    id: "reporting",
+    id: "speak-up",
     number: "03",
-    body: "Obligation to report any known integrity breaches through official channels.",
+    title: "Speak Up",
+    body: "Raise concerns when something threatens the fairness or safety of the game.",
     imageUrl: "/assets/global/gallery-playing-hall.webp",
     imageAlt:
       "A tournament hall seen down its rows of tables, officials standing between them",

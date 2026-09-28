@@ -68,13 +68,13 @@ const dim = computed(() =>
     <!-- Bebas 72/64 (`762:1328`) — a number set tighter than its own font size,
          which is the step the pillars' titles take and the same token.
 
-         It is the clause's heading: there is no other name for "01", and a
-         reader tabbing by heading should find three of them. -->
+         It is the clause's heading — number and name, "01 — Respect Others" —
+         and a reader tabbing by heading should find three of them. -->
     <component
       :is="numberTag"
       class="font-display text-[length:var(--text-display-pillar)] leading-[0.89] text-white"
     >
-      {{ clause.number }}
+      {{ clause.number }} — {{ clause.title }}
     </component>
 
     <!-- Inter 36/56 and a 40px gap above it — the frame's own `gap: 40`. -->

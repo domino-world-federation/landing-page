@@ -11,9 +11,9 @@ export const INTEGRITY_COPY = {
   /** `601:17847`, one entry per line — `SharpeningHeadline` sweeps each line on
    *  its own, so the break has to be stated rather than left to the column. */
   headerTitle: ["A Fair Game", "for All"],
-  headerEyebrow: "Zero Tolerance Policy",
+  headerEyebrow: "Integrity Is Everyone’s Responsibility",
   headerIntro:
-    "The Domino World Federation maintains the highest standards of competitive integrity, ensuring every match is decided solely by skill, strategy, and the fall of the tiles.",
+    "Every player, coach, official, volunteer, and federation has a part in protecting fair competition. Together, we can uphold respect, honesty, and trust throughout dominoes.",
   bandAlt:
     "A tournament hall mid-match, players seated across long rows of tables under overhead lighting",
 
@@ -24,13 +24,13 @@ export const INTEGRITY_COPY = {
    * — lives in `./ethics`, because it is a list the column iterates rather than
    * a heading the section states once.
    */
-  ethicsHeading: "Code of Ethics",
+  ethicsHeading: "Our Standards of Conduct",
 
   technical: {
-    heading: "Technical Overview",
+    heading: "Protecting the Game",
     intro:
-      'Our proprietary "Tile-Trace" engine monitors pattern anomalies in real-time across all DWF-sanctioned digital platforms.',
-    label: "How the integrity engine works",
+      "Integrity depends on the actions of everyone involved in dominoes. These commitments help protect participants and the credibility of competition.",
+    label: "Commitments that protect the game",
   },
 
   flow: {
@@ -106,60 +106,54 @@ export const INTEGRITY_COPY = {
 /** `601:17856` — the four principles, 2 × 2 in the design. */
 export const INTEGRITY_PRINCIPLES = [
   {
-    id: "legality",
-    label: "Legality",
-    detail:
-      "Absolute adherence to international sporting laws and regional regulations governing table games.",
-  },
-  {
-    // Figma types "TRANSPARENCT". A typo of the kind D40 fixes.
-    id: "transparency",
-    label: "Transparency",
-    detail:
-      "Full disclosure of tournament software, shuffling algorithms, and adjudication processes.",
+    id: "integrity",
+    label: "Integrity",
+    detail: "Compete honestly and act in ways that protect trust in the game.",
   },
   {
     id: "fair-play",
     label: "Fair Play",
-    detail:
-      "Providing equal opportunity for all members regardless of technical infrastructure or geography.",
+    detail: "Reject cheating, corruption, and match manipulation.",
   },
   {
-    id: "anti-cheating",
-    label: "Anti Cheating",
+    id: "respect",
+    label: "Respect",
+    detail: "Treat opponents and everyone involved in dominoes with dignity.",
+  },
+  {
+    id: "safe-sport",
+    label: "Safe Sport",
     detail:
-      "Rigorous protection against external interference and internal data manipulation.",
+      "Help create an environment free from abuse, harassment, discrimination, and exploitation.",
   },
 ] as const
 
-/** `601:17895` — what the engine actually does. */
+/** `601:17895` — the commitments that protect the game. */
 export const INTEGRITY_MEASURES = [
   {
-    id: "heuristic",
-    title: "Heuristic Analysis",
-    detail:
-      "Identifying statistical deviations from expected probability curves in player decision-making.",
+    id: "fair-competition",
+    title: "Fair Competition",
+    detail: "Compete honestly and reject cheating or match manipulation.",
     iconUrl: "/assets/integrity/icon-tech-heuristic.svg",
   },
   {
-    id: "metadata",
-    title: "Metadata Fingerprinting",
-    detail:
-      "Cross-referencing device patterns and latency markers to prevent unauthorized multi-accounting.",
+    id: "information",
+    title: "Responsible Information Use",
+    detail: "Respect confidential information and use it responsibly.",
     iconUrl: "/assets/integrity/icon-tech-metadata.svg",
   },
   {
-    id: "rng",
-    title: "RNG Validation",
+    id: "safe-participation",
+    title: "Safe Participation",
     detail:
-      "Provably fair cryptographic seeds used for every shuffle, verifiable by participants post-match.",
+      "Help protect participants from abuse, harassment, and discrimination.",
     iconUrl: "/assets/integrity/icon-tech-rng.svg",
   },
   {
-    id: "signal",
-    title: "Signal Blocking",
+    id: "anti-doping",
+    title: "Anti-Doping Commitment",
     detail:
-      "Physical protocols for in-person tournaments including electronic interference measures.",
+      "Follow the World Anti-Doping Code as DWF works toward full WADA compliance.",
     iconUrl: "/assets/integrity/icon-tech-signal.svg",
   },
 ] as const

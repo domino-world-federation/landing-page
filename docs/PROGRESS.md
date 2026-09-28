@@ -1939,3 +1939,14 @@ sekadar tidak berisi dokumen. 28 baris dipetakan ke kosakata baru (D79).
   nyata sebagai wakil presiden fiktif. **`AboutBoardCarousel` dan `AboutBoardCard`
   TIDAK dihapus**: `/tournaments` masih menggambar strip pimpinannya sendiri dengan
   keduanya, dari API — dan catatan lisensi itu masih berlaku untuk halaman itu.
+
+- **Naskah halaman Integrity direvisi tim DWF** (2026-09-28). Header: eyebrow
+  "Integrity Is Everyone's Responsibility" dan intro baru. Core Principles jadi
+  Integrity / Fair Play / Respect / Safe Sport. Code of Ethics jadi "Our Standards
+  of Conduct", dan tiap klausul kini bernama setelah nomornya ("01 — Respect
+  Others") — field `title` baru di `EthicsClause`. Technical Overview jadi
+  "Protecting the Game" dengan empat komitmen baru; naskah soal mesin
+  "Tile-Trace" dan langkah teknisnya hilang seluruhnya. **Ikon keempat kartu itu
+  belum diganti** — masih ikon heuristik/metadata/RNG/sinyal lama, menunggu aset
+  dari desain. Butir "Institutional Framework → Our Approach" diterapkan di
+  eyebrow header Governance — satu-satunya tempat teks itu ada.
