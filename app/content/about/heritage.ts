@@ -16,8 +16,8 @@
 import type { HeritageMilestone } from "~/lib/api/types"
 
 export const HERITAGE_COPY = {
-  eyebrow: "Our Heritage",
-  heading: "Decades of excellence",
+  eyebrow: "Our Journey",
+  heading: "A Global Movement",
   /** Screen-reader name for the strip; the design has no visible label for it.
    *  It doubles as the name of the scrollable region, so it has to say what
    *  moves rather than merely what it contains. */

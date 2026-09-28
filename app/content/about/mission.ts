@@ -14,32 +14,33 @@ export type MissionCardCopy = {
 export const MISSION_COPY = {
   eyebrow: "Our Mission",
   /**
-   * Two entries because Figma breaks the line itself (`107:2888`, at 100/108)
-   * rather than letting the 1920 column decide. Each entry is its own line.
+   * An array because the heading is drawn one line per entry — Figma broke the
+   * design's longer heading itself (`107:2888`, at 100/108). The revised
+   * heading fits on one.
    */
-  heading: ["Providing the platform", "for uncompromising competition"],
+  heading: ["More Than a Game"],
   intro:
-    "Our mission is to establish, regulate, and systematically promote competitive dominoes on a global scale.",
+    "Our mission is to help people and communities grow through dominoes by expanding opportunities to participate, learn, connect, and compete.",
 } as const
 
 export const MISSION_CARDS: readonly MissionCardCopy[] = [
   {
     id: "excellence",
     icon: "/assets/about/icon-mission-excellence.svg",
-    title: "Promote Excellence",
-    body: "Sanctioning elite world championships, formalizing global rankings, and recognizing historic master records.",
+    title: "Grow Participation",
+    body: "Make dominoes more accessible to people of different ages, backgrounds, and abilities.",
   },
   {
     id: "community",
     icon: "/assets/about/icon-mission-community.svg",
-    title: "Build Community",
-    body: "Encouraging inter-generational tournament formats that unify local clubs and preserve competitive heritage.",
+    title: "Strengthen Communities",
+    body: "Bring people together across cultures and generations through a shared love of the game.",
   },
   {
     id: "inclusion",
     icon: "/assets/about/icon-mission-inclusion.svg",
-    title: "Foster Inclusion",
-    body: "Delivering educational kits and resource packages directly to national associations to grow inclusive regional play.",
+    title: "Support Learning",
+    body: "Use dominoes to encourage strategic thinking, communication, resilience, and lifelong learning.",
   },
   {
     id: "integrity",
@@ -48,9 +49,7 @@ export const MISSION_CARDS: readonly MissionCardCopy[] = [
      * plate and the mark on it are separate layers — so it is exported whole.
      */
     icon: "/assets/about/icon-mission-integrity.svg",
-    title: "Ensure Integrity",
-    /** Figma reads "on all contents" (`107:2962`); "continents" is what the
-     *  sentence means, and the other three cards all speak geographically. */
-    body: "Enforcing clean, drug-free play, standardized rules, and unbiased technical commissions on all continents.",
+    title: "Protect the Game",
+    body: "Promote respect, integrity, and fair competition at every level of participation.",
   },
 ] as const

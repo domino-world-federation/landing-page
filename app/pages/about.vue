@@ -81,7 +81,6 @@ useHead({ htmlAttrs: { class: "snap-sections" } })
     <AboutMission />
     <AboutStructuralFrameworks />
     <AboutExecutiveBoards />
-    <AboutSubCommittees />
     <AboutHeadquarters />
   </main>
 </template>

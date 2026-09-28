@@ -13,7 +13,11 @@
  */
 
 export const FRAMEWORKS_COPY = {
-  heading: "Structural Frameworks",
+  heading: "Our Global Network",
+  /** Between the heading and the panel — the federation's revision
+   *  (2026-09-28); the design has nothing there. */
+  intro:
+    "DWF brings National Federations together across five continents around a shared commitment to participation, respect, and fair competition.",
   /**
    * Two entries because Figma breaks the line itself (`113:3663`), centred in
    * an 864px column. Each renders as its own line.

@@ -51,8 +51,18 @@ import { FRAMEWORKS_COPY } from "~/content/about/frameworks"
       </h2>
     </MotionReveal>
 
+    <!-- Set as Mission's intro is — Inter at the body-lg step, white, 1094 of
+         the design's 1920. -->
+    <MotionReveal :y="32" :delay="STAGGER" class="mt-6 lg:mt-9 lg:max-w-[1094px]">
+      <p
+        class="font-sans text-[length:var(--text-body-lg)] leading-[1.22] text-white"
+      >
+        {{ FRAMEWORKS_COPY.intro }}
+      </p>
+    </MotionReveal>
+
     <!-- 64px between the heading and the panel; 3.33vw is 64/1920. -->
-    <MotionReveal :y="48" :delay="STAGGER" class="mt-10 lg:mt-[3.33vw]">
+    <MotionReveal :y="48" :delay="STAGGER * 2" class="mt-10 lg:mt-[3.33vw]">
       <!-- 700 of 1760 is the design's ratio, held from `lg` up so the panel
            keeps its proportions with the window; below that it drops to a height
            the sentence fits rather than a shape nothing is in. -->

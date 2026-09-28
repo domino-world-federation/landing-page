@@ -6,15 +6,15 @@
 export const ABOUT_HEADER_COPY = {
   /**
    * One entry per line, the way `VISION_COPY.heading` and
-   * `FEATURE_HQ_COPY.headline` are written — the design breaks after
-   * "authority" and the break is not incidental here: the sharpening sweep runs
+   * `FEATURE_HQ_COPY.headline` are written — the break is not incidental here:
+   * the sharpening sweep runs
    * left-to-right along **each** line, so the lines have to be known rather
    * than left to whatever the column width happens to produce.
    *
    * A translation may of course want to break elsewhere, which is exactly why
    * this is an array and not a `<br>` buried in the markup (RULES §9).
    */
-  title: ["The global authority", "for dominoes."],
+  title: ["Connecting the World", "Through Dominoes"],
   intro:
-    "The Domino World Federation (DWF) stands as the definitive international governing body for the sport of dominoes. Established to standardize competitive play and foster global community, we represent over 80 national member associations across five continents.",
+    "The Domino World Federation (DWF) brings national federations together to support dominoes as a cultural, social, and competitive discipline. We work to protect the spirit of the game while helping it grow.",
 } as const

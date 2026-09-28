@@ -53,8 +53,8 @@ const cta = computed(() =>
 
     <!-- Bebas rather than the wireframe's 16px Inter caps. The wireframe types
          every heading at 16 because it is a wireframe; on this site a card title
-         at that size is a label. `--text-display-label` is 36, the step the
-         Sub-Committees cards take for the same job. -->
+         at that size is a label. `--text-display-label` is 36, the step About's
+         Sub-Committees cards took for the same job. -->
     <h3
       class="font-display text-[length:var(--text-display-label)] leading-[1.22] text-white uppercase"
     >

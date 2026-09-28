@@ -1977,3 +1977,16 @@ sekadar tidak berisi dokumen. 28 baris dipetakan ke kosakata baru (D79).
   dan `IntegrityReport::TYPES` — karena backend menolak nilai di luar daftarnya
   (422). Laporan lama tetap membawa jenis lamanya; filter di layar CMS
   menawarkan jenis lama itu selama masih ada barisnya.
+
+- **Halaman About direvisi tim DWF** (2026-09-28). Header, Overview, Heritage
+  (eyebrow + judul saja — kartu milestone tidak disentuh), Vision, dan Mission
+  memakai naskah baru. Structural Frameworks jadi "Our Global Network" dengan
+  paragraf baru di antara judul dan panel; butir "Domino Agenda 2030 / hapus
+  timeline 2026–2029" untuk section ini diabaikan atas keputusan pemilik repo —
+  tempelan dari revisi Governance, section ini tidak punya timeline. **Section
+  Sub-Committees dicabut** (`SubCommittees`, `CommitteeCard`,
+  `content/about/committees.ts`) karena komitenya sudah tampil di Executive
+  Boards; `getSubCommittees`, endpoint `/sub-committees`, dan layar
+  Sub-Committees di backoffice masih ada tetapi tidak lagi tampil di mana pun.
+  **Key Selling Point (Pillars) belum diubah** — permintaannya memuat naskah
+  Governance yang sama; menunggu teks yang benar.

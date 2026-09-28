@@ -1,10 +1,7 @@
 /**
  * Overview copy — Figma node `84:753`, kept out of JSX for i18n (RULES §9).
  *
- * One fix against the design: `79:625` reads "…fairness across a borders",
- * where "a" is a stray article left over from an edit. Corrected to "all
- * borders" — the sentence is otherwise ungrammatical, and shipping a typo the
- * federation would have to ask us to fix is not fidelity.
+ * The copy is the federation's revision (2026-09-28), not the design's.
  */
 
 export type OverviewPillar = {
@@ -15,18 +12,18 @@ export type OverviewPillar = {
 
 export const OVERVIEW_COPY = {
   eyebrow: "Overview",
-  heading: "Unifying the world piece by piece",
+  heading: "One World, One Game, One Global Family",
 } as const
 
 export const OVERVIEW_PILLARS: readonly OverviewPillar[] = [
   {
-    id: "standardization",
-    title: "Standardization",
-    body: "Defining the universal rules of engagement, from professional tournament formats to casual community play, ensuring fairness across all borders.",
+    id: "purpose",
+    title: "Our Purpose",
+    body: "To create opportunities for people to play, learn, compete, and connect through dominoes.",
   },
   {
-    id: "sanctioning",
-    title: "Sanctioning",
-    body: "The sole authority for recognizing world records, hosting World Championships, and ranking the elite practitioners of the game.",
+    id: "approach",
+    title: "Our Approach",
+    body: "We promote participation, inclusion, fair competition, and respect for the game and everyone who plays it.",
   },
 ] as const
