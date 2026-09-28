@@ -26,8 +26,12 @@ import { FORMATS, FORMATS_ALT } from "~/content/domino/formats"
  * grows as the page scrolls. A figure cannot both be standing on something and
  * be floating over it, so the parallax went.
  *
- * Below `lg` the panels stack and both figures are dropped. They are 40%-opacity
- * backdrops behind the copy; at phone widths that copy needs the whole panel.
+ * Below `lg` the panels stack and the figures stay, as on the desktop: 40%
+ * backdrops behind the copy, standing on each panel's floor. A stacked panel is
+ * narrow and tall, so there they keep the height fraction and take their width
+ * from the asset's own ratio — the desktop's width fraction would squash them.
+ * The singles figure moves to the panel's right edge, the doubles pair stays
+ * on the left, so each still stands on the side away from its copy.
  */
 const [singles, doubles] = FORMATS
 </script>
@@ -70,7 +74,7 @@ const [singles, doubles] = FORMATS
           <DominoFormatFigure
             src="/assets/domino/format-singles-silhouette.webp"
             :alt="FORMATS_ALT.singles"
-            class="left-[58.41%] h-[88.24%] w-[42.73%]"
+            class="right-[-6%] aspect-[376/600] h-[88.24%] lg:right-auto lg:left-[58.41%] lg:aspect-auto lg:w-[42.73%]"
           />
         </template>
       </DominoFormatPanel>
@@ -88,7 +92,7 @@ const [singles, doubles] = FORMATS
           <DominoFormatFigure
             src="/assets/domino/format-doubles-silhouette.webp"
             :alt="FORMATS_ALT.doubles"
-            class="left-[-2.84%] h-[88.24%] w-[46.02%]"
+            class="left-[-6%] aspect-[405/600] h-[88.24%] lg:left-[-2.84%] lg:aspect-auto lg:w-[46.02%]"
           />
         </template>
       </DominoFormatPanel>

@@ -166,14 +166,20 @@ const { data } = await useAsyncData("domino-regulations", async () => {
            rather than rows in a list. Each is a link to the file, so the
            accessible name says which document rather than leaving two identical
            "open" links. -->
-      <ul v-if="data.regulations.length > 0" class="flex flex-wrap gap-6">
+      <!-- Below `lg` one full-width button per row, and the button grows with
+           its title: a document title is data, and in a fixed 64px pill a long
+           one ran out of the box on a phone. -->
+      <ul
+        v-if="data.regulations.length > 0"
+        class="flex flex-col gap-4 lg:flex-row lg:flex-wrap lg:gap-6"
+      >
         <li v-for="doc in data.regulations" :key="doc.id">
           <a
             :href="doc.fileUrl"
             target="_blank"
             rel="noopener"
             :aria-label="`${REGULATIONS_COPY.openLabel.replace('%s', doc.title)} (${DOCUMENT_LINK_COPY.newTab})`"
-            class="rounded-btn font-display focus-visible:ring-gold flex h-16 items-center justify-center gap-6 bg-white/20 px-5 text-[length:var(--text-display-btn)] leading-10 text-white transition-colors hover:bg-white/30 focus-visible:ring-2 focus-visible:outline-none"
+            class="rounded-btn font-display focus-visible:ring-gold flex min-h-16 w-full items-center justify-between gap-4 bg-white/20 px-5 py-3 text-left text-[length:var(--text-display-btn)] leading-tight text-white transition-colors hover:bg-white/30 focus-visible:ring-2 focus-visible:outline-none lg:h-16 lg:w-auto lg:justify-center lg:gap-6 lg:py-0 lg:text-center lg:leading-10"
           >
             {{ doc.title }}
             <!-- A 24px inline SVG sized in CSS. The shared glyph points LEFT;
@@ -184,7 +190,7 @@ const { data } = await useAsyncData("domino-regulations", async () => {
               alt=""
               width="24"
               height="24"
-              class="size-6 rotate-135 invert"
+              class="size-6 shrink-0 rotate-135 invert"
             >
           </a>
         </li>

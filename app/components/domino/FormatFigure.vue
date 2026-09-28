@@ -20,11 +20,11 @@ const SETTLE = DURATION * 1.4
  * paragraph readable, so it belongs on the layer rather than being something the
  * image was baked with — the asset is a clean silhouette and stays reusable.
  *
- * `max-lg:hidden` rather than a conditional render — the markup is identical on
- * both sides of the breakpoint, so nothing here can disagree between server and
- * client (RULES §12). The `xs` step in `sizes` is a single pixel for the same
- * reason: a `display:none` image is still a candidate the browser may fetch, and
- * naming a one-pixel width is how it is told not to bother below `lg`.
+ * **Drawn on phones too** (repo owner's call, 2026-09-28) — it used to be
+ * `max-lg:hidden`. A stacked panel is narrow and tall, so the width and height
+ * fractions the caller gives would squash the figure there; below `lg` the
+ * caller keeps the height and lets the figure's own aspect ratio set the width
+ * instead (see `FormatSplit`).
  */
 defineOptions({ inheritAttrs: false })
 
@@ -33,7 +33,7 @@ defineProps<{ src: string; alt: string }>()
 const attrs = useAttrs()
 const rootClass = computed(() =>
   cn(
-    "absolute bottom-0 opacity-40 max-lg:hidden",
+    "absolute bottom-0 opacity-40",
     attrs.class as string | undefined,
   ),
 )
@@ -54,7 +54,7 @@ const rootClass = computed(() =>
       to="0px"
       :duration="SETTLE"
       fill
-      :sizes="imageSizes({ xs: '1px', lg: '24vw' })"
+      :sizes="imageSizes({ xs: '80vw', lg: '24vw' })"
       image-class-name="object-fill"
     />
   </div>
