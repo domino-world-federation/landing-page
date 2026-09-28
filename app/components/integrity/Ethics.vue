@@ -126,9 +126,49 @@ const fade = computed(() => ({ duration: DURATION, ease: EASE }))
          floored at `--nav-clearance`: this is where the scroll comes to rest, so
          its head lands under a navbar up to 112px tall and 3.125vw is only 60 at
          the design width. -->
+    <!-- **Below `lg`: the three clauses as three cards, each with its own
+         photograph** — the treatment About's pillars take on a phone, and for
+         the same reason: the stage is a desktop construction, a masked column
+         turning against a pinned picture, and squeezed into one column it is
+         the clauses as bare text with one photograph after them. The stage is
+         `hidden` there and this list from `lg`, so server and client render
+         the same markup. -->
+    <div class="flex flex-col gap-10 px-5 pt-16 pb-12 md:px-10 lg:hidden">
+      <MotionReveal :y="40">
+        <h2
+          class="font-display text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
+        >
+          {{ COPY.ethicsHeading }}
+        </h2>
+      </MotionReveal>
+
+      <ol class="flex list-none flex-col gap-14">
+        <li v-for="clause in ETHICS_CLAUSES" :key="clause.id">
+          <MotionReveal :y="32" class="flex flex-col">
+            <NuxtImg
+              :src="clause.imageUrl"
+              :alt="clause.imageAlt"
+              :sizes="imageSizes({ xs: '100vw' })"
+              class="aspect-[4/3] w-full rounded-[20px] object-cover"
+            />
+            <h3
+              class="font-display mt-6 text-[length:var(--text-display-pillar)] leading-[0.89] text-white uppercase"
+            >
+              {{ clause.number }} — {{ clause.title }}
+            </h3>
+            <p
+              class="font-sans mt-4 text-[length:var(--text-body-lg)] leading-[1.56] text-white/70"
+            >
+              {{ clause.body }}
+            </p>
+          </MotionReveal>
+        </li>
+      </ol>
+    </div>
+
     <div
       ref="stage"
-      class="flex flex-col gap-10 overflow-hidden px-5 pt-28 pb-[max(48px,3.125vw)] md:px-10 lg:sticky lg:top-0 lg:h-dvh lg:flex-row lg:items-stretch lg:justify-between lg:gap-16 lg:px-20 lg:pt-[max(var(--nav-clearance),3.125vw)]"
+      class="hidden flex-col gap-10 overflow-hidden px-5 pt-28 pb-[max(48px,3.125vw)] md:px-10 lg:sticky lg:top-0 lg:flex lg:h-dvh lg:flex-row lg:items-stretch lg:justify-between lg:gap-16 lg:px-20 lg:pt-[max(var(--nav-clearance),3.125vw)]"
     >
       <!-- **The heading rides in the left column, not above the row**, and that
            is what puts its cap line level with the top of the photograph. Figma

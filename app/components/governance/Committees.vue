@@ -23,7 +23,7 @@ const { data: committees } = await useAsyncData(
   <section
     v-if="committees.length > 0"
     aria-labelledby="committees-heading"
-    class="flex snap-screen flex-col justify-center gap-10 px-5 pt-28 pb-16 md:px-10 lg:gap-12 lg:px-20 lg:pt-[var(--nav-clearance)] lg:pb-[4.17vw]"
+    class="flex flex-col justify-center gap-10 px-5 pt-16 pb-16 lg:snap-screen md:px-10 lg:gap-12 lg:px-20 lg:pt-[var(--nav-clearance)] lg:pb-[4.17vw]"
   >
     <MotionReveal :y="40">
       <h2

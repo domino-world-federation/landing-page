@@ -31,7 +31,7 @@ const steps = INTEGRITY_FLOW.map((step) => ({
 <template>
   <section
     aria-labelledby="flow-heading"
-    class="flex snap-screen flex-col items-center justify-center gap-10 px-5 pt-28 pb-16 md:px-10 lg:gap-16 lg:px-20 lg:pt-[var(--nav-clearance)] lg:pb-[4.17vw]"
+    class="flex flex-col items-center justify-center gap-10 px-5 pt-16 pb-16 lg:snap-screen md:px-10 lg:gap-16 lg:px-20 lg:pt-[var(--nav-clearance)] lg:pb-[4.17vw]"
   >
     <div class="flex w-full max-w-[1760px] flex-col items-center gap-6 text-center lg:gap-9">
       <MotionReveal :y="40">

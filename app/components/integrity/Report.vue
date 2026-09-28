@@ -128,7 +128,7 @@ const FIELD =
 <template>
   <section
     aria-labelledby="report-heading"
-    class="flex snap-screen flex-col justify-center gap-10 px-5 pt-28 pb-16 md:px-10 lg:flex-row lg:items-center lg:justify-between lg:gap-16 lg:px-20 lg:pt-[var(--nav-clearance)] lg:pb-[3.13vw]"
+    class="flex flex-col justify-center gap-10 px-5 pt-16 pb-16 lg:snap-screen md:px-10 lg:flex-row lg:items-center lg:justify-between lg:gap-16 lg:px-20 lg:pt-[var(--nav-clearance)] lg:pb-[3.13vw]"
   >
     <div class="flex flex-col gap-6 lg:w-[23.5%] lg:shrink-0">
       <MotionReveal :y="40">

@@ -16,7 +16,7 @@ const COPY = INTEGRITY_COPY.technical
 <template>
   <section
     aria-labelledby="technical-heading"
-    class="flex snap-screen flex-col items-center justify-center gap-10 px-5 pt-28 pb-16 md:px-10 lg:gap-12 lg:px-20 lg:pt-[var(--nav-clearance)] lg:pb-[4.17vw]"
+    class="flex flex-col items-center justify-center gap-10 px-5 pt-16 pb-16 lg:snap-screen md:px-10 lg:gap-12 lg:px-20 lg:pt-[var(--nav-clearance)] lg:pb-[4.17vw]"
   >
     <div class="flex max-w-[1760px] flex-col items-center gap-6 text-center lg:gap-9">
       <MotionReveal :y="40">
@@ -40,23 +40,23 @@ const COPY = INTEGRITY_COPY.technical
          explanations run to different lengths. -->
     <ul
       :aria-label="COPY.label"
-      class="grid w-full auto-rows-fr list-none gap-5 sm:grid-cols-2 lg:grid-cols-4"
+      class="grid w-full auto-rows-fr list-none grid-cols-2 gap-3 md:gap-5 lg:grid-cols-4"
     >
       <li v-for="(measure, i) in INTEGRITY_MEASURES" :key="measure.id">
         <MotionReveal :y="24" :delay="i * 0.06" class="h-full [&>*]:h-full">
           <article
-            class="flex h-full flex-col justify-between gap-8 rounded-[var(--radius-card)] bg-[linear-gradient(180deg,rgba(255,255,255,0.12)_0%,rgba(255,255,255,0.04)_100%)] p-6"
+            class="flex h-full flex-col justify-between gap-6 rounded-[var(--radius-card)] bg-[linear-gradient(180deg,rgba(255,255,255,0.12)_0%,rgba(255,255,255,0.04)_100%)] p-4 md:gap-8 md:p-6"
           >
             <UiGoldTile :src="measure.iconUrl" />
 
-            <div class="flex flex-col gap-4">
+            <div class="flex flex-col gap-2 md:gap-4">
               <h3
-                class="font-sans text-[length:var(--text-heading-card)] leading-[1.22] font-semibold text-white"
+                class="font-sans text-base leading-[1.22] font-semibold text-white md:text-[length:var(--text-heading-card)]"
               >
                 {{ measure.title }}
               </h3>
               <p
-                class="font-sans text-[length:var(--text-body-sm)] leading-[1.5] text-white/60"
+                class="font-sans text-sm leading-[1.5] text-white/60 md:text-[length:var(--text-body-sm)]"
               >
                 {{ measure.detail }}
               </p>

@@ -15,7 +15,7 @@ const COPY = GOVERNANCE_COPY.strategy
 <template>
   <section
     aria-labelledby="strategy-heading"
-    class="flex snap-screen flex-col items-center justify-center px-5 pt-28 pb-16 text-center md:px-10 lg:px-20 lg:pt-[var(--nav-clearance)] lg:pb-[3.13vw]"
+    class="flex flex-col items-center justify-center px-5 pt-16 pb-16 lg:snap-screen text-center md:px-10 lg:px-20 lg:pt-[var(--nav-clearance)] lg:pb-[3.13vw]"
   >
     <div class="flex max-w-[1760px] flex-col items-center gap-6 lg:gap-9">
       <MotionReveal :y="40">

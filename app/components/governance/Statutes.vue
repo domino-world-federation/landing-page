@@ -31,7 +31,7 @@ const { data: documents } = await useAsyncData(
   <section
     v-if="documents.length > 0"
     aria-labelledby="statutes-heading"
-    class="bg-bg flex snap-screen flex-col justify-center px-5 pt-28 pb-16 md:px-10 lg:px-20 lg:pt-[var(--nav-clearance)] lg:pb-[5.73vw]"
+    class="bg-bg flex flex-col justify-center px-5 pt-16 pb-16 lg:snap-screen md:px-10 lg:px-20 lg:pt-[var(--nav-clearance)] lg:pb-[5.73vw]"
   >
     <div class="flex flex-col gap-10 lg:flex-row lg:items-center lg:gap-[8.33vw]">
       <div
