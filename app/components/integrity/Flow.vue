@@ -7,7 +7,7 @@ import { INTEGRITY_COPY, INTEGRITY_FLOW } from "~/content/integrity"
  *
  * What everyone involved does to keep the game fair, as four steps on a dotted
  * rail. The design has a heading only; the paragraph under it is the
- * federation's revision, set the way Technical sets its own.
+ * federation's revision, set the way Technical sets its own — centred, with the heading over it.
  *
  * The same block the members page's application process and governance's
  * strategic plan are, drawn the same way: the rule runs BETWEEN markers rather
@@ -33,7 +33,7 @@ const steps = INTEGRITY_FLOW.map((step) => ({
     aria-labelledby="flow-heading"
     class="flex snap-screen flex-col items-center justify-center gap-10 px-5 pt-28 pb-16 md:px-10 lg:gap-16 lg:px-20 lg:pt-[var(--nav-clearance)] lg:pb-[4.17vw]"
   >
-    <div class="flex w-full max-w-[1760px] flex-col gap-6 lg:gap-9">
+    <div class="flex w-full max-w-[1760px] flex-col items-center gap-6 text-center lg:gap-9">
       <MotionReveal :y="40">
         <h2
           id="flow-heading"
