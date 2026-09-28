@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { UseScrollOptions } from "motion-v"
+import { useMediaQuery } from "@vueuse/core"
 
 const ORIGINS = {
   top: "origin-top",
@@ -73,6 +74,16 @@ const props = withDefaults(
      * Negative flips the direction — the layer rises as the page scrolls down.
      */
     speed?: number
+    /**
+     * The travel below `lg`, when it should differ from `speed` — `0` holds
+     * the layer still on a phone. Unset, the phone gets `speed` as before.
+     *
+     * Phones get less scroll-linked movement than the desktop on purpose: the
+     * address bar resizes the viewport mid-scroll, mid-range hardware lags the
+     * finger, and on a narrow screen the depth between layers barely reads
+     * while its compositing cost does not shrink.
+     */
+    mobileSpeed?: number
     enter?: EnterProps
     /** The point `enter.scale` grows or shrinks towards. Defaults to centre. */
     origin?: keyof typeof ORIGINS
@@ -92,6 +103,12 @@ const passThrough = computed(() => {
 
 const root = useTemplateRef<HTMLDivElement>("root")
 const prefersReducedMotion = useReducedMotion()
+
+// `lg` and up. Read inside the transformer below, never in the template, for
+// the reason the reduced-motion preference is: it is `false` during SSR, and an
+// unscrolled page is at `0%` travel whichever speed applies, so the first
+// client render matches the server.
+const isDesktop = useMediaQuery("(min-width: 64rem)")
 
 // Whether the enclosing `EntranceGroup` is on screen. `true` when there is no
 // group, which is what keeps a standalone layer playing on mount as before.
@@ -116,10 +133,15 @@ const { scrollYProgress } = useScroll({
 // rather than as a fixed output range so the preference is re-read on every
 // frame instead of being frozen at setup; at an unscrolled page both resolve to
 // `0%`, so the first client render still matches the server exactly.
+function travel() {
+  if (prefersReducedMotion.value) return 0
+  if (!isDesktop.value && props.mobileSpeed !== undefined) return props.mobileSpeed
+  return props.speed
+}
+
 const y = useTransform(
   scrollYProgress,
-  (progress: number) =>
-    `${progress * (prefersReducedMotion.value ? 0 : props.speed)}%`,
+  (progress: number) => `${progress * travel()}%`,
 )
 
 // The layer still has to LAND on the entrance's end state — that is where the

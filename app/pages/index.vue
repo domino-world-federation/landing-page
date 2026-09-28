@@ -34,7 +34,13 @@ useSeoMeta({
 
 <template>
   <main class="relative z-10">
-    <HomeHero />
+    <HomeHero>
+      <!-- Below `lg` the card sits inside the hero; the band below takes over
+           from `lg`. See the slot's note in `Hero`. -->
+      <template #upcoming>
+        <HomeCountdown />
+      </template>
+    </HomeHero>
 
     <!-- S3 overlaps the hero in Figma (`y:768` of a 1080-tall frame) and, in
          the redraw, stops 20px SHORT of its foot — where it used to hang ~150px
@@ -81,7 +87,7 @@ useSeoMeta({
          snap point exactly while it is a band, and `snap-align-none` from
          `menu`, where it goes back to being part of S2. -->
     <div
-      class="relative z-40 flex snap-start snap-always justify-center px-5 py-12 lg:px-20 menu:h-0 menu:-translate-y-5 menu:items-end menu:snap-align-none menu:py-0"
+      class="relative z-40 hidden snap-start snap-always justify-center px-5 py-12 lg:flex lg:px-20 menu:h-0 menu:-translate-y-5 menu:items-end menu:snap-align-none menu:py-0"
     >
       <HomeCountdown />
     </div>

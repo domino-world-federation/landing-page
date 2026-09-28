@@ -192,11 +192,21 @@ const TILE_DELAY = HERO_RETREAT / 3
          room to rearm. Coming up from S3 the hero enters from the top of the
          viewport, so it is already 40% on screen well before it settles — the
          retreat plays into a filling frame rather than after it. -->
-    <MotionEntranceGroup :amount="0.4" class="absolute inset-0 z-10">
+    <!-- Below `lg` the stage is a fixed 640px at the top rather than the whole
+         section: the phone hero also holds the upcoming card and the mission
+         copy under its CTA, so its height depends on them, and layers placed
+         in percentages of THAT would drift every time the card's copy wrapped.
+         From `lg` it is the whole section again, as before. -->
+    <MotionEntranceGroup
+      :amount="0.4"
+      class="absolute inset-x-0 top-0 z-10 h-[640px] lg:bottom-0 lg:h-auto"
+    >
       <!-- Rocks are the heaviest layers, and were once dropped below md to spare
-           low-end phones the compositing. They are kept now because without them
-           the phone layout is not the same design — three moving layers either
-           way, which is the per-viewport ceiling (RULES §12).
+           low-end phones the compositing. They are kept because without them the
+           phone layout is not the same design — but below `lg` they hold still
+           on scroll (`mobile-speed="0"`) and only the tile keeps a little
+           travel: one moving layer on a phone, three on the desktop. Their
+           entrance plays either way; it is not scroll-linked.
 
            Upper-right on both, but far wider on a phone: a rock at Figma's 45%
            of a portrait box is a small chip floating in grey, where at 1920 the
@@ -205,11 +215,12 @@ const TILE_DELAY = HERO_RETREAT / 3
            exactly as the design's runs off the frame. -->
       <MotionParallaxLayer
         :speed="12"
+        :mobile-speed="0"
         :enter="{ scale: [1, 0.82], duration: HERO_RETREAT }"
         origin="topRight"
         anchor="top"
         decorative
-        class="absolute top-[7%] left-[42%] z-10 w-[70%] lg:top-0 lg:left-[47.6%] lg:w-[45.4%]"
+        class="absolute top-[10%] left-[40%] z-10 w-[80%] [--rock-blur:1.25px] lg:top-0 lg:left-[47.6%] lg:w-[45.4%] lg:[--rock-blur:4px]"
       >
         <!-- `priority` even though the rock is decorative: it is the biggest
              thing painted above the fold, so it is the LCP candidate. Being
@@ -224,7 +235,7 @@ const TILE_DELAY = HERO_RETREAT / 3
           :height="361"
           priority
           from="0px"
-          to="4px"
+          to="var(--rock-blur)"
           :duration="HERO_RETREAT"
         />
       </MotionParallaxLayer>
@@ -236,11 +247,12 @@ const TILE_DELAY = HERO_RETREAT / 3
            bleed off the left edge rather than sit inside a margin. -->
       <MotionParallaxLayer
         :speed="6"
+        :mobile-speed="0"
         :enter="{ scale: [1, 0.82], duration: HERO_RETREAT }"
         origin="bottomLeft"
         anchor="top"
         decorative
-        class="absolute top-[43%] -left-[16%] z-20 w-[78%] lg:top-[63.9%] lg:left-[8.4%] lg:w-[49.2%]"
+        class="absolute top-[56%] -left-[20%] z-20 w-[90%] [--rock-blur:2px] lg:top-[63.9%] lg:left-[8.4%] lg:w-[49.2%] lg:[--rock-blur:6.5px]"
       >
         <!-- Same reasoning as the upper rock — which of the two is the LCP
              element depends on the viewport. -->
@@ -251,7 +263,7 @@ const TILE_DELAY = HERO_RETREAT / 3
           :height="403"
           priority
           from="0px"
-          to="6.5px"
+          to="var(--rock-blur)"
           :duration="HERO_RETREAT"
         />
       </MotionParallaxLayer>
@@ -260,12 +272,11 @@ const TILE_DELAY = HERO_RETREAT / 3
            box (`objectFit: cover`). Letting the native 1882 × 2267 ratio decide
            would make the tile a tenth taller than the design.
 
-           The phone numbers are chosen against the headline, which wraps to two
-           lines there where the design has one: the tile is held to 30% of the
-           viewport — the share it takes at 1920 — and its bottom edge stops
-           inside the first line, so it crosses "WITHOUT" and leaves the second
-           line completely clear. Measured per line with
-           `Range.getClientRects()`: 46–50% of line one, 0% of line two.
+           On a phone the tile is set the way the design sets it at 1920 —
+           large, centred, and standing IN FRONT of the headline, which is the
+           composition — rather than as a small chip above the words. It was
+           the chip until 2026-09-28, and the phone hero read as a different
+           page from the desktop one.
 
            Comes in while the rocks are still retreating — it starts around a
            third of the way into their 1.6s and lands before they settle, so the
@@ -291,6 +302,7 @@ const TILE_DELAY = HERO_RETREAT / 3
            nothing else in this layer needs touching. -->
       <MotionParallaxLayer
         :speed="24"
+        :mobile-speed="8"
         :enter="{
           opacity: [0, 1],
           scale: [0.70, 0.80],
@@ -299,7 +311,7 @@ const TILE_DELAY = HERO_RETREAT / 3
           delay: TILE_DELAY,
         }"
         anchor="top"
-        class="absolute top-[16%] left-[43%] z-30 h-[15%] w-[30%] lg:top-[16.3%] lg:left-[35.3%] lg:h-[58.9%] lg:w-[30.5%]"
+        class="absolute top-[20%] left-[22%] z-30 h-[42%] w-[56%] lg:top-[16.3%] lg:left-[35.3%] lg:h-[58.9%] lg:w-[30.5%]"
       >
         <!-- The PNG, not the SVG next to it: that SVG is the very same
              1882 × 2267 raster wrapped in base64, so it buys no sharpness — it
@@ -386,7 +398,7 @@ const TILE_DELAY = HERO_RETREAT / 3
          `inset-x-0` sizes to the type and `mx-auto` re-centres it. `px-0` goes
          with it, or the phone's gutter would put 20px of ramp at each end. -->
     <p
-      class="font-sans relative z-50 mt-auto pt-28 bg-linear-to-r from-white via-[var(--color-silver-mid)] to-white bg-clip-text px-5 text-center text-base font-semibold tracking-[0.24em] text-transparent uppercase lg:absolute lg:inset-x-0 lg:top-[35.3%] lg:mx-auto lg:mt-0 lg:w-fit lg:px-0 lg:pt-0 lg:text-2xl"
+      class="font-sans relative z-50 pt-[252px] bg-linear-to-r from-white via-[var(--color-silver-mid)] to-white bg-clip-text px-5 text-center text-base font-semibold tracking-[0.24em] text-transparent uppercase lg:absolute lg:inset-x-0 lg:top-[35.3%] lg:mx-auto lg:mt-0 lg:w-fit lg:px-0 lg:pt-0 lg:text-2xl"
     >
       {{ copy.tagline }}
     </p>
@@ -431,7 +443,7 @@ const TILE_DELAY = HERO_RETREAT / 3
          design width still renders the design's numbers exactly, and every
          narrower one keeps the same proportion instead of the same pixels. -->
     <div
-      class="relative z-60 mt-auto flex flex-col gap-10 px-5 pt-12 pb-10 md:px-10 lg:gap-[4.32vw] lg:px-20 lg:pt-0 lg:pb-[7.66vw]"
+      class="relative z-60 flex flex-col gap-10 px-5 pt-[168px] pb-10 md:px-10 lg:mt-auto lg:gap-[4.32vw] lg:px-20 lg:pt-0 lg:pb-[7.66vw]"
     >
       <!-- 340 × 72 in Figma (`31:1117`); the height is set by the component.
            `max-w-70` on a phone, not the full 340: at 390px wide the design's
@@ -446,6 +458,14 @@ const TILE_DELAY = HERO_RETREAT / 3
       >
         {{ copy.primaryCta }}
       </UiGoldCta>
+
+      <!-- The upcoming card, on a phone only — inside the hero, under its CTA,
+           so the next event is on the first screen. From `lg` the page draws
+           it in its own band (and from `menu` pulls it up over this section),
+           so this slot is hidden there. -->
+      <div class="flex justify-center lg:hidden">
+        <slot name="upcoming" />
+      </div>
 
       <!-- Figma sets the two copy blocks against opposite edges. That reads as a
            pair only while they sit side by side; stacked on a phone, one

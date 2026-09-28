@@ -30,9 +30,17 @@ import { STATS_COPY } from "~/content/home/stats"
  * figure at a time in a slot, and reaching the last means scrolling a viewport
  * per figure — a reader on a screen reader would be walked through a visual
  * effect to be told four numbers. The `<dl>` here is the accessible one
- * — every stat once, in source order, visually hidden. `sr-only` rather than
- * `display:none`, so it is in the accessibility tree, and it is `absolute`, so
- * it adds nothing to the track's measurements.
+ * — every stat once, in source order. From `lg` it is visually hidden
+ * (`sr-only`, so it stays in the accessibility tree, and `absolute`, so it adds
+ * nothing to the track's measurements).
+ *
+ * **Below `lg` the `<dl>` is the section and the wheel is not drawn.** A track
+ * a screen tall per figure is a pinned stage the reader has to scroll through
+ * four times to get past, and on a phone — where the address bar resizes the
+ * screen mid-scroll and a flick carries momentum through the notches — it reads
+ * as the page sticking. Every figure at once, one row each, is the same content
+ * without the stage. Both are in the markup at every width and CSS picks, so
+ * there is no branch for hydration to disagree over.
  *
  * Figma has this frame at `y:2065` while S4 runs to `2277`, so on the canvas the
  * stats sit on the building's last 212px — its fade-to-background band. Pulling
@@ -66,13 +74,27 @@ const { data: stats } = await useAsyncData("home-stats", () => getFederationStat
       {{ STATS_COPY.heading }}
     </h2>
 
-    <dl class="sr-only">
-      <div v-for="stat in stats" :key="stat.id">
-        <dt>{{ stat.label }}</dt>
-        <dd>{{ stat.value }}</dd>
+    <!-- The wheel's focused row, still: label left, the gold figure right, a
+         faint rule between rows standing in for the wheel's frame. -->
+    <dl class="flex flex-col px-5 py-16 md:px-10 lg:sr-only">
+      <div
+        v-for="stat in stats"
+        :key="stat.id"
+        class="flex items-center justify-between gap-6 border-b border-white/10 py-6 last:border-b-0"
+      >
+        <dt
+          class="font-sans text-[length:var(--text-stat-label)] leading-tight font-medium text-white"
+        >
+          {{ stat.label }}
+        </dt>
+        <dd
+          class="font-display text-gold-gradient text-[length:var(--text-display-stat)] leading-none"
+        >
+          {{ stat.value }}
+        </dd>
       </div>
     </dl>
 
-    <HomeStatsWheel :stats="stats" />
+    <HomeStatsWheel :stats="stats" class="hidden lg:block" />
   </section>
 </template>

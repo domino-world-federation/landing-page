@@ -57,7 +57,12 @@ withDefaults(
          `priority`: each of these sits immediately below the fold and is the
          largest image on its page, so it is what LCP lands on for anyone who
          scrolls at all. -->
-    <MotionParallaxLayer :speed="8" class="absolute inset-x-0 -inset-y-[6%]">
+    <!-- Half that on a phone (D80). -->
+    <MotionParallaxLayer
+      :speed="8"
+      :mobile-speed="4"
+      class="absolute inset-x-0 -inset-y-[6%]"
+    >
       <NuxtImg
         :src="src"
         :alt="alt"

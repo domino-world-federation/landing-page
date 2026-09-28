@@ -2,6 +2,11 @@
 import { getFeaturedEvent } from "~/lib/api/client"
 import { COUNTDOWN_COPY } from "~/content/home/countdown"
 
+// Per instance: Home mounts this card twice — inside the hero below `lg`, in
+// its own band from `lg` — and CSS hides one. A fixed id would be duplicated in
+// the DOM, and `aria-labelledby` would resolve to whichever came first.
+const headingId = useId()
+
 /**
  * S3 — Figma node `24:1025`, redrawn. The upcoming-match card.
  *
@@ -51,7 +56,7 @@ const { data: event } = await useAsyncData(
 <template>
   <section
     v-if="event"
-    aria-labelledby="countdown-heading"
+    :aria-labelledby="headingId"
     class="countdown-stroke rounded-t-countdown relative flex w-full max-w-[498px] flex-col gap-4 bg-[image:var(--gradient-countdown-fill)] p-5 backdrop-blur-[4px]"
   >
     <div class="flex items-center gap-4">
@@ -75,7 +80,7 @@ const { data: event } = await useAsyncData(
              in a list of them, and "World Championship 2026" alone does not say
              what the card is. -->
         <h2
-          id="countdown-heading"
+          :id="headingId"
           class="font-sans text-xl leading-6 font-semibold tracking-[0.12em] text-white uppercase"
         >
           <span class="sr-only">{{ COUNTDOWN_COPY.label }}: </span>

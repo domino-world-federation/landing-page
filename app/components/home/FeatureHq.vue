@@ -79,7 +79,12 @@ const SETTLE = DURATION * 1.5
          The scale entrance rides INSIDE the parallax wrapper on purpose — the
          outer element owns `y` from the scroll position, the inner one owns a
          one-off `scale`, so the two never write to the same transform. -->
-    <MotionParallaxLayer :speed="8" decorative class="absolute inset-0 -z-10">
+    <MotionParallaxLayer
+      :speed="8"
+      :mobile-speed="4"
+      decorative
+      class="absolute inset-0 -z-10"
+    >
       <!-- Pushed in past its resting frame, then settling back — the building
            comes to rest rather than simply being there. It never goes below `1`,
            so no edge of the baked-in fade is ever pulled inside the frame
