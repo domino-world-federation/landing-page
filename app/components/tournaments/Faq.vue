@@ -41,7 +41,7 @@ const { data: faqs } = await useAsyncData("tournament-faq", () => getFaqs("tourn
 <template>
   <section
     aria-labelledby="tournament-faq-heading"
-    class="px-5 pt-28 pb-16 md:px-10 lg:px-20 lg:pt-[max(var(--nav-clearance),4.4792vw)] lg:pb-[4.4792vw]"
+    class="px-5 pt-16 pb-16 md:px-10 lg:px-20 lg:pt-[max(var(--nav-clearance),4.4792vw)] lg:pb-[4.4792vw]"
   >
     <UiFaqPanel
       :items="faqs"

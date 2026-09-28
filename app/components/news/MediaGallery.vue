@@ -131,8 +131,9 @@ function openViewer(item: GalleryItem) {
         // A snap stop buys its own clearance, the way the rail above it does.
         // The heading is 76px of Bebas sitting at the top of the section, and
         // the navbar is fixed 112px of it — without this it opens underneath the
-        // bar.
-        snap && 'snap-screen justify-center pt-28 lg:pt-[var(--nav-clearance)]',
+        // bar. From `lg` only: a phone does not snap, so there the section is
+        // as tall as its content and the navbar clearance is just a gap.
+        snap && 'lg:snap-screen lg:justify-center lg:pt-[var(--nav-clearance)]',
       )
     "
   >

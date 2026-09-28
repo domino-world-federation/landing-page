@@ -14,9 +14,11 @@ import { OLYMPICS_COPY } from "~/content/tournaments/olympics"
  * than reading five loose words. The row backgrounds are on the cells so a row
  * still reads as one band once the columns stack.
  *
- * Below `lg` the table scrolls sideways inside its own box rather than
- * collapsing into cards: five short columns stay legible at 720px, and a
- * horizontal scroller keeps the header attached to its data.
+ * Below `lg` it is cards instead (repo owner's call, 2026-09-28). It used to
+ * scroll sideways inside its own box, which kept the header attached to its
+ * data but made a phone pan across 840px to read a single row. Both renderings
+ * are in the markup and CSS picks one, so nothing differs between server and
+ * client.
  *
  * The design sets the rows in DM Sans, which the site does not load — it ships
  * Inter and Bebas (DESIGN-TOKENS §1) — so they are Inter at the same size, the
@@ -60,7 +62,7 @@ const TD =
   <section
     v-if="results.length > 0"
     aria-labelledby="olympic-results-heading"
-    class="bg-bg flex snap-screen flex-col items-center justify-center gap-10 px-5 pt-28 pb-16 md:px-10 lg:gap-[2.5vw] lg:px-20 lg:pt-[var(--nav-clearance)] lg:pb-[3.125vw]"
+    class="bg-bg flex flex-col items-center justify-center gap-10 px-5 pt-16 pb-16 lg:snap-screen md:px-10 lg:gap-[2.5vw] lg:px-20 lg:pt-[var(--nav-clearance)] lg:pb-[3.125vw]"
   >
     <MotionReveal :y="24">
       <h2
@@ -71,9 +73,43 @@ const TD =
       </h2>
     </MotionReveal>
 
+    <!-- Below `lg`: one card per result. The table needed 840px and a phone
+         had to pan sideways through every row to read one; a card puts the
+         whole result in view, and the column names ride along as labels on
+         the two values that need them. -->
+    <ul class="flex w-full list-none flex-col gap-3 lg:hidden">
+      <li
+        v-for="result in shown"
+        :key="result.id"
+        class="flex flex-col gap-3 rounded-[var(--radius-glass)] bg-white/12 p-5"
+      >
+        <div class="flex items-center justify-between gap-4">
+          <span
+            class="font-display text-muted text-[length:var(--text-display-label)] leading-none"
+          >
+            {{ result.year }}
+          </span>
+          <span
+            class="font-sans rounded-btn bg-white/12 px-3 py-1 text-sm leading-6 text-white/80"
+          >
+            {{ result.category }}
+          </span>
+        </div>
+        <p class="font-sans text-lg leading-[1.4] font-semibold text-white">
+          {{ result.event }}
+        </p>
+        <dl class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm leading-6">
+          <dt class="font-sans text-white/50">{{ columns.winners }}</dt>
+          <dd class="font-sans text-white">{{ result.winners }}</dd>
+          <dt class="font-sans text-white/50">{{ columns.federation }}</dt>
+          <dd class="font-sans text-white">{{ result.federation }}</dd>
+        </dl>
+      </li>
+    </ul>
+
     <!-- The scroller, not the table, owns the overflow — a table that sets its
-         own `overflow` loses its layout algorithm. -->
-    <div class="w-full overflow-x-auto">
+         own `overflow` loses its layout algorithm. From `lg` only. -->
+    <div class="hidden w-full overflow-x-auto lg:block">
       <table
         class="w-full min-w-[840px] border-separate border-spacing-y-2 text-left"
       >

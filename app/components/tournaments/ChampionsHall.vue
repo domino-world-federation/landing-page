@@ -73,7 +73,7 @@ function openViewer(index: number) {
   <section
     v-if="champions.length > 0"
     aria-labelledby="champions-heading"
-    class="bg-bg flex snap-screen flex-col justify-center px-5 pt-28 pb-16 md:px-10 lg:px-20 lg:pt-[max(var(--nav-clearance),7.29vw)] lg:pb-[4.17vw]"
+    class="bg-bg flex flex-col justify-center px-5 pt-16 pb-16 lg:snap-screen md:px-10 lg:px-20 lg:pt-[max(var(--nav-clearance),7.29vw)] lg:pb-[4.17vw]"
   >
     <!-- The heading goes INSIDE the rail rather than above it, which is what
          puts it on the arrows' line: `CardRail` draws a header row and takes the
