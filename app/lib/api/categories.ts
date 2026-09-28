@@ -62,7 +62,6 @@ export const DOCUMENT_SECTION = {
   homeResources: "home.resources",
   dominoRulebook: "domino.rulebook",
   governanceStatutes: "governance.statutes",
-  governanceRepository: "governance.repository",
   developmentLibrary: "development.library",
   developmentYouth: "development.youth",
   tournamentRegulations: "tournaments.regulations",

@@ -9,11 +9,11 @@
 export const GOVERNANCE_COPY = {
   /** `613:24833`, one entry per line — `SharpeningHeadline` takes the array and
    *  sweeps each line on its own, so the break has to be stated. */
-  headerTitle: ["Transparency", "& Integrity"],
+  headerTitle: ["Governance", "& Integrity"],
   /** `613:24835` — the line above the intro, at the title's baseline. */
   headerEyebrow: "Our Approach",
   headerIntro:
-    "The Domino World Federation (DWF) operates under a rigorous framework of accountability, ensuring the sport's global expansion is managed with the highest ethical standards.",
+    "DWF is committed to transparent governance, ethical standards, gender equality, and athlete representation in leadership and decision-making.",
   bandAlt:
     "Delegates seated in the federation's general assembly hall during a session",
 
@@ -21,80 +21,30 @@ export const GOVERNANCE_COPY = {
   overview: {
     eyebrow: "Overview",
     heading: "Governance",
-    mandateLabel: "Mandate",
-    mandate:
-      "The DWF is a non-profit association headquartered in Lausanne, Switzerland, governed by Articles 60 et seq. of the Swiss Civil Code.",
-    missionLabel: "Mission",
-    mission:
-      "To promote, develop and govern the sport of dominoes globally while protecting its integrity through standardized rules and anti-doping protocols.",
+    roleLabel: "Our Role",
+    role:
+      "As the world governing federation for dominoes, DWF works to protect the spirit of the game while supporting its growth and encouraging participation worldwide.",
+    commitmentsLabel: "Our Commitments",
+    commitments:
+      "DWF promotes fair competition and inclusion, adheres to the World Anti-Doping Code, and recognises the jurisdiction of the Court of Arbitration for Sport.",
   },
 
-  committeesHeading: "Standing Committees",
-  /** Names the committee list for assistive tech. */
-  committeesLabel: "Standing committees of the federation",
+  committeesHeading: "Institutional Commitments",
+  /** Names the commitment list for assistive tech. */
+  committeesLabel: "Institutional commitments of the federation",
 
   statutes: {
-    heading: "Statutes & Constitution",
+    heading: "Governance Documents",
     intro:
-      "The fundamental legal documents that define the DWF's structure, powers, and procedures.",
+      "Access DWF’s statutes, meeting minutes, election records, resolutions, and other official documents that support transparent and accountable governance.",
   },
 
   strategy: {
-    heading: "Strategic Plan 2026 - 2029",
-    /** `613:25119`. Figma repeats the members page's "A standardized 4-step
-     *  pathway…" here, which is that page's sentence about joining the
-     *  federation and says nothing about a strategic plan. Pasted, like the four
-     *  identically-dated press releases and the Tokyo album's heading (D40), so
-     *  it is replaced with a line about what the plan actually is. */
+    heading: "Domino Agenda 2030 Strategic Plan",
     intro:
-      "Four years of work, set out year by year — from harmonizing the rules to standing for Olympic recognition.",
-    label: "Strategic plan milestones",
-  },
-
-  repository: {
-    eyebrow: "Library",
-    heading: "Governance Repository",
+      "Through its long-term Domino Agenda 2030 Strategic Plan, DWF is building a sustainable future for dominoes focused on youth empowerment, education, accessibility, digital innovation, cultural preservation, and international competitions that promote peace, solidarity, friendship, and unity.",
   },
 
   /** `%1` is the document title, `%2` its printed file description. */
   downloadLabel: "Download %s",
 } as const
-
-/**
- * The strategic plan's four years — `613:25133`.
- *
- * Copy rather than data: this is the federation stating its own plan in prose on
- * one page, not a record any other page reads or that a backend would serve. The
- * committees below it ARE data, because they are a list of standing bodies that
- * changes when the federation reorganizes.
- */
-export const STRATEGY_MILESTONES = [
-  {
-    id: "2026",
-    year: "2026",
-    title: "Foundation",
-    detail:
-      "Global digitization of tournament scoring systems and rules harmonization.",
-  },
-  {
-    id: "2027",
-    year: "2027",
-    title: "Inclusion",
-    detail:
-      "Launch of the 'Dominoes in Schools' global initiative and youth championship.",
-  },
-  {
-    id: "2028",
-    year: "2028",
-    title: "Expansion",
-    detail:
-      "Establishment of 5 Regional Development Centers across South America and Asia.",
-  },
-  {
-    id: "2029",
-    year: "2029",
-    title: "Recognition",
-    detail:
-      "Full Olympic recognized status and the inaugural Global Games of Dominoes.",
-  },
-] as const

@@ -1950,3 +1950,21 @@ sekadar tidak berisi dokumen. 28 baris dipetakan ke kosakata baru (D79).
   belum diganti** — masih ikon heuristik/metadata/RNG/sinyal lama, menunggu aset
   dari desain. Butir "Institutional Framework → Our Approach" diterapkan di
   eyebrow header Governance — satu-satunya tempat teks itu ada.
+
+- **Halaman Governance direvisi tim DWF** (2026-09-28). Header jadi "Governance
+  & Integrity" / "Our Approach" dengan intro baru; Overview jadi Our Role / Our
+  Commitments. Standing Committees jadi "Institutional Commitments" — tiga
+  kartunya masih record `StandingCommittee` dari backoffice, jadi mock dan
+  `FrontendContentSeeder` diperbarui, **tapi baris yang sudah ada di database
+  harus disunting di bagian Standing Committees (Komite Tetap) backoffice**; seeder mencocokkan
+  nama, jadi menjalankannya ulang menambah tiga baris baru di samping yang lama.
+  Statutes & Constitution jadi "Governance Documents" dan dokumennya 2 kolom × 3
+  baris (tata letak Repository dipinjam). **Governance Repository dicabut**
+  beserta raknya: `governance.repository` hilang dari `DOCUMENT_SECTION`, mock,
+  dan `config('dwf.document_sections')` di backend. Baris `document_placements`
+  lama untuk rak itu tidak dihapus — tidak ada yang membacanya. Strategic Plan
+  jadi "Domino Agenda 2030 Strategic Plan" tanpa rel tahun 2026–2029
+  (`STRATEGY_MILESTONES` dihapus). Shine halaman kini `1920/1699` — plan +
+  footer — karena Repository yang ikut ditutupinya sudah tidak ada. **Ikon kartu
+  "Equality & Representation" masih pinjaman** (ikon technical) sampai desain
+  menggambarnya.

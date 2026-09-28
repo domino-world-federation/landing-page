@@ -70,12 +70,12 @@ const BODY =
         class="flex flex-col gap-10 menu:grow-[1259] menu:basis-0 menu:flex-row menu:gap-[3.13vw]"
       >
         <div class="flex flex-1 flex-col gap-6 menu:gap-9">
-          <dt :class="LABEL">{{ COPY.mandateLabel }}</dt>
-          <dd :class="BODY">{{ COPY.mandate }}</dd>
+          <dt :class="LABEL">{{ COPY.roleLabel }}</dt>
+          <dd :class="BODY">{{ COPY.role }}</dd>
         </div>
         <div class="flex flex-1 flex-col gap-6 menu:gap-9">
-          <dt :class="LABEL">{{ COPY.missionLabel }}</dt>
-          <dd :class="BODY">{{ COPY.mission }}</dd>
+          <dt :class="LABEL">{{ COPY.commitmentsLabel }}</dt>
+          <dd :class="BODY">{{ COPY.commitments }}</dd>
         </div>
       </dl>
     </div>

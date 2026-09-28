@@ -637,7 +637,6 @@ export const MOCK_SECTIONS: Record<
   "home.resources": { category: null, max: 6 },
   "domino.rulebook": { category: "Rules & Regulations", max: 1 },
   "governance.statutes": { category: "Governance Documents", max: 6 },
-  "governance.repository": { category: "Governance Documents", max: 6 },
   "development.library": { category: "Development Resources", max: 6 },
   "development.youth": { category: "Development Resources", max: 1 },
   "tournaments.regulations": { category: "Rules & Regulations", max: 6 },
@@ -1890,45 +1889,36 @@ export const MOCK_MEMBERSHIP_STATS: FederationStat[] = [
  * fall back to that square until the federation supplies the artwork.
  */
 /**
- * The three standing committees `/governance` draws — `613:24908`.
+ * The three cards `/governance` draws under "Institutional Commitments" —
+ * `613:24908`. The record is still a standing committee (the backoffice's
+ * name for it); since the federation's revision (2026-09-28) each one names a
+ * commitment rather than a body.
  *
  * A different list from `MOCK_SUB_COMMITTEES`, which About prints: that is six
- * names with no remit, this is three bodies with what each is responsible for.
- * The design shows both on the same site, so they are two records rather than
- * one that some pages read half of.
+ * names with no remit, this is three headings with what each one covers.
+ *
+ * TODO(design): the glyphs are the old committees' — ethics still fits the
+ * first card, and the anti-doping one the third; "Equality & Representation"
+ * borrows the technical glyph until the design draws one.
  */
 export const MOCK_STANDING_COMMITTEES: StandingCommittee[] = [
   {
-    id: "technical",
-    name: "Technical rules",
-    remit: [
-      "International Rulebook Oversight",
-      "Equipment Standards",
-      "Tournament Sanctioning",
-    ],
+    id: "governance-ethics",
+    name: "Governance & Ethics",
+    remit: ["Transparent Governance", "High Ethical Standards"],
+    iconUrl: "/assets/governance/icon-committee-ethics.svg",
+  },
+  {
+    id: "equality",
+    name: "Equality & Representation",
+    remit: ["Gender Equality", "Athlete Representation"],
     iconUrl: "/assets/governance/icon-committee-technical.svg",
   },
   {
-    id: "medical",
-    name: "Medical & Anti-doping",
-    remit: [
-      "WADA Compliance",
-      // Figma types "Player Warfare Protocols". A doping committee's business
-      // is player WELFARE; "warfare" is a typo of the kind D40 fixes.
-      "Player Welfare Protocols",
-      "Mental Health in Sport",
-    ],
+    id: "international",
+    name: "International Commitments",
+    remit: ["World Anti-Doping Code Adherence", "CAS Jurisdiction"],
     iconUrl: "/assets/governance/icon-committee-medical.svg",
-  },
-  {
-    id: "ethics",
-    name: "Ethics & Compliance",
-    remit: [
-      "Conflict of Interest",
-      "Disciplinary Tribunal",
-      "Good Governance Audit",
-    ],
-    iconUrl: "/assets/governance/icon-committee-ethics.svg",
   },
 ]
 

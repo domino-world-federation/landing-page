@@ -5,9 +5,11 @@ import { GOVERNANCE_COPY } from "~/content/governance"
  * `/governance` — Figma screen `613:24831`.
  *
  * The tenth page, and the first of the two navbar entries that were still `#`.
- * Seven blocks in the design's order: the header, the assembly photograph, the
- * white Overview band, the standing committees, the statutes, the strategic
- * plan, and the governance repository.
+ * Six blocks: the header, the assembly photograph, the white Overview band, the
+ * institutional commitments, the governance documents, and the strategic plan.
+ * The design's seventh, the Governance Repository, was folded into the
+ * documents shelf by the federation's revision (2026-09-28) — both drew the
+ * same category.
  *
  * **The shell is About's, Domino's and Development's**, and deliberately: a
  * header band under the `fixed` navbar, a full-bleed photograph that is pinned
@@ -26,30 +28,25 @@ import { GOVERNANCE_COPY } from "~/content/governance"
  * The shine is declared here and rendered by the `default` layout, which also
  * supplies the `isolate` that keeps its `-z-10` from sliding behind the page
  * background; `<main>` sits above it at `z-10` and the footer paints between the
- * two. Figma puts the artwork at `y:3310` — exactly where the strategic plan
- * begins — and runs it 2779px to `y:6089`, the foot of the document, so
- * anchoring the layer to the bottom reproduces both ends without measuring a
- * section whose height depends on how its copy wraps.
+ * two. Figma starts the artwork where the strategic plan begins and runs it to
+ * the foot of the document, so anchoring the layer to the bottom reproduces
+ * both ends without measuring a section whose height depends on how its copy
+ * wraps.
  *
- * **1919 was the earlier screen's number and it stopped short.** That draft
- * (`613:25382`) sat on a 5469-tall page whose sections were hug-height; the
- * redraw makes the strategic plan and the repository a full 1080 each, which
- * pushes the block this layer backs from 1919 to 2779. The old ratio left the
- * beam's head somewhere inside the repository, so the strategic plan sat on
- * bare `--color-bg` — which is what this fixes.
+ * **1699 is the strategic plan plus the footer** — 1080 + 619 at the design
+ * width. The design's 2779 also covered the Governance Repository, a second
+ * 1080 screen; with that section gone the old ratio would start the beam's head
+ * a screen above the plan, over the documents shelf.
  *
  * **The floor is not decoration.** The ratio is measured against the viewport's
- * WIDTH and the two sections it has to cover are measured in `dvh`, so the two
- * agree only at 16:9: on a 1440 x 900 window the ratio yields 2084px where the
- * content stands 2264 tall, and the head lands ~180px inside the strategic plan
- * again. `200dvh` is those two sections exactly, and `32.24vw` is the design's
+ * WIDTH and the section it has to cover is measured in `dvh`, so the two agree
+ * only at 16:9. `100dvh` is that section exactly, and `32.24vw` is the design's
  * own footer (619 of 1920) — so the minimum is the same measurement the ratio
  * makes, taken in the units the page is actually built in. Whichever is larger
- * wins, which means Figma's number governs wherever Figma's number is already
- * enough.
+ * wins.
  */
 definePageMeta({
-  shine: { aspectClass: "aspect-[1920/2779] min-h-[calc(200dvh+32.24vw)]" },
+  shine: { aspectClass: "aspect-[1920/1699] min-h-[calc(100dvh+32.24vw)]" },
 })
 
 useHead({ htmlAttrs: { class: "snap-sections" } })
@@ -57,7 +54,7 @@ useHead({ htmlAttrs: { class: "snap-sections" } })
 useSeoMeta({
   title: "Governance | Domino World Federation",
   description:
-    "How the Domino World Federation is run — its mandate and mission, standing committees, statutes and constitution, the 2026–2029 strategic plan, and the public governance repository.",
+    "How the Domino World Federation is run — its role and commitments, governance documents, and the Domino Agenda 2030 Strategic Plan.",
 })
 </script>
 
@@ -130,6 +127,5 @@ useSeoMeta({
     <GovernanceCommittees />
     <GovernanceStatutes />
     <GovernanceStrategy />
-    <GovernanceRepository />
   </main>
 </template>
