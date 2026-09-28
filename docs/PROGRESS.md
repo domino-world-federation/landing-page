@@ -1968,3 +1968,12 @@ sekadar tidak berisi dokumen. 28 baris dipetakan ke kosakata baru (D79).
   footer — karena Repository yang ikut ditutupinya sudah tidak ada. **Ikon kartu
   "Equality & Representation" masih pinjaman** (ikon technical) sampai desain
   menggambarnya.
+
+- **Procedural Flow dan form laporan Integrity direvisi tim DWF** (2026-09-28).
+  Flow jadi "Integrity in Action" dengan empat langkah baru (Know the Rules →
+  Speak Up) dan paragraf baru di bawah judulnya — naskahnya dikirim terpotong,
+  jadi dipakai kalimat lengkap yang sama dengan intro Protecting the Game. Form: intro, judul, label, placeholder, dan tombol baru; **pilihan
+  jenis laporan diganti di dua repo sekaligus** — `INTEGRITY_COPY.report.types`
+  dan `IntegrityReport::TYPES` — karena backend menolak nilai di luar daftarnya
+  (422). Laporan lama tetap membawa jenis lamanya; filter di layar CMS
+  menawarkan jenis lama itu selama masih ada barisnya.

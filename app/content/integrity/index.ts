@@ -34,8 +34,11 @@ export const INTEGRITY_COPY = {
   },
 
   flow: {
-    heading: "Procedural Flow",
-    label: "How a report is handled",
+    heading: "Integrity in Action",
+    /** Not in the design — added by the federation's revision (2026-09-28). */
+    intro:
+      "Integrity depends on the actions of everyone involved in dominoes. These commitments help protect participants and the credibility of competition.",
+    label: "How everyone keeps the game fair",
   },
 
   report: {
@@ -48,26 +51,30 @@ export const INTEGRITY_COPY = {
      * line about what this form is for.
      */
     intro:
-      "If you have seen something that threatens the fairness of a match, tell us. It does not have to be proof — a suspicion, recorded early, is what an investigation starts from.",
+      "If you have a concern about cheating, match manipulation, corruption, abuse, harassment, or discrimination in dominoes, you can share the details here. Include what happened, when and where it happened, and any other information you think may help.",
     reassurance:
       "Whistleblowers are the first line of defense. All reports are handled with 100% anonymity and processed by our secure legal team.",
 
-    formHeading: "Quick Submission",
-    typeLabel: "Incident Type",
-    typePlaceholder: "Select the incident type",
-    /** The kinds of report the form accepts. */
+    formHeading: "Share Your Concern",
+    typeLabel: "Type of concern",
+    typePlaceholder: "Select the type of concern",
+    /**
+     * The kinds of report the form accepts. **A contract, not just copy**: the
+     * backend refuses any value not in `IntegrityReport::TYPES`, so a change
+     * here has to land there in the same release.
+     */
     types: [
-      "Match manipulation",
-      "Doping",
-      "Betting or insider information",
-      "Harassment or abuse",
-      "Conflict of interest",
-      "Something else",
+      "Cheating or match manipulation",
+      "Corruption or betting",
+      "Abuse, harassment or discrimination",
+      "Anti-doping concern",
+      "Other",
     ],
     descriptionLabel: "Description",
     descriptionHint: "min. 20 characters",
-    descriptionPlaceholder: "Provide as much detail as possible",
-    submit: "Submit Securely",
+    descriptionPlaceholder:
+      "Tell us what happened, when and where it happened, and who was involved, if known.",
+    submit: "Submit Report",
     /** Replaces the button's label while the request is in flight. */
     sending: "Submitting…",
     confidentiality:
@@ -99,7 +106,7 @@ export const INTEGRITY_COPY = {
     unavailable:
       "The secure reporting channel is not live yet. Until it is, email integrity@dwf-domino.org — that address is monitored.",
     tooShort: "Please describe what happened in at least 20 characters.",
-    needsType: "Please choose the kind of incident you are reporting.",
+    needsType: "Please choose the type of concern you are reporting.",
   },
 } as const
 
@@ -158,30 +165,31 @@ export const INTEGRITY_MEASURES = [
   },
 ] as const
 
-/** `601:17945` — what happens to a report once it is filed. */
+/** `601:17945` — what everyone involved does to keep the game fair. */
 export const INTEGRITY_FLOW = [
   {
-    id: "report",
+    id: "know-the-rules",
     number: "01",
-    title: "Report",
-    detail: "Incident flagged or reported via Integrity Page.",
+    title: "Know the Rules",
+    detail:
+      "Understand the regulations and ethical responsibilities that protect the sport.",
   },
   {
-    id: "inquiry",
+    id: "compete-fairly",
     number: "02",
-    title: "Inquiry",
-    detail: "Confidential data gathering by the Integrity Unit.",
+    title: "Compete Fairly",
+    detail: "Reject cheating, corruption, and match manipulation.",
   },
   {
-    id: "tribunal",
+    id: "protect-trust",
     number: "03",
-    title: "Tribunal",
-    detail: "Independent panel review and final sentencing.",
+    title: "Protect Trust",
+    detail: "Handle confidential information responsibly.",
   },
   {
-    id: "appeals",
+    id: "speak-up",
     number: "04",
-    title: "Appeals",
-    detail: "14-day window for submission to the High Council.",
+    title: "Speak Up",
+    detail: "Raise concerns and help create a safe, transparent environment.",
   },
 ] as const
