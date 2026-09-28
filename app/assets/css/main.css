@@ -322,6 +322,14 @@
      site; the 0.875rem floor is where its capitals stop being comfortable
      beside a 32px tick. */
   --text-display-item: clamp(0.875rem, 1.25vw, 1.5rem); /* 24/1920 */
+  /* Bebas 60/44 — the apex of About's org chart (`1097:3104`), the "DWF" on
+     the gold card. Only there; the floor keeps it clearly the largest thing in
+     the chart once the node titles below it have bottomed out. */
+  --text-display-apex: clamp(1.75rem, 3.125vw, 3.75rem); /* 60/1920 */
+  /* Bebas 48 — a node title in the same chart (`1097:3107`, `1097:3116`).
+     "NATIONAL FEDERATION" is the longest; at the floor it wraps to two lines in
+     a 1024px window rather than overflowing its card. */
+  --text-display-node: clamp(1.5rem, 2.5vw, 3rem); /* 48/1920 */
   /* Inter SemiBold 40/48 — a card's own heading, e.g. the coaching levels
      (`192:14645`) and the support application card (`207:15158`). Numerically
      the same slope as `display-2xs`, and kept apart for the reason recorded

@@ -1998,3 +1998,16 @@ sekadar tidak berisi dokumen. 28 baris dipetakan ke kosakata baru (D79).
   tanpa foto tampil tanpa bingkai foto. Data statisnya pindah dari
   `content/about/heritage.ts` ke mock, dengan ringkasan kartu 2–3 disamakan
   dengan seeder backend (di Figma ketiganya berbagi satu teks).
+
+- **Our Global Network (Structural Frameworks) digambar ulang dari desain baru**
+  (`1097:3096`, 2026-09-28). Panel placeholder diganti bagan organisasi: kartu
+  emas DWF, tiga National Federation, masing-masing di atas Federation Members,
+  dengan cabang emas dan penghubung abu-abu; kalimat lamanya jadi
+  `<figcaption>`. Label negara A/B/C (desain menulis "Country A" tiga kali).
+  **Section-nya tepat satu layar dari `lg`** (permintaan pemilik repo): judul
+  dan paragraf sebaris, dan seluruh ukuran bagan ditulis dalam
+  `--u: min(1vw, 1.7778dvh)` supaya layar lebar yang pendek pun tidak perlu
+  scroll. Diperiksa lewat screenshot di 1920×1080, 1920×900, 1440×900, 390.
+  Token baru `--text-display-apex` (60) dan `--text-display-node` (48) untuk di
+  bawah `lg`. Ikon placeholder dihapus; emblem watermark di
+  `public/assets/about/decor-frameworks-emblem.svg`.

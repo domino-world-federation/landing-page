@@ -1,15 +1,15 @@
 /**
- * Structural Frameworks copy — Figma node `111:3152`, kept out of JSX for i18n
- * (RULES §9).
+ * Our Global Network (was Structural Frameworks) — Figma node `1097:3096`,
+ * kept out of JSX for i18n (RULES §9).
  *
- * The section is a PLACEHOLDER in the design and is built as one deliberately.
- * Figma draws a 1760 × 700 grey panel carrying an icon and a grey sentence
- * describing what the eventual org chart will show — it is the designer saying
- * "a diagram goes here", not a diagram. Inventing a chart of a federation whose
- * committee structure we have not been given would put fiction on an About page,
- * so the panel is reproduced as drawn and marked here instead.
+ * The panel is the org chart the earlier placeholder (`111:3152`) held a place
+ * for: the federation at the top, national federations under it, and each
+ * federation's registered players and clubs under that. It is a diagram of the
+ * STRUCTURE, not a directory — the design repeats one generic federation three
+ * times, and so does this.
  *
- * TODO(design): replace with the real organisational chart (blocker B2).
+ * The design labels all three "Country A", which is a card duplicated without
+ * its label being touched; they read A, B, C here.
  */
 
 export const FRAMEWORKS_COPY = {
@@ -18,11 +18,21 @@ export const FRAMEWORKS_COPY = {
    *  (2026-09-28); the design has nothing there. */
   intro:
     "DWF brings National Federations together across five continents around a shared commitment to participation, respect, and fair competition.",
+
+  chart: {
+    apexShort: "DWF",
+    apexName: "Domino World Federation",
+    federation: "National Federation",
+    countries: ["Country A", "Country B", "Country C"],
+    members: "Federation Members",
+    membersDetail: "Registered Players & Clubs",
+  },
+
   /**
-   * Two entries because Figma breaks the line itself (`113:3663`), centred in
-   * an 864px column. Each renders as its own line.
+   * Under the chart (`1097:3100`). Two entries because Figma breaks the line
+   * itself, centred in an 864px column; each renders as its own line.
    */
-  placeholder: [
+  caption: [
     "Our structure ensures clear accountability from the Executive Board through",
     "to Technical Committees and Member National Federations.",
   ],
