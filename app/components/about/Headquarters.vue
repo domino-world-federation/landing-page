@@ -95,6 +95,7 @@ const SETTLE = DURATION * 1.5
          while it was last, the layer stalled halfway (D16). -->
     <MotionParallaxLayer
       :speed="8"
+      :mobile-speed="4"
       anchor="foot"
       decorative
       class="absolute inset-0 -z-10"

@@ -20,7 +20,7 @@ defineProps<{ card: MissionCardCopy }>()
        margin. `min-h` so a longer translation grows the card instead of spilling
        out of it. -->
   <div
-    class="flex min-h-[300px] flex-col justify-between gap-10 rounded-[20px] bg-[linear-gradient(180deg,rgb(255_255_255/0.12)_0%,rgb(255_255_255/0.04)_100%)] p-6 lg:min-h-[22.14vw]"
+    class="flex h-full flex-col justify-between gap-6 rounded-[20px] bg-[linear-gradient(180deg,rgb(255_255_255/0.12)_0%,rgb(255_255_255/0.04)_100%)] p-4 md:min-h-[300px] md:gap-10 md:p-6 lg:min-h-[22.14vw]"
   >
     <!-- 72 × 72 in Figma; `w-auto h-…` so the intrinsic ratio is kept and the
          SVG is never squashed. A plain `<img>`, since an SVG passes through the
@@ -33,17 +33,17 @@ defineProps<{ card: MissionCardCopy }>()
       alt=""
       width="72"
       height="72"
-      class="h-14 w-auto lg:h-[min(3.75vw,72px)]"
+      class="h-10 w-auto md:h-14 lg:h-[min(3.75vw,72px)]"
     >
 
-    <div class="flex flex-col gap-4">
+    <div class="flex flex-col gap-2 md:gap-4">
       <h3
-        class="font-sans text-[length:var(--text-body-lg)] leading-[1.22] font-semibold text-white"
+        class="font-sans text-base leading-[1.22] font-semibold text-white md:text-[length:var(--text-body-lg)]"
       >
         {{ card.title }}
       </h3>
       <p
-        class="font-sans text-[length:var(--text-body-sm)] leading-[1.5] text-white/40"
+        class="font-sans text-sm leading-[1.5] text-white/40 md:text-[length:var(--text-body-sm)]"
       >
         {{ card.body }}
       </p>

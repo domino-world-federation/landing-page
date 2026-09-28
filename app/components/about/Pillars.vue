@@ -132,9 +132,44 @@ const fade = computed(() => ({ duration: DURATION, ease: EASE }))
          floored at `--nav-clearance`: this is where the scroll comes to rest, so
          its head lands under a navbar up to 112px tall, and 3.125vw is only 60
          at the design width. -->
+    <!-- **Below `lg`: the three claims as three cards, each with its own
+         photograph.** The stage below is a desktop construction — a masked
+         column turning against a pinned picture — and squeezed into one
+         column it left a counter reading "0", the claims as bare text, one
+         photograph after them and a screen of empty black. On a phone the
+         same content is simply listed. The stage is `hidden` there and this
+         list from `lg`, so the markup is the same on server and client. -->
+    <ul class="flex list-none flex-col gap-14 px-5 pt-20 pb-16 md:px-10 lg:hidden">
+      <li v-for="pillar in PILLARS" :key="pillar.id">
+        <MotionReveal :y="32" class="flex flex-col">
+          <NuxtImg
+            :src="pillar.imageUrl"
+            :alt="pillar.imageAlt"
+            :sizes="imageSizes({ xs: '100vw' })"
+            class="aspect-[4/3] w-full rounded-[20px] object-cover"
+          />
+          <p
+            class="font-sans mt-6 text-[length:var(--text-eyebrow)] leading-7 font-medium text-white/40 uppercase"
+          >
+            {{ pillar.eyebrow }}
+          </p>
+          <h3
+            class="font-display mt-2 text-[length:var(--text-display-pillar)] leading-[0.89] text-white uppercase"
+          >
+            {{ pillar.title }}
+          </h3>
+          <p
+            class="font-sans mt-4 text-[length:var(--text-body-lg)] leading-[1.56] text-white/70"
+          >
+            {{ pillar.body }}
+          </p>
+        </MotionReveal>
+      </li>
+    </ul>
+
     <div
       ref="stage"
-      class="flex flex-col items-center justify-center gap-12 overflow-hidden px-5 pt-28 pb-[max(48px,3.125vw)] md:px-10 lg:sticky lg:top-0 lg:h-dvh lg:flex-row lg:justify-between lg:gap-16 lg:px-20 lg:pt-[max(var(--nav-clearance),3.125vw)]"
+      class="hidden flex-col items-center justify-center gap-12 overflow-hidden px-5 pt-28 pb-[max(48px,3.125vw)] md:px-10 lg:sticky lg:top-0 lg:flex lg:h-dvh lg:flex-row lg:justify-between lg:gap-16 lg:px-20 lg:pt-[max(var(--nav-clearance),3.125vw)]"
     >
       <!-- The mask is on the OUTER element and the movement on the inner one.
            Reversed, the window would travel with the blocks and never fade

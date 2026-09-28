@@ -61,6 +61,10 @@ defineProps<{ milestone: HeritageMilestone; index: number }>()
           // child it takes what the scroller has instead, and the cap keeps a
           // tall window from stretching it past the size the design draws.
           'flex min-h-0 max-h-[500px] flex-1 flex-col gap-4 rounded-[32px] bg-[var(--color-surface-card)]/50 p-5 lg:gap-[1.46vw] lg:p-[1.46vw]',
+          // Without a photograph there is nothing for the stretch to hold, and
+          // on a phone the card became a tall empty slab under two lines of
+          // copy. It hugs its text there instead; from `lg` it is left as drawn.
+          !milestone.imageUrl && 'max-lg:flex-none',
         )
       "
     >

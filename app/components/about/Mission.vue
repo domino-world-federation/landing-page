@@ -53,7 +53,9 @@ import { MISSION_CARDS, MISSION_COPY } from "~/content/about/mission"
     <!-- Four across at `lg`, two at `md`, one below — the cards carry a title
          and three lines of body each, and at four columns on a tablet the body
          wraps to seven. -->
-    <ul class="grid list-none gap-5 md:grid-cols-2 lg:grid-cols-4">
+    <!-- Two up from the smallest screen: one card per row made each a
+         300px slab for two lines of copy. -->
+    <ul class="grid list-none grid-cols-2 gap-3 md:gap-5 lg:grid-cols-4">
       <li v-for="(card, i) in MISSION_CARDS" :key="card.id" class="flex">
         <!-- The stagger is per card and the wrapper is `w-full` so the animated
              element, not the card inside it, is the grid item — otherwise every

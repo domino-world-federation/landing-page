@@ -21,7 +21,7 @@ import { VISION_ALT, VISION_COPY } from "~/content/about/vision"
        hold the entrance until the reader has already read the eyebrow. -->
   <MotionEntranceGroup
     :amount="0.3"
-    class="relative flex snap-screen flex-col justify-center overflow-hidden lg:h-dvh"
+    class="relative flex flex-col justify-center overflow-hidden lg:h-dvh lg:snap-screen"
   >
     <!-- One screen, like the four sections around it — `566:13530` is
          1920 × 1080. See `Heritage` for why the height is `dvh` and not the
@@ -42,8 +42,12 @@ import { VISION_ALT, VISION_COPY } from "~/content/about/vision"
          Filling the section removes both. Every layer inside is placed as a
          percentage, so the composition scales with the screen rather than
          needing one to match. Below `lg` the blocks stack and the height comes
-         from the copy instead, with the tile behind it as a backdrop. -->
-    <div class="relative min-h-[560px] lg:h-full">
+         from the copy — and the tile stands UNDER the copy, in the flow, at
+         full strength. It used to sit behind the text at 40% as a backdrop,
+         where its glow washed over the words and its foot hung out of the
+         section. The section is not a full screen there either: `snap-screen`
+         centred a short stack in a tall box and left a black band above it. -->
+    <div class="relative flex flex-col lg:block lg:h-full">
       <!-- 1. The wash the section opens with — `--color-surface-dark` to nothing
            over the top 317px (16.5vw). It is the same colour Heritage ends on,
            so the two bands meet with no visible join. -->
@@ -109,8 +113,9 @@ import { VISION_ALT, VISION_COPY } from "~/content/about/vision"
            `cover` would crop the globe or the foot depending on the window. -->
       <MotionParallaxLayer
         :speed="-12"
+        :mobile-speed="-4"
         decorative
-        class="absolute top-[14.5%] left-[36.72%] h-[91%] w-[26.56%] max-lg:opacity-40"
+        class="relative order-last mx-auto mb-16 h-[380px] w-[52%] max-w-[240px] lg:absolute lg:top-[14.5%] lg:left-[36.72%] lg:mx-0 lg:mb-0 lg:h-[91%] lg:w-[26.56%] lg:max-w-none"
       >
         <div
           class="pointer-events-none absolute top-[1.29%] left-[2.35%] h-[91.25%] w-[95.1%]"
@@ -167,14 +172,14 @@ import { VISION_ALT, VISION_COPY } from "~/content/about/vision"
            page's own black, which is what the next section starts from. -->
       <div
         aria-hidden="true"
-        class="pointer-events-none absolute inset-x-0 top-[33%] bottom-0 bg-[radial-gradient(ellipse_farthest-side_at_51%_0%,transparent_45%,var(--color-bg)_88%)]"
+        class="pointer-events-none absolute inset-x-0 top-[33%] bottom-0 hidden bg-[radial-gradient(ellipse_farthest-side_at_51%_0%,transparent_45%,var(--color-bg)_88%)] lg:block"
       />
 
       <!-- 5. The left column — Figma x80 y411, 560 wide. Absolute from `lg`,
            where the design's overlap with the tile is the point; below it the
            two columns are simply stacked and read in order. -->
       <div
-        class="relative flex flex-col gap-16 px-5 py-20 md:px-10 lg:absolute lg:inset-0 lg:block lg:p-0"
+        class="relative flex flex-col gap-16 px-5 pt-20 pb-12 md:px-10 lg:absolute lg:inset-0 lg:block lg:p-0"
       >
         <MotionReveal
           :y="48"
