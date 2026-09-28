@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { HERITAGE_COPY, HERITAGE_MILESTONES } from "~/content/about/heritage"
+import { getHeritageMilestones } from "~/lib/api/client"
+import { HERITAGE_COPY } from "~/content/about/heritage"
 
 /**
  * Heritage — Figma node `88:1163`.
@@ -9,10 +10,9 @@ import { HERITAGE_COPY, HERITAGE_MILESTONES } from "~/content/about/heritage"
  * starts. The two meet with no seam because they are the same colour, not
  * because they are aligned.
  *
- * The milestones are copy for the moment rather than a feed — see
- * `content/about/heritage`. They are entities and belong behind the API by
- * RULES §8; the endpoint does not exist yet, and an empty strip under a heading
- * is worse than a strip that is right and static.
+ * The milestones come from the API (RULES §8) — the backoffice's Heritage
+ * screen, in its order. None at all and the section is not drawn: a heading
+ * over an empty strip, in a track a screen tall, says nothing.
  *
  * **The section is a track now, and the strip is turned by the reader.** It used
  * to be one screen with the timeline advancing itself on a timer; the repo owner
@@ -22,12 +22,11 @@ import { HERITAGE_COPY, HERITAGE_MILESTONES } from "~/content/about/heritage"
  * side. Vertical scroll goes in, horizontal travel comes out, and reaching the
  * section below means having been past every date.
  */
-/**
- * Static, for now: the CMS has no `/heritage-milestones` endpoint yet, so the
- * fetch came back empty and the section rendered a heading over nothing. See
- * `content/about/heritage` for the note and the TODO that moves it back.
- */
-const milestones = computed(() => HERITAGE_MILESTONES)
+const { data: milestones } = await useAsyncData(
+  "about-heritage",
+  () => getHeritageMilestones(),
+  { default: () => [] },
+)
 
 /**
  * How many screens of vertical scroll the strip is given to travel across.
@@ -74,6 +73,7 @@ const { scrollYProgress } = useScroll({
        no room to pin anything, so the strip goes back to being a plain
        horizontal scroller the reader pans by hand. -->
   <section
+    v-if="milestones.length > 0"
     ref="track"
     :style="{ '--heritage-steps': steps }"
     class="snap-pass relative lg:h-[calc(var(--heritage-steps)*100dvh)] lg:motion-reduce:h-dvh"

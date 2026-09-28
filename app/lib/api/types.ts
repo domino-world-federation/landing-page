@@ -554,8 +554,10 @@ export type HeritageMilestone = {
   year: string
   title: string
   summary: string
-  imageUrl: string
-  imageAlt: string
+  /** `null` until a photograph is uploaded in the backoffice — the column is
+   *  nullable there, and the card simply goes without one. */
+  imageUrl: string | null
+  imageAlt: string | null
 }
 
 /**

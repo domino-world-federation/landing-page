@@ -6,7 +6,6 @@
  * Text and numbers come from the Figma design so the slice matches on sight.
  */
 
-import { HERITAGE_MILESTONES } from "~/content/about/heritage"
 import { BOARD_MEMBERS } from "~/content/about/boards"
 import type { DocumentSection } from "~/lib/api/categories"
 import type {
@@ -886,9 +885,57 @@ export const MOCK_SHOWCASE_EVENTS: ShowcaseEvent[] = [
   },
 ]
 
-/** Re-exported: the section reads this straight from `content/about/heritage`
- *  while the CMS has no endpoint for it. See that file for why. */
-export const MOCK_HERITAGE_MILESTONES: HeritageMilestone[] = HERITAGE_MILESTONES
+/**
+ * The About page's heritage timeline (`88:1163`). The years come from the axis
+ * markers and the titles and photographs from the four cards, in the order
+ * Figma places them along it.
+ *
+ * The first three cards share one body in Figma (`88:1205`, `88:1210`,
+ * `88:1215` are one text layer), so cards 2 and 3 carry the backoffice seed's
+ * summaries instead — the API is the source now, and a mock that disagrees with
+ * it only hides what the page will look like once it is switched over.
+ */
+export const MOCK_HERITAGE_MILESTONES: HeritageMilestone[] = [
+  {
+    id: "h1",
+    year: "1974",
+    title: "The Foundation",
+    summary:
+      "Representatives from 12 nations gathered in Geneva to formalize the first set of international rules and establish the DWF.",
+    imageUrl: "/assets/about/heritage-card-01.webp",
+    imageAlt:
+      "Two men in early twentieth-century suits conferring across a roll-top desk in a wood-panelled office",
+  },
+  {
+    id: "h2",
+    year: "1990",
+    title: "Inaugural World Cup",
+    summary:
+      "The first World Cup brought together national champions from every founding federation.",
+    imageUrl: "/assets/about/heritage-card-02.webp",
+    imageAlt:
+      "A packed arena of competitors at long tables beneath World Domino Championship banners",
+  },
+  {
+    id: "h3",
+    year: "2001",
+    title: "75 Countries Joined",
+    summary:
+      "Membership passed seventy-five national bodies, making the federation genuinely global.",
+    imageUrl: "/assets/about/heritage-card-03.webp",
+    imageAlt:
+      "Delegates seated along both sides of a conference table before a row of national flags and press cameras",
+  },
+  {
+    id: "h4",
+    year: "2003",
+    title: "DWF Championship World Tour",
+    summary: "The First DWF Championship World Tour with 80 countries joined.",
+    imageUrl: "/assets/about/heritage-card-04.webp",
+    imageAlt:
+      "Supporters in team colours with their arms raised, cheering in a crowd",
+  },
+]
 
 /** Re-exported: the carousel reads this straight from `content/about/boards`
  *  while the CMS has no endpoint for it. See that file for why. */

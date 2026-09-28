@@ -76,13 +76,17 @@ defineProps<{ milestone: HeritageMilestone; index: number }>()
       <!-- `flex-1` and `min-h-0`: the photograph takes whatever the copy left,
            and without `min-h-0` a flex item refuses to shrink below its content
            and the card grows past its 500px instead. -->
-      <div class="relative min-h-0 flex-1 overflow-hidden rounded-xl">
+      <!-- Absent until the backoffice has a photograph for this milestone. -->
+      <div
+        v-if="milestone.imageUrl"
+        class="relative min-h-0 flex-1 overflow-hidden rounded-xl"
+      >
         <!-- `draggable="false"`: a dragged image is a browser drag-and-drop by
              default, which hijacks the pan the moment the pointer lands on a
              photograph. -->
         <NuxtImg
           :src="milestone.imageUrl"
-          :alt="milestone.imageAlt"
+          :alt="milestone.imageAlt ?? ''"
           :sizes="imageSizes({ xs: '80vw', lg: '25vw' })"
           :draggable="false"
           class="absolute inset-0 size-full object-cover"

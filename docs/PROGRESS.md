@@ -1990,3 +1990,11 @@ sekadar tidak berisi dokumen. 28 baris dipetakan ke kosakata baru (D79).
   Sub-Committees di backoffice masih ada tetapi tidak lagi tampil di mana pun.
   **Key Selling Point (Pillars) belum diubah** — permintaannya memuat naskah
   Governance yang sama; menunggu teks yang benar.
+
+- **Our Journey (Heritage) di About kini dari API** (2026-09-28) —
+  `getHeritageMilestones()`, disunting di layar Heritage backoffice
+  (SISA-PEKERJAAN §7). Tanpa milestone section tidak dirender. `imageUrl` dan
+  `imageAlt` kini `string | null` karena kolomnya nullable di backend; kartu
+  tanpa foto tampil tanpa bingkai foto. Data statisnya pindah dari
+  `content/about/heritage.ts` ke mock, dengan ringkasan kartu 2–3 disamakan
+  dengan seeder backend (di Figma ketiganya berbagi satu teks).
