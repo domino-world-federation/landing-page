@@ -17,7 +17,7 @@ import {
 <template>
   <section
     aria-labelledby="grassroots-heading"
-    class="flex snap-screen flex-col justify-center gap-10 px-5 pt-28 pb-16 md:px-10 lg:gap-[3.13vw] lg:px-20 lg:pt-[var(--nav-clearance)] lg:pb-[4.17vw]"
+    class="flex flex-col justify-center gap-10 px-5 pt-16 pb-16 lg:snap-screen md:px-10 lg:gap-[3.13vw] lg:px-20 lg:pt-[var(--nav-clearance)] lg:pb-[4.17vw]"
   >
     <div class="flex flex-col items-center gap-6 text-center lg:gap-9">
       <MotionReveal :y="32">
@@ -47,7 +47,7 @@ import {
     <!-- Three across from `lg`, stacked below. No two-column step: the cards
          carry a 3:4 photograph each, so a 2-up row would leave one card alone on
          a second row at half the width of the pair above it. -->
-    <ul class="grid list-none gap-5 lg:grid-cols-3">
+    <ul class="grid list-none gap-3 lg:grid-cols-3 lg:gap-5">
       <li v-for="(card, i) in GRASSROOTS_CARDS" :key="card.id" class="flex">
         <!-- The stagger is per card, and the wrapper is `w-full` so the animated
              element is the grid item — otherwise each card sizes to its own

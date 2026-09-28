@@ -18,7 +18,7 @@ import { SUPPORT_BENEFITS, SUPPORT_COPY } from "~/content/development/support"
 <template>
   <section
     aria-labelledby="support-heading"
-    class="flex snap-screen flex-col justify-center px-5 pt-28 pb-16 md:px-10 lg:px-20 lg:pt-[var(--nav-clearance)] lg:pb-[3.13vw]"
+    class="flex flex-col justify-center px-5 pt-16 pb-16 lg:snap-screen md:px-10 lg:px-20 lg:pt-[var(--nav-clearance)] lg:pb-[3.13vw]"
   >
     <div
       class="flex flex-col gap-10 menu:flex-row menu:justify-between menu:gap-[8.96vw]"

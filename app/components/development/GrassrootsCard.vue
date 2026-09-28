@@ -16,25 +16,31 @@ import type { GrassrootsCardCopy } from "~/content/development/grassroots"
  *
  * `mt-auto` keeps it at the foot however many lines the body above it wraps to,
  * which is what keeps the three pictures on one line across the row.
+ *
+ * **Below `lg` the card lies on its side** (repo owner's call, 2026-09-28): a
+ * 112px square photograph on the left and the copy beside it, the shape
+ * Federation Members' benefit cards take on a phone. Stacked full-width, each
+ * card was a paragraph over a picture the width of the screen — three of them
+ * made the section some 1700px tall.
  */
 defineProps<{ card: GrassrootsCardCopy }>()
 </script>
 
 <template>
   <div
-    class="flex h-full flex-col gap-7 rounded-[var(--radius-feature)] bg-[var(--color-surface-card)]/50 p-7"
+    class="flex h-full flex-row items-start gap-4 rounded-[var(--radius-feature)] bg-[var(--color-surface-card)]/50 p-4 lg:flex-col lg:items-stretch lg:gap-7 lg:p-7"
   >
-    <div class="flex flex-col gap-3">
+    <div class="flex min-w-0 flex-col gap-1.5 lg:gap-3">
       <!-- The Bebas kicker that sat here — the programme's "family" — is gone;
            see `GRASSROOTS_CARDS` for why. The title carries the card on its own,
            which is what it was doing anyway. -->
       <h3
-        class="font-sans text-[length:var(--text-body-lg)] leading-[1.22] font-semibold text-white"
+        class="font-sans text-lg leading-[1.22] font-semibold text-white lg:text-[length:var(--text-body-lg)]"
       >
         {{ card.title }}
       </h3>
 
-      <p class="font-sans text-[length:var(--text-eyebrow)] leading-8 text-white/60">
+      <p class="font-sans text-sm leading-6 text-white/60 lg:text-[length:var(--text-eyebrow)] lg:leading-8">
         {{ card.body }}
       </p>
     </div>
@@ -46,7 +52,7 @@ defineProps<{ card: GrassrootsCardCopy }>()
          tightens and the card comes back under the screen; `object-cover` means
          the picture loses its edges rather than distorting. -->
     <div
-      class="relative mt-auto aspect-3/4 w-full overflow-hidden rounded-[var(--radius-glass)] lg:max-h-[32dvh]"
+      class="relative order-first aspect-square w-28 shrink-0 overflow-hidden rounded-[var(--radius-glass)] lg:order-none lg:mt-auto lg:aspect-3/4 lg:max-h-[32dvh] lg:w-full"
     >
       <!-- One of three cards from `lg` up, one per row below it. The card is
            inset by the section's 80px padding and its own 28px, which the rough
@@ -54,7 +60,7 @@ defineProps<{ card: GrassrootsCardCopy }>()
       <NuxtImg
         :src="card.image"
         :alt="card.imageAlt"
-        :sizes="imageSizes({ xs: '100vw', lg: '30vw' })"
+        :sizes="imageSizes({ xs: '112px', lg: '30vw' })"
         class="absolute inset-0 size-full object-cover"
       />
     </div>

@@ -204,7 +204,9 @@ function step(direction: 1 | -1) {
         // spends — and a foot of its own, because the strip is 700px of card and
         // the next section starts the moment this one ends. On the slope alone
         // it ran past the fold and the cards came out cut.
-        !backdrop && 'pt-28 pb-16 lg:pt-[var(--nav-clearance)] lg:pb-[4.17vw]',
+        // No head padding below `lg`: nothing snaps there, and the heading row
+        // already carries its own `pt-24`.
+        !backdrop && 'pb-16 lg:pt-[var(--nav-clearance)] lg:pb-[4.17vw]',
       )
     "
   >

@@ -37,7 +37,7 @@ const activeGrade = computed(
 <template>
   <section
     aria-labelledby="certifications-heading"
-    class="flex snap-screen flex-col justify-center bg-[linear-gradient(180deg,var(--color-bg)_0%,var(--color-surface-dark)_100%)] pt-28 pb-16 lg:pt-[var(--nav-clearance)] lg:pb-[4.17vw]"
+    class="flex flex-col justify-center bg-[linear-gradient(180deg,var(--color-bg)_0%,var(--color-surface-dark)_100%)] pt-16 pb-16 lg:snap-screen lg:pt-[var(--nav-clearance)] lg:pb-[4.17vw]"
   >
     <!-- The section pads top and bottom only (`80px 0px`); its two children
          carry the 80px sides themselves. Reproduced rather than flattened

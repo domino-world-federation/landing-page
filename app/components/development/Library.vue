@@ -26,9 +26,12 @@ const { data: documents } = await useAsyncData(
 </script>
 
 <template>
+  <!-- Absent rather than a heading over nothing when the shelf is empty —
+       the rule every other document shelf on the site follows. -->
   <section
+    v-if="documents.length > 0"
     aria-labelledby="library-heading"
-    class="flex snap-screen flex-col justify-center px-5 pt-28 pb-16 md:px-10 lg:px-20 lg:pt-[var(--nav-clearance)] lg:pb-[3.13vw]"
+    class="flex flex-col justify-center px-5 pt-16 pb-16 lg:snap-screen md:px-10 lg:px-20 lg:pt-[var(--nav-clearance)] lg:pb-[3.13vw]"
   >
     <div class="flex flex-col gap-10 lg:flex-row lg:gap-[13.96vw]">
       <div
