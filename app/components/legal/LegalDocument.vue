@@ -73,9 +73,12 @@ const titleLines = computed(() => [props.title])
          contents list would clip the card, which is exactly what was asked to be
          undone last time this column was pinned. -->
     <template #sidebarFooter>
-      <UiSupportCard />
+      <!-- Beside the contents from `lg`; after the body on a phone, where
+           the sidebar stacks above it. -->
+      <div class="hidden lg:block"><UiSupportCard /></div>
     </template>
 
     <LegalBody :sections="sections" />
+    <div class="mt-12 lg:hidden"><UiSupportCard /></div>
   </UiSideTabLayout>
 </template>

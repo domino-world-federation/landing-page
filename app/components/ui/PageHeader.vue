@@ -42,8 +42,11 @@ defineSlots<{
        band instead of overflowing it; 27.6vw is 530/1920, so the design width
        reproduces the band exactly and narrower windows fall back to the floor.
        The top padding reserves the `fixed` navbar (~112px at `lg`: 36+60+16). -->
+  <!-- Below `lg` the band is as tall as its content, under the navbar's
+       clearance: a 420px floor with everything bottom-aligned put the title
+       halfway down a phone screen, under a band of nothing (2026-09-28). -->
   <section
-    class="flex min-h-[420px] flex-col justify-end gap-8 px-5 pt-32 pb-14 md:px-10 lg:min-h-[27.6vw] lg:gap-16 lg:px-20 lg:pb-[5.2vw]"
+    class="flex flex-col justify-end gap-8 px-5 pt-28 pb-10 md:px-10 lg:min-h-[27.6vw] lg:pt-32 lg:gap-16 lg:px-20 lg:pb-[5.2vw]"
   >
     <NuxtLink
       v-if="back"

@@ -38,7 +38,7 @@ withDefaults(
       :aria-current="active ? current : undefined"
       :class="
         cn(
-          'font-display focus-visible:ring-gold flex items-center gap-3 whitespace-nowrap border-b-2 py-4 text-[length:var(--text-display-caption)] leading-[1.25] transition-colors focus-visible:ring-2 focus-visible:outline-none lg:border-b-0 lg:py-6',
+          'font-display focus-visible:ring-gold flex items-center gap-3 whitespace-nowrap border-b-2 pt-1 pb-2.5 text-xl leading-[1.25] lg:text-[length:var(--text-display-caption)] transition-colors focus-visible:ring-2 focus-visible:outline-none lg:border-b-0 lg:py-6',
           active
             ? 'text-gold border-gold'
             : 'text-muted hover:text-white/80 border-transparent lg:pl-4',

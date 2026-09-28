@@ -140,7 +140,10 @@ const clearHref = computed(() =>
           :active="category"
           :query="q"
         />
-        <UiSupportCard />
+        <!-- In the sidebar from `lg`. Below it the sidebar stacks ABOVE the
+             questions, which put the card between the topic tabs and the
+             answers — so on a phone it comes after the board instead. -->
+        <div class="hidden lg:block"><UiSupportCard /></div>
       </template>
 
       <FaqBoard :key="boardKey" :items="shown">
@@ -155,6 +158,7 @@ const clearHref = computed(() =>
           <template v-else>{{ FAQ_PAGE_COPY.empty }}</template>
         </template>
       </FaqBoard>
+      <div class="mt-12 lg:hidden"><UiSupportCard /></div>
     </UiSideTabLayout>
   </main>
 </template>

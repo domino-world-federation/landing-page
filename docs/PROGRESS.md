@@ -2011,3 +2011,128 @@ sekadar tidak berisi dokumen. 28 baris dipetakan ke kosakata baru (D79).
   Token baru `--text-display-apex` (60) dan `--text-display-node` (48) untuk di
   bawah `lg`. Ikon placeholder dihapus; emblem watermark di
   `public/assets/about/decor-frameworks-emblem.svg`.
+
+- **Home versi mobile dibuat lebih ringan (D80)** (2026-09-28). Di bawah `lg`:
+  batu-batu hero diam saat scroll (entrance tetap), tile hero tinggal
+  `mobileSpeed` 8 dari 24, latar FeatureHq 4 dari 8, dan roda Stats — track
+  sticky satu layar per angka — diganti daftar statis semua angka (`<dl>` yang
+  tadinya `sr-only` kini tampil di bawah `lg`). Prop baru `mobileSpeed` di
+  `MotionParallaxLayer`; tanpa prop itu perilaku lama tidak berubah, jadi
+  halaman lain belum tersentuh. Desktop tidak berubah. Tidak diperiksa lewat
+  screenshot — pemilik repo merevisi manual.
+
+- **Hero Home versi mobile disamakan komposisinya dengan desktop** (2026-09-28).
+  Di bawah `lg`: tile domino besar di tengah dan menimpa judul, batu
+  membingkai dari kanan atas dan bawah dengan blur yang diskalakan ke
+  ukurannya (`--rock-blur` 1.25/2px; desktop tetap 4/6.5px), stage dekorasi
+  setinggi tetap 640px. **Kartu Upcoming kini di dalam hero**, di bawah
+  Explore Membership (slot `upcoming`), lalu blok misi + Official Rules di
+  bawahnya; band Countdown di `index.vue` hanya tampil dari `lg`. Countdown
+  dirender dua kali, jadi id judulnya kini `useId()`. Desktop tidak berubah.
+  Tidak diperiksa lewat screenshot — pemilik repo merevisi manual.
+
+- **About versi mobile mengikuti D80** (2026-09-28). Sebagian besar sudah
+  sesuai sebelumnya: track Heritage dan Pillars hanya ada dari `lg` (di bawahnya
+  scroller horizontal dan daftar biasa), dan snap mati di bawah `lg`. Yang
+  diubah hanya dua layer parallax: tile Vision `mobileSpeed` -4 dari -12, latar
+  Headquarters 4 dari 8. Stage Heritage tetap `h-dvh` di mobile — satu layar,
+  bukan track yang menahan, dan kartunya mengambil tinggi dari rantai itu.
+  Desktop tidak berubah.
+
+- **Perbaikan About versi mobile** (2026-09-28), semuanya di bawah `lg`:
+  (1) pita hitam di antara Our Journey dan Our Vision hilang — Vision tidak lagi
+  `snap-screen` di mobile, yang memusatkan tumpukan pendek di kotak setinggi
+  layar; (2) tile Vision berdiri di bawah teks, dalam alur, opasitas penuh,
+  bukan latar 40% yang menimpa paragraf; vignette-nya hanya dari `lg`;
+  (3) Key Selling Point (Pillars) jadi tiga kartu, masing-masing dengan fotonya
+  — stage kolom berputar + counter "0" kini `hidden` di bawah `lg`;
+  (4) kartu Mission dua kolom dengan padding dan huruf lebih kecil; (5) kartu
+  milestone tanpa foto tidak lagi melar jadi kotak kosong. Desktop tidak
+  berubah. Diperiksa lewat screenshot 390px dengan data prod.
+
+- **Domino versi mobile** (2026-09-28). Siluet Singles/Doubles kini tampil juga
+  di bawah `lg` (sebelumnya `max-lg:hidden`): tinggi tetap pecahan panel, lebar
+  dari rasio aset (`aspect-[376/600]`, `aspect-[405/600]`) supaya tidak gepeng
+  di panel yang sempit-tinggi; singles di tepi kanan, doubles di kiri. Tombol
+  dokumen regulasi di bawah `lg` jadi selebar kolom dan tingginya mengikuti
+  judul. `UiStickyBand` (dipakai beberapa halaman) `mobileSpeed` 4 dari 8
+  (D80). Desktop tidak berubah.
+
+- **Tournaments versi mobile: jarak antar section dirapatkan** (2026-09-28).
+  Di bawah `lg` section Rail, Champions Hall, Olympic Results, dan Media
+  Gallery tidak lagi `snap-screen` (min 100dvh + konten di tengah, sisa
+  ~150–200px kosong atas-bawah), dan padding atas `pt-28` (jarak navbar untuk
+  snap, padahal snap mati di mobile) jadi `pt-16` di Rail, Regulations,
+  Champions Hall, Olympic Results, FAQ. Diukur di 390px: halaman ~550px lebih
+  pendek, jarak antar isi ~130–150px dari ~180–350px. `MediaGallery` dengan
+  `snap` ikut berubah di halaman lain yang memakainya. Desktop tidak berubah.
+
+- **Olympic Results di `/tournaments` jadi kartu di mobile** (2026-09-28). Di
+  bawah `lg` tiap hasil satu kartu: tahun + kategori di atas, nama event sebagai
+  judul, lalu Winners dan Federation berlabel. Tabel 840px yang harus digeser ke
+  samping hanya dari `lg`. Desktop tidak berubah.
+
+- **Federation Members versi mobile** (2026-09-28), semuanya di bawah `lg`:
+  section Map, Directory, Benefits, Application Process, dan CTA tidak lagi
+  `snap-screen` dan padding atasnya `pt-16` (bukan jarak navbar `pt-28`) —
+  diukur di 390px, halaman ~1100px lebih pendek. Peta: titik 4% lebar peta
+  (desktop 1.8%), tooltip dan garisnya lebih pendek, filter lima pil turun baris
+  alih-alih terpotong di kanan. Kartu Benefits di bawah `md` horizontal (ikon
+  kiri 48px, teks kanan) — kira-kira separuh tingginya. Desktop tidak berubah.
+
+- **Player Membership versi mobile** (2026-09-28). Application Process di bawah
+  `lg` memakai `UiStepRail` (rel titik + nomor emas) seperti Federation
+  Members; daftar bernomor desain tetap dari `lg`. Jarak: WhatIs, Benefits,
+  Apply `pt-16` alih-alih `pt-28`, dan Benefits/Apply/CTA tidak lagi
+  `snap-screen` di bawah `lg`. Desktop tidak berubah.
+
+- **Development versi mobile** (2026-09-28). Certifications, Library,
+  Grassroots, Support Programs, dan CTA tidak lagi `snap-screen` di bawah `lg`
+  dan padding atasnya `pt-16`. Library disembunyikan bila raknya kosong (di
+  prod belum ada dokumen, jadi tadinya tampil judul di atas kekosongan). Foto
+  kartu Grassroots di bawah `lg` 4:3, bukan 3:4 potret, dengan padding lebih
+  kecil. `UiNews` tanpa backdrop tidak lagi punya padding kepala di bawah `lg`
+  (baris judulnya sudah `pt-24`); versi Home (dengan backdrop) tidak berubah.
+  Desktop tidak berubah.
+
+- **Kartu Grassroots (Worldwide) di mobile jadi horizontal** (2026-09-28): foto
+  persegi 112px di kiri, judul + deskripsi lebih kecil di kanan, seperti kartu
+  Benefits Federation Members. Section 1670 → 949px di 390px. Desktop tidak
+  berubah.
+
+- **Governance versi mobile** (2026-09-28). Institutional Commitments,
+  Governance Documents, dan Strategic Plan tidak lagi `snap-screen` di bawah
+  `lg` dan padding atasnya `pt-16`; Strategic Plan 844 → 474px di 390px.
+  Desktop tidak berubah.
+
+- **Integrity versi mobile** (2026-09-28). Our Standards of Conduct di bawah
+  `lg` jadi tiga kartu berfoto ("01 — Respect Others" …), sama dengan Pillars
+  About; stage kolom berputar `hidden` di bawah `lg`. Protecting the Game dua
+  kolom di bawah `lg` dengan padding/huruf lebih kecil (sebelumnya satu kolom
+  sampai `sm`). Technical, Flow, Report tidak lagi `snap-screen` di bawah `lg`
+  dan padding atasnya `pt-16`. Desktop tidak berubah.
+
+- **Halaman News disusun ulang (desktop + mobile)** (2026-09-28), mengikuti
+  layout dari pemilik repo. Header "Federation News" dicabut (`news/Header.vue`
+  dihapus; `<h1>` tetap ada sebagai `sr-only`) — halaman dibuka langsung pada
+  Featured Story. Archive: baris kontrol berisi tab kategori di kiri, Search dan
+  tombol View All (ke `/news/all`) di kanan; pill "View more" di bawah grid
+  dihapus. Grid 4 kolom × 2 baris (8 berita) dari `lg`, 2 kolom di bawahnya;
+  judul kartu `line-clamp-2`. Kartu berita tanpa foto (API tidak mengirim
+  `thumbnailUrl`) kini menampilkan bingkai berwarna dengan emblem samar,
+  bukan ikon gambar rusak.
+
+- **Strip kategori News dirapikan** (2026-09-28). Pil latar kini bingkai
+  tetap dan tab digeser di dalamnya (scrollbar tersembunyi), dengan fade di
+  tepi yang masih menyimpan tab — tidak lagi berakhir pada kata yang terpotong
+  menabrak kotak search. Tab yang dipilih digeser ke tepi kiri strip setelah
+  navigasi (semampu strip bisa digeser). Diperiksa di 1600 dan 390px.
+
+- **FAQ dan halaman `/page/*` versi mobile** (2026-09-28), semuanya di bawah
+  `lg`. `UiPageHeader` tidak lagi `min-h-[420px]` rata bawah — judul tadinya
+  turun ke tengah layar HP; kini `pt-28 pb-10` (dipakai juga oleh News All,
+  Press Releases, Tournaments All/detail, Olympics, galeri detail). Kartu Need
+  Support di FAQ dan dokumen legal pindah ke SETELAH isi (tadinya di antara tab
+  dan jawaban). Strip tab `UiSideTabList`/`UiSideTab`: jarak 24px, teks 20px,
+  garis emas rapat di bawah teks di atas track tipis, dan fade di kanan.
+  Desktop tidak berubah.

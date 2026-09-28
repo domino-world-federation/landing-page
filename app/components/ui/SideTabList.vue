@@ -75,10 +75,15 @@ watch(() => route.fullPath, () => nextTick(bringActiveIntoView))
     </p>
     <!-- The scrollbar is hidden, not removed: the strip still scrolls by drag,
          wheel and keyboard. Same treatment the news rail and the heritage
-         timeline give their own horizontal tracks. -->
+         timeline give their own horizontal tracks.
+
+         Below `lg` the strip sits on a hairline track the active tab's gold
+         underline rests on, and fades out at its right edge so a cut-off tab
+         reads as "more this way" rather than as a mistake. The trailing
+         padding lets the last tab scroll clear of the fade. -->
     <ol
       ref="list"
-      class="flex snap-x gap-2 overflow-x-auto scroll-smooth [scrollbar-width:none] lg:flex-col lg:gap-0 lg:overflow-visible [&::-webkit-scrollbar]:hidden"
+      class="flex snap-x gap-6 overflow-x-auto scroll-smooth border-b border-[#353535] pr-10 [scrollbar-width:none] max-lg:[mask-image:linear-gradient(to_right,#000_calc(100%-40px),transparent)] lg:flex-col lg:gap-0 lg:overflow-visible lg:border-b-0 lg:pr-0 [&::-webkit-scrollbar]:hidden"
     >
       <slot />
     </ol>
