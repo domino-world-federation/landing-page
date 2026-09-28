@@ -34,7 +34,7 @@ const COPY = PLAYER_MEMBERSHIP_COPY.benefits
       </h2>
     </MotionReveal>
 
-    <ul class="grid auto-rows-fr gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    <ul class="grid auto-rows-fr grid-cols-2 gap-3 md:gap-5 lg:grid-cols-3">
       <!-- Staggered rather than arriving together: six panels appearing at once
            is a flash rather than an entrance. 0.06s is under the page's standard
            step, which six of them would otherwise stretch into a queue. -->
@@ -47,20 +47,20 @@ const COPY = PLAYER_MEMBERSHIP_COPY.benefits
         class="h-full [&>*]:h-full"
       >
         <div
-          class="flex h-full min-h-[18.75vw] flex-col justify-between gap-6 rounded-[var(--radius-card)] bg-linear-to-b from-white/12 to-white/4 p-6"
+          class="flex h-full min-h-[18.75vw] flex-col justify-between gap-4 rounded-[var(--radius-card)] bg-linear-to-b from-white/12 to-white/4 p-4 md:gap-6 md:p-6"
         >
           <UiGoldTile :src="benefit.iconUrl" />
 
-          <div class="flex flex-col gap-4">
+          <div class="flex flex-col gap-2 md:gap-4">
             <!-- Inter SemiBold 36/44 (`629:28555`). -->
             <h3
-              class="font-sans text-[length:var(--text-body-lg)] leading-[1.22] font-semibold text-white"
+              class="font-sans text-base leading-[1.22] font-semibold text-white md:text-[length:var(--text-body-lg)]"
             >
               {{ benefit.title }}
             </h3>
             <!-- Inter 24/36 at 60% (`629:28556`). -->
             <p
-              class="font-sans text-[length:var(--text-body-sm)] leading-[1.5] text-white/60"
+              class="font-sans text-sm leading-[1.5] text-white/60 md:text-[length:var(--text-body-sm)]"
             >
               {{ benefit.body }}
             </p>

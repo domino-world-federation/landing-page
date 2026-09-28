@@ -2136,3 +2136,9 @@ sekadar tidak berisi dokumen. 28 baris dipetakan ke kosakata baru (D79).
   dan jawaban). Strip tab `UiSideTabList`/`UiSideTab`: jarak 24px, teks 20px,
   garis emas rapat di bawah teks di atas track tipis, dan fade di kanan.
   Desktop tidak berubah.
+
+- **Membership Benefits dua kolom di mobile** (2026-09-28), di Player
+  Membership dan Federation Members: kartu vertikal ringkas (ikon, judul 16px,
+  deskripsi 14px) dua sejajar di bawah `md`, seperti Our Mission. Kartu ganjil
+  terakhir di Federation Members (3 kartu) melebar penuh. Player Membership
+  1800 → 1106px. Tablet dan desktop tidak berubah.

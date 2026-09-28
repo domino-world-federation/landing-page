@@ -45,7 +45,7 @@ import { MEMBERSHIP_BENEFITS, MEMBERS_COPY } from "~/content/members"
       {{ MEMBERS_COPY.benefitsHeading }}
     </h2>
 
-    <ul class="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-5 lg:grid-cols-3">
+    <ul class="grid grid-cols-2 gap-3 max-md:[&>li:last-child:nth-child(odd)]:col-span-2 md:gap-5 lg:grid-cols-3">
       <li
         v-for="(benefit, index) in MEMBERSHIP_BENEFITS"
         :key="benefit.id"
@@ -57,7 +57,7 @@ import { MEMBERSHIP_BENEFITS, MEMBERS_COPY } from "~/content/members"
           class="flex flex-1 flex-col"
         >
           <div
-            class="flex flex-1 flex-row items-start gap-4 rounded-[var(--radius-card)] bg-linear-to-b from-white/12 to-white/4 p-5 md:min-h-[280px] md:flex-col md:justify-between md:gap-8 md:p-6 lg:min-h-[360px]"
+            class="flex flex-1 flex-col justify-between gap-4 rounded-[var(--radius-card)] bg-linear-to-b from-white/12 to-white/4 p-4 md:min-h-[280px] md:gap-8 md:p-6 lg:min-h-[360px]"
           >
             <!-- 72px gold tile with a 56px glyph centred in it (`405:28528`). -->
             <span
@@ -76,7 +76,7 @@ import { MEMBERSHIP_BENEFITS, MEMBERS_COPY } from "~/content/members"
             <div class="flex flex-col gap-1.5 md:gap-4">
               <!-- Inter SemiBold 36/44. -->
               <h3
-                class="font-sans text-lg leading-[1.22] font-semibold text-white md:text-[length:var(--text-body-lg)]"
+                class="font-sans text-base leading-[1.22] font-semibold text-white md:text-[length:var(--text-body-lg)]"
               >
                 {{ benefit.title }}
               </h3>
