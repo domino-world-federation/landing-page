@@ -30,17 +30,31 @@ defineProps<{ article: NewsArticle }>()
     <!-- 572 × 322. An aspect rather than a height, so the picture keeps its crop
          as the column narrows instead of the frame closing on it. -->
     <div
-      class="relative aspect-[572/322] w-full overflow-hidden rounded-[var(--radius-glass)]"
+      class="relative aspect-[572/322] w-full overflow-hidden rounded-[var(--radius-glass)] bg-white/6"
     >
       <!-- Empty alt: the headline below is the card's content, and naming the
            picture would announce the story twice. The same call S8's tiles and
            the Development strip both make. -->
+      <!-- The API leaves `thumbnailUrl` out entirely for an article filed
+           without a picture, whatever the type says, and an `<img>` with no
+           source draws the browser's broken-image icon. So the frame stands
+           empty on its own tint with the emblem faint in it instead. -->
       <NuxtImg
+        v-if="article.thumbnailUrl"
         :src="article.thumbnailUrl"
         alt=""
-        :sizes="imageSizes({ xs: '100vw', md: '45vw', lg: '30vw' })"
+        :sizes="imageSizes({ xs: '50vw', lg: '24vw' })"
         class="absolute inset-0 size-full object-cover"
       />
+      <img
+        v-else
+        src="/assets/global/logo-dwf-emblem.svg"
+        alt=""
+        aria-hidden="true"
+        width="196"
+        height="196"
+        class="absolute top-1/2 left-1/2 w-1/4 -translate-x-1/2 -translate-y-1/2 opacity-15"
+      >
 
       <!-- `165:8315`: inset 16px from the picture's top-right corner. -->
       <div
@@ -62,7 +76,7 @@ defineProps<{ article: NewsArticle }>()
     <!-- Bebas 32/40 at 50%. Figma puts the opacity on the wrapper (`163:8227`)
          rather than on each of the three texts. -->
     <p
-      class="font-display flex flex-wrap items-center gap-2.5 text-[length:var(--text-display-caption)] leading-[1.25] text-white/50"
+      class="font-display flex flex-wrap items-center gap-x-2 text-base leading-[1.25] text-white/50 md:gap-2.5 md:text-[length:var(--text-display-caption)]"
     >
       <span>{{ article.category }}</span>
       <!-- Punctuation between two labels rather than content — hidden, so it is
@@ -75,7 +89,7 @@ defineProps<{ article: NewsArticle }>()
 
     <!-- Inter SemiBold 28/36. -->
     <h3
-      class="font-sans text-[length:var(--text-heading-tile)] leading-[1.29] font-semibold text-white"
+      class="font-sans line-clamp-2 text-sm leading-[1.35] font-semibold text-white md:text-[length:var(--text-heading-tile)] md:leading-[1.29]"
     >
       <!-- The stretched link: `after` covers the card, so the anchor is the
            whole tile while the accessible name stays the headline. -->

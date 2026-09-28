@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { NEWS_HEADER_COPY } from "~/content/news/header"
+
 /**
  * `/news` — Figma screen `156:7512`.
  *
@@ -12,6 +14,11 @@
  * navbar, then the page's sections, then the footer outside `<main>` as its own
  * landmark. No `PageShine` — the design has none here, unlike Development. No
  * `Join`: that is a landing-page section.
+ *
+ * **No header band** (repo owner's call, 2026-09-28): the page opens on the
+ * featured story, and the search moved into the archive's control row beside
+ * the category tabs. The page's `<h1>` stays, visually hidden — the featured
+ * band's heading is a story's title, not the page's.
  *
  * **The archive is filtered by the URL.** `?category=` is read here and passed
  * down, so the section renders on the server and a filtered archive is a link
@@ -32,7 +39,7 @@ const category = computed(() =>
 
 <template>
   <main>
-    <NewsHeader />
+    <h1 class="sr-only">{{ NEWS_HEADER_COPY.title.join(" ") }}</h1>
     <NewsFeaturedBand />
     <NewsArchive :category="category" />
     <NewsPressReleases />

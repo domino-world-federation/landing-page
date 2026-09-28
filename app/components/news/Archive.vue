@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { getLatestNews, getNewsCategories } from "~/lib/api/client"
+import { useEventListener } from "@vueuse/core"
 import { NEWS_ARCHIVE_COPY } from "~/content/news/archive"
 
 /** The design's grid is six tiles, three abreast, two rows (`165:8250`). */
-const PAGE = 6
+const PAGE = 8
 
 /**
  * The grid's own anchor, so "view more" returns the reader to the tiles rather
@@ -57,7 +58,6 @@ const { data: fetched } = await useAsyncData(
 )
 
 const articles = computed(() => fetched.value.slice(0, PAGE))
-const hasMore = computed(() => fetched.value.length > PAGE)
 
 function tabHref(next?: string) {
   const query = next ? `?category=${encodeURIComponent(next)}` : ""
@@ -66,6 +66,59 @@ function tabHref(next?: string) {
 
 // The filter travels with the reader: opening the archive from a filtered grid
 // should not silently drop the filter on the way.
+/**
+ * The tab strip scrolls inside its pill. Two jobs here, both client-only and
+ * both after render, so the server's markup is never affected:
+ *
+ * - **the chosen tab is brought to the strip's left edge** (repo owner's call,
+ *   2026-09-28), so picking a category from the far end of a long vocabulary
+ *   leaves it in view — and leaves the ones after it next in line;
+ * - **a fade marks each edge with tabs still behind it**, so the strip no
+ *   longer ends on a word cut in half.
+ */
+const strip = useTemplateRef<HTMLUListElement>("strip")
+const fadeStart = ref(false)
+const fadeEnd = ref(false)
+
+function measureStrip() {
+  const el = strip.value
+  if (!el) return
+  fadeStart.value = el.scrollLeft > 1
+  fadeEnd.value = el.scrollLeft + el.clientWidth < el.scrollWidth - 1
+}
+
+const FADE = "40px"
+const stripMask = computed(() => {
+  if (!fadeStart.value && !fadeEnd.value) return undefined
+  const start = fadeStart.value ? `transparent 0, #000 ${FADE}` : "#000 0"
+  const end = fadeEnd.value ? `#000 calc(100% - ${FADE}), transparent 100%` : "#000 100%"
+  return `linear-gradient(to right, ${start}, ${end})`
+})
+
+function bringActiveToStart(smooth: boolean) {
+  const el = strip.value
+  const active = el?.querySelector<HTMLElement>('[aria-current="page"]')
+  if (!el || !active) return
+  el.scrollTo({
+    left: active.parentElement!.offsetLeft,
+    behavior: smooth ? "smooth" : "instant",
+  })
+}
+
+onMounted(() => {
+  bringActiveToStart(false)
+  measureStrip()
+  useEventListener(window, "resize", measureStrip)
+})
+
+watch(
+  () => props.category,
+  async () => {
+    await nextTick()
+    bringActiveToStart(true)
+  },
+)
+
 const allHref = computed(() =>
   props.category
     ? `/news/all?category=${encodeURIComponent(props.category)}`
@@ -92,12 +145,26 @@ const allHref = computed(() =>
          `156:7563`). Same component in the design system, so the same numbers
          here. `overflow-x-auto` because the strip is as long as the feed's
          vocabulary, which the page does not control. -->
+    <!-- The control row: category tabs on the left, the search field and the
+         View All button on the right (repo owner's layout, 2026-09-28 — the
+         search used to sit in a header band this page no longer has, and View
+         All replaces the "View more" pill that sat under the grid). Stacked
+         below `lg`: the tabs scroll on their own line, the search and button
+         share the next. -->
+    <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between lg:gap-8">
+    <!-- The pill is the frame and the strip scrolls INSIDE it, so a long
+         vocabulary no longer runs its last tab into the search field cut
+         mid-word: it fades out at whichever edge still has tabs behind it.
+         The fades are a mask, driven by where the strip is scrolled to. -->
     <nav
       :aria-label="NEWS_ARCHIVE_COPY.filterLabel"
-      class="-mx-5 overflow-x-auto px-5 md:-mx-10 md:px-10 lg:-mx-20 lg:px-20"
+      class="min-w-0 rounded-[var(--radius-glass)] bg-black/40 p-1 backdrop-blur-[10px] lg:flex-1"
     >
       <ul
-        class="flex w-max items-center gap-0 rounded-[var(--radius-glass)] bg-black/40 p-1 backdrop-blur-[10px]"
+        ref="strip"
+        :style="{ maskImage: stripMask, WebkitMaskImage: stripMask }"
+        class="relative flex items-center gap-0 overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        @scroll.passive="measureStrip"
       >
         <NewsArchiveTab
           :label="NEWS_ARCHIVE_COPY.allTab"
@@ -114,6 +181,17 @@ const allHref = computed(() =>
       </ul>
     </nav>
 
+      <div class="flex items-start gap-3 lg:w-[max(420px,28vw)] lg:shrink-0">
+        <NewsSearch class="min-w-0 flex-1" />
+        <NuxtLink
+          :to="allHref"
+          class="rounded-btn font-display focus-visible:ring-gold flex h-13 shrink-0 items-center justify-center bg-white/20 px-4 text-[length:var(--text-display-btn)] leading-none text-white uppercase transition-colors hover:bg-white/30 focus-visible:ring-2 focus-visible:outline-none"
+        >
+          {{ NEWS_ARCHIVE_COPY.viewAll }}
+        </NuxtLink>
+      </div>
+    </div>
+
     <p
       v-if="articles.length === 0"
       class="font-sans text-[length:var(--text-eyebrow)] leading-8 text-white/60"
@@ -121,22 +199,14 @@ const allHref = computed(() =>
       {{ NEWS_ARCHIVE_COPY.empty }}
     </p>
 
-    <!-- 572-wide tiles with a 20px gutter: three of them plus two gutters is
-         1756 against the 1760 the section's 80px margins leave, so the design's
-         row is a plain three-column grid rather than a measured one. -->
-    <ul v-else class="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+    <!-- Four across from `lg`, two rows of them (the repo owner's layout,
+         2026-09-28 — it was three across in Figma). Two across on a phone:
+         one full-width picture per story made the grid a long scroll of
+         photographs. -->
+    <ul v-else class="grid grid-cols-2 gap-x-3 gap-y-6 md:gap-5 lg:grid-cols-4">
       <li v-for="article in articles" :key="article.id">
         <NewsGridCard :article="article" />
       </li>
     </ul>
-
-    <!-- `166:8428` — the silver pill, centred under the grid. Hidden once the
-         six on screen ARE the feed: a button leading to an archive that holds
-         nothing more is the silent no-op D28 ruled out. -->
-    <div v-if="hasMore" class="flex justify-center">
-      <UiSilverCta :href="allHref" class="lg:min-w-[18.75vw]">
-        {{ NEWS_ARCHIVE_COPY.more }}
-      </UiSilverCta>
-    </div>
   </section>
 </template>

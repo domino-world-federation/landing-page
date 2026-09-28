@@ -19,8 +19,8 @@ export const NEWS_ARCHIVE_COPY = {
   /** Names the tab strip for assistive tech. */
   filterLabel: "Filter articles by category",
 
-  /** `166:8429` — the silver pill under the grid. */
-  more: "View more",
+  /** The button beside the search field that opens `/news/all`. */
+  viewAll: "View All",
 
   /**
    * The per-card link name. `%s` is the headline: the card is a stretched

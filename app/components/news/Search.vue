@@ -25,14 +25,14 @@ function handleSubmit() {
 </script>
 
 <template>
-  <div class="flex w-full flex-col gap-2 lg:max-w-[402px]">
+  <div class="flex w-full flex-col gap-2">
     <!-- `min-w-0` on the form as well as the input: the form is a flex item in
          the header row and carries the same implicit `auto` minimum the input
          has just given up, so without it the box re-imposes the intrinsic width
          and pushes the heading beside it (D29). -->
     <form
       role="search"
-      class="flex w-full min-w-0 items-center gap-4 rounded-[var(--radius-glass)] bg-white/12 px-4 py-3.5 focus-within:ring-2 focus-within:ring-white/40"
+      class="flex w-full min-w-0 items-center gap-4 h-13 rounded-[var(--radius-glass)] bg-white/12 px-4 focus-within:ring-2 focus-within:ring-white/40"
       @submit.prevent="handleSubmit"
     >
       <!-- A placeholder is not a label — it vanishes the moment there is text in
@@ -55,12 +55,12 @@ function handleSubmit() {
         v-model="query"
         type="search"
         :placeholder="NEWS_HEADER_COPY.searchPlaceholder"
-        class="font-sans w-0 flex-1 bg-transparent text-[length:var(--text-eyebrow)] leading-8 text-white placeholder:text-white/60 focus:outline-none [&::-webkit-search-cancel-button]:appearance-none"
+        class="font-sans w-0 flex-1 bg-transparent text-base leading-6 text-white placeholder:text-white/60 focus:outline-none [&::-webkit-search-cancel-button]:appearance-none"
       >
       <button
         type="submit"
         :aria-label="NEWS_HEADER_COPY.searchLabel"
-        class="focus-visible:ring-gold flex size-9 shrink-0 items-center justify-center rounded-[4px] transition-transform duration-200 hover:scale-105 focus-visible:ring-2 focus-visible:outline-none"
+        class="focus-visible:ring-gold flex size-7 shrink-0 items-center justify-center rounded-[4px] transition-transform duration-200 hover:scale-105 focus-visible:ring-2 focus-visible:outline-none"
       >
         <!-- A 36px inline SVG sized in CSS. Drawn in white already, so no
              `invert`. -->
@@ -69,7 +69,7 @@ function handleSubmit() {
           alt=""
           width="36"
           height="36"
-          class="size-9"
+          class="size-7"
         >
       </button>
     </form>
