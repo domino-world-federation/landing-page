@@ -19,7 +19,7 @@ const COPY = PLAYER_MEMBERSHIP_COPY.cta
 <template>
   <section
     aria-labelledby="player-cta-heading"
-    class="relative flex snap-screen flex-col items-center justify-center gap-8 px-5 py-20 text-center md:px-10 lg:gap-[3.33vw] lg:px-20 lg:py-[5.21vw]"
+    class="relative flex flex-col items-center lg:snap-screen justify-center gap-8 px-5 py-20 text-center md:px-10 lg:gap-[3.33vw] lg:px-20 lg:py-[5.21vw]"
   >
     <div class="flex w-full flex-col items-center gap-6 lg:gap-[1.25vw]">
       <MotionReveal :y="40" class="w-full">

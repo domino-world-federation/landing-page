@@ -36,7 +36,7 @@ import { MEMBERSHIP_BENEFITS, MEMBERS_COPY } from "~/content/members"
   <section
     id="membership-benefits"
     aria-labelledby="benefits-heading"
-    class="flex snap-screen flex-col justify-center gap-10 px-5 pt-28 pb-10 md:px-10 lg:gap-15 lg:px-20 lg:pt-[var(--nav-clearance)] lg:pb-[4.1667vw]"
+    class="flex flex-col justify-center gap-10 px-5 pt-16 pb-10 lg:snap-screen md:px-10 lg:gap-15 lg:px-20 lg:pt-[var(--nav-clearance)] lg:pb-[4.1667vw]"
   >
     <h2
       id="benefits-heading"
@@ -45,7 +45,7 @@ import { MEMBERSHIP_BENEFITS, MEMBERS_COPY } from "~/content/members"
       {{ MEMBERS_COPY.benefitsHeading }}
     </h2>
 
-    <ul class="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+    <ul class="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-5 lg:grid-cols-3">
       <li
         v-for="(benefit, index) in MEMBERSHIP_BENEFITS"
         :key="benefit.id"
@@ -57,26 +57,26 @@ import { MEMBERSHIP_BENEFITS, MEMBERS_COPY } from "~/content/members"
           class="flex flex-1 flex-col"
         >
           <div
-            class="flex min-h-[280px] flex-1 flex-col justify-between gap-8 rounded-[var(--radius-card)] bg-linear-to-b from-white/12 to-white/4 p-6 lg:min-h-[360px]"
+            class="flex flex-1 flex-row items-start gap-4 rounded-[var(--radius-card)] bg-linear-to-b from-white/12 to-white/4 p-5 md:min-h-[280px] md:flex-col md:justify-between md:gap-8 md:p-6 lg:min-h-[360px]"
           >
             <!-- 72px gold tile with a 56px glyph centred in it (`405:28528`). -->
             <span
               aria-hidden
-              class="flex size-18 shrink-0 items-center justify-center rounded-[var(--radius-glass)] bg-[image:var(--gradient-gold-tile)]"
+              class="flex size-12 shrink-0 items-center justify-center md:size-18 rounded-[var(--radius-glass)] bg-[image:var(--gradient-gold-tile)]"
             >
               <img
                 :src="benefit.iconUrl"
                 alt=""
                 width="56"
                 height="56"
-                class="size-14"
+                class="size-8 md:size-14"
               >
             </span>
 
-            <div class="flex flex-col gap-4">
+            <div class="flex flex-col gap-1.5 md:gap-4">
               <!-- Inter SemiBold 36/44. -->
               <h3
-                class="font-sans text-[length:var(--text-body-lg)] leading-[1.22] font-semibold text-white"
+                class="font-sans text-lg leading-[1.22] font-semibold text-white md:text-[length:var(--text-body-lg)]"
               >
                 {{ benefit.title }}
               </h3>
@@ -84,7 +84,7 @@ import { MEMBERSHIP_BENEFITS, MEMBERS_COPY } from "~/content/members"
                    bodies mid-sentence; the breaks are not reproduced — the
                    column decides where a line ends (D40). -->
               <p
-                class="font-sans text-[length:var(--text-body-sm)] leading-[1.5] text-white/60"
+                class="font-sans text-sm leading-[1.5] text-white/60 md:text-[length:var(--text-body-sm)]"
               >
                 {{ benefit.body }}
               </p>

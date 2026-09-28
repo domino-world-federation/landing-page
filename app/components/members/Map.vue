@@ -74,7 +74,7 @@ const filterStatus = computed(() => {
 <template>
   <section
     :aria-label="MEMBERS_COPY.mapLabel"
-    class="flex snap-screen flex-col items-center justify-center gap-8 px-5 pt-28 pb-10 md:px-10 lg:gap-10 lg:px-20 lg:pt-[var(--nav-clearance)] lg:pb-[3.125vw]"
+    class="flex flex-col items-center justify-center gap-8 px-5 pt-16 pb-10 lg:snap-screen md:px-10 lg:gap-10 lg:px-20 lg:pt-[var(--nav-clearance)] lg:pb-[3.125vw]"
   >
     <!-- Figma draws the plate and the markers as separate layers — `404:28158`
          is the gradient plate with the landmass on it, `404:28176` the dots over
@@ -122,7 +122,7 @@ const filterStatus = computed(() => {
       <div
         role="radiogroup"
         :aria-label="MEMBERS_COPY.mapKeyLabel"
-        class="mx-auto flex w-max items-center rounded-[var(--radius-glass)] bg-black/40 p-1 backdrop-blur-[10px]"
+        class="mx-auto flex max-w-full flex-wrap items-center justify-center rounded-[var(--radius-glass)] bg-black/40 p-1 backdrop-blur-[10px] lg:w-max lg:flex-nowrap"
       >
         <button
           type="button"
@@ -130,7 +130,7 @@ const filterStatus = computed(() => {
           :aria-checked="activeTier === undefined"
           :class="
             cn(
-              'font-sans focus-visible:ring-gold rounded-[var(--radius-btn)] px-5 py-3.5 text-[length:var(--text-label-xs)] leading-6 font-medium whitespace-nowrap transition-colors focus-visible:ring-2 focus-visible:outline-none',
+              'font-sans focus-visible:ring-gold rounded-[var(--radius-btn)] px-4 py-2.5 lg:px-5 lg:py-3.5 text-[length:var(--text-label-xs)] leading-6 font-medium whitespace-nowrap transition-colors focus-visible:ring-2 focus-visible:outline-none',
               activeTier === undefined
                 ? 'bg-white/12 text-white'
                 : 'text-white/70 hover:text-white',
@@ -149,7 +149,7 @@ const filterStatus = computed(() => {
           :aria-checked="activeTier === tier.id"
           :class="
             cn(
-              'font-sans focus-visible:ring-gold flex items-center gap-2 rounded-[var(--radius-btn)] px-5 py-3.5 text-[length:var(--text-label-xs)] leading-6 font-medium whitespace-nowrap transition-colors focus-visible:ring-2 focus-visible:outline-none',
+              'font-sans focus-visible:ring-gold flex items-center gap-2 rounded-[var(--radius-btn)] px-4 py-2.5 lg:px-5 lg:py-3.5 text-[length:var(--text-label-xs)] leading-6 font-medium whitespace-nowrap transition-colors focus-visible:ring-2 focus-visible:outline-none',
               activeTier === tier.id
                 ? 'bg-white/12 text-white'
                 : 'text-white/70 hover:text-white',

@@ -207,7 +207,7 @@ function toggle(id: string) {
         type="button"
         :aria-pressed="marker.id === openId"
         :aria-label="markerName(marker)"
-        class="focus-visible:ring-gold absolute w-[1.8%] -translate-x-1/2 -translate-y-1/2 rounded-full focus-visible:ring-2 focus-visible:outline-none"
+        class="focus-visible:ring-gold absolute w-[4%] -translate-x-1/2 -translate-y-1/2 rounded-full focus-visible:ring-2 focus-visible:outline-none lg:w-[1.8%]"
         :style="{
           left: `${marker.x}%`,
           top: `${marker.y}%`,
@@ -309,7 +309,7 @@ function toggle(id: string) {
           :transition="transition"
         >
           <div
-            class="flex flex-col items-center gap-0.5 rounded-[var(--radius-btn)] bg-[#1e1e1e] px-4 py-2 whitespace-nowrap shadow-[var(--shadow-card)]"
+            class="flex flex-col items-center gap-0.5 rounded-[var(--radius-btn)] bg-[#1e1e1e] px-3 py-1.5 whitespace-nowrap lg:px-4 lg:py-2 shadow-[var(--shadow-card)]"
           >
             <p
               class="font-sans text-[length:var(--text-label-xs)] leading-6 font-medium text-white"
@@ -336,7 +336,7 @@ function toggle(id: string) {
                before and what put a tag over Siberia for a marker in Java. -->
           <span
             aria-hidden
-            class="h-19 w-0.5 shrink-0 bg-linear-to-b from-transparent to-[#e1b764]"
+            class="h-8 w-0.5 shrink-0 bg-linear-to-b lg:h-19 from-transparent to-[#e1b764]"
           />
         </Motion>
       </AnimatePresence>

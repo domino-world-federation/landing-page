@@ -23,7 +23,7 @@ const COPY = PLAYER_MEMBERSHIP_COPY.benefits
 <template>
   <section
     aria-labelledby="membership-benefits-heading"
-    class="bg-bg flex snap-screen flex-col justify-center gap-9 px-5 pt-28 pb-16 md:px-10 lg:px-20 lg:pt-[max(var(--nav-clearance),7.29vw)] lg:pb-[4.17vw]"
+    class="bg-bg flex flex-col justify-center gap-9 px-5 pt-16 pb-16 lg:snap-screen md:px-10 lg:px-20 lg:pt-[max(var(--nav-clearance),7.29vw)] lg:pb-[4.17vw]"
   >
     <MotionReveal :y="40" blur-from="10px">
       <h2

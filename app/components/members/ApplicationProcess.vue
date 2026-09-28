@@ -36,7 +36,7 @@ const steps = APPLICATION_STEPS.map((step) => ({
 <template>
   <section
     aria-labelledby="process-heading"
-    class="flex snap-screen flex-col items-center justify-center gap-10 px-5 pt-28 pb-10 md:px-10 lg:gap-16 lg:px-20 lg:pt-[var(--nav-clearance)] lg:pb-[3.125vw]"
+    class="flex flex-col items-center justify-center gap-10 px-5 pt-16 pb-10 lg:snap-screen md:px-10 lg:gap-16 lg:px-20 lg:pt-[var(--nav-clearance)] lg:pb-[3.125vw]"
   >
     <div class="flex max-w-[1760px] flex-col items-center gap-6 lg:gap-9">
       <h2

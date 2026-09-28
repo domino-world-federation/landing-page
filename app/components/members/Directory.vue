@@ -85,7 +85,7 @@ const open = computed(
   <section
     v-if="federations.length > 0"
     aria-labelledby="directory-heading"
-    class="flex snap-screen flex-col items-center justify-center gap-8 px-5 pt-28 pb-10 md:px-10 lg:gap-16 lg:px-20 lg:pt-[max(var(--nav-clearance),4.17vw)] lg:pb-[4.17vw]"
+    class="flex flex-col items-center justify-center gap-8 px-5 pt-16 pb-10 lg:snap-screen md:px-10 lg:gap-16 lg:px-20 lg:pt-[max(var(--nav-clearance),4.17vw)] lg:pb-[4.17vw]"
   >
     <!-- Bebas 100 through the page's gold gradient. `uppercase` is the
          heading's, not the string's (D40). -->

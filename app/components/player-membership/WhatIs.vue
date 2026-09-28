@@ -14,7 +14,7 @@ const COPY = PLAYER_MEMBERSHIP_COPY.whatIs
 <template>
   <section
     aria-labelledby="what-is-dwf-id-heading"
-    class="bg-bg flex flex-col items-center gap-9 px-5 pt-28 pb-16 text-center md:px-10 lg:gap-[2.92vw] lg:px-20 lg:pt-[max(var(--nav-clearance),7.29vw)] lg:pb-[3.13vw]"
+    class="bg-bg flex flex-col items-center gap-9 px-5 pt-16 pb-16 text-center md:px-10 lg:gap-[2.92vw] lg:px-20 lg:pt-[max(var(--nav-clearance),7.29vw)] lg:pb-[3.13vw]"
   >
     <MotionReveal :y="40" blur-from="10px">
       <h2

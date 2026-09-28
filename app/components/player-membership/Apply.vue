@@ -19,6 +19,19 @@ import {
  */
 const ELIGIBILITY = PLAYER_MEMBERSHIP_COPY.eligibility
 const PROCESS = PLAYER_MEMBERSHIP_COPY.process
+
+/**
+ * The steps in `ui/StepRail`'s shape, for phones — the rail Federation Members
+ * draws its own application process with, so the two pages' processes read as
+ * one design there (repo owner's call, 2026-09-28). The number is the position,
+ * as it is in the list the desktop keeps.
+ */
+const railSteps = APPLICATION_STEPS.map((step, i) => ({
+  id: step.id,
+  marker: String(i + 1).padStart(2, "0"),
+  title: step.title,
+  detail: step.body,
+}))
 </script>
 
 <template>
@@ -26,7 +39,7 @@ const PROCESS = PLAYER_MEMBERSHIP_COPY.process
        this section over to the shine behind the one after it. -->
   <section
     aria-labelledby="apply-heading"
-    class="flex snap-screen flex-col justify-center gap-10 bg-[linear-gradient(180deg,var(--color-bg)_0%,transparent_100%)] px-5 pt-28 pb-16 md:px-10 lg:gap-[4.17vw] lg:px-20 lg:pt-[max(var(--nav-clearance),7.29vw)] lg:pb-[4.17vw]"
+    class="flex flex-col justify-center gap-10 bg-[linear-gradient(180deg,var(--color-bg)_0%,transparent_100%)] px-5 pt-16 pb-16 lg:snap-screen md:px-10 lg:gap-[4.17vw] lg:px-20 lg:pt-[max(var(--nav-clearance),7.29vw)] lg:pb-[4.17vw]"
   >
     <h2 id="apply-heading" class="sr-only">
       {{ ELIGIBILITY.heading }}
@@ -100,7 +113,15 @@ const PROCESS = PLAYER_MEMBERSHIP_COPY.process
                  and the marker is drawn from the counter, so a step inserted in
                  the middle cannot leave the numbering behind the way a number in
                  the data would. -->
-            <ol class="flex list-none flex-col gap-7">
+            <!-- Below `lg`: the dotted rail with gold numbers, as on Federation
+                 Members. From `lg`: the design's numbered list, unchanged. -->
+            <UiStepRail
+              :label="PROCESS.heading"
+              :steps="railSteps"
+              class="lg:hidden"
+            />
+
+            <ol class="hidden list-none flex-col gap-7 lg:flex">
               <li
                 v-for="(step, i) in APPLICATION_STEPS"
                 :key="step.id"
