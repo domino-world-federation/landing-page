@@ -52,8 +52,6 @@ export const INTEGRITY_COPY = {
      */
     intro:
       "If you have a concern about cheating, match manipulation, corruption, abuse, harassment, or discrimination in dominoes, you can share the details here. Include what happened, when and where it happened, and any other information you think may help.",
-    reassurance:
-      "Whistleblowers are the first line of defense. All reports are handled with 100% anonymity and processed by our secure legal team.",
 
     formHeading: "Share Your Concern",
     typeLabel: "Type of concern",

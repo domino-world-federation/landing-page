@@ -143,9 +143,6 @@ const FIELD =
       <p class="font-sans text-[length:var(--text-eyebrow)] leading-8 text-white/60">
         {{ COPY.intro }}
       </p>
-      <p class="font-sans text-[length:var(--text-eyebrow)] leading-8 text-white/60">
-        {{ COPY.reassurance }}
-      </p>
     </div>
 
     <!-- 1136 of 1920 is 59.17%. -->

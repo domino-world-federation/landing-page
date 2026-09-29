@@ -2163,3 +2163,7 @@ sekadar tidak berisi dokumen. 28 baris dipetakan ke kosakata baru (D79).
 - **Ikon kartu 1 dan 2 Protecting the Game ditukar** (2026-09-29): Fair
   Competition kini memakai ikon jabat tangan (`icon-tech-metadata.svg`),
   Responsible Information Use ikon toa (`icon-tech-heuristic.svg`).
+
+- **Kalimat "Whistleblowers are the first line of defense…" di Report an
+  Integrity Issue dihapus** (2026-09-29), dari template dan dari
+  `INTEGRITY_COPY.report`.
