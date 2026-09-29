@@ -141,13 +141,13 @@ export const INTEGRITY_MEASURES = [
     id: "fair-competition",
     title: "Fair Competition",
     detail: "Compete honestly and reject cheating or match manipulation.",
-    iconUrl: "/assets/integrity/icon-tech-heuristic.svg",
+    iconUrl: "/assets/integrity/icon-tech-metadata.svg",
   },
   {
     id: "information",
     title: "Responsible Information Use",
     detail: "Respect confidential information and use it responsibly.",
-    iconUrl: "/assets/integrity/icon-tech-metadata.svg",
+    iconUrl: "/assets/integrity/icon-tech-heuristic.svg",
   },
   {
     id: "safe-participation",

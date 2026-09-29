@@ -2159,3 +2159,7 @@ sekadar tidak berisi dokumen. 28 baris dipetakan ke kosakata baru (D79).
   Simple to Learn, Deep to Master. Foto per klaim masih placeholder lama
   (cincin Olimpiade, delegasi tim, pertandingan catur) — kini tidak cocok dengan
   naskahnya. Diperiksa di 1920×1080 dan 390px.
+
+- **Ikon kartu 1 dan 2 Protecting the Game ditukar** (2026-09-29): Fair
+  Competition kini memakai ikon jabat tangan (`icon-tech-metadata.svg`),
+  Responsible Information Use ikon toa (`icon-tech-heuristic.svg`).
