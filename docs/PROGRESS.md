@@ -2151,3 +2151,11 @@ sekadar tidak berisi dokumen. 28 baris dipetakan ke kosakata baru (D79).
   ("Every Generation", paragraf lebih panjang) membuat judul pecah tiga baris
   dan paragraf terpotong di bawah layar — feedback tim product. Diperiksa di
   1920×1080, 1440×900, 1660×1245.
+
+- **Key Selling Point (Pillars) About direvisi tim DWF** (2026-09-29). Counter
+  "0" di atas kolom diganti judul "Why Dominoes?" (`PILLARS_COPY.heading`, gaya
+  judul emas; `PillarCounter.vue` dihapus); eyebrow tiap klaim dicabut dari data
+  dan tampilan; tiga klaim jadi Accessible to All / A Game That Connects /
+  Simple to Learn, Deep to Master. Foto per klaim masih placeholder lama
+  (cincin Olimpiade, delegasi tim, pertandingan catur) — kini tidak cocok dengan
+  naskahnya. Diperiksa di 1920×1080 dan 390px.

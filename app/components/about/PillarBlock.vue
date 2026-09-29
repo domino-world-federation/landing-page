@@ -62,11 +62,6 @@ const dim = computed(() =>
     :animate="{ opacity: focused ? 1 : IDLE, transition: dim }"
     :style="{ willChange: 'opacity' }"
   >
-    <p
-      class="font-sans text-[length:var(--text-eyebrow)] leading-7 font-medium text-white/40 uppercase"
-    >
-      {{ pillar.eyebrow }}
-    </p>
 
     <!-- Bebas 72/64 — a heading set tighter than its own font size, which is how
          the design stacks the two-word titles. -->

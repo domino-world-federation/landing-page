@@ -104,6 +104,7 @@ const fade = computed(() => ({ duration: DURATION, ease: EASE }))
        of nothing to scroll past. -->
   <section
     ref="track"
+    aria-labelledby="pillars-heading"
     :style="{ '--pillars-steps': screens, '--column-fade': '12%' }"
     class="snap-pass relative lg:h-[calc(var(--pillars-steps)*100dvh)] lg:motion-reduce:h-dvh"
   >
@@ -139,7 +140,15 @@ const fade = computed(() => ({ duration: DURATION, ease: EASE }))
          photograph after them and a screen of empty black. On a phone the
          same content is simply listed. The stage is `hidden` there and this
          list from `lg`, so the markup is the same on server and client. -->
-    <ul class="flex list-none flex-col gap-14 px-5 pt-20 pb-16 md:px-10 lg:hidden">
+    <div class="flex flex-col gap-10 px-5 pt-16 pb-16 md:px-10 lg:hidden">
+    <MotionReveal :y="40">
+      <h2
+        class="font-display text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
+      >
+        {{ PILLARS_COPY.heading }}
+      </h2>
+    </MotionReveal>
+    <ul class="flex list-none flex-col gap-14">
       <li v-for="pillar in PILLARS" :key="pillar.id">
         <MotionReveal :y="32" class="flex flex-col">
           <NuxtImg
@@ -148,13 +157,8 @@ const fade = computed(() => ({ duration: DURATION, ease: EASE }))
             :sizes="imageSizes({ xs: '100vw' })"
             class="aspect-[4/3] w-full rounded-[20px] object-cover"
           />
-          <p
-            class="font-sans mt-6 text-[length:var(--text-eyebrow)] leading-7 font-medium text-white/40 uppercase"
-          >
-            {{ pillar.eyebrow }}
-          </p>
           <h3
-            class="font-display mt-2 text-[length:var(--text-display-pillar)] leading-[0.89] text-white uppercase"
+            class="font-display mt-6 text-[length:var(--text-display-pillar)] leading-[0.89] text-white uppercase"
           >
             {{ pillar.title }}
           </h3>
@@ -166,6 +170,7 @@ const fade = computed(() => ({ duration: DURATION, ease: EASE }))
         </MotionReveal>
       </li>
     </ul>
+    </div>
 
     <div
       ref="stage"
@@ -181,15 +186,16 @@ const fade = computed(() => ({ duration: DURATION, ease: EASE }))
       <div
         class="flex w-full flex-col gap-8 lg:h-full lg:w-[42.71%] lg:gap-[2.08vw]"
       >
-        <!-- The counter sits above the column rather than beside a block: it
-             counts the SECTION's steps, and one of it is what the reference
-             draws. -->
-        <AboutPillarCounter
-          :value="index + 1"
-          :total="cells.length"
-          :label="PILLARS_COPY.counterLabel"
-          class="shrink-0"
-        />
+        <!-- The section's heading, where the design drew a rolling counter —
+             the federation's revision (2026-09-29). -->
+        <MotionReveal :y="40" class="shrink-0">
+          <h2
+            id="pillars-heading"
+            class="font-display text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
+          >
+            {{ PILLARS_COPY.heading }}
+          </h2>
+        </MotionReveal>
 
         <div
           ref="viewport"
