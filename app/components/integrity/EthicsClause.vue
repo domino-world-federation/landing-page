@@ -25,7 +25,8 @@ const IDLE = 0.4
  */
 const props = withDefaults(
   defineProps<{
-    clause: EthicsClause
+    /** `cms` is the clause's field prefix in the page editor (`ethics.clauses.0`). */
+    clause: EthicsClause & { cms?: string }
     duplicate: boolean
     focused?: boolean
     /**
@@ -72,13 +73,14 @@ const dim = computed(() =>
          and a reader tabbing by heading should find three of them. -->
     <component
       :is="numberTag"
+      v-cms="clause.cms && `${clause.cms}.title`"
       class="font-display text-[length:var(--text-display-pillar)] leading-[0.89] text-white"
     >
       {{ clause.number }} — {{ clause.title }}
     </component>
 
     <!-- Inter 36/56 and a 40px gap above it — the frame's own `gap: 40`. -->
-    <p class="font-sans mt-10 text-[length:var(--text-body-lg)] leading-[1.56]">
+    <p v-cms="clause.cms && `${clause.cms}.body`" class="font-sans mt-10 text-[length:var(--text-body-lg)] leading-[1.56]">
       <MotionReadingText
         :text="clause.body"
         :active="reading"

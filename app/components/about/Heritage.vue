@@ -2,6 +2,9 @@
 import { getHeritageMilestones } from "~/lib/api/client"
 import { HERITAGE_COPY } from "~/content/about/heritage"
 
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("about")
+
 /**
  * Heritage — Figma node `88:1163`.
  *
@@ -124,9 +127,10 @@ const { scrollYProgress } = useScroll({
       >
         <MotionReveal :y="32">
           <p
+            v-cms="'heritage.eyebrow'"
             class="font-sans text-[length:var(--text-eyebrow)] leading-7 font-medium text-white uppercase"
           >
-            {{ HERITAGE_COPY.eyebrow }}
+            {{ copy.text('heritage.eyebrow', HERITAGE_COPY.eyebrow) }}
           </p>
         </MotionReveal>
 
@@ -134,9 +138,10 @@ const { scrollYProgress } = useScroll({
           <!-- Bebas **100/108** (`566:13474`), which is `--text-display-statement`
                exactly — the same step eight other headings across the site take. -->
           <h2
+            v-cms="'heritage.heading'"
             class="font-display text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
           >
-            {{ HERITAGE_COPY.heading }}
+            {{ copy.text('heritage.heading', HERITAGE_COPY.heading) }}
           </h2>
         </MotionReveal>
       </div>

@@ -3,6 +3,9 @@ import { FAQ_COPY } from "~/content/home/faq"
 
 import { getFaqs } from "~/lib/api/client"
 
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("home")
+
 /**
  * The questions and THEIR ORDER come from the CMS — the "FAQ per Page" screen
  * ranks them per page, and this section is one of the three pages it ranks.
@@ -65,10 +68,15 @@ const { data: faqs } = await useAsyncData("home-faq", () => getFaqs("home"), {
   >
     <UiFaqPanel
       :items="faqs"
-      :heading="FAQ_COPY.heading"
+      heading-cms="faq.heading"
+      :heading="copy.text('faq.heading', FAQ_COPY.heading)"
       heading-id="faq-heading"
       tone="dark"
-      :view-more="{ label: FAQ_COPY.viewMore, href: FAQ_COPY.viewMoreHref }"
+      :view-more="{
+        label: copy.text('faq.view_more', FAQ_COPY.viewMore),
+        href: FAQ_COPY.viewMoreHref,
+        cms: 'faq.view_more',
+      }"
     />
   </section>
 </template>

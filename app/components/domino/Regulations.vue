@@ -4,6 +4,9 @@ import { DOCUMENT_CATEGORY, DOCUMENT_SECTION } from "~/lib/api/categories"
 import { REFEREE_DUTIES, REGULATIONS_COPY } from "~/content/domino/regulations"
 import { DOCUMENT_LINK_COPY } from "~/content/documents"
 
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("domino")
+
 /**
  * Referee guidelines and the documents behind them — Figma node `359:15793` in
  * the **updated** file.
@@ -101,9 +104,10 @@ const { data } = await useAsyncData("domino-regulations", async () => {
             {{ data.rulebook.title }}
           </h3>
           <p
+            v-cms="'regulations.rulebook_blurb'"
             class="font-sans text-[length:var(--text-body-sm)] leading-[1.5] text-white/50"
           >
-            {{ REGULATIONS_COPY.rulebookBlurb }}
+            {{ copy.text('regulations.rulebook_blurb', REGULATIONS_COPY.rulebookBlurb) }}
           </p>
         </div>
 
@@ -123,14 +127,16 @@ const { data } = await useAsyncData("domino-regulations", async () => {
              heading's, not the string's (D40). -->
         <h2
           id="regulations-heading"
+          v-cms="'regulations.heading'"
           class="font-display w-fit text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
         >
-          {{ REGULATIONS_COPY.refereeHeading }}
+          {{ copy.text('regulations.heading', REGULATIONS_COPY.refereeHeading) }}
         </h2>
         <p
+          v-cms="'regulations.intro'"
           class="font-sans text-[length:var(--text-body-sm)] leading-[1.5] text-white/50"
         >
-          {{ REGULATIONS_COPY.refereeIntro }}
+          {{ copy.text('regulations.intro', REGULATIONS_COPY.refereeIntro) }}
         </p>
       </div>
 
@@ -156,8 +162,11 @@ const { data } = await useAsyncData("domino-regulations", async () => {
           >
             {{ String(index + 1).padStart(2, "0") }}
           </span>
-          <p class="font-sans text-[length:var(--text-body-sm)] leading-[1.33] text-white">
-            {{ duty.text }}
+          <p
+            v-cms="`regulations.duties.${index}.text`"
+            class="font-sans text-[length:var(--text-body-sm)] leading-[1.33] text-white"
+          >
+            {{ copy.text(`regulations.duties.${index}.text`, duty.text) }}
           </p>
         </li>
       </ol>

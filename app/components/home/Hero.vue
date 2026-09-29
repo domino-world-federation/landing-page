@@ -4,40 +4,37 @@ import { HERO_ALT, HERO_COPY } from "~/content/home/hero"
 /**
  * The hero's words, from the CMS where the federation has typed them.
  *
- * Fetched during the server render (see `useHomeCopy`) — this is the first
- * screen of the site, and a headline that arrives a beat after the page is the
- * worst possible first impression.
+ * Fetched during the server render (`usePageCopy` awaits it through
+ * `useAsyncData`) — this is the first screen of the site, and a headline that
+ * arrives a beat after the page is the worst possible first impression.
  *
  * Every field falls back to `HERO_COPY`, which is Figma's own wording
  * (`22:789`). `HERO_ALT` stays in the repo and is not fetched: it describes the
  * artwork that ships with this component, so it belongs beside it.
  */
-const homeCopy = useHomeCopy()
+// Editable in the backoffice's page editor; the constants are the fallback.
+const page = usePageCopy("home")
 
-const copy = computed(() => {
-  const hero = homeCopy.value.hero
+const copy = computed(() => ({
+  tagline: page.text("hero.tagline", HERO_COPY.tagline),
+  headline: page.text("hero.headline", HERO_COPY.headline),
+  mission: page.text("hero.mission", HERO_COPY.mission),
+  accountability: page.text("hero.accountability", HERO_COPY.accountability),
+  primaryCta: page.text("hero.primary_cta", HERO_COPY.primaryCta),
+  primaryCtaUrl: page.text("hero.primary_cta_url", HERO_COPY.primaryCtaUrl),
+  secondaryCta: page.text("hero.secondary_cta", HERO_COPY.secondaryCta),
 
-  return {
-    tagline: hero.tagline ?? HERO_COPY.tagline,
-    headline: hero.headline ?? HERO_COPY.headline,
-    mission: hero.mission ?? HERO_COPY.mission,
-    accountability: hero.accountability ?? HERO_COPY.accountability,
-    primaryCta: hero.primaryCta ?? HERO_COPY.primaryCta,
-    primaryCtaUrl: hero.primaryCtaUrl ?? HERO_COPY.primaryCtaUrl,
-    secondaryCta: hero.secondaryCta ?? HERO_COPY.secondaryCta,
-
-    /*
-     * The one destination the design never decided.
-     *
-     * It was written `to="#"` straight into the markup below, so it could not
-     * be fixed without a deploy — and the CMS seeds it as `#` too, deliberately:
-     * guessing where "Official Rules" points would be the backoffice deciding
-     * something nobody has decided. Reading it from the copy is what turns
-     * settling that question into typing a URL into a form.
-     */
-    secondaryCtaUrl: hero.secondaryCtaUrl ?? "#",
-  }
-})
+  /*
+   * The one destination the design never decided.
+   *
+   * It was written `to="#"` straight into the markup below, so it could not
+   * be fixed without a deploy — and the CMS seeds it as `#` too, deliberately:
+   * guessing where "Official Rules" points would be the backoffice deciding
+   * something nobody has decided. Reading it from the copy is what turns
+   * settling that question into typing a URL into a form.
+   */
+  secondaryCtaUrl: page.text("hero.secondary_cta_url", "#"),
+}))
 
 /**
  * Seconds. How long the rocks take to retreat, and how long their softening
@@ -398,6 +395,7 @@ const TILE_DELAY = HERO_RETREAT / 3
          `inset-x-0` sizes to the type and `mx-auto` re-centres it. `px-0` goes
          with it, or the phone's gutter would put 20px of ramp at each end. -->
     <p
+      v-cms="'hero.tagline'"
       class="font-sans relative z-50 pt-[252px] bg-linear-to-r from-white via-[var(--color-silver-mid)] to-white bg-clip-text px-5 text-center text-base font-semibold tracking-[0.24em] text-transparent uppercase lg:absolute lg:inset-x-0 lg:top-[35.3%] lg:mx-auto lg:mt-0 lg:w-fit lg:px-0 lg:pt-0 lg:text-2xl"
     >
       {{ copy.tagline }}
@@ -414,6 +412,7 @@ const TILE_DELAY = HERO_RETREAT / 3
          and tails off the letters. The extra leading costs nothing anyway, since
          from `lg` this is positioned rather than in flow. -->
     <h1
+      v-cms="'hero.headline'"
       class="font-display relative z-0 mt-3 bg-linear-to-r from-white via-[var(--color-silver-mid)] to-white bg-clip-text px-5 text-center text-[length:var(--text-display-lg)] leading-none text-transparent uppercase lg:absolute lg:inset-x-0 lg:top-[42.6%] lg:mx-auto lg:mt-0 lg:w-fit lg:px-0"
     >
       {{ copy.headline }}
@@ -453,6 +452,7 @@ const TILE_DELAY = HERO_RETREAT / 3
            wide it can go before the capsule reads as a rounded rectangle. From
            `sm` the screen is wide enough for Figma's own 340. -->
       <UiGoldCta
+        v-cms="'hero.primary_cta'"
         :href="copy.primaryCtaUrl"
         class="mx-auto w-full max-w-70 sm:max-w-85"
       >
@@ -481,6 +481,7 @@ const TILE_DELAY = HERO_RETREAT / 3
              against a 432px block. 288px clears it; from `menu-lg` the row is
              wide enough for the design's own width. -->
         <p
+          v-cms="'hero.mission'"
           class="font-sans max-w-108 text-center text-base leading-[26px] text-white lg:text-left lg:text-lg menu:max-w-72 menu-lg:max-w-108"
         >
           {{ copy.mission }}
@@ -492,11 +493,13 @@ const TILE_DELAY = HERO_RETREAT / 3
              pushes everything above it up. -->
         <div class="flex flex-col gap-4 lg:gap-8 lg:items-end">
           <p
+            v-cms="'hero.accountability'"
             class="font-sans max-w-79 text-center text-base leading-[26px] text-white lg:text-right lg:text-lg"
           >
             {{ copy.accountability }}
           </p>
           <NuxtLink
+            v-cms="'hero.secondary_cta'"
             :to="copy.secondaryCtaUrl"
             class="rounded-btn font-display focus-visible:ring-gold flex items-center justify-center bg-white/20 px-5 py-4 text-[length:var(--text-display-btn)] leading-none text-white uppercase focus-visible:ring-2 focus-visible:outline-none lg:w-73"
           >

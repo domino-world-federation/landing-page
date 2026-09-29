@@ -14,6 +14,9 @@ import { PLAYER_MEMBERSHIP_COPY } from "~/content/player-membership"
  * markup, which is the trade D57 rules against.
  */
 const COPY = PLAYER_MEMBERSHIP_COPY.cta
+
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("player-membership")
 </script>
 
 <template>
@@ -25,12 +28,13 @@ const COPY = PLAYER_MEMBERSHIP_COPY.cta
       <MotionReveal :y="40" class="w-full">
         <h2
           id="player-cta-heading"
+          v-cms="'cta.headline'"
           class="font-display mx-auto max-w-[65.83vw] text-[length:var(--text-display-md)] leading-[1.0476] text-white uppercase max-lg:max-w-none"
         >
           <!-- A block per line so the design's break survives without a `<br>`
                a translation would have to carry (RULES §9). -->
           <span
-            v-for="line in COPY.headline"
+            v-for="line in copy.lines('cta.headline', COPY.headline)"
             :key="line"
             class="block"
           >{{ line }}</span>
@@ -39,9 +43,10 @@ const COPY = PLAYER_MEMBERSHIP_COPY.cta
 
       <MotionReveal :y="32" :delay="STAGGER" class="w-full">
         <p
+          v-cms="'cta.body'"
           class="font-sans mx-auto max-w-[40.83vw] text-base leading-8 text-white/70 text-balance max-lg:max-w-none lg:text-xl"
         >
-          {{ COPY.body }}
+          {{ copy.text('cta.body', COPY.body) }}
         </p>
       </MotionReveal>
     </div>
@@ -51,7 +56,7 @@ const COPY = PLAYER_MEMBERSHIP_COPY.cta
       :delay="STAGGER * 2"
       class="w-fit max-w-full min-w-[min(100%,13.75vw)]"
     >
-      <UiSilverCta :href="COPY.ctaUrl">{{ COPY.cta }}</UiSilverCta>
+      <UiSilverCta :href="COPY.ctaUrl"><span v-cms="'cta.cta'">{{ copy.text('cta.cta', COPY.cta) }}</span></UiSilverCta>
     </MotionReveal>
   </section>
 </template>

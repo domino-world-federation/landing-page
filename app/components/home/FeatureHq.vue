@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { FEATURE_HQ_ALT, FEATURE_HQ_COPY } from "~/content/home/feature-hq"
 
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("home")
+
 /**
  * Seconds. The building settles more slowly than the copy that sits on it — it
  * is the larger object and the further one away, so the same duration would have
@@ -150,12 +153,13 @@ const SETTLE = DURATION * 1.5
     >
       <MotionReveal :y="48" blur-from="12px">
         <h2
+          v-cms="'feature.headline'"
           class="font-display text-gold-gradient text-[length:var(--text-display-feature)] leading-none uppercase"
         >
           <!-- A block per line so the design's break survives, rather than a
                `<br>` that a translation would have to carry along (RULES §9). -->
           <span
-            v-for="line in FEATURE_HQ_COPY.headline"
+            v-for="line in copy.lines('feature.headline', FEATURE_HQ_COPY.headline)"
             :key="line"
             class="block"
           >{{ line }}</span>
@@ -168,9 +172,10 @@ const SETTLE = DURATION * 1.5
              held to 680 because the copy it carried was a five-line paragraph
              that wanted a shorter measure; the redraw's is one sentence. -->
         <p
+          v-cms="'feature.body'"
           class="font-sans text-base leading-7 text-white lg:text-xl lg:leading-8"
         >
-          {{ FEATURE_HQ_COPY.body }}
+          {{ copy.text('feature.body', FEATURE_HQ_COPY.body) }}
         </p>
       </MotionReveal>
 
@@ -186,10 +191,11 @@ const SETTLE = DURATION * 1.5
         class="w-fit"
       >
         <NuxtLink
+          v-cms="'feature.cta'"
           :to="FEATURE_HQ_COPY.ctaUrl"
           class="rounded-btn font-display focus-visible:ring-gold flex h-16 w-fit items-center justify-center bg-white/20 px-5 text-[length:var(--text-display-btn)] leading-10 text-white uppercase transition-colors hover:bg-white/30 focus-visible:ring-2 focus-visible:outline-none"
         >
-          {{ FEATURE_HQ_COPY.cta }}
+          {{ copy.text('feature.cta', FEATURE_HQ_COPY.cta) }}
         </NuxtLink>
       </MotionReveal>
     </div>

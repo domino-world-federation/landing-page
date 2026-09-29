@@ -28,8 +28,29 @@ import { RULEBOOK_COPY, RULE_SETS } from "~/content/domino/rulebook"
 // nothing.
 const activeId = ref(RULE_SETS[1]?.id ?? RULE_SETS[0]?.id)
 
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("domino")
+
+/** Each set carries its field prefix (`rulebook.sets.1`) for the markers. */
+const ruleSets = computed(() =>
+  RULE_SETS.map((set, i) => {
+    const cms = `rulebook.sets.${i}`
+    return {
+      ...set,
+      cms,
+      tab: copy.text(`${cms}.tab`, set.tab),
+      title: copy.text(`${cms}.title`, set.title),
+      body: copy.text(`${cms}.body`, set.body),
+      quote: {
+        text: copy.text(`${cms}.quote`, set.quote.text),
+        cite: copy.text(`${cms}.cite`, set.quote.cite),
+      },
+    }
+  }),
+)
+
 const active = computed(
-  () => RULE_SETS.find((set) => set.id === activeId.value) ?? RULE_SETS[0],
+  () => ruleSets.value.find((set) => set.id === activeId.value) ?? ruleSets.value[0],
 )
 </script>
 
@@ -42,9 +63,10 @@ const active = computed(
     <div class="flex flex-col items-center gap-6">
       <h2
         id="rulebook-heading"
+        v-cms="'rulebook.heading'"
         class="font-display text-gold-gradient text-center text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
       >
-        {{ RULEBOOK_COPY.heading }}
+        {{ copy.text('rulebook.heading', RULEBOOK_COPY.heading) }}
       </h2>
 
       <!-- `572:14028` — the navbar's chrome again: 40% black under a 10px
@@ -59,8 +81,9 @@ const active = computed(
         class="flex w-max max-w-full items-center gap-0 overflow-x-auto rounded-[var(--radius-glass)] bg-black/40 p-1 backdrop-blur-[10px]"
       >
         <button
-          v-for="set in RULE_SETS"
+          v-for="set in ruleSets"
           :key="set.id"
+          v-cms="`${set.cms}.tab`"
           type="button"
           role="tab"
           :aria-selected="set.id === active.id"
@@ -86,6 +109,7 @@ const active = computed(
     >
       <!-- Inter SemiBold 36/44. -->
       <h3
+        v-cms="`${active.cms}.title`"
         class="font-sans text-[length:var(--text-body-lg)] leading-[1.22] font-semibold text-white"
       >
         {{ active.title }}
@@ -93,6 +117,7 @@ const active = computed(
 
       <!-- Inter Regular 24/36 at 50%. -->
       <p
+        v-cms="`${active.cms}.body`"
         class="font-sans text-[length:var(--text-body-sm)] leading-[1.5] text-white/50"
       >
         {{ active.body }}
@@ -105,6 +130,7 @@ const active = computed(
         class="rounded-[var(--radius-glass)] border-l-4 border-black bg-[#f3f3f4] p-6 lg:p-8"
       >
         <blockquote
+          v-cms="`${active.cms}.quote`"
           class="font-sans text-[length:var(--text-heading-tile)] leading-[1.29] text-[#1a1c1d] italic"
         >
           &ldquo;{{ active.quote.text }}&rdquo;
@@ -113,6 +139,7 @@ const active = computed(
              Split out so it is marked up as the attribution it is — a screen
              reader then knows where the quotation ends. -->
         <figcaption
+          v-cms="`${active.cms}.cite`"
           class="font-sans text-[length:var(--text-heading-tile)] leading-[1.29] text-[#1a1c1d] italic"
         >
           &mdash; {{ active.quote.cite }}

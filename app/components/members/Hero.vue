@@ -2,6 +2,9 @@
 import { getMembershipStats } from "~/lib/api/client"
 import { MEMBERS_COPY } from "~/content/members"
 
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("federation-members")
+
 /**
  * The members hero — Figma node `401:19063`, 1920 × 1080 full bleed.
  *
@@ -261,16 +264,18 @@ const { data: stats } = await useAsyncData(
     <div class="flex w-full max-w-[1200px] flex-col items-center gap-8 lg:gap-16">
       <!-- Inter Medium 84, centred. -->
       <h1
+        v-cms="'hero.title'"
         class="font-sans text-center text-[length:var(--text-page-title)] leading-[1.1] font-medium text-white"
       >
-        {{ MEMBERS_COPY.heroTitle }}
+        {{ copy.text('hero.title', MEMBERS_COPY.heroTitle) }}
       </h1>
 
       <!-- 728 of the design's 1920, centred under the title. -->
       <p
+        v-cms="'hero.intro'"
         class="font-sans max-w-[728px] text-center text-[length:var(--text-eyebrow)] leading-8 text-white/60"
       >
-        {{ MEMBERS_COPY.heroIntro }}
+        {{ copy.text('hero.intro', MEMBERS_COPY.heroIntro) }}
       </p>
     </div>
 
@@ -280,10 +285,11 @@ const { data: stats } = await useAsyncData(
          through the ink gradient. So it is `GoldCta`, not a second button that
          happens to look like it. -->
     <UiGoldCta
+      v-cms="'hero.cta'"
       :href="MEMBERS_COPY.heroCtaHref"
       class="mt-10 lg:mt-[8.39vw] lg:w-[340px]"
     >
-      {{ MEMBERS_COPY.heroCta }}
+      {{ copy.text('hero.cta', MEMBERS_COPY.heroCta) }}
     </UiGoldCta>
 
     <!-- `404:19188` — four figures across the foot, 129px below the pill. A

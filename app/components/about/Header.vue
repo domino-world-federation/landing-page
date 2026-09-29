@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ABOUT_HEADER_COPY } from "~/content/about/header"
 
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("about")
+
 /**
  * About's header band — Figma node `119:4799`.
  *
@@ -34,17 +37,19 @@ import { ABOUT_HEADER_COPY } from "~/content/about/header"
     <!-- 824px of the design's 1920 — the sentence is meant to break after
          "authority", and a wider column would set it on two long lines. -->
     <h1
+      v-cms="'header.title'"
       class="font-sans w-full text-[length:var(--text-page-title)] leading-[1.1] font-medium text-white lg:max-w-[824px]"
     >
-      <MotionSharpeningHeadline :lines="ABOUT_HEADER_COPY.title" />
+      <MotionSharpeningHeadline :lines="copy.lines('header.title', ABOUT_HEADER_COPY.title)" />
     </h1>
 
     <!-- 480px, and 20/32 against the heading's 84 — the small print beside the
          claim. Deliberately still. -->
     <p
+      v-cms="'header.intro'"
       class="font-sans w-full text-[length:var(--text-eyebrow)] leading-8 text-white/60 lg:max-w-[480px]"
     >
-      {{ ABOUT_HEADER_COPY.intro }}
+      {{ copy.text('header.intro', ABOUT_HEADER_COPY.intro) }}
     </p>
   </section>
 </template>

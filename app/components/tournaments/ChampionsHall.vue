@@ -3,6 +3,9 @@ import type { GalleryItem } from "~/lib/api/types"
 import { getChampions } from "~/lib/api/client"
 import { TOURNAMENTS_COPY } from "~/content/tournaments"
 
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("tournaments")
+
 /**
  * Champions Hall — Figma node `381:17633`.
  *
@@ -95,9 +98,10 @@ function openViewer(index: number) {
              gradient. -->
         <h2
           id="champions-heading"
+          v-cms="'champions.heading'"
           class="font-display w-fit text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
         >
-          {{ TOURNAMENTS_COPY.champions.heading }}
+          {{ copy.text('champions.heading', TOURNAMENTS_COPY.champions.heading) }}
         </h2>
       </template>
 

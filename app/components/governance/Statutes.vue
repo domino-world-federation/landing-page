@@ -3,6 +3,9 @@ import { getSectionResources } from "~/lib/api/client"
 import { DOCUMENT_SECTION } from "~/lib/api/categories"
 import { GOVERNANCE_COPY } from "~/content/governance"
 
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("governance")
+
 /**
  * Governance Documents — Figma node `613:25154`.
  *
@@ -40,16 +43,18 @@ const { data: documents } = await useAsyncData(
         <MotionReveal :y="40">
           <h2
             id="statutes-heading"
+            v-cms="'documents.heading'"
             class="font-display text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
           >
-            {{ GOVERNANCE_COPY.statutes.heading }}
+            {{ copy.text('documents.heading', GOVERNANCE_COPY.statutes.heading) }}
           </h2>
         </MotionReveal>
 
         <p
+          v-cms="'documents.intro'"
           class="font-sans text-[length:var(--text-heading-card)] leading-[1.22] text-white"
         >
-          {{ GOVERNANCE_COPY.statutes.intro }}
+          {{ copy.text('documents.intro', GOVERNANCE_COPY.statutes.intro) }}
         </p>
       </div>
 

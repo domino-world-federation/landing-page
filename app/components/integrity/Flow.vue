@@ -19,13 +19,22 @@ import { INTEGRITY_COPY, INTEGRITY_FLOW } from "~/content/integrity"
  */
 const COPY = INTEGRITY_COPY.flow
 
-/** Mapped onto `ui/StepRail`'s shape. */
-const steps = INTEGRITY_FLOW.map((step) => ({
-  id: step.id,
-  marker: step.number,
-  title: step.title,
-  detail: step.detail,
-}))
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("integrity")
+
+/**
+ * Mapped onto `ui/StepRail`'s shape. The steps render inside that shared
+ * component, so their text is overridden here and carries no click marker.
+ */
+const steps = computed(() =>
+  INTEGRITY_FLOW.map((step, i) => ({
+    id: step.id,
+    marker: step.number,
+    title: copy.text(`flow.steps.${i}.title`, step.title),
+    detail: copy.text(`flow.steps.${i}.detail`, step.detail),
+    cms: { title: `flow.steps.${i}.title`, detail: `flow.steps.${i}.detail` },
+  })),
+)
 </script>
 
 <template>
@@ -37,17 +46,19 @@ const steps = INTEGRITY_FLOW.map((step) => ({
       <MotionReveal :y="40">
         <h2
           id="flow-heading"
+          v-cms="'flow.heading'"
           class="font-display text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
         >
-          {{ COPY.heading }}
+          {{ copy.text('flow.heading', COPY.heading) }}
         </h2>
       </MotionReveal>
 
       <!-- 1094 of the design's 1920, Technical's measure. -->
       <p
+        v-cms="'flow.intro'"
         class="font-sans max-w-[1094px] text-[length:var(--text-heading-card)] leading-[1.22] text-white"
       >
-        {{ COPY.intro }}
+        {{ copy.text('flow.intro', COPY.intro) }}
       </p>
     </div>
 

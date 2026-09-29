@@ -64,7 +64,7 @@ import type {
   NewsletterSubmission,
   IntegrityReportSubmission,
   SiteSettings,
-  HomeCopy,
+  PageCopyValues,
 } from "./types"
 
 /**
@@ -713,17 +713,23 @@ export async function getSiteSettings(): Promise<SiteSettings> {
 }
 
 /**
- * The home page's editable copy — `GET /home`.
+ * One page's text from the backoffice's page editor (`/pages`) — only the
+ * fields someone has filled; every other field keeps the copy in
+ * `app/content/`. `usePageCopy` does the merging.
  *
- * Same arrangement as `getSiteSettings` and for the same reason: empty under
- * the mock, and `home/Hero` and `home/Join` fall back to `content/home/*`.
- *
- * The two keys are always present even when their contents are not, so callers
- * can write `copy.hero.headline ?? …` without checking `hero` itself.
+ * `preview` is the editor's token (`?cms-preview=` on the page's URL). A valid
+ * one returns the DRAFT; an expired or wrong one quietly returns what is live.
+ * Unknown page, or no API: an empty map, so the built-in copy renders.
  */
-export async function getHomeCopy(): Promise<HomeCopy> {
-  if (useMock()) return { hero: {}, closing: {} }
-  return request<HomeCopy>("/home")
+export async function getPageCopy(page: string, preview?: string): Promise<PageCopyValues> {
+  if (useMock()) return {}
+  const query = preview ? `?preview=${encodeURIComponent(preview)}` : ""
+  try {
+    const { values } = await request<{ values: PageCopyValues }>(`/pages/${page}${query}`)
+    return values
+  } catch {
+    return {}
+  }
 }
 
 /**

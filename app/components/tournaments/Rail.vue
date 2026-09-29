@@ -2,6 +2,9 @@
 import { getTournaments } from "~/lib/api/client"
 import { TOURNAMENTS_COPY } from "~/content/tournaments"
 
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("tournaments")
+
 /**
  * All Tournaments — Figma node `373:17419`.
  *
@@ -39,9 +42,10 @@ const { data: tournaments } = await useAsyncData(
                Development page's own 100px heading already measured. -->
           <h2
             id="tournament-rail-heading"
+            v-cms="'rail.heading'"
             class="font-display text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
           >
-            {{ TOURNAMENTS_COPY.rail.heading }}
+            {{ copy.text('rail.heading', TOURNAMENTS_COPY.rail.heading) }}
           </h2>
         </MotionReveal>
       </template>
@@ -50,10 +54,11 @@ const { data: tournaments } = await useAsyncData(
            `581:14655` puts it. It used to sit beside the heading. -->
       <template #trailing>
         <NuxtLink
+          v-cms="'rail.view_all'"
           :to="TOURNAMENTS_COPY.rail.viewAllHref"
           class="font-display focus-visible:ring-gold flex h-16 items-center justify-center rounded-[var(--radius-btn)] bg-white/20 px-5 text-[length:var(--text-display-caption)] leading-[1.25] whitespace-nowrap text-white uppercase transition-colors hover:bg-white/30 focus-visible:ring-2 focus-visible:outline-none"
         >
-          {{ TOURNAMENTS_COPY.rail.viewAll }}
+          {{ copy.text('rail.view_all', TOURNAMENTS_COPY.rail.viewAll) }}
         </NuxtLink>
       </template>
 

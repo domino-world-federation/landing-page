@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { VISION_ALT, VISION_COPY } from "~/content/about/vision"
 
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("about")
+
 /**
  * Vision — Figma node `102:2793`.
  *
@@ -195,27 +198,30 @@ import { VISION_ALT, VISION_COPY } from "~/content/about/vision"
           class="lg:absolute lg:top-[33%] lg:left-[4.17%] lg:w-[31.8%]"
         >
           <p
+            v-cms="'vision.eyebrow'"
             class="font-sans text-[length:var(--text-eyebrow)] leading-7 font-medium text-white uppercase"
           >
-            {{ VISION_COPY.eyebrow }}
+            {{ copy.text('vision.eyebrow', VISION_COPY.eyebrow) }}
           </p>
 
           <h2
+            v-cms="'vision.heading'"
             class="font-display mt-9 text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
           >
             <!-- A block per line so the design's break survives without a `<br>`
                  a translation would have to carry (RULES §9). -->
             <span
-              v-for="line in VISION_COPY.heading"
+              v-for="line in copy.lines('vision.heading', VISION_COPY.heading)"
               :key="line"
               class="block"
             >{{ line }}</span>
           </h2>
 
           <p
+            v-cms="'vision.lead'"
             class="font-sans mt-9 text-[length:var(--text-body-lg)] leading-[1.22] text-white"
           >
-            {{ VISION_COPY.lead }}
+            {{ copy.text('vision.lead', VISION_COPY.lead) }}
           </p>
         </MotionReveal>
 
@@ -236,9 +242,10 @@ import { VISION_ALT, VISION_COPY } from "~/content/about/vision"
                half opacity — it is the section's closing note, set quieter than
                the claim above it. -->
           <p
+            v-cms="'vision.detail'"
             class="font-sans mt-6 bg-[linear-gradient(180deg,#ffffff_0%,var(--color-silver-mid)_100%)] bg-clip-text text-[length:var(--text-body-md)] leading-[1.5] text-transparent opacity-50"
           >
-            {{ VISION_COPY.detail }}
+            {{ copy.text('vision.detail', VISION_COPY.detail) }}
           </p>
         </MotionReveal>
       </div>

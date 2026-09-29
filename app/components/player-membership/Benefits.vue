@@ -18,6 +18,16 @@ import {
  * further than another's.
  */
 const COPY = PLAYER_MEMBERSHIP_COPY.benefits
+
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("player-membership")
+const cards = computed(() =>
+  MEMBERSHIP_BENEFITS.map((benefit, i) => ({
+    ...benefit,
+    title: copy.text(`benefits.cards.${i}.title`, benefit.title),
+    body: copy.text(`benefits.cards.${i}.body`, benefit.body),
+  })),
+)
 </script>
 
 <template>
@@ -28,9 +38,10 @@ const COPY = PLAYER_MEMBERSHIP_COPY.benefits
     <MotionReveal :y="40" blur-from="10px">
       <h2
         id="membership-benefits-heading"
+        v-cms="'benefits.heading'"
         class="font-display mx-auto w-fit text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
       >
-        {{ COPY.heading }}
+        {{ copy.text('benefits.heading', COPY.heading) }}
       </h2>
     </MotionReveal>
 
@@ -39,7 +50,7 @@ const COPY = PLAYER_MEMBERSHIP_COPY.benefits
            is a flash rather than an entrance. 0.06s is under the page's standard
            step, which six of them would otherwise stretch into a queue. -->
       <MotionReveal
-        v-for="(benefit, i) in MEMBERSHIP_BENEFITS"
+        v-for="(benefit, i) in cards"
         :key="benefit.id"
         as="li"
         :y="24"
@@ -54,12 +65,14 @@ const COPY = PLAYER_MEMBERSHIP_COPY.benefits
           <div class="flex flex-col gap-2 md:gap-4">
             <!-- Inter SemiBold 36/44 (`629:28555`). -->
             <h3
+              v-cms="`benefits.cards.${i}.title`"
               class="font-sans text-base leading-[1.22] font-semibold text-white md:text-[length:var(--text-body-lg)]"
             >
               {{ benefit.title }}
             </h3>
             <!-- Inter 24/36 at 60% (`629:28556`). -->
             <p
+              v-cms="`benefits.cards.${i}.body`"
               class="font-sans text-sm leading-[1.5] text-white/60 md:text-[length:var(--text-body-sm)]"
             >
               {{ benefit.body }}

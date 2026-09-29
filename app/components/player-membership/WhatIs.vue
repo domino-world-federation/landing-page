@@ -9,6 +9,9 @@ import { PLAYER_MEMBERSHIP_COPY } from "~/content/player-membership"
  * sections on the page that is NOT a screen — it is as tall as what it says.
  */
 const COPY = PLAYER_MEMBERSHIP_COPY.whatIs
+
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("player-membership")
 </script>
 
 <template>
@@ -19,9 +22,10 @@ const COPY = PLAYER_MEMBERSHIP_COPY.whatIs
     <MotionReveal :y="40" blur-from="10px">
       <h2
         id="what-is-dwf-id-heading"
+        v-cms="'what_is.heading'"
         class="font-display w-fit text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
       >
-        {{ COPY.heading }}
+        {{ copy.text('what_is.heading', COPY.heading) }}
       </h2>
     </MotionReveal>
 
@@ -35,16 +39,17 @@ const COPY = PLAYER_MEMBERSHIP_COPY.whatIs
         <!-- Inter 36/44 (`629:28540`) — the claim, at full strength above the
              definition that follows it at 60%. -->
         <p
+          v-cms="'what_is.lead'"
           class="font-sans text-[length:var(--text-body-lg)] leading-[1.22] text-white"
         >
-          {{ COPY.lead }}
+          {{ copy.text('what_is.lead', COPY.lead) }}
         </p>
       </MotionReveal>
 
       <MotionReveal :y="32" :delay="STAGGER * 2">
-        <div class="flex flex-col gap-6 lg:gap-9">
+        <div v-cms="'what_is.body'" class="flex flex-col gap-6 lg:gap-9">
           <p
-            v-for="paragraph in COPY.body"
+            v-for="paragraph in copy.lines('what_is.body', COPY.body)"
             :key="paragraph"
             class="font-sans text-[length:var(--text-body-sm)] leading-[1.5] text-white/60"
           >

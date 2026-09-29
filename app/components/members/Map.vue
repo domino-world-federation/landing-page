@@ -2,6 +2,17 @@
 import { MEMBERS_COPY, MEMBERSHIP_TIERS } from "~/content/members"
 import { MAP_MARKERS } from "~/content/members/map-markers"
 
+// Editable in the backoffice's page editor; the constants are the fallback.
+// Only the pills' words — the tier ids and colours stay the content file's.
+const copy = usePageCopy("federation-members")
+const tiers = computed(() =>
+  MEMBERSHIP_TIERS.map((tier, i) => ({
+    ...tier,
+    cms: `map.tiers.${i}.label`,
+    label: copy.text(`map.tiers.${i}.label`, tier.label),
+  })),
+)
+
 /**
  * The membership map — Figma node `404:28159`, 1920 × 1089.
  *
@@ -35,7 +46,7 @@ import { MAP_MARKERS } from "~/content/members/map-markers"
  * punched out by a mask, the same problem the gold CTA's conic stroke has and
  * the same answer.
  */
-function swatch(tier: (typeof MEMBERSHIP_TIERS)[number]) {
+function swatch(tier: { from: string, to: string }) {
   return {
     background: `linear-gradient(0deg, ${tier.from} 0%, ${tier.to} 100%)`,
     boxShadow: `0 0 4px 0 ${tier.from}`,
@@ -63,7 +74,7 @@ const shownCount = computed(() =>
 )
 
 const filterStatus = computed(() => {
-  const tier = MEMBERSHIP_TIERS.find((t) => t.id === activeTier.value)
+  const tier = tiers.value.find((t) => t.id === activeTier.value)
   return tier
     ? MEMBERS_COPY.mapFilterStatus(tier.label, shownCount.value)
     : MEMBERS_COPY.mapFilterAllStatus(shownCount.value)
@@ -125,6 +136,7 @@ const filterStatus = computed(() => {
         class="mx-auto flex max-w-full flex-wrap items-center justify-center rounded-[var(--radius-glass)] bg-black/40 p-1 backdrop-blur-[10px] lg:w-max lg:flex-nowrap"
       >
         <button
+          v-cms="'map.show_all'"
           type="button"
           role="radio"
           :aria-checked="activeTier === undefined"
@@ -138,11 +150,11 @@ const filterStatus = computed(() => {
           "
           @click="activeTier = undefined"
         >
-          {{ MEMBERS_COPY.mapShowAll }}
+          {{ copy.text('map.show_all', MEMBERS_COPY.mapShowAll) }}
         </button>
 
         <button
-          v-for="tier in MEMBERSHIP_TIERS"
+          v-for="tier in tiers"
           :key="tier.id"
           type="button"
           role="radio"
@@ -158,7 +170,7 @@ const filterStatus = computed(() => {
           @click="activeTier = activeTier === tier.id ? undefined : tier.id"
         >
           <span aria-hidden class="size-3.5 rounded-full" :style="swatch(tier)" />
-          {{ tier.label }}
+          <span v-cms="tier.cms">{{ tier.label }}</span>
         </button>
       </div>
     </div>

@@ -3,6 +3,9 @@ import { getSectionResources } from "~/lib/api/client"
 import { DOCUMENT_SECTION } from "~/lib/api/categories"
 import { TOURNAMENTS_COPY } from "~/content/tournaments"
 
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("tournaments")
+
 /**
  * Tournament Regulations — Figma node `381:17589`.
  *
@@ -62,9 +65,10 @@ const { data: documents } = await useAsyncData(
              the shelf (`381:17631`). -->
         <h2
           id="tournament-regulations-heading"
+          v-cms="'regulations.heading'"
           class="font-display w-fit text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
         >
-          {{ TOURNAMENTS_COPY.regulations.heading }}
+          {{ copy.text('regulations.heading', TOURNAMENTS_COPY.regulations.heading) }}
         </h2>
       </MotionReveal>
 

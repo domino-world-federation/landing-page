@@ -2167,3 +2167,29 @@ sekadar tidak berisi dokumen. 28 baris dipetakan ke kosakata baru (D79).
 - **Kalimat "Whistleblowers are the first line of defense…" di Report an
   Integrity Issue dihapus** (2026-09-29), dari template dan dari
   `INTEGRITY_COPY.report`.
+
+- **Editor Halaman — sisi situs (D81)** (2026-09-29). `usePageCopy(page)`
+  menggabungkan naskah dari `/api/v1/pages/{page}` di atas konstanta
+  `app/content/`; directive `v-cms="'section.field'"` menandai elemen (atribut
+  `data-edit-key` hanya muncul di mode pratinjau, tidak di markup server);
+  `plugins/cms-edit.client.ts` menjalankan mode pratinjau (`?cms-preview=` di
+  dalam iframe): garis hover, klik → `dwf-cms:select`, ketikan panel →
+  override langsung, naskah bawaan dikirim sebagai placeholder;
+  `server/middleware/frame-ancestors.ts` hanya mengizinkan backoffice
+  membingkai situs. Semua section About terhubung (59 field). Diuji ujung ke
+  ujung di lokal: draf tampil, ketikan tampil langsung, kosong → bawaan, klik →
+  kunci yang benar. Env baru: `NUXT_PUBLIC_BACKOFFICE_ORIGIN`.
+
+- **Editor Halaman Tahap 2** (2026-09-29): Domino, Tournaments, Federation
+  Members, Player Membership, Development, Governance, dan Integrity kini
+  membaca `usePageCopy` dan menandai teksnya dengan `v-cms` (257 field
+  tambahan). `UiStepRail`, `UiFaqPanel`, `UiFormField` menerima penanda
+  opsional. Diverifikasi di runtime: kunci yang dibaca tiap halaman sama dengan
+  skema backend. Rincian: `../docs/RENCANA-EDITOR-HALAMAN.md` §9.
+
+- **Home di Editor Halaman** (2026-09-29). Hero dan penutup (Join) pindah dari
+  `useHomeCopy` (`/api/v1/home`) ke `usePageCopy("home")` dengan kunci yang
+  dipetakan migrasi backend dari isi lama; ditambah kartu upcoming (label tombol
+  + satuan waktu), FeatureHq, Partners, Resources, dan FAQ — 24 field.
+  `useHomeCopy`, `getHomeCopy`, dan tipe `HomeCopy` dihapus. Deploy backend dan
+  situs harus bersamaan (backend dulu aman: `/api/v1/home` lama tetap dijawab).

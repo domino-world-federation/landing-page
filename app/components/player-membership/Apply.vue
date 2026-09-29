@@ -20,18 +20,40 @@ import {
 const ELIGIBILITY = PLAYER_MEMBERSHIP_COPY.eligibility
 const PROCESS = PLAYER_MEMBERSHIP_COPY.process
 
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("player-membership")
+const eligibilityHeading = computed(() =>
+  copy.text("apply.eligibility_heading", ELIGIBILITY.heading),
+)
+const processHeading = computed(() =>
+  copy.text("apply.process_heading", PROCESS.heading),
+)
+const requirements = computed(() =>
+  copy.lines("apply.requirements", ELIGIBILITY_REQUIREMENTS),
+)
+const steps = computed(() =>
+  APPLICATION_STEPS.map((step, i) => ({
+    ...step,
+    title: copy.text(`apply.steps.${i}.title`, step.title),
+    body: copy.text(`apply.steps.${i}.body`, step.body),
+  })),
+)
+
 /**
  * The steps in `ui/StepRail`'s shape, for phones — the rail Federation Members
  * draws its own application process with, so the two pages' processes read as
  * one design there (repo owner's call, 2026-09-28). The number is the position,
  * as it is in the list the desktop keeps.
  */
-const railSteps = APPLICATION_STEPS.map((step, i) => ({
-  id: step.id,
-  marker: String(i + 1).padStart(2, "0"),
-  title: step.title,
-  detail: step.body,
-}))
+const railSteps = computed(() =>
+  steps.value.map((step, i) => ({
+    id: step.id,
+    marker: String(i + 1).padStart(2, "0"),
+    title: step.title,
+    detail: step.body,
+    cms: { title: `apply.steps.${i}.title`, detail: `apply.steps.${i}.body` },
+  })),
+)
 </script>
 
 <template>
@@ -42,35 +64,37 @@ const railSteps = APPLICATION_STEPS.map((step, i) => ({
     class="flex flex-col justify-center gap-10 bg-[linear-gradient(180deg,var(--color-bg)_0%,transparent_100%)] px-5 pt-16 pb-16 lg:snap-screen md:px-10 lg:gap-[4.17vw] lg:px-20 lg:pt-[max(var(--nav-clearance),7.29vw)] lg:pb-[4.17vw]"
   >
     <h2 id="apply-heading" class="sr-only">
-      {{ ELIGIBILITY.heading }}
+      {{ eligibilityHeading }}
     </h2>
 
     <div class="flex flex-col gap-12 lg:flex-row lg:gap-[5.21vw]">
       <div class="flex flex-1 flex-col gap-6 lg:gap-9">
         <MotionReveal :y="40" blur-from="10px">
           <p
+            v-cms="'apply.eligibility_heading'"
             class="font-display w-fit text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
           >
-            {{ ELIGIBILITY.heading }}
+            {{ eligibilityHeading }}
           </p>
         </MotionReveal>
 
         <MotionReveal :y="32" :delay="STAGGER">
           <div class="flex flex-col gap-6 lg:gap-9">
             <p
+              v-cms="'apply.eligibility_intro'"
               class="font-sans text-[length:var(--text-body-sm)] leading-[1.5] text-white/40"
             >
-              {{ ELIGIBILITY.intro }}
+              {{ copy.text('apply.eligibility_intro', ELIGIBILITY.intro) }}
             </p>
 
             <!-- `629:28606`: a 36px tick and a line of 20/28, 36 apart. The
                  tick is `aria-hidden` — a list of requirements read out as
                  "tick, tick, tick" is the glyph announced five times and the
                  requirement never. -->
-            <ul class="flex flex-col gap-6 lg:gap-9">
+            <ul v-cms="'apply.requirements'" class="flex flex-col gap-6 lg:gap-9">
               <li
-                v-for="requirement in ELIGIBILITY_REQUIREMENTS"
-                :key="requirement"
+                v-for="(requirement, i) in requirements"
+                :key="i"
                 class="flex items-center gap-3"
               >
                 <img
@@ -95,18 +119,20 @@ const railSteps = APPLICATION_STEPS.map((step, i) => ({
       <div class="flex flex-1 flex-col gap-6 lg:gap-9">
         <MotionReveal :y="40" :delay="STAGGER" blur-from="10px">
           <h3
+            v-cms="'apply.process_heading'"
             class="font-display w-fit text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
           >
-            {{ PROCESS.heading }}
+            {{ processHeading }}
           </h3>
         </MotionReveal>
 
         <MotionReveal :y="32" :delay="STAGGER * 2">
           <div class="flex flex-col gap-6 lg:gap-9">
             <p
+              v-cms="'apply.process_intro'"
               class="font-sans text-[length:var(--text-body-sm)] leading-[1.5] text-white/40"
             >
-              {{ PROCESS.intro }}
+              {{ copy.text('apply.process_intro', PROCESS.intro) }}
             </p>
 
             <!-- `629:28626`. The step's number is the list's own — `<ol>` counts
@@ -116,14 +142,14 @@ const railSteps = APPLICATION_STEPS.map((step, i) => ({
             <!-- Below `lg`: the dotted rail with gold numbers, as on Federation
                  Members. From `lg`: the design's numbered list, unchanged. -->
             <UiStepRail
-              :label="PROCESS.heading"
+              :label="processHeading"
               :steps="railSteps"
               class="lg:hidden"
             />
 
             <ol class="hidden list-none flex-col gap-7 lg:flex">
               <li
-                v-for="(step, i) in APPLICATION_STEPS"
+                v-for="(step, i) in steps"
                 :key="step.id"
                 class="flex items-center gap-3"
               >
@@ -137,11 +163,13 @@ const railSteps = APPLICATION_STEPS.map((step, i) => ({
                 <div class="flex flex-col gap-3">
                   <!-- Inter Bold 20/28 (`629:28630`). -->
                   <p
+                    v-cms="`apply.steps.${i}.title`"
                     class="font-sans text-[length:var(--text-eyebrow)] leading-7 font-bold text-white"
                   >
                     {{ step.title }}
                   </p>
                   <p
+                    v-cms="`apply.steps.${i}.body`"
                     class="font-sans text-[length:var(--text-eyebrow)] leading-7 text-white/40"
                   >
                     {{ step.body }}

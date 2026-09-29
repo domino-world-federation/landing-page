@@ -4,6 +4,30 @@ import {
   REFEREE_GRADES,
 } from "~/content/development/certifications"
 
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("development")
+// Each grade's pathway is its own list in the editor (`c_levels`, `b_levels`,
+// `a_levels`), keyed by the grade's id, and every level carries its prefix
+// (`cms`) down to the ladder that draws it.
+const grades = computed(() =>
+  REFEREE_GRADES.map((grade, i) => ({
+    ...grade,
+    cms: `certifications.grades.${i}`,
+    name: copy.text(`certifications.grades.${i}.name`, grade.name),
+    scope: copy.text(`certifications.grades.${i}.scope`, grade.scope),
+    levels: grade.levels.map((level, j) => {
+      const cms = `certifications.${grade.id}_levels.${j}`
+      return {
+        ...level,
+        cms,
+        marker: copy.text(`${cms}.marker`, level.marker),
+        title: copy.text(`${cms}.title`, level.title),
+        body: copy.text(`${cms}.body`, level.body),
+      }
+    }),
+  })),
+)
+
 /**
  * Official Certifications — Figma node `190:13674`.
  *
@@ -29,8 +53,8 @@ const activeGradeId = ref(REFEREE_GRADES[0]!.id)
 
 const activeGrade = computed(
   () =>
-    REFEREE_GRADES.find((grade) => grade.id === activeGradeId.value)
-    ?? REFEREE_GRADES[0]!,
+    grades.value.find((grade) => grade.id === activeGradeId.value)
+    ?? grades.value[0]!,
 )
 </script>
 
@@ -47,18 +71,20 @@ const activeGrade = computed(
       <div class="flex flex-col gap-6 px-5 md:px-10 lg:gap-9 lg:px-20">
         <MotionReveal :y="32">
           <p
+            v-cms="'certifications.eyebrow'"
             class="font-sans text-[length:var(--text-eyebrow)] leading-7 font-medium text-white uppercase"
           >
-            {{ CERTIFICATIONS_COPY.eyebrow }}
+            {{ copy.text('certifications.eyebrow', CERTIFICATIONS_COPY.eyebrow) }}
           </p>
         </MotionReveal>
 
         <MotionReveal :y="40" :delay="STAGGER">
           <h2
             id="certifications-heading"
+            v-cms="'certifications.heading'"
             class="font-display w-fit text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
           >
-            {{ CERTIFICATIONS_COPY.heading }}
+            {{ copy.text('certifications.heading', CERTIFICATIONS_COPY.heading) }}
           </h2>
         </MotionReveal>
       </div>
@@ -94,7 +120,7 @@ const activeGrade = computed(
           <h3 class="sr-only">{{ CERTIFICATIONS_COPY.gradesLabel }}</h3>
 
           <MotionReveal
-            v-for="(grade, i) in REFEREE_GRADES"
+            v-for="(grade, i) in grades"
             :key="grade.id"
             :y="24"
             :delay="STAGGER * i"
@@ -132,19 +158,22 @@ const activeGrade = computed(
                   {{ grade.letter }}
                 </span>
                 <span
+                  v-cms="'certifications.grade_word'"
                   class="font-sans text-[length:var(--text-eyebrow)] leading-8 text-white/60 uppercase"
                 >
-                  {{ CERTIFICATIONS_COPY.gradeWord }}
+                  {{ copy.text('certifications.grade_word', CERTIFICATIONS_COPY.gradeWord) }}
                 </span>
               </span>
 
               <span class="flex min-w-0 flex-1 flex-col gap-2 lg:gap-3">
                 <span
+                  v-cms="`${grade.cms}.name`"
                   class="font-display text-[length:var(--text-display-year)] leading-[1.15] text-white"
                 >
                   {{ grade.name }}
                 </span>
                 <span
+                  v-cms="`${grade.cms}.scope`"
                   class="font-sans text-[length:var(--text-eyebrow)] leading-7 text-white/60"
                 >
                   {{ grade.scope }}

@@ -42,9 +42,16 @@ const props = defineProps<{ federation: MemberFederation }>()
 
 const COPY = MEMBERS_COPY.directoryDetail
 
-const tier = computed(() =>
-  MEMBERSHIP_TIERS.find((t) => t.id === props.federation.tierId),
-)
+// Editable in the backoffice's page editor; the constants are the fallback.
+// The tier label is the map's filter pill (`map.tiers.N.label`), so the record
+// names a tier the way the filter above it does.
+const copy = usePageCopy("federation-members")
+
+const tier = computed(() => {
+  const i = MEMBERSHIP_TIERS.findIndex((t) => t.id === props.federation.tierId)
+  const t = MEMBERSHIP_TIERS[i]
+  return t ? { ...t, label: copy.text(`map.tiers.${i}.label`, t.label) } : undefined
+})
 
 /** The tier dot, drawn the way the map's markers and its legend are: a gradient
  *  disc with the middle punched out, because a `border` cannot take a
@@ -145,17 +152,17 @@ const VALUE =
       class="flex w-full flex-col gap-3.5 rounded-[var(--radius-glass)] bg-white/[0.06] p-4"
     >
       <div v-if="federation.president" class="flex flex-col gap-0.5">
-        <dt :class="LABEL">{{ COPY.president }}</dt>
+        <dt v-cms="'directory.president_label'" :class="LABEL">{{ copy.text('directory.president_label', COPY.president) }}</dt>
         <dd :class="VALUE">{{ federation.president }}</dd>
       </div>
 
       <div v-if="federation.headquarters" class="flex flex-col gap-0.5">
-        <dt :class="LABEL">{{ COPY.headquarters }}</dt>
+        <dt v-cms="'directory.headquarters_label'" :class="LABEL">{{ copy.text('directory.headquarters_label', COPY.headquarters) }}</dt>
         <dd :class="VALUE">{{ federation.headquarters }}</dd>
       </div>
 
       <div v-if="federation.email || federation.phone" class="flex flex-col gap-0.5">
-        <dt :class="LABEL">{{ COPY.contact }}</dt>
+        <dt v-cms="'directory.contact_label'" :class="LABEL">{{ copy.text('directory.contact_label', COPY.contact) }}</dt>
         <!-- Real `mailto:`/`tel:` links. These are the one pair of controls on
              the page that CAN act without a backend, so D28's "refuse in the
              open" does not apply to them. -->

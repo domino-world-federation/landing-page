@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { DEVELOPMENT_CTA_COPY } from "~/content/development/cta"
 
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("development")
+
 /**
  * The page's closing call to action — Figma node `207:15320`.
  *
@@ -27,24 +30,28 @@ import { DEVELOPMENT_CTA_COPY } from "~/content/development/cta"
       <MotionReveal :y="48" class="lg:max-w-[59.11vw]">
         <h2
           id="development-cta-heading"
+          v-cms="'cta.heading'"
           class="font-display text-[length:var(--text-display-md)] leading-[1.05] text-white uppercase"
         >
-          {{ DEVELOPMENT_CTA_COPY.heading }}
+          {{ copy.text('cta.heading', DEVELOPMENT_CTA_COPY.heading) }}
         </h2>
       </MotionReveal>
 
       <!-- 1087, a shade narrower than the headline above it, so the paragraph
            sits inside the block rather than reaching past it. -->
       <MotionReveal :y="32" :delay="STAGGER" class="lg:max-w-[56.61vw]">
-        <p class="font-sans text-[length:var(--text-eyebrow)] leading-8 text-white/60">
-          {{ DEVELOPMENT_CTA_COPY.body }}
+        <p
+          v-cms="'cta.body'"
+          class="font-sans text-[length:var(--text-eyebrow)] leading-8 text-white/60"
+        >
+          {{ copy.text('cta.body', DEVELOPMENT_CTA_COPY.body) }}
         </p>
       </MotionReveal>
     </div>
 
     <MotionReveal :y="24" :delay="STAGGER * 2">
-      <UiSilverCta :href="DEVELOPMENT_CTA_COPY.ctaHref">
-        {{ DEVELOPMENT_CTA_COPY.cta }}
+      <UiSilverCta v-cms="'cta.button'" :href="DEVELOPMENT_CTA_COPY.ctaHref">
+        {{ copy.text('cta.button', DEVELOPMENT_CTA_COPY.cta) }}
       </UiSilverCta>
     </MotionReveal>
   </section>

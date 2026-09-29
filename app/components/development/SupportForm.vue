@@ -2,6 +2,9 @@
 import { ApiError, submitContact } from "~/lib/api/client"
 import { SUPPORT_COPY } from "~/content/development/support"
 
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("development")
+
 /**
  * The grant application card — Figma node `207:15156`.
  *
@@ -108,12 +111,16 @@ const notice = computed(() => {
   >
     <div class="flex flex-col gap-4 lg:gap-6">
       <h3
+        v-cms="'support.form_heading'"
         class="font-sans text-[length:var(--text-heading-card)] leading-[1.2] font-semibold text-black"
       >
-        {{ SUPPORT_COPY.formHeading }}
+        {{ copy.text('support.form_heading', SUPPORT_COPY.formHeading) }}
       </h3>
-      <p class="font-sans text-[length:var(--text-eyebrow)] leading-8 text-black/60">
-        {{ SUPPORT_COPY.formIntro }}
+      <p
+        v-cms="'support.form_intro'"
+        class="font-sans text-[length:var(--text-eyebrow)] leading-8 text-black/60"
+      >
+        {{ copy.text('support.form_intro', SUPPORT_COPY.formIntro) }}
       </p>
     </div>
 
@@ -121,7 +128,8 @@ const notice = computed(() => {
       <UiFormField
         id="support-federation"
         v-model="federation"
-        :label="SUPPORT_COPY.federationLabel"
+        label-cms="support.federation_label"
+        :label="copy.text('support.federation_label', SUPPORT_COPY.federationLabel)"
         :placeholder="SUPPORT_COPY.federationPlaceholder"
         type="text"
         autocomplete="organization"
@@ -130,7 +138,8 @@ const notice = computed(() => {
       <UiFormField
         id="support-email"
         v-model="email"
-        :label="SUPPORT_COPY.emailLabel"
+        label-cms="support.email_label"
+        :label="copy.text('support.email_label', SUPPORT_COPY.emailLabel)"
         :placeholder="SUPPORT_COPY.emailPlaceholder"
         type="email"
         autocomplete="email"
@@ -139,7 +148,8 @@ const notice = computed(() => {
       <UiFormField
         id="support-needs"
         v-model="needs"
-        :label="SUPPORT_COPY.needsLabel"
+        label-cms="support.needs_label"
+        :label="copy.text('support.needs_label', SUPPORT_COPY.needsLabel)"
         :placeholder="SUPPORT_COPY.needsPlaceholder"
         :minlength="MIN_NEEDS"
         multiline
@@ -153,11 +163,12 @@ const notice = computed(() => {
              the first; one that stays disabled afterwards would strand anyone
              whose send failed. -->
         <button
+          v-cms="'support.submit'"
           type="submit"
           :disabled="status === 'sending'"
           class="rounded-btn font-display border border-black px-6 py-3 text-[length:var(--text-display-btn)] leading-10 text-black uppercase transition-colors hover:bg-black hover:text-white focus-visible:ring-2 focus-visible:ring-black focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-black"
         >
-          {{ SUPPORT_COPY.submit }}
+          {{ copy.text('support.submit', SUPPORT_COPY.submit) }}
         </button>
 
         <!-- `role="status"` so the notice is announced when it appears — an

@@ -153,6 +153,18 @@ export default defineNuxtConfig({
        * server says so in its boot log, so nobody has to remember unprompted.
        */
       allowIndexing: false,
+
+      /**
+       * The backoffice's origin — the one site allowed to frame this one, for
+       * the page editor's live preview (`?cms-preview=`), and the only origin
+       * whose `postMessage`s the preview obeys.
+       *
+       * Empty means no one may frame the site at all (`frame-ancestors
+       * 'self'`), which is the safe default and breaks only the editor.
+       *
+       * Override with `NUXT_PUBLIC_BACKOFFICE_ORIGIN`, no trailing slash.
+       */
+      backofficeOrigin: "",
     },
   },
 

@@ -2,6 +2,9 @@
 import { getFeaturedEvent } from "~/lib/api/client"
 import { COUNTDOWN_COPY } from "~/content/home/countdown"
 
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("home")
+
 // Per instance: Home mounts this card twice — inside the hero below `lg`, in
 // its own band from `lg` — and CSS hides one. A fixed id would be duplicated in
 // the DOM, and `aria-labelledby` would resolve to whichever came first.
@@ -112,8 +115,8 @@ const { data: event } = await useAsyncData(
     <!-- The same silver pill S13 ends the page on — extracted to `SilverCta`
          when the second one appeared. Here it fills the card's width, which is
          the flex column's own doing; there it hugs its label. -->
-    <UiSilverCta :href="event.ctaUrl ?? '#'">
-      {{ COUNTDOWN_COPY.cta }}
+    <UiSilverCta v-cms="'countdown.cta'" :href="event.ctaUrl ?? '#'">
+      {{ copy.text('countdown.cta', COUNTDOWN_COPY.cta) }}
     </UiSilverCta>
   </section>
 </template>

@@ -30,6 +30,9 @@ import { INTEGRITY_COPY } from "~/content/integrity"
  */
 const COPY = INTEGRITY_COPY.report
 
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("integrity")
+
 type Status =
   | "idle"
   | "invalid-type"
@@ -134,14 +137,15 @@ const FIELD =
       <MotionReveal :y="40">
         <h2
           id="report-heading"
+          v-cms="'report.heading'"
           class="font-display text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
         >
-          {{ COPY.heading }}
+          {{ copy.text('report.heading', COPY.heading) }}
         </h2>
       </MotionReveal>
 
-      <p class="font-sans text-[length:var(--text-eyebrow)] leading-8 text-white/60">
-        {{ COPY.intro }}
+      <p v-cms="'report.intro'" class="font-sans text-[length:var(--text-eyebrow)] leading-8 text-white/60">
+        {{ copy.text('report.intro', COPY.intro) }}
       </p>
     </div>
 
@@ -151,15 +155,16 @@ const FIELD =
     >
       <form class="flex flex-col gap-8 lg:gap-12" novalidate @submit.prevent="submit">
         <p
+          v-cms="'report.form_heading'"
           class="font-sans text-[length:var(--text-heading-card)] leading-[1.2] font-semibold text-black"
         >
-          {{ COPY.formHeading }}
+          {{ copy.text('report.form_heading', COPY.formHeading) }}
         </p>
 
         <div class="flex flex-col gap-6">
           <label class="flex flex-col gap-4" for="integrity-type">
-            <span :class="FIELD_LABEL">
-              {{ COPY.typeLabel }}
+            <span v-cms="'report.type_label'" :class="FIELD_LABEL">
+              {{ copy.text('report.type_label', COPY.typeLabel) }}
               <!-- The asterisk is decoration; the field carries `required` for
                    the readers who need to be told. -->
               <span aria-hidden class="text-[#FF1D34]">*</span>
@@ -167,11 +172,12 @@ const FIELD =
             <select
               id="integrity-type"
               v-model="type"
+              v-cms="'report.type_placeholder'"
               required
               :class="FIELD"
               :aria-invalid="status === 'invalid-type'"
             >
-              <option value="" disabled>{{ COPY.typePlaceholder }}</option>
+              <option value="" disabled>{{ copy.text('report.type_placeholder', COPY.typePlaceholder) }}</option>
               <option v-for="item in COPY.types" :key="item" :value="item">
                 {{ item }}
               </option>
@@ -180,7 +186,7 @@ const FIELD =
 
           <label class="flex flex-col gap-4" for="integrity-description">
             <span class="flex flex-wrap items-baseline gap-2">
-              <span :class="FIELD_LABEL">{{ COPY.descriptionLabel }}</span>
+              <span v-cms="'report.description_label'" :class="FIELD_LABEL">{{ copy.text('report.description_label', COPY.descriptionLabel) }}</span>
               <span
                 class="font-sans text-[length:var(--text-body-sm)] leading-8 font-medium text-[#999999]"
               >
@@ -190,9 +196,10 @@ const FIELD =
             <textarea
               id="integrity-description"
               v-model="description"
+              v-cms="'report.description_placeholder'"
               rows="3"
               :minlength="MIN_DESCRIPTION"
-              :placeholder="COPY.descriptionPlaceholder"
+              :placeholder="copy.text('report.description_placeholder', COPY.descriptionPlaceholder)"
               :class="cn(FIELD, 'resize-y')"
               :aria-invalid="status === 'too-short'"
             />
@@ -206,11 +213,12 @@ const FIELD =
              button that stayed disabled afterwards would strand a reporter whose
              submission failed. -->
         <button
+          v-cms="'report.submit'"
           type="submit"
           :disabled="status === 'sending'"
           class="rounded-btn font-display bg-gold focus-visible:ring-gold flex h-16 w-full items-center justify-center px-5 text-[length:var(--text-display-caption)] leading-[1.25] text-black uppercase transition-colors hover:bg-[var(--color-gold-btn-light)] focus-visible:ring-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-gold"
         >
-          {{ status === "sending" ? COPY.sending : COPY.submit }}
+          {{ status === "sending" ? COPY.sending : copy.text('report.submit', COPY.submit) }}
         </button>
 
         <!-- Always in the DOM and empty until there is something to say: a live

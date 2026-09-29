@@ -37,6 +37,19 @@ import { PILLARS, PILLARS_COPY } from "~/content/about/pillars"
  * out. Integrity's code of ethics is drawn as the same construction, which is
  * what moved it out of here (D32/D43).
  */
+// Editable in the backoffice's page editor; the constants are the fallback.
+// Each claim carries its field prefix (`cms`) so both renderings — the
+// phone's cards and the desktop's turning column — can mark their text.
+const copy = usePageCopy("about")
+const items = computed(() =>
+  PILLARS.map((pillar, i) => ({
+    ...pillar,
+    cms: `pillars.items.${i}`,
+    title: copy.text(`pillars.items.${i}.title`, pillar.title),
+    body: copy.text(`pillars.items.${i}.body`, pillar.body),
+  })),
+)
+
 const track = useTemplateRef<HTMLElement>("track")
 const stage = useTemplateRef<HTMLElement>("stage")
 const viewport = useTemplateRef<HTMLDivElement>("viewport")
@@ -48,7 +61,7 @@ const column = useTemplateRef<HTMLDivElement>("column")
  * claim in the first position. See the composable.
  */
 const { screens, cells, index, readingProgress, travel, scrolled } =
-  useTurningColumn(track, stage, PILLARS, {
+  useTurningColumn(track, stage, items, {
     pad: false,
     viewport,
     column,
@@ -143,13 +156,14 @@ const fade = computed(() => ({ duration: DURATION, ease: EASE }))
     <div class="flex flex-col gap-10 px-5 pt-16 pb-16 md:px-10 lg:hidden">
     <MotionReveal :y="40">
       <h2
+        v-cms="'pillars.heading'"
         class="font-display text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
       >
-        {{ PILLARS_COPY.heading }}
+        {{ copy.text('pillars.heading', PILLARS_COPY.heading) }}
       </h2>
     </MotionReveal>
     <ul class="flex list-none flex-col gap-14">
-      <li v-for="pillar in PILLARS" :key="pillar.id">
+      <li v-for="pillar in items" :key="pillar.id">
         <MotionReveal :y="32" class="flex flex-col">
           <NuxtImg
             :src="pillar.imageUrl"
@@ -158,11 +172,13 @@ const fade = computed(() => ({ duration: DURATION, ease: EASE }))
             class="aspect-[4/3] w-full rounded-[20px] object-cover"
           />
           <h3
+            v-cms="`${pillar.cms}.title`"
             class="font-display mt-6 text-[length:var(--text-display-pillar)] leading-[0.89] text-white uppercase"
           >
             {{ pillar.title }}
           </h3>
           <p
+            v-cms="`${pillar.cms}.body`"
             class="font-sans mt-4 text-[length:var(--text-body-lg)] leading-[1.56] text-white/70"
           >
             {{ pillar.body }}
@@ -191,9 +207,10 @@ const fade = computed(() => ({ duration: DURATION, ease: EASE }))
         <MotionReveal :y="40" class="shrink-0">
           <h2
             id="pillars-heading"
+            v-cms="'pillars.heading'"
             class="font-display text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
           >
-            {{ PILLARS_COPY.heading }}
+            {{ copy.text('pillars.heading', PILLARS_COPY.heading) }}
           </h2>
         </MotionReveal>
 

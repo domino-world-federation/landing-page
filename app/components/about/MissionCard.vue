@@ -11,7 +11,8 @@ import type { MissionCardCopy } from "~/content/about/mission"
  * page background rather than a solid, so the section keeps reading as one dark
  * band with four lit patches in it.
  */
-defineProps<{ card: MissionCardCopy }>()
+/** `cms` is the card's field prefix in the page editor (`mission.cards.0`). */
+defineProps<{ card: MissionCardCopy & { cms?: string } }>()
 </script>
 
 <template>
@@ -38,11 +39,13 @@ defineProps<{ card: MissionCardCopy }>()
 
     <div class="flex flex-col gap-2 md:gap-4">
       <h3
+        v-cms="card.cms && `${card.cms}.title`"
         class="font-sans text-base leading-[1.22] font-semibold text-white md:text-[length:var(--text-body-lg)]"
       >
         {{ card.title }}
       </h3>
       <p
+        v-cms="card.cms && `${card.cms}.body`"
         class="font-sans text-sm leading-[1.5] text-white/40 md:text-[length:var(--text-body-sm)]"
       >
         {{ card.body }}

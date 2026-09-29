@@ -3,6 +3,9 @@ import { getSectionResources } from "~/lib/api/client"
 import { DOCUMENT_SECTION } from "~/lib/api/categories"
 import { LIBRARY_COPY } from "~/content/development/library"
 
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("development")
+
 /**
  * Educational Resources — Figma node `192:14833`.
  *
@@ -39,18 +42,20 @@ const { data: documents } = await useAsyncData(
       >
         <MotionReveal :y="32">
           <p
+            v-cms="'library.eyebrow'"
             class="font-sans text-[length:var(--text-eyebrow)] leading-7 font-medium text-white uppercase"
           >
-            {{ LIBRARY_COPY.eyebrow }}
+            {{ copy.text('library.eyebrow', LIBRARY_COPY.eyebrow) }}
           </p>
         </MotionReveal>
 
         <MotionReveal :y="40" :delay="STAGGER">
           <h2
             id="library-heading"
+            v-cms="'library.heading'"
             class="font-display text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
           >
-            {{ LIBRARY_COPY.heading }}
+            {{ copy.text('library.heading', LIBRARY_COPY.heading) }}
           </h2>
         </MotionReveal>
       </div>

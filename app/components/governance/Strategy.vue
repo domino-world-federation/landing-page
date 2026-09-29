@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { GOVERNANCE_COPY } from "~/content/governance"
 
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("governance")
+
 /**
  * Domino Agenda 2030 Strategic Plan — Figma node `613:25116`.
  *
@@ -21,17 +24,19 @@ const COPY = GOVERNANCE_COPY.strategy
       <MotionReveal :y="40">
         <h2
           id="strategy-heading"
+          v-cms="'strategy.heading'"
           class="font-display text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
         >
-          {{ COPY.heading }}
+          {{ copy.text('strategy.heading', COPY.heading) }}
         </h2>
       </MotionReveal>
 
       <!-- 1094 of the design's 1920. -->
       <p
+        v-cms="'strategy.intro'"
         class="font-sans max-w-[1094px] text-[length:var(--text-heading-card)] leading-[1.22] text-white"
       >
-        {{ COPY.intro }}
+        {{ copy.text('strategy.intro', COPY.intro) }}
       </p>
     </div>
   </section>

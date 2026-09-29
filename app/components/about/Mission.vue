@@ -8,6 +8,17 @@ import { MISSION_CARDS, MISSION_COPY } from "~/content/about/mission"
  * are all two-column, and this one collects the page back onto its axis before
  * the footer. The four cards are the only grid on the page.
  */
+
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("about")
+const cards = computed(() =>
+  MISSION_CARDS.map((card, i) => ({
+    ...card,
+    cms: `mission.cards.${i}`,
+    title: copy.text(`mission.cards.${i}.title`, card.title),
+    body: copy.text(`mission.cards.${i}.body`, card.body),
+  })),
+)
 </script>
 
 <template>
@@ -19,20 +30,22 @@ import { MISSION_CARDS, MISSION_COPY } from "~/content/about/mission"
     <div class="flex flex-col items-center gap-9 text-center">
       <MotionReveal :y="32">
         <p
+          v-cms="'mission.eyebrow'"
           class="font-sans text-[length:var(--text-eyebrow)] leading-7 font-medium text-white uppercase"
         >
-          {{ MISSION_COPY.eyebrow }}
+          {{ copy.text('mission.eyebrow', MISSION_COPY.eyebrow) }}
         </p>
       </MotionReveal>
 
       <MotionReveal :y="48" :delay="STAGGER" blur-from="10px">
         <h2
+          v-cms="'mission.heading'"
           class="font-display text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08]"
         >
           <!-- A block per line so the design's break survives without a `<br>` a
                translation would have to carry (RULES §9). -->
           <span
-            v-for="line in MISSION_COPY.heading"
+            v-for="line in copy.lines('mission.heading', MISSION_COPY.heading)"
             :key="line"
             class="block"
           >{{ line }}</span>
@@ -43,9 +56,10 @@ import { MISSION_CARDS, MISSION_COPY } from "~/content/about/mission"
            heading's second line rather than running past it. -->
       <MotionReveal :y="32" :delay="STAGGER * 2" class="lg:max-w-[1094px]">
         <p
+          v-cms="'mission.intro'"
           class="font-sans text-[length:var(--text-body-lg)] leading-[1.22] text-white"
         >
-          {{ MISSION_COPY.intro }}
+          {{ copy.text('mission.intro', MISSION_COPY.intro) }}
         </p>
       </MotionReveal>
     </div>
@@ -56,7 +70,7 @@ import { MISSION_CARDS, MISSION_COPY } from "~/content/about/mission"
     <!-- Two up from the smallest screen: one card per row made each a
          300px slab for two lines of copy. -->
     <ul class="grid list-none grid-cols-2 gap-3 md:gap-5 lg:grid-cols-4">
-      <li v-for="(card, i) in MISSION_CARDS" :key="card.id" class="flex">
+      <li v-for="(card, i) in cards" :key="card.id" class="flex">
         <!-- The stagger is per card and the wrapper is `w-full` so the animated
              element, not the card inside it, is the grid item — otherwise every
              card sizes to its own content and the row loses its even columns. -->

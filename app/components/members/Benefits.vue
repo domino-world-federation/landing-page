@@ -1,6 +1,17 @@
 <script setup lang="ts">
 import { MEMBERSHIP_BENEFITS, MEMBERS_COPY } from "~/content/members"
 
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("federation-members")
+const benefits = computed(() =>
+  MEMBERSHIP_BENEFITS.map((benefit, i) => ({
+    ...benefit,
+    cms: `benefits.cards.${i}`,
+    title: copy.text(`benefits.cards.${i}.title`, benefit.title),
+    body: copy.text(`benefits.cards.${i}.body`, benefit.body),
+  })),
+)
+
 /**
  * Membership benefits — Figma node `405:28521`.
  *
@@ -40,14 +51,15 @@ import { MEMBERSHIP_BENEFITS, MEMBERS_COPY } from "~/content/members"
   >
     <h2
       id="benefits-heading"
+      v-cms="'benefits.heading'"
       class="font-display text-gold-gradient text-center text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
     >
-      {{ MEMBERS_COPY.benefitsHeading }}
+      {{ copy.text('benefits.heading', MEMBERS_COPY.benefitsHeading) }}
     </h2>
 
     <ul class="grid grid-cols-2 gap-3 max-md:[&>li:last-child:nth-child(odd)]:col-span-2 md:gap-5 lg:grid-cols-3">
       <li
-        v-for="(benefit, index) in MEMBERSHIP_BENEFITS"
+        v-for="(benefit, index) in benefits"
         :key="benefit.id"
         class="flex"
       >
@@ -76,6 +88,7 @@ import { MEMBERSHIP_BENEFITS, MEMBERS_COPY } from "~/content/members"
             <div class="flex flex-col gap-1.5 md:gap-4">
               <!-- Inter SemiBold 36/44. -->
               <h3
+                v-cms="`${benefit.cms}.title`"
                 class="font-sans text-base leading-[1.22] font-semibold text-white md:text-[length:var(--text-body-lg)]"
               >
                 {{ benefit.title }}
@@ -84,6 +97,7 @@ import { MEMBERSHIP_BENEFITS, MEMBERS_COPY } from "~/content/members"
                    bodies mid-sentence; the breaks are not reproduced — the
                    column decides where a line ends (D40). -->
               <p
+                v-cms="`${benefit.cms}.body`"
                 class="font-sans text-sm leading-[1.5] text-white/60 md:text-[length:var(--text-body-sm)]"
               >
                 {{ benefit.body }}

@@ -8,7 +8,18 @@ import { MAP_MARKERS } from "~/content/members/map-markers"
  */
 const POP = 0.28
 
-const TIER_BY_ID = new Map(MEMBERSHIP_TIERS.map((tier) => [tier.id, tier]))
+// Editable in the backoffice's page editor; the constants are the fallback.
+// The tier names are the map's filter pills (`map.tiers.N.label`), so a callout
+// names a tier the way the filter under it does.
+const copy = usePageCopy("federation-members")
+const TIER_BY_ID = computed(() =>
+  new Map(
+    MEMBERSHIP_TIERS.map((tier, i) => [
+      tier.id,
+      { ...tier, label: copy.text(`map.tiers.${i}.label`, tier.label) },
+    ]),
+  ),
+)
 
 /**
  * The markers on the members map, and the callout that opens on one.
@@ -85,7 +96,7 @@ const shown = computed(() => {
  * every marker came out a solid disc instead of a ring.
  */
 function dotStyle(marker: (typeof MAP_MARKERS)[number]) {
-  const tier = TIER_BY_ID.get(marker.tier)
+  const tier = TIER_BY_ID.value.get(marker.tier)
   if (!tier) return undefined
 
   return {
@@ -105,11 +116,11 @@ const transition = computed(() =>
 )
 
 function markerName(marker: (typeof MAP_MARKERS)[number]) {
-  return `${marker.place}, ${TIER_BY_ID.get(marker.tier)?.label ?? marker.tier}`
+  return `${marker.place}, ${TIER_BY_ID.value.get(marker.tier)?.label ?? marker.tier}`
 }
 
 function highlight(marker: (typeof MAP_MARKERS)[number]) {
-  const tier = TIER_BY_ID.get(marker.tier)
+  const tier = TIER_BY_ID.value.get(marker.tier)
   return tier
     ? `radial-gradient(circle, ${tier.from}66 0%, transparent 70%)`
     : undefined
@@ -123,7 +134,7 @@ function highlight(marker: (typeof MAP_MARKERS)[number]) {
  * mask — the same problem the gold CTA's conic stroke has, solved the same way.
  */
 const swatchStyle = computed(() => {
-  const tier = open.value ? TIER_BY_ID.get(open.value.tier) : undefined
+  const tier = open.value ? TIER_BY_ID.value.get(open.value.tier) : undefined
   if (!tier) return undefined
 
   return {
@@ -135,7 +146,7 @@ const swatchStyle = computed(() => {
 })
 
 const openTierLabel = computed(() =>
-  open.value ? TIER_BY_ID.get(open.value.tier)?.label : undefined,
+  open.value ? TIER_BY_ID.value.get(open.value.tier)?.label : undefined,
 )
 
 /** The open marker's chevron breathing. Two values, both composited. */

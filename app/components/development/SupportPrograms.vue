@@ -1,6 +1,16 @@
 <script setup lang="ts">
 import { SUPPORT_BENEFITS, SUPPORT_COPY } from "~/content/development/support"
 
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("development")
+const benefits = computed(() =>
+  SUPPORT_BENEFITS.map((benefit, i) => ({
+    ...benefit,
+    cms: `support.benefits.${i}`,
+    text: copy.text(`support.benefits.${i}.text`, benefit.text),
+  })),
+)
+
 /**
  * Federation Support Programs — Figma node `202:15013`.
  *
@@ -28,24 +38,29 @@ import { SUPPORT_BENEFITS, SUPPORT_COPY } from "~/content/development/support"
       >
         <MotionReveal :y="32">
           <p
+            v-cms="'support.eyebrow'"
             class="font-sans text-[length:var(--text-eyebrow)] leading-7 font-medium text-white uppercase"
           >
-            {{ SUPPORT_COPY.eyebrow }}
+            {{ copy.text('support.eyebrow', SUPPORT_COPY.eyebrow) }}
           </p>
         </MotionReveal>
 
         <MotionReveal :y="40" :delay="STAGGER">
           <h2
             id="support-heading"
+            v-cms="'support.heading'"
             class="font-display text-gold-gradient text-[length:var(--text-display-sm)] leading-[0.95] uppercase"
           >
-            {{ SUPPORT_COPY.heading }}
+            {{ copy.text('support.heading', SUPPORT_COPY.heading) }}
           </h2>
         </MotionReveal>
 
         <MotionReveal :y="32" :delay="STAGGER * 2">
-          <p class="font-sans text-[length:var(--text-eyebrow)] leading-8 text-white/60">
-            {{ SUPPORT_COPY.intro }}
+          <p
+            v-cms="'support.intro'"
+            class="font-sans text-[length:var(--text-eyebrow)] leading-8 text-white/60"
+          >
+            {{ copy.text('support.intro', SUPPORT_COPY.intro) }}
           </p>
         </MotionReveal>
 
@@ -56,7 +71,7 @@ import { SUPPORT_BENEFITS, SUPPORT_COPY } from "~/content/development/support"
                  on the right, where nothing follows, so the row's own padding is
                  vertical only and the 20 is dropped. -->
             <li
-              v-for="benefit in SUPPORT_BENEFITS"
+              v-for="benefit in benefits"
               :key="benefit.id"
               class="flex items-center gap-2 py-3"
             >
@@ -71,6 +86,7 @@ import { SUPPORT_BENEFITS, SUPPORT_COPY } from "~/content/development/support"
                 class="size-6 shrink-0 lg:size-8"
               >
               <span
+                v-cms="`${benefit.cms}.text`"
                 class="font-display text-[length:var(--text-display-item)] leading-[1.33] text-white"
               >
                 {{ benefit.text }}

@@ -52,6 +52,9 @@ defineProps<{
     marker: string
     title: string
     detail: string
+    /** Page-editor field keys for this step's title and detail, when the page
+     *  makes them editable — marks them for click-to-edit in the preview. */
+    cms?: { title?: string; detail?: string }
   }[]
 }>()
 </script>
@@ -104,11 +107,12 @@ defineProps<{
           {{ step.marker }}
         </p>
         <h3
+          v-cms="step.cms?.title"
           class="font-sans text-[length:var(--text-heading-card)] leading-[1.2] font-semibold text-white"
         >
           {{ step.title }}
         </h3>
-        <p class="font-sans text-[length:var(--text-body-sm)] leading-[1.5] text-white/40">
+        <p v-cms="step.cms?.detail" class="font-sans text-[length:var(--text-body-sm)] leading-[1.5] text-white/40">
           {{ step.detail }}
         </p>
       </div>

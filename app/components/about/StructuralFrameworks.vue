@@ -41,7 +41,19 @@ import { FRAMEWORKS_COPY } from "~/content/about/frameworks"
  * transparent at the top, solid at the foot — so the band arrives from the page
  * background Mission sits on.
  */
-const CHART = FRAMEWORKS_COPY.chart
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("about")
+const CHART = computed(() => {
+  const chart = FRAMEWORKS_COPY.chart
+  return {
+    apexShort: copy.text("frameworks.apex_short", chart.apexShort),
+    apexName: copy.text("frameworks.apex_name", chart.apexName),
+    federation: copy.text("frameworks.federation", chart.federation),
+    countries: copy.lines("frameworks.countries", chart.countries),
+    members: copy.text("frameworks.members", chart.members),
+    membersDetail: copy.text("frameworks.members_detail", chart.membersDetail),
+  }
+})
 </script>
 
 <template>
@@ -66,9 +78,10 @@ const CHART = FRAMEWORKS_COPY.chart
              it is clipped to the glyphs, so the box has to hug the type. -->
         <h2
           id="frameworks-heading"
+          v-cms="'frameworks.heading'"
           class="font-display w-fit text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08] lg:text-[length:calc(var(--u)*5.2083)]"
         >
-          {{ FRAMEWORKS_COPY.heading }}
+          {{ copy.text('frameworks.heading', FRAMEWORKS_COPY.heading) }}
         </h2>
       </MotionReveal>
 
@@ -76,9 +89,10 @@ const CHART = FRAMEWORKS_COPY.chart
            way every page header sets its intro. -->
       <MotionReveal :y="32" :delay="STAGGER" class="lg:max-w-[calc(var(--u)*33.33)]">
         <p
+          v-cms="'frameworks.intro'"
           class="font-sans text-[length:var(--text-eyebrow)] leading-[1.6] text-white/70 lg:text-[length:calc(var(--u)*1.0417)]"
         >
-          {{ FRAMEWORKS_COPY.intro }}
+          {{ copy.text('frameworks.intro', FRAMEWORKS_COPY.intro) }}
         </p>
       </MotionReveal>
     </div>
@@ -112,11 +126,13 @@ const CHART = FRAMEWORKS_COPY.chart
               class="pointer-events-none absolute top-[-24px] left-1/2 h-[158px] w-auto -translate-x-1/2 lg:top-[calc(var(--u)*-1.25)] lg:h-[calc(var(--u)*8.23)]"
             >
             <p
+              v-cms="'frameworks.apex_short'"
               class="font-display relative bg-[linear-gradient(180deg,#1A1307_0%,#523E1D_100%)] bg-clip-text text-[length:var(--text-display-apex)] leading-[0.73] text-transparent lg:text-[length:calc(var(--u)*3.125)]"
             >
               {{ CHART.apexShort }}
             </p>
             <p
+              v-cms="'frameworks.apex_name'"
               class="font-display relative text-[length:var(--text-display-caption)] leading-[1.2] text-[#523E1D] lg:text-[length:calc(var(--u)*1.6667)]"
             >
               {{ CHART.apexName }}
@@ -145,8 +161,8 @@ const CHART = FRAMEWORKS_COPY.chart
           <!-- 3 × 400 with 80 between them, as fractions of the 1360. -->
           <div class="mt-10 grid gap-10 lg:mt-0 lg:grid-cols-3 lg:gap-x-[5.88%]">
             <div
-              v-for="country in CHART.countries"
-              :key="country"
+              v-for="(country, i) in CHART.countries"
+              :key="i"
               class="flex flex-col items-stretch"
             >
               <!-- `1097:3106`: a pale steel face with a gradient edge — two
@@ -156,11 +172,13 @@ const CHART = FRAMEWORKS_COPY.chart
                 class="flex flex-col gap-2 rounded-xl border-2 border-transparent px-5 py-4 text-center [background:linear-gradient(180deg,#8F8F8F_0%,#E2E2E2_100%)_padding-box,linear-gradient(0deg,#525252_0%,#828282_100%)_border-box] shadow-[inset_0_0_16px_0_rgba(255,255,255,0.8)] lg:gap-[calc(var(--u)*0.4)] lg:px-[calc(var(--u)*1.67)] lg:py-[calc(var(--u)*1.04)]"
               >
                 <p
+                  v-cms="'frameworks.federation'"
                   class="font-display text-[length:var(--text-display-node)] leading-none text-[#2B2B2B] lg:text-[length:calc(var(--u)*2.5)]"
                 >
                   {{ CHART.federation }}
                 </p>
                 <p
+                  v-cms="'frameworks.countries'"
                   class="font-sans text-[length:var(--text-eyebrow)] leading-[1.6] font-medium text-[var(--color-ink-placeholder)] lg:text-[length:calc(var(--u)*1.0417)]"
                 >
                   {{ country }}
@@ -178,11 +196,13 @@ const CHART = FRAMEWORKS_COPY.chart
                 class="flex flex-col items-center gap-2 rounded-xl bg-[#171717] px-5 py-4 text-center lg:gap-[calc(var(--u)*0.4)] lg:px-[calc(var(--u)*1.67)] lg:py-[calc(var(--u)*1.04)]"
               >
                 <p
+                  v-cms="'frameworks.members'"
                   class="font-display bg-[linear-gradient(90deg,#FFFFFF_0%,#999999_100%)] bg-clip-text text-[length:var(--text-display-node)] leading-none text-transparent lg:text-[length:calc(var(--u)*2.5)]"
                 >
                   {{ CHART.members }}
                 </p>
                 <p
+                  v-cms="'frameworks.members_detail'"
                   class="font-sans text-[length:var(--text-eyebrow)] leading-[1.6] font-medium text-[var(--color-ink-placeholder)] lg:text-[length:calc(var(--u)*1.0417)]"
                 >
                   {{ CHART.membersDetail }}
@@ -195,10 +215,11 @@ const CHART = FRAMEWORKS_COPY.chart
         <!-- Inter 24/36 in the placeholder grey, 864 of 1920. A block per line
              so the design's break survives without a `<br>` (RULES §9). -->
         <figcaption
+          v-cms="'frameworks.caption'"
           class="font-sans max-w-[864px] text-center text-[length:var(--text-body-sm)] leading-[1.5] text-[var(--color-ink-placeholder)] lg:max-w-[calc(var(--u)*45)] lg:text-[length:calc(var(--u)*1.25)]"
         >
           <span
-            v-for="line in FRAMEWORKS_COPY.caption"
+            v-for="line in copy.lines('frameworks.caption', FRAMEWORKS_COPY.caption)"
             :key="line"
             class="lg:block"
           >{{ line }} </span>

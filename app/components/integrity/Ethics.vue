@@ -36,6 +36,19 @@ import { ETHICS_CLAUSES } from "~/content/integrity/ethics"
  */
 const COPY = INTEGRITY_COPY
 
+// Editable in the backoffice's page editor; the constants are the fallback.
+// Each clause carries its field prefix (`cms`) so both renderings — the
+// phone's cards and the desktop's turning column — can mark their text.
+const copy = usePageCopy("integrity")
+const clauses = computed(() =>
+  ETHICS_CLAUSES.map((clause, i) => ({
+    ...clause,
+    cms: `ethics.clauses.${i}`,
+    title: copy.text(`ethics.clauses.${i}.title`, clause.title),
+    body: copy.text(`ethics.clauses.${i}.body`, clause.body),
+  })),
+)
+
 const track = useTemplateRef<HTMLElement>("track")
 const stage = useTemplateRef<HTMLElement>("stage")
 const viewport = useTemplateRef<HTMLDivElement>("viewport")
@@ -47,7 +60,7 @@ const column = useTemplateRef<HTMLDivElement>("column")
  * list out of order, which is the one thing a numbered list may not be.
  */
 const { screens, cells, index, readingProgress, travel, scrolled, isPad } =
-  useTurningColumn(track, stage, ETHICS_CLAUSES, {
+  useTurningColumn(track, stage, clauses, {
     pad: false,
     viewport,
     column,
@@ -136,14 +149,15 @@ const fade = computed(() => ({ duration: DURATION, ease: EASE }))
     <div class="flex flex-col gap-10 px-5 pt-16 pb-12 md:px-10 lg:hidden">
       <MotionReveal :y="40">
         <h2
+          v-cms="'ethics.heading'"
           class="font-display text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
         >
-          {{ COPY.ethicsHeading }}
+          {{ copy.text('ethics.heading', COPY.ethicsHeading) }}
         </h2>
       </MotionReveal>
 
       <ol class="flex list-none flex-col gap-14">
-        <li v-for="clause in ETHICS_CLAUSES" :key="clause.id">
+        <li v-for="clause in clauses" :key="clause.id">
           <MotionReveal :y="32" class="flex flex-col">
             <NuxtImg
               :src="clause.imageUrl"
@@ -152,11 +166,13 @@ const fade = computed(() => ({ duration: DURATION, ease: EASE }))
               class="aspect-[4/3] w-full rounded-[20px] object-cover"
             />
             <h3
+              v-cms="`${clause.cms}.title`"
               class="font-display mt-6 text-[length:var(--text-display-pillar)] leading-[0.89] text-white uppercase"
             >
               {{ clause.number }} — {{ clause.title }}
             </h3>
             <p
+              v-cms="`${clause.cms}.body`"
               class="font-sans mt-4 text-[length:var(--text-body-lg)] leading-[1.56] text-white/70"
             >
               {{ clause.body }}
@@ -184,9 +200,10 @@ const fade = computed(() => ({ duration: DURATION, ease: EASE }))
         <MotionReveal :y="40">
           <h2
             id="ethics-heading"
+            v-cms="'ethics.heading'"
             class="font-display text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
           >
-            {{ COPY.ethicsHeading }}
+            {{ copy.text('ethics.heading', COPY.ethicsHeading) }}
           </h2>
         </MotionReveal>
 

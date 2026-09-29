@@ -3,6 +3,9 @@ import type { IsoDateString } from "~/lib/api/types"
 import type { Remaining } from "~/utils/date"
 import { COUNTDOWN_COPY } from "~/content/home/countdown"
 
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("home")
+
 /**
  * The only interactive part of S3 — the digits, and nothing else (RULES §5).
  *
@@ -115,8 +118,11 @@ watch(() => props.startsAt, (next) => {
         >
           {{ remaining ? padUnit(remaining[unit.key]) : "--" }}
         </span>
-        <span class="font-sans text-sm leading-[22px] text-white/60 uppercase">
-          {{ unit.label }}
+        <span
+          v-cms="`countdown.${unit.key}`"
+          class="font-sans text-sm leading-[22px] text-white/60 uppercase"
+        >
+          {{ copy.text(`countdown.${unit.key}`, unit.label) }}
         </span>
       </div>
     </template>

@@ -33,7 +33,39 @@ import { FORMATS, FORMATS_ALT } from "~/content/domino/formats"
  * The singles figure moves to the panel's right edge, the doubles pair stays
  * on the left, so each still stands on the side away from its copy.
  */
-const [singles, doubles] = FORMATS
+
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("domino")
+
+/**
+ * Each panel carries its field prefix (`cms`, `formats.panels.0`) so the panel
+ * can mark what it renders. The two statistics rows become flat fields named
+ * after their id (`players_label`, `hand_size_value`) — the editor's lists do
+ * not nest.
+ */
+const formats = computed(() =>
+  FORMATS.map((format, i) => {
+    const cms = `formats.panels.${i}`
+    return {
+      ...format,
+      cms,
+      eyebrow: copy.text(`${cms}.eyebrow`, format.eyebrow),
+      heading: copy.text(`${cms}.heading`, format.heading),
+      body: copy.text(`${cms}.body`, format.body),
+      stats: format.stats.map((stat) => {
+        const field = `${cms}.${stat.id.replaceAll("-", "_")}`
+        return {
+          ...stat,
+          cms: field,
+          label: copy.text(`${field}_label`, stat.label),
+          value: copy.text(`${field}_value`, stat.value),
+        }
+      }),
+    }
+  }),
+)
+const singles = computed(() => formats.value[0])
+const doubles = computed(() => formats.value[1])
 </script>
 
 <template>

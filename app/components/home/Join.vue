@@ -29,8 +29,8 @@ import { JOIN_COPY } from "~/content/home/join"
  *
  * ── The words come from the CMS since 2026-09-05 ──
  *
- * `GET /home`, the same request `home/Hero` makes at the other end of the page
- * and the same one it is deduped against. Every field falls back to
+ * The page editor's `home` page (`usePageCopy`), the same request `home/Hero`
+ * makes at the other end of the page and the same one it is deduped against. Every field falls back to
  * `JOIN_COPY`, which is Figma's own wording.
  *
  * **`headline` stays a list of lines.** The server stores it as one text column
@@ -44,16 +44,19 @@ import { JOIN_COPY } from "~/content/home/join"
  * does now, and the CMS seeds this button pointing at it — so the fallback is
  * the copy file's `#` and the live answer comes from the backoffice.
  */
-const homeCopy = useHomeCopy()
+// Editable in the backoffice's page editor; the constants are the fallback.
+const page = usePageCopy("home")
 
 const copy = computed(() => {
-  const closing = homeCopy.value.closing
+  const headline = page.lines("closing.headline", JOIN_COPY.headline)
 
   return {
-    headline: closing.headline?.length ? closing.headline : JOIN_COPY.headline,
-    body: closing.body ?? JOIN_COPY.body,
-    cta: closing.cta ?? JOIN_COPY.cta,
-    ctaUrl: closing.ctaUrl ?? JOIN_COPY.ctaUrl,
+    // An empty list falls back too, as it did under `GET /home`: a heading with
+    // no lines would leave the section without its claim.
+    headline: headline.length ? headline : JOIN_COPY.headline,
+    body: page.text("closing.body", JOIN_COPY.body),
+    cta: page.text("closing.cta", JOIN_COPY.cta),
+    ctaUrl: page.text("closing.cta_url", JOIN_COPY.ctaUrl),
   }
 })
 </script>
@@ -81,6 +84,7 @@ const copy = computed(() => {
       <MotionReveal :y="40" class="w-full">
         <h2
           id="join-heading"
+          v-cms="'closing.headline'"
           class="font-display mx-auto max-w-[59.11vw] text-[length:var(--text-display-md)] leading-[1.0476] text-white uppercase max-lg:max-w-none"
         >
           <!-- A block per line so the design's break survives, rather than a
@@ -103,6 +107,7 @@ const copy = computed(() => {
              entrance's own opacity has something to animate that does not fight
              it. -->
         <p
+          v-cms="'closing.body'"
           class="font-sans mx-auto max-w-[56.61vw] text-base leading-7 text-white/60 text-balance max-lg:max-w-none lg:text-xl lg:leading-8"
         >
           {{ copy.body }}
@@ -126,7 +131,7 @@ const copy = computed(() => {
       :delay="STAGGER * 2"
       class="w-fit max-w-full min-w-[min(100%,13.75vw)]"
     >
-      <UiSilverCta :href="copy.ctaUrl">{{ copy.cta }}</UiSilverCta>
+      <UiSilverCta v-cms="'closing.cta'" :href="copy.ctaUrl">{{ copy.cta }}</UiSilverCta>
     </MotionReveal>
   </section>
 </template>

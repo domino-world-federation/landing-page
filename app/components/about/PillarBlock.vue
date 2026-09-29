@@ -20,7 +20,8 @@ const IDLE = 0.5
  */
 const props = withDefaults(
   defineProps<{
-    pillar: Pillar
+    /** `cms` is the claim's field prefix in the page editor (`pillars.items.0`). */
+    pillar: Pillar & { cms?: string }
     duplicate: boolean
     focused?: boolean
     /**
@@ -67,6 +68,7 @@ const dim = computed(() =>
          the design stacks the two-word titles. -->
     <component
       :is="headingTag"
+      v-cms="pillar.cms && `${pillar.cms}.title`"
       class="font-display text-[length:var(--text-display-pillar)] leading-[0.89] text-white uppercase"
     >
       {{ pillar.title }}
@@ -75,6 +77,7 @@ const dim = computed(() =>
     <!-- The sentence reads itself while the block is current AND the reader is
          there to see it. -->
     <p
+      v-cms="pillar.cms && `${pillar.cms}.body`"
       class="font-sans mt-7 text-[length:var(--text-body-lg)] leading-[1.56]"
     >
       <MotionReadingText

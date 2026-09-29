@@ -2,6 +2,9 @@
 import { TOURNAMENTS_COPY } from "~/content/tournaments"
 import { getFaqs } from "~/lib/api/client"
 
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("tournaments")
+
 /**
  * The questions and THEIR ORDER come from the CMS — the "FAQ per Page" screen
  * ranks them per page, and this section is one of the three pages it ranks.
@@ -45,12 +48,14 @@ const { data: faqs } = await useAsyncData("tournament-faq", () => getFaqs("tourn
   >
     <UiFaqPanel
       :items="faqs"
-      :heading="TOURNAMENTS_COPY.faq.heading"
+      heading-cms="faq.heading"
+      :heading="copy.text('faq.heading', TOURNAMENTS_COPY.faq.heading)"
       heading-id="tournament-faq-heading"
       tone="dark"
       :view-more="{
-        label: TOURNAMENTS_COPY.faq.viewMore,
+        label: copy.text('faq.view_more', TOURNAMENTS_COPY.faq.viewMore),
         href: TOURNAMENTS_COPY.faq.viewMoreHref,
+        cms: 'faq.view_more',
       }"
     />
   </section>

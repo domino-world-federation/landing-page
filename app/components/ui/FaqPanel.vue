@@ -36,7 +36,9 @@ withDefaults(
      *  the landing page. */
     headingAlign?: "left" | "center"
     /** The button under the list. Omitted where the design draws none. */
-    viewMore?: { label: string; href: string }
+    viewMore?: { label: string; href: string; cms?: string }
+    /** Page-editor field key for the heading, when the page makes it editable. */
+    headingCms?: string
   }>(),
   { tone: "dark", headingAlign: "left", viewMore: undefined },
 )
@@ -76,6 +78,7 @@ withDefaults(
              makes the same call, and on the dark pane it draws plain white. -->
         <h2
           :id="headingId"
+          v-cms="headingCms"
           :class="
             cn(
               'font-display text-[length:var(--text-display-sm)] leading-[0.95] uppercase',
@@ -98,6 +101,7 @@ withDefaults(
              card carries, which would read as a foreign object on glass. -->
         <NuxtLink
           v-if="viewMore"
+          v-cms="viewMore.cms"
           :to="viewMore.href"
           :class="
             cn(

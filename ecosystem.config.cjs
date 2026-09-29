@@ -92,6 +92,11 @@ module.exports = {
         // diubah; server mengingatkan di log setiap restart selama masih
         // tertutup.
         NUXT_PUBLIC_ALLOW_INDEXING: "false",
+
+        // Backoffice — satu-satunya origin yang boleh membingkai situs ini
+        // (pratinjau editor halaman) dan yang pesannya dituruti pratinjau.
+        // Kosong = tidak ada yang boleh membingkai; editor halaman tak jalan.
+        NUXT_PUBLIC_BACKOFFICE_ORIGIN: "https://fed-bo.pborado.com",
       },
 
       autorestart: true,

@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { MEMBERS_COPY } from "~/content/members"
 
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("federation-members")
+
 /**
  * The closing call to action — Figma node `406:479`.
  *
@@ -21,19 +24,21 @@ import { MEMBERS_COPY } from "~/content/members"
       <!-- Bebas 126/132, 1135 of the design's 1920. `uppercase` is the
            heading's, not the string's (D40). -->
       <h2
+        v-cms="'cta.heading'"
         class="font-display max-w-[1135px] text-center text-[length:var(--text-display-md)] leading-[1.05] text-white uppercase"
       >
-        {{ MEMBERS_COPY.ctaHeading }}
+        {{ copy.text('cta.heading', MEMBERS_COPY.ctaHeading) }}
       </h2>
       <p
+        v-cms="'cta.intro'"
         class="font-sans max-w-[784px] text-center text-[length:var(--text-eyebrow)] leading-8 text-white/70"
       >
-        {{ MEMBERS_COPY.ctaIntro }}
+        {{ copy.text('cta.intro', MEMBERS_COPY.ctaIntro) }}
       </p>
     </div>
 
-    <UiSilverCta :href="MEMBERS_COPY.ctaHref">
-      {{ MEMBERS_COPY.ctaButton }}
+    <UiSilverCta v-cms="'cta.button'" :href="MEMBERS_COPY.ctaHref">
+      {{ copy.text('cta.button', MEMBERS_COPY.ctaButton) }}
     </UiSilverCta>
   </section>
 </template>

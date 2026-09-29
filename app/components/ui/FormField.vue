@@ -19,6 +19,8 @@ withDefaults(
   defineProps<{
     id: string
     label: string
+    /** Page-editor field key for the label, when the page makes it editable. */
+    labelCms?: string
     placeholder: string
     type?: "text" | "email"
     autocomplete?: string
@@ -52,6 +54,7 @@ const CONTROL =
 <template>
   <div class="flex flex-col gap-4 lg:gap-6">
     <label
+      v-cms="labelCms"
       :for="id"
       class="font-sans text-[length:var(--text-body-sm)] leading-8 font-semibold text-black"
     >

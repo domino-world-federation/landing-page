@@ -27,6 +27,9 @@ import {
  * background, and it is what fades the card's own foot into the section.
  */
 const COPY = PLAYER_MEMBERSHIP_COPY.hero
+
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("player-membership")
 </script>
 
 <template>
@@ -88,17 +91,19 @@ const COPY = PLAYER_MEMBERSHIP_COPY.hero
       <MotionReveal :y="40" blur-from="10px" class="w-full">
         <h1
           id="player-hero-heading"
+          v-cms="'hero.title'"
           class="font-sans mx-auto max-w-[62.5vw] text-[length:var(--text-heading-claim)] leading-[1.1] font-medium text-white max-lg:max-w-none"
         >
-          {{ COPY.title }}
+          {{ copy.text('hero.title', COPY.title) }}
         </h1>
       </MotionReveal>
 
       <MotionReveal :y="32" :delay="STAGGER" class="w-full">
         <p
+          v-cms="'hero.body'"
           class="font-sans mx-auto max-w-[42.29vw] text-base leading-8 text-white/60 max-lg:max-w-none lg:text-xl"
         >
-          {{ COPY.body }}
+          {{ copy.text('hero.body', COPY.body) }}
         </p>
       </MotionReveal>
     </div>
@@ -120,7 +125,7 @@ const COPY = PLAYER_MEMBERSHIP_COPY.hero
         :href="COPY.ctaUrl"
         class="mx-auto w-full max-w-70 sm:max-w-85"
       >
-        {{ COPY.cta }}
+        <span v-cms="'hero.cta'">{{ copy.text('hero.cta', COPY.cta) }}</span>
       </UiGoldCta>
     </MotionReveal>
   </section>

@@ -17,6 +17,16 @@ import { INTEGRITY_COPY, INTEGRITY_PRINCIPLES } from "~/content/integrity"
  * round it. It is what decides that this band covers the photograph, and that
  * fact belongs to the section doing the covering.
  */
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("integrity")
+const principles = computed(() =>
+  INTEGRITY_PRINCIPLES.map((principle, i) => ({
+    ...principle,
+    label: copy.text(`principles.items.${i}.label`, principle.label),
+    detail: copy.text(`principles.items.${i}.detail`, principle.detail),
+  })),
+)
+
 const LABEL =
   "font-sans text-[length:var(--text-eyebrow)] leading-7 font-medium text-black uppercase"
 </script>
@@ -38,9 +48,10 @@ const LABEL =
              gold on white measures 1.9:1 against the 4.5 RULES §10 asks for. -->
         <h2
           id="principles-heading"
+          v-cms="'principles.heading'"
           class="font-display text-[length:var(--text-display-sm)] leading-[0.95] text-black uppercase"
         >
-          {{ INTEGRITY_COPY.principlesHeading }}
+          {{ copy.text('principles.heading', INTEGRITY_COPY.principlesHeading) }}
         </h2>
       </MotionReveal>
 
@@ -51,14 +62,15 @@ const LABEL =
         class="grid gap-10 menu:grow-[1259] menu:basis-0 menu:grid-cols-2 menu:gap-x-[3.13vw] menu:gap-y-9"
       >
         <div
-          v-for="(principle, i) in INTEGRITY_PRINCIPLES"
+          v-for="(principle, i) in principles"
           :key="principle.id"
           class="flex flex-col gap-6 menu:gap-9"
         >
           <MotionReveal :y="24" :delay="i * 0.06">
-            <dt :class="LABEL">{{ principle.label }}</dt>
+            <dt v-cms="`principles.items.${i}.label`" :class="LABEL">{{ principle.label }}</dt>
           </MotionReveal>
           <dd
+            v-cms="`principles.items.${i}.detail`"
             class="font-sans text-[length:var(--text-heading-card)] leading-[1.22] text-[#3F3F3F]"
           >
             {{ principle.detail }}

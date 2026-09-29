@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { GOVERNANCE_COPY } from "~/content/governance"
 
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("governance")
+
 /**
  * Overview — Figma node `613:24895`.
  *
@@ -50,7 +53,7 @@ const BODY =
         class="flex flex-col gap-6 menu:shrink-0 menu:grow-[362] menu:basis-0 menu:gap-9"
       >
         <MotionReveal :y="32">
-          <p :class="LABEL">{{ COPY.eyebrow }}</p>
+          <p v-cms="'overview.eyebrow'" :class="LABEL">{{ copy.text('overview.eyebrow', COPY.eyebrow) }}</p>
         </MotionReveal>
 
         <!-- Bebas 76/72 in black, not the gold gradient the dark sections use:
@@ -58,9 +61,10 @@ const BODY =
         <MotionReveal :y="40" :delay="STAGGER">
           <h2
             id="governance-overview-heading"
+            v-cms="'overview.heading'"
             class="font-display text-[length:var(--text-display-sm)] leading-[0.95] text-black uppercase"
           >
-            {{ COPY.heading }}
+            {{ copy.text('overview.heading', COPY.heading) }}
           </h2>
         </MotionReveal>
       </div>
@@ -70,12 +74,12 @@ const BODY =
         class="flex flex-col gap-10 menu:grow-[1259] menu:basis-0 menu:flex-row menu:gap-[3.13vw]"
       >
         <div class="flex flex-1 flex-col gap-6 menu:gap-9">
-          <dt :class="LABEL">{{ COPY.roleLabel }}</dt>
-          <dd :class="BODY">{{ COPY.role }}</dd>
+          <dt v-cms="'overview.role_label'" :class="LABEL">{{ copy.text('overview.role_label', COPY.roleLabel) }}</dt>
+          <dd v-cms="'overview.role'" :class="BODY">{{ copy.text('overview.role', COPY.role) }}</dd>
         </div>
         <div class="flex flex-1 flex-col gap-6 menu:gap-9">
-          <dt :class="LABEL">{{ COPY.commitmentsLabel }}</dt>
-          <dd :class="BODY">{{ COPY.commitments }}</dd>
+          <dt v-cms="'overview.commitments_label'" :class="LABEL">{{ copy.text('overview.commitments_label', COPY.commitmentsLabel) }}</dt>
+          <dd v-cms="'overview.commitments'" :class="BODY">{{ copy.text('overview.commitments', COPY.commitments) }}</dd>
         </div>
       </dl>
     </div>

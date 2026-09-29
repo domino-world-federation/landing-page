@@ -3,6 +3,9 @@ import { DOMINO_FAQ_COPY } from "~/content/domino/faq"
 
 import { getFaqs } from "~/lib/api/client"
 
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("domino")
+
 /**
  * The questions and THEIR ORDER come from the CMS — the "FAQ per Page" screen
  * ranks them per page, and this section is one of the three pages it ranks.
@@ -66,12 +69,14 @@ const { data: faqs } = await useAsyncData("domino-faq", () => getFaqs("domino"),
   >
     <UiFaqPanel
       :items="faqs"
-      :heading="DOMINO_FAQ_COPY.heading"
+      heading-cms="faq.heading"
+      :heading="copy.text('faq.heading', DOMINO_FAQ_COPY.heading)"
       heading-id="domino-faq-heading"
       tone="dark"
       :view-more="{
-        label: DOMINO_FAQ_COPY.viewMore,
+        label: copy.text('faq.view_more', DOMINO_FAQ_COPY.viewMore),
         href: DOMINO_FAQ_COPY.viewMoreHref,
+        cms: 'faq.view_more',
       }"
     />
   </section>

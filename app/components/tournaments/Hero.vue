@@ -2,6 +2,9 @@
 import type { ShowcaseEvent } from "~/lib/api/types"
 import { TOURNAMENTS_COPY } from "~/content/tournaments"
 
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("tournaments")
+
 /**
  * The page's opening block — Figma node `370:17243`.
  *
@@ -123,10 +126,11 @@ defineProps<{ event: ShowcaseEvent }>()
          the window — so the correction tracks the type at every width instead of
          being a pixel guess against the section's height. -->
     <p
+      v-cms="'hero.watermark'"
       aria-hidden
       class="font-display pointer-events-none absolute inset-x-0 top-[58%] -z-10 -mt-[0.1em] bg-linear-to-b from-white to-transparent bg-clip-text text-center text-[20.83vw] leading-[0.9] tracking-[-0.0492em] text-transparent"
     >
-      {{ TOURNAMENTS_COPY.hero.watermark }}
+      {{ copy.text('hero.watermark', TOURNAMENTS_COPY.hero.watermark) }}
     </p>
 
     <!-- The foot bar (`370:17245`): a fall to the page's own black.
@@ -171,7 +175,7 @@ defineProps<{ event: ShowcaseEvent }>()
         :notice="TOURNAMENTS_COPY.hero.watchLiveUnavailable"
         class="rounded-btn font-display focus-visible:ring-gold bg-gold flex h-18 w-full items-center justify-center gap-4 px-5 text-[length:var(--text-display-cta)] leading-11 text-black uppercase transition-colors hover:bg-[var(--color-gold-btn-light)] focus-visible:ring-2 focus-visible:outline-none lg:w-80"
       >
-        {{ TOURNAMENTS_COPY.hero.watchLive }}
+        <span v-cms="'hero.watch_live'">{{ copy.text('hero.watch_live', TOURNAMENTS_COPY.hero.watchLive) }}</span>
         <img
           src="/assets/tournaments/icon-live-stream.svg"
           alt=""

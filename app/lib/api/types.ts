@@ -767,41 +767,6 @@ export type SiteSettings = {
   socialYoutube?: string
 }
 
-/** Naskah hero halaman depan — `home.hero` di `GET /home`. */
-export type HomeHeroCopy = {
-  tagline?: string
-  headline?: string
-  mission?: string
-  accountability?: string
-  primaryCta?: string
-  primaryCtaUrl?: string
-  secondaryCta?: string
-  secondaryCtaUrl?: string
-}
-
-/**
- * Band ajakan penutup halaman depan — `home.closing`.
- *
- * `headline` LARIK, dan itu keputusan yang disengaja di kedua sisi: Figma
- * (`56:4683`) memutus barisnya menjadi dua baris berbobot sama, dan putusan
- * baris itu bagian dari komposisinya. Server menyimpannya sebagai satu kolom
- * teks dan memecahnya pada baris baru sebelum mengirim, jadi yang sampai ke
- * sini sudah berbentuk baris-baris. Merangkainya kembali dengan `join(" ")`
- * membuang keputusan desain yang sengaja disimpan.
- */
-export type HomeClosingCopy = {
-  headline?: string[]
-  body?: string
-  cta?: string
-  ctaUrl?: string
-}
-
-/** Seluruh naskah yang bisa disunting di layar Home Page. */
-export type HomeCopy = {
-  hero: HomeHeroCopy
-  closing: HomeClosingCopy
-}
-
 /* -------------------------------------------------------------- Submissions
  *
  * The bodies the three public forms POST. Everything above this line is what
@@ -864,3 +829,11 @@ export type IntegrityReportSubmission = Honeypot & {
   type: string
   description: string
 }
+
+/**
+ * One page's editable text, keyed `section.field` (or `section.list.N.field`),
+ * as the backoffice's page editor serves it. Headings drawn line by line come
+ * as arrays. Only filled fields are present. The keys are a contract with
+ * `config('dwf.pages')` in `backend-cms`.
+ */
+export type PageCopyValues = Record<string, string | string[]>

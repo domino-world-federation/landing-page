@@ -2,6 +2,9 @@
 import { getMemberFederations } from "~/lib/api/client"
 import { MEMBERS_COPY } from "~/content/members"
 
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("federation-members")
+
 /** The design's list shows six (`405:28396`). */
 const ROWS = 6
 
@@ -91,9 +94,10 @@ const open = computed(
          heading's, not the string's (D40). -->
     <h2
       id="directory-heading"
+      v-cms="'directory.heading'"
       class="font-display text-gold-gradient text-center text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
     >
-      {{ MEMBERS_COPY.directoryHeading }}
+      {{ copy.text('directory.heading', MEMBERS_COPY.directoryHeading) }}
     </h2>
 
     <!-- 69 / 31 at the design width. The card comes SECOND in the source and is

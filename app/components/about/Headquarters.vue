@@ -22,6 +22,11 @@ import { HQ_ALT, HQ_CONTACT, HQ_COPY } from "~/content/about/headquarters"
  */
 const settings = useSiteSettings()
 
+// The headline, the hours and the phone are editable in the backoffice's page
+// editor (the constants are the fallback); the address and email stay with
+// Contact & Social above, which the footer reads too.
+const copy = usePageCopy("about")
+
 const contactLines = computed(() =>
   HQ_CONTACT.map((line) => {
     if (line.id === "address") {
@@ -38,6 +43,13 @@ const contactLines = computed(() =>
       // it lies in the one direction nobody checks — the part you only find out
       // about after the mail has gone somewhere else.
       return fromCms ? { ...line, label: fromCms, href: `mailto:${fromCms}` } : line
+    }
+
+    if (line.id === "phone") {
+      const label = copy.text("headquarters.phone", line.label)
+
+      // Same reasoning as the email: the link dials what the row says.
+      return { ...line, label, href: `tel:${label.replace(/[^\d+]/g, "")}`, cms: "headquarters.phone" }
     }
 
     return line
@@ -145,9 +157,10 @@ const SETTLE = DURATION * 1.5
     >
       <MotionReveal :y="48" blur-from="12px">
         <h2
+          v-cms="'headquarters.headline'"
           class="font-display text-gold-gradient text-[length:var(--text-display-feature)] leading-none uppercase"
         >
-          {{ HQ_COPY.headline }}
+          {{ copy.text('headquarters.headline', HQ_COPY.headline) }}
         </h2>
       </MotionReveal>
 
@@ -169,9 +182,10 @@ const SETTLE = DURATION * 1.5
            left to the content so a longer translation cannot clip the label. -->
       <MotionReveal :y="32" :delay="STAGGER * 2" blur-from="6px" class="w-fit">
         <p
+          v-cms="'headquarters.hours'"
           class="rounded-btn font-display flex h-16 w-fit items-center justify-center bg-white/20 px-5 text-[length:var(--text-display-btn)] leading-10 text-white uppercase"
         >
-          {{ HQ_COPY.hours }}
+          {{ copy.text('headquarters.hours', HQ_COPY.hours) }}
         </p>
       </MotionReveal>
     </div>

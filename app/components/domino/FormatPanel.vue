@@ -18,7 +18,14 @@ import type { Format } from "~/content/domino/formats"
 defineOptions({ inheritAttrs: false })
 
 const props = defineProps<{
-  format: Format
+  /**
+   * `cms` is the panel's field prefix in the page editor (`formats.panels.0`);
+   * each stat's `cms` is its row's prefix, completed with `_label`/`_value`.
+   */
+  format: Omit<Format, "stats"> & {
+    cms?: string
+    stats: readonly (Format["stats"][number] & { cms?: string })[]
+  }
   align: "start" | "end"
   /** Set on the first panel only, so the section can be labelled by it. */
   headingId?: string
@@ -66,6 +73,7 @@ const rootClass = computed(() =>
           <!-- 20/28 Inter Medium (`131:4836`). Black at full strength — it is
                the quietest line by size, not by contrast. -->
           <p
+            v-cms="format.cms && `${format.cms}.eyebrow`"
             class="font-sans text-[length:var(--text-eyebrow)] leading-7 font-medium text-black uppercase"
           >
             {{ format.eyebrow }}
@@ -75,6 +83,7 @@ const rootClass = computed(() =>
                body. -->
           <h2
             :id="headingId"
+            v-cms="format.cms && `${format.cms}.heading`"
             class="font-display text-[length:var(--text-display-sm)] leading-[0.95] text-black uppercase"
           >
             {{ format.heading }}
@@ -87,6 +96,7 @@ const rootClass = computed(() =>
            grey that exists nowhere else. -->
       <MotionReveal :y="32" :delay="STAGGER" class="w-full">
         <p
+          v-cms="format.cms && `${format.cms}.body`"
           class="font-sans text-[length:var(--text-eyebrow)] leading-8 text-[var(--color-bg)]/60"
         >
           {{ format.body }}
@@ -109,6 +119,7 @@ const rootClass = computed(() =>
                  only what is painted. Bebas 32/40, the label at 60%
                  (`207:15598`). -->
             <dt
+              v-cms="stat.cms && `${stat.cms}_label`"
               :class="
                 cn(
                   'font-display text-[length:var(--text-display-btn)] leading-10 text-black/60 uppercase',
@@ -119,6 +130,7 @@ const rootClass = computed(() =>
               {{ stat.label }}
             </dt>
             <dd
+              v-cms="stat.cms && `${stat.cms}_value`"
               :class="
                 cn(
                   'font-display text-[length:var(--text-display-btn)] leading-10 text-black uppercase',

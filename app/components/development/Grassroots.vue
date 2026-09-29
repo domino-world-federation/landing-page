@@ -4,6 +4,17 @@ import {
   GRASSROOTS_COPY,
 } from "~/content/development/grassroots"
 
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("development")
+const cards = computed(() =>
+  GRASSROOTS_CARDS.map((card, i) => ({
+    ...card,
+    cms: `grassroots.cards.${i}`,
+    title: copy.text(`grassroots.cards.${i}.title`, card.title),
+    body: copy.text(`grassroots.cards.${i}.body`, card.body),
+  })),
+)
+
 /**
  * Grassroots Initiatives — Figma node `192:14877`.
  *
@@ -22,9 +33,10 @@ import {
     <div class="flex flex-col items-center gap-6 text-center lg:gap-9">
       <MotionReveal :y="32">
         <p
+          v-cms="'grassroots.eyebrow'"
           class="font-sans text-[length:var(--text-eyebrow)] leading-7 font-medium text-white uppercase"
         >
-          {{ GRASSROOTS_COPY.eyebrow }}
+          {{ copy.text('grassroots.eyebrow', GRASSROOTS_COPY.eyebrow) }}
         </p>
       </MotionReveal>
 
@@ -37,9 +49,10 @@ import {
       <MotionReveal :y="48" :delay="STAGGER">
         <h2
           id="grassroots-heading"
+          v-cms="'grassroots.heading'"
           class="font-display text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
         >
-          {{ GRASSROOTS_COPY.heading }}
+          {{ copy.text('grassroots.heading', GRASSROOTS_COPY.heading) }}
         </h2>
       </MotionReveal>
     </div>
@@ -48,7 +61,7 @@ import {
          carry a 3:4 photograph each, so a 2-up row would leave one card alone on
          a second row at half the width of the pair above it. -->
     <ul class="grid list-none gap-3 lg:grid-cols-3 lg:gap-5">
-      <li v-for="(card, i) in GRASSROOTS_CARDS" :key="card.id" class="flex">
+      <li v-for="(card, i) in cards" :key="card.id" class="flex">
         <!-- The stagger is per card, and the wrapper is `w-full` so the animated
              element is the grid item — otherwise each card sizes to its own
              content and the row loses its even columns. -->
@@ -72,10 +85,11 @@ import {
          (RULES §9). -->
     <MotionReveal :y="24" :delay="STAGGER * 3" class="mx-auto w-fit">
       <NuxtLink
+        v-cms="'grassroots.view_all'"
         :to="GRASSROOTS_COPY.viewAllHref"
         class="rounded-btn font-display focus-visible:ring-gold flex h-16 items-center justify-center bg-white/20 px-5 text-[length:var(--text-display-btn)] leading-10 text-white uppercase transition-colors hover:bg-white/30 focus-visible:ring-2 focus-visible:outline-none"
       >
-        {{ GRASSROOTS_COPY.viewAll }}
+        {{ copy.text('grassroots.view_all', GRASSROOTS_COPY.viewAll) }}
       </NuxtLink>
     </MotionReveal>
   </section>

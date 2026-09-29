@@ -10,11 +10,13 @@ import type { ContactLine } from "~/content/about/headquarters"
  * — the underline appears on hover, so the row does not read as three links when
  * only two are.
  */
-defineProps<{ line: ContactLine }>()
+/** `cms` marks the row for the page editor when its text is editable there. */
+defineProps<{ line: ContactLine & { cms?: string } }>()
 </script>
 
 <template>
   <li
+    v-cms="line.cms"
     class="font-sans flex items-center gap-3 text-[length:var(--text-eyebrow)] leading-7 text-white"
   >
     <component

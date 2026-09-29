@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { GOVERNANCE_COPY } from "~/content/governance"
 
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("governance")
+
 /**
  * The Governance header band — Figma node `613:24832`.
  *
@@ -29,21 +32,23 @@ import { GOVERNANCE_COPY } from "~/content/governance"
          stretching across a 2560 monitor away from the block it is paired
          with. -->
     <h1
+      v-cms="'header.title'"
       class="font-sans w-full text-[length:var(--text-page-title)] leading-[1.1] font-medium text-white lg:max-w-[824px]"
     >
-      <MotionSharpeningHeadline :lines="GOVERNANCE_COPY.headerTitle" />
+      <MotionSharpeningHeadline :lines="copy.lines('header.title', GOVERNANCE_COPY.headerTitle)" />
     </h1>
 
     <!-- 480px. Inter 32/40 over Inter 20/32 at 60% — a label and its
          paragraph. -->
     <div class="flex w-full flex-col gap-5 lg:max-w-[480px]">
       <p
+        v-cms="'header.eyebrow'"
         class="font-sans text-[length:var(--text-display-caption)] leading-[1.25] text-white"
       >
-        {{ GOVERNANCE_COPY.headerEyebrow }}
+        {{ copy.text('header.eyebrow', GOVERNANCE_COPY.headerEyebrow) }}
       </p>
-      <p class="font-sans text-[length:var(--text-eyebrow)] leading-8 text-white/60">
-        {{ GOVERNANCE_COPY.headerIntro }}
+      <p v-cms="'header.intro'" class="font-sans text-[length:var(--text-eyebrow)] leading-8 text-white/60">
+        {{ copy.text('header.intro', GOVERNANCE_COPY.headerIntro) }}
       </p>
     </div>
   </section>

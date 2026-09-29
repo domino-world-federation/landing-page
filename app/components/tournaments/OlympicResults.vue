@@ -3,6 +3,9 @@ import { getOlympicResults } from "~/lib/api/client"
 import { TOURNAMENTS_COPY } from "~/content/tournaments"
 import { OLYMPICS_COPY } from "~/content/tournaments/olympics"
 
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("tournaments")
+
 /**
  * Olympic Results — Figma node `385:17860`.
  *
@@ -48,7 +51,16 @@ const { data: results } = await useAsyncData(
  */
 const shown = computed(() => results.value.slice(0, OLYMPICS_COPY.perPage))
 
-const columns = TOURNAMENTS_COPY.results.columns
+const columns = computed(() => {
+  const c = TOURNAMENTS_COPY.results.columns
+  return {
+    year: copy.text("results.col_year", c.year),
+    event: copy.text("results.col_event", c.event),
+    category: copy.text("results.col_category", c.category),
+    winners: copy.text("results.col_winners", c.winners),
+    federation: copy.text("results.col_federation", c.federation),
+  }
+})
 
 // Bebas 36/44 in `#616161` (`381:17797`). The header row has no fill in the
 // design, unlike the rows under it.
@@ -67,9 +79,10 @@ const TD =
     <MotionReveal :y="24">
       <h2
         id="olympic-results-heading"
+        v-cms="'results.heading'"
         class="font-display mx-auto w-fit text-gold-gradient text-center text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
       >
-        {{ TOURNAMENTS_COPY.results.heading }}
+        {{ copy.text('results.heading', TOURNAMENTS_COPY.results.heading) }}
       </h2>
     </MotionReveal>
 
@@ -99,9 +112,9 @@ const TD =
           {{ result.event }}
         </p>
         <dl class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm leading-6">
-          <dt class="font-sans text-white/50">{{ columns.winners }}</dt>
+          <dt v-cms="'results.col_winners'" class="font-sans text-white/50">{{ columns.winners }}</dt>
           <dd class="font-sans text-white">{{ result.winners }}</dd>
-          <dt class="font-sans text-white/50">{{ columns.federation }}</dt>
+          <dt v-cms="'results.col_federation'" class="font-sans text-white/50">{{ columns.federation }}</dt>
           <dd class="font-sans text-white">{{ result.federation }}</dd>
         </dl>
       </li>
@@ -115,11 +128,11 @@ const TD =
       >
         <thead>
           <tr>
-            <th scope="col" :class="cn(TH, 'w-[124px]')">{{ columns.year }}</th>
-            <th scope="col" :class="cn(TH, 'w-[560px]')">{{ columns.event }}</th>
-            <th scope="col" :class="cn(TH, 'w-[240px]')">{{ columns.category }}</th>
-            <th scope="col" :class="TH">{{ columns.winners }}</th>
-            <th scope="col" :class="cn(TH, 'text-right')">
+            <th v-cms="'results.col_year'" scope="col" :class="cn(TH, 'w-[124px]')">{{ columns.year }}</th>
+            <th v-cms="'results.col_event'" scope="col" :class="cn(TH, 'w-[560px]')">{{ columns.event }}</th>
+            <th v-cms="'results.col_category'" scope="col" :class="cn(TH, 'w-[240px]')">{{ columns.category }}</th>
+            <th v-cms="'results.col_winners'" scope="col" :class="TH">{{ columns.winners }}</th>
+            <th v-cms="'results.col_federation'" scope="col" :class="cn(TH, 'text-right')">
               {{ columns.federation }}
             </th>
           </tr>
@@ -145,7 +158,7 @@ const TD =
     </div>
 
     <UiSilverCta :href="TOURNAMENTS_COPY.results.moreHref">
-      {{ TOURNAMENTS_COPY.results.more }}
+      <span v-cms="'results.more'">{{ copy.text('results.more', TOURNAMENTS_COPY.results.more) }}</span>
     </UiSilverCta>
   </section>
 </template>

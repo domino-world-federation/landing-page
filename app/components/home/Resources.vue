@@ -3,6 +3,9 @@ import { getSectionResources } from "~/lib/api/client"
 import { DOCUMENT_SECTION } from "~/lib/api/categories"
 import { RESOURCES_COPY } from "~/content/home/resources"
 
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("home")
+
 /**
  * S10 — Figma node `56:4554`. The resource library.
  *
@@ -76,12 +79,13 @@ const { data: documents } = await useAsyncData(
              a block rather than as two sentences. -->
         <h2
           id="resources-heading"
+          v-cms="'resources.heading'"
           class="font-display text-gold-gradient text-[length:var(--text-display-sm)] leading-[0.95] uppercase"
         >
-          {{ RESOURCES_COPY.heading }}
+          {{ copy.text('resources.heading', RESOURCES_COPY.heading) }}
         </h2>
-        <p class="font-sans text-base leading-7 text-white lg:text-xl lg:leading-8">
-          {{ RESOURCES_COPY.intro }}
+        <p v-cms="'resources.intro'" class="font-sans text-base leading-7 text-white lg:text-xl lg:leading-8">
+          {{ copy.text('resources.intro', RESOURCES_COPY.intro) }}
         </p>
       </div>
 

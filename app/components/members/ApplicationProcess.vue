@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { APPLICATION_STEPS, MEMBERS_COPY } from "~/content/members"
 
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("federation-members")
+
 /**
  * The application process — Figma node `406:453`.
  *
@@ -25,12 +28,18 @@ import { APPLICATION_STEPS, MEMBERS_COPY } from "~/content/members"
  * where it says `body` — renaming the copy to match would make three pages'
  * content files answer to one component's vocabulary, which is backwards.
  */
-const steps = APPLICATION_STEPS.map((step) => ({
-  id: step.id,
-  marker: step.number,
-  title: step.title,
-  detail: step.body,
-}))
+const steps = computed(() =>
+  APPLICATION_STEPS.map((step, i) => ({
+    id: step.id,
+    marker: step.number,
+    // Rendered inside `UiStepRail`, which carries no `v-cms` marker — editable
+    // from the panel, just not clickable in the preview.
+    title: copy.text(`process.steps.${i}.title`, step.title),
+    detail: copy.text(`process.steps.${i}.body`, step.body),
+    cms: { title: `process.steps.${i}.title`, detail: `process.steps.${i}.body` },
+  })),
+)
+const heading = computed(() => copy.text("process.heading", MEMBERS_COPY.processHeading))
 </script>
 
 <template>
@@ -41,18 +50,20 @@ const steps = APPLICATION_STEPS.map((step) => ({
     <div class="flex max-w-[1760px] flex-col items-center gap-6 lg:gap-9">
       <h2
         id="process-heading"
+        v-cms="'process.heading'"
         class="font-display text-gold-gradient text-center text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
       >
-        {{ MEMBERS_COPY.processHeading }}
+        {{ heading }}
       </h2>
       <!-- Inter Regular 36/44, 1094 of the design's 1920. -->
       <p
+        v-cms="'process.intro'"
         class="font-sans max-w-[1094px] text-center text-[length:var(--text-body-lg)] leading-[1.22] text-white"
       >
-        {{ MEMBERS_COPY.processIntro }}
+        {{ copy.text('process.intro', MEMBERS_COPY.processIntro) }}
       </p>
     </div>
 
-    <UiStepRail :label="MEMBERS_COPY.processHeading" :steps="steps" />
+    <UiStepRail :label="heading" :steps="steps" />
   </section>
 </template>

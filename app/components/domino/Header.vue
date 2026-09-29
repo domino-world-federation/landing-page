@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { DOMINO_HEADER_COPY } from "~/content/domino/header"
 
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("domino")
+
 /**
  * The Domino page's header band — Figma node `119:4809`.
  *
@@ -31,9 +34,10 @@ import { DOMINO_HEADER_COPY } from "~/content/domino/header"
          width, so the cap is what stops it from stretching across the band
          rather than what forces a break. -->
     <h1
+      v-cms="'header.title'"
       class="font-sans w-full text-[length:var(--text-page-title)] leading-[1.1] font-medium text-white lg:max-w-[824px]"
     >
-      <MotionSharpeningHeadline :lines="DOMINO_HEADER_COPY.title" />
+      <MotionSharpeningHeadline :lines="copy.lines('header.title', DOMINO_HEADER_COPY.title)" />
     </h1>
 
     <!-- 480px wide with a 22px gap between the two (`119:4823`). `gap-[1.15vw]`
@@ -44,14 +48,18 @@ import { DOMINO_HEADER_COPY } from "~/content/domino/header"
     >
       <!-- 32/40 white — the loudest thing in the column, and the only line on
            the page that states the argument outright. -->
-      <p class="font-sans text-[length:var(--text-body-md)] leading-10 text-white">
-        {{ DOMINO_HEADER_COPY.subtitle }}
+      <p
+        v-cms="'header.subtitle'"
+        class="font-sans text-[length:var(--text-body-md)] leading-10 text-white"
+      >
+        {{ copy.text('header.subtitle', DOMINO_HEADER_COPY.subtitle) }}
       </p>
       <!-- 20/32 at 60% — the small print, matching About's intro exactly. -->
       <p
+        v-cms="'header.intro'"
         class="font-sans text-[length:var(--text-eyebrow)] leading-8 text-white/60"
       >
-        {{ DOMINO_HEADER_COPY.intro }}
+        {{ copy.text('header.intro', DOMINO_HEADER_COPY.intro) }}
       </p>
     </div>
   </section>

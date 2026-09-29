@@ -3,6 +3,17 @@ import { getSectionResources } from "~/lib/api/client"
 import { DOCUMENT_SECTION } from "~/lib/api/categories"
 import { YOUTH_COPY, YOUTH_STATS } from "~/content/development/youth"
 
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("development")
+const stats = computed(() =>
+  YOUTH_STATS.map((stat, i) => ({
+    ...stat,
+    cms: `youth.stats.${i}`,
+    figure: copy.text(`youth.stats.${i}.figure`, stat.figure),
+    label: copy.text(`youth.stats.${i}.label`, stat.label),
+  })),
+)
+
 /**
  * Youth Development — Figma node `190:13662`.
  *
@@ -69,9 +80,10 @@ const { data: curriculum } = await useAsyncData(
       >
         <MotionReveal :y="32">
           <p
+            v-cms="'youth.eyebrow'"
             class="font-sans text-[length:var(--text-eyebrow)] leading-7 font-medium text-black uppercase"
           >
-            {{ YOUTH_COPY.eyebrow }}
+            {{ copy.text('youth.eyebrow', YOUTH_COPY.eyebrow) }}
           </p>
         </MotionReveal>
 
@@ -81,9 +93,10 @@ const { data: curriculum } = await useAsyncData(
         <MotionReveal :y="40" :delay="STAGGER">
           <h2
             id="youth-heading"
+            v-cms="'youth.heading'"
             class="font-display text-[length:var(--text-display-sm)] leading-[0.95] text-black uppercase"
           >
-            {{ YOUTH_COPY.heading }}
+            {{ copy.text('youth.heading', YOUTH_COPY.heading) }}
           </h2>
         </MotionReveal>
       </div>
@@ -95,9 +108,10 @@ const { data: curriculum } = await useAsyncData(
              body copy in on a white ground. -->
         <MotionReveal :y="32" :delay="STAGGER" class="menu:flex-1">
           <p
+            v-cms="'youth.intro'"
             class="font-sans text-[length:var(--text-body-lg)] leading-[1.22] text-[var(--color-ink-body)]"
           >
-            {{ YOUTH_COPY.intro }}
+            {{ copy.text('youth.intro', YOUTH_COPY.intro) }}
           </p>
         </MotionReveal>
 
@@ -114,16 +128,18 @@ const { data: curriculum } = await useAsyncData(
                  so. -->
             <dl class="flex flex-wrap gap-8 lg:gap-[3.13vw]">
               <div
-                v-for="stat in YOUTH_STATS"
+                v-for="stat in stats"
                 :key="stat.id"
                 class="flex flex-col gap-3 lg:gap-6"
               >
                 <dt
+                  v-cms="`${stat.cms}.figure`"
                   class="font-sans text-[length:var(--text-body-2xl)] leading-[1.13] font-bold text-black"
                 >
                   {{ stat.figure }}
                 </dt>
                 <dd
+                  v-cms="`${stat.cms}.label`"
                   class="font-sans text-[length:var(--text-eyebrow)] leading-7 font-medium text-black"
                 >
                   {{ stat.label }}
@@ -146,9 +162,10 @@ const { data: curriculum } = await useAsyncData(
               class="group rounded-btn flex w-fit items-center gap-3 border border-[var(--color-border-light)] bg-white px-6 py-4 transition-colors hover:border-[var(--color-silver-mid)] focus-visible:ring-2 focus-visible:ring-black focus-visible:outline-none"
             >
               <span
+                v-cms="'youth.download_cta'"
                 class="font-sans text-sm leading-6 font-medium text-[var(--color-ink-pill)] uppercase lg:text-base"
               >
-                {{ YOUTH_COPY.downloadCta }}
+                {{ copy.text('youth.download_cta', YOUTH_COPY.downloadCta) }}
               </span>
               <span class="flex size-6 shrink-0 items-center justify-center">
                 <!-- Drawn in `#1A1C1D` for light grounds, which is exactly where

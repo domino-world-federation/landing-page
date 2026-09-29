@@ -2,6 +2,9 @@
 import { getPartners } from "~/lib/api/client"
 import { PARTNERS_COPY } from "~/content/home/partners"
 
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("home")
+
 /**
  * Seconds for the strip to travel its own length once.
  *
@@ -74,9 +77,10 @@ const { data: partners } = await useAsyncData("home-partners", () => getPartners
     <div class="flex flex-col gap-[max(24px,2.71vw)]">
       <h2
         id="partners-heading"
+        v-cms="'partners.heading'"
         class="font-sans px-5 text-center text-[length:var(--text-partners-heading)] leading-[1.25] font-semibold tracking-[0.25em] text-white/80 uppercase"
       >
-        {{ PARTNERS_COPY.heading }}
+        {{ copy.text('partners.heading', PARTNERS_COPY.heading) }}
       </h2>
 
       <UiMarquee :duration="LAP" :label="PARTNERS_COPY.regionLabel">

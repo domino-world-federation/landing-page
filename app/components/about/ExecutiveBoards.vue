@@ -37,7 +37,22 @@ import { BOARDS_COPY, EXECUTIVE_COMMITTEE } from "~/content/about/boards"
  * part of the request, and it is one word to change if the federation wants the
  * two to agree.
  */
-const COPY = EXECUTIVE_COMMITTEE
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("about")
+const COPY = computed(() => {
+  const base = EXECUTIVE_COMMITTEE
+  return {
+    intro: copy.text("boards.intro", base.intro),
+    officers: base.officers.map((officer, i) => ({
+      cms: `boards.officers.${i}`,
+      role: copy.text(`boards.officers.${i}.role`, officer.role),
+      name: copy.text(`boards.officers.${i}.name`, officer.name),
+    })),
+    membersLabel: copy.text("boards.members_label", base.membersLabel),
+    members: copy.lines("boards.members", base.members),
+    closing: copy.text("boards.closing", base.closing),
+  }
+})
 </script>
 
 <template>
@@ -49,9 +64,10 @@ const COPY = EXECUTIVE_COMMITTEE
         <!-- The gold statement heading `Mission` uses — see
              `StructuralFrameworks` for why it carries `w-fit`. -->
         <h2
+          v-cms="'boards.heading'"
           class="font-display w-fit text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08]"
         >
-          {{ BOARDS_COPY.heading }}
+          {{ copy.text('boards.heading', BOARDS_COPY.heading) }}
         </h2>
       </MotionReveal>
 
@@ -59,6 +75,7 @@ const COPY = EXECUTIVE_COMMITTEE
            same kind of sentence and is read at the same width. -->
       <MotionReveal :y="32" :delay="0.08">
         <p
+          v-cms="'boards.intro'"
           class="font-sans max-w-[824px] text-[length:var(--text-eyebrow)] leading-8 text-white/60"
         >
           {{ COPY.intro }}
@@ -76,15 +93,17 @@ const COPY = EXECUTIVE_COMMITTEE
         <dl class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
           <div
             v-for="officer in COPY.officers"
-            :key="officer.role"
+            :key="officer.cms"
             class="flex flex-col gap-2"
           >
             <dt
+              v-cms="`${officer.cms}.role`"
               class="font-sans text-[length:var(--text-eyebrow)] leading-7 text-white/70 uppercase"
             >
               {{ officer.role }}
             </dt>
             <dd
+              v-cms="`${officer.cms}.name`"
               class="font-sans text-[length:var(--text-body-xl)] leading-[1.17] text-white"
             >
               {{ officer.name }}
@@ -100,16 +119,18 @@ const COPY = EXECUTIVE_COMMITTEE
       <MotionReveal :y="32" :delay="0.24">
         <div class="flex flex-col gap-4">
           <h3
+            v-cms="'boards.members_label'"
             class="font-sans text-[length:var(--text-eyebrow)] leading-7 text-white/70 uppercase"
           >
             {{ COPY.membersLabel }}
           </h3>
           <ul
+            v-cms="'boards.members'"
             class="grid list-none grid-cols-1 gap-x-8 gap-y-3 sm:grid-cols-2 lg:grid-cols-3"
           >
             <li
-              v-for="member in COPY.members"
-              :key="member"
+              v-for="(member, i) in COPY.members"
+              :key="i"
               class="font-sans text-[length:var(--text-body-xl)] leading-[1.17] text-white"
             >
               {{ member }}
@@ -120,6 +141,7 @@ const COPY = EXECUTIVE_COMMITTEE
 
       <MotionReveal :y="32" :delay="0.32">
         <p
+          v-cms="'boards.closing'"
           class="font-sans max-w-[824px] text-[length:var(--text-eyebrow)] leading-8 text-white/60"
         >
           {{ COPY.closing }}

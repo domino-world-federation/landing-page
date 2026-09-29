@@ -2,6 +2,9 @@
 import { getStandingCommittees } from "~/lib/api/client"
 import { GOVERNANCE_COPY } from "~/content/governance"
 
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("governance")
+
 /**
  * Standing Committees — Figma node `613:24906`.
  *
@@ -28,9 +31,10 @@ const { data: committees } = await useAsyncData(
     <MotionReveal :y="40">
       <h2
         id="committees-heading"
+        v-cms="'committees.heading'"
         class="font-display text-gold-gradient text-[length:var(--text-display-statement)] leading-[1.08] uppercase"
       >
-        {{ GOVERNANCE_COPY.committeesHeading }}
+        {{ copy.text('committees.heading', GOVERNANCE_COPY.committeesHeading) }}
       </h2>
     </MotionReveal>
 

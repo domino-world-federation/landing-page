@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { OVERVIEW_COPY, OVERVIEW_PILLARS } from "~/content/about/overview"
 
+// Editable in the backoffice's page editor; the constants are the fallback.
+const copy = usePageCopy("about")
+
 /**
  * Overview — Figma node `84:753`.
  *
@@ -24,14 +27,16 @@ import { OVERVIEW_COPY, OVERVIEW_PILLARS } from "~/content/about/overview"
          breaks into the four lines the design draws. -->
     <div class="mb-12 lg:mb-0 lg:w-[362px] lg:shrink-0">
       <p
+        v-cms="'overview.eyebrow'"
         class="font-sans text-[length:var(--text-eyebrow)] leading-7 font-medium text-black uppercase"
       >
-        {{ OVERVIEW_COPY.eyebrow }}
+        {{ copy.text('overview.eyebrow', OVERVIEW_COPY.eyebrow) }}
       </p>
       <h2
+        v-cms="'overview.heading'"
         class="font-display mt-9 text-[length:var(--text-display-sm)] leading-[0.95] text-black uppercase"
       >
-        {{ OVERVIEW_COPY.heading }}
+        {{ copy.text('overview.heading', OVERVIEW_COPY.heading) }}
       </h2>
     </div>
 
@@ -50,14 +55,16 @@ import { OVERVIEW_COPY, OVERVIEW_PILLARS } from "~/content/about/overview"
         :delay="STAGGER * i"
       >
         <h3
+          v-cms="`overview.cards.${i}.title`"
           class="font-sans text-[length:var(--text-eyebrow)] leading-7 font-medium text-black uppercase"
         >
-          {{ pillar.title }}
+          {{ copy.text(`overview.cards.${i}.title`, pillar.title) }}
         </h3>
         <p
+          v-cms="`overview.cards.${i}.body`"
           class="font-sans mt-9 text-[length:var(--text-body-lg)] leading-[1.22] text-[var(--color-ink-body)]"
         >
-          {{ pillar.body }}
+          {{ copy.text(`overview.cards.${i}.body`, pillar.body) }}
         </p>
       </MotionReveal>
     </div>

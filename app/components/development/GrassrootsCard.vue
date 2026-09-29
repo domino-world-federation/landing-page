@@ -23,7 +23,10 @@ import type { GrassrootsCardCopy } from "~/content/development/grassroots"
  * card was a paragraph over a picture the width of the screen — three of them
  * made the section some 1700px tall.
  */
-defineProps<{ card: GrassrootsCardCopy }>()
+defineProps<{
+  /** `cms` is the card's field prefix in the page editor (`grassroots.cards.0`). */
+  card: GrassrootsCardCopy & { cms?: string }
+}>()
 </script>
 
 <template>
@@ -35,12 +38,15 @@ defineProps<{ card: GrassrootsCardCopy }>()
            see `GRASSROOTS_CARDS` for why. The title carries the card on its own,
            which is what it was doing anyway. -->
       <h3
+        v-cms="card.cms && `${card.cms}.title`"
         class="font-sans text-lg leading-[1.22] font-semibold text-white lg:text-[length:var(--text-body-lg)]"
       >
         {{ card.title }}
       </h3>
 
-      <p class="font-sans text-sm leading-6 text-white/60 lg:text-[length:var(--text-eyebrow)] lg:leading-8">
+      <p
+        v-cms="card.cms && `${card.cms}.body`"
+        class="font-sans text-sm leading-6 text-white/60 lg:text-[length:var(--text-eyebrow)] lg:leading-8">
         {{ card.body }}
       </p>
     </div>
