@@ -2142,3 +2142,12 @@ sekadar tidak berisi dokumen. 28 baris dipetakan ke kosakata baru (D79).
   deskripsi 14px) dua sejajar di bawah `md`, seperti Our Mission. Kartu ganjil
   terakhir di Federation Members (3 kartu) melebar penuh. Player Membership
   1800 → 1106px. Tablet dan desktop tidak berubah.
+
+- **Our Vision (About) responsif di desktop yang bukan 16:9** (2026-09-29).
+  Kotak tile dari `lg` dikunci ke rasio tile (510:983), di tengah, kakinya
+  5.5% di bawah section, lebarnya `min(26.56%, 91dvh × 0.5188)` — persis sama
+  di 16:9; di 4:3 cahaya emas tidak lagi menjulang di atas tile. Kolom kiri
+  diperlebar 29.17% → 31.8% dan dinaikkan 37.2% → 33%, karena naskah baru
+  ("Every Generation", paragraf lebih panjang) membuat judul pecah tiga baris
+  dan paragraf terpotong di bawah layar — feedback tim product. Diperiksa di
+  1920×1080, 1440×900, 1660×1245.

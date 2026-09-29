@@ -63,6 +63,15 @@ import { VISION_ALT, VISION_COPY } from "~/content/about/vision"
            this line says the thing a single time. -->
       <span class="sr-only">{{ VISION_ALT.tile }}</span>
 
+      <!-- **Locked to the tile's own shape from `lg`** (2026-09-29). Figma's box
+           is 26.56% of the width by 91% of the height — 510 × 983 at 1920 ×
+           1080, which is the tile's ratio only on a 16:9 screen. On a taller
+           one (4:3, a laptop with the browser's chrome) the box went narrow
+           and tall, the tile sat at its foot, and the glow — which fills the
+           box — towered over it. So the box keeps 510:983, stands where
+           Figma's does (centred, its foot 5.5% below the section's) and takes
+           the smaller of the two widths: identical at 16:9, and never taller
+           than the screen allows. -->
       <!-- 2 + 3. The gold and the tile, in ONE layer — and that is a fix, not a
            tidy-up. They were two, with only the tile travelling, and the halo
            promptly slid out from behind it: Figma insets the glow 12px inside
@@ -115,7 +124,7 @@ import { VISION_ALT, VISION_COPY } from "~/content/about/vision"
         :speed="-12"
         :mobile-speed="-4"
         decorative
-        class="relative order-last mx-auto mb-16 h-[380px] w-[52%] max-w-[240px] lg:absolute lg:top-[14.5%] lg:left-[36.72%] lg:mx-0 lg:mb-0 lg:h-[91%] lg:w-[26.56%] lg:max-w-none"
+        class="relative order-last mx-auto mb-16 h-[380px] w-[52%] max-w-[240px] lg:absolute lg:bottom-[-5.5%] lg:left-1/2 lg:mx-0 lg:mb-0 lg:aspect-[510/983] lg:h-auto lg:w-[min(26.56%,calc(91dvh*0.5188))] lg:max-w-none lg:-translate-x-1/2"
       >
         <div
           class="pointer-events-none absolute top-[1.29%] left-[2.35%] h-[91.25%] w-[95.1%]"
@@ -183,7 +192,7 @@ import { VISION_ALT, VISION_COPY } from "~/content/about/vision"
       >
         <MotionReveal
           :y="48"
-          class="lg:absolute lg:top-[37.2%] lg:left-[4.17%] lg:w-[29.17%]"
+          class="lg:absolute lg:top-[33%] lg:left-[4.17%] lg:w-[31.8%]"
         >
           <p
             class="font-sans text-[length:var(--text-eyebrow)] leading-7 font-medium text-white uppercase"
