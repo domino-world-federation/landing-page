@@ -15,9 +15,14 @@ import { cmsFallbacks, useCmsOverrides } from "~/composables/usePageCopy"
  * - in, `dwf-cms:highlight` — a field was focused in the panel; its element
  *   scrolls into view and flashes.
  *
- * A click on a marked element is swallowed rather than followed: several are
- * links or buttons, and following one would navigate the preview away from
- * the page being edited.
+ * **The preview never leaves the page being edited.** A click on a marked
+ * element is swallowed and becomes a field selection; a click on any other
+ * link (the navbar, a card, a button) is swallowed too, and the editor is told
+ * (`dwf-cms:navigation-blocked`) so it can say why nothing happened. Router
+ * navigations started from code are refused the same way. Staying on the same
+ * path is allowed — a page's own filters and anchors still work. Following a
+ * link would load another page without the preview's token, into a panel that
+ * is still editing the first one.
  */
 export default defineNuxtPlugin((nuxtApp) => {
   const params = new URL(window.location.href).searchParams
@@ -40,17 +45,47 @@ export default defineNuxtPlugin((nuxtApp) => {
   `
   document.head.append(style)
 
+  const here = () => window.location.pathname
+
+  /** Whether following this link would leave the page being edited. */
+  function leaves(link: HTMLAnchorElement): boolean {
+    const href = link.getAttribute("href")
+    if (!href || href.startsWith("#")) return false
+    const url = new URL(link.href, window.location.href)
+    return url.origin !== window.location.origin || url.pathname !== here()
+  }
+
   document.addEventListener(
     "click",
     (event) => {
-      const el = (event.target as Element | null)?.closest<HTMLElement>("[data-edit-key]")
-      if (!el?.dataset.editKey) return
-      event.preventDefault()
-      event.stopPropagation()
-      send({ type: "dwf-cms:select", key: el.dataset.editKey })
+      const target = event.target as Element | null
+      const el = target?.closest<HTMLElement>("[data-edit-key]")
+      if (el?.dataset.editKey) {
+        event.preventDefault()
+        event.stopPropagation()
+        send({ type: "dwf-cms:select", key: el.dataset.editKey })
+        return
+      }
+
+      const link = target?.closest<HTMLAnchorElement>("a[href]")
+      if (link && leaves(link)) {
+        event.preventDefault()
+        event.stopPropagation()
+        send({ type: "dwf-cms:navigation-blocked" })
+      }
     },
     true,
   )
+
+  // Navigations started from code (`navigateTo`, a button's router push) —
+  // refused unless they stay on this path.
+  useRouter().beforeEach((to, from) => {
+    // The first navigation comes from the router's start location, which has
+    // no match — that is the preview page itself arriving, not a departure.
+    if (from.matched.length === 0 || to.path === from.path) return true
+    send({ type: "dwf-cms:navigation-blocked" })
+    return false
+  })
 
   window.addEventListener("message", (event) => {
     if (event.origin !== origin) return

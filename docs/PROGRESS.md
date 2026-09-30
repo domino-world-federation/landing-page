@@ -2193,3 +2193,10 @@ sekadar tidak berisi dokumen. 28 baris dipetakan ke kosakata baru (D79).
   + satuan waktu), FeatureHq, Partners, Resources, dan FAQ — 24 field.
   `useHomeCopy`, `getHomeCopy`, dan tipe `HomeCopy` dihapus. Deploy backend dan
   situs harus bersamaan (backend dulu aman: `/api/v1/home` lama tetap dijawab).
+
+- **Pratinjau Editor Halaman tidak bisa pindah halaman** (2026-09-30, permintaan
+  pemilik repo). Klik tautan apa pun di pratinjau yang menuju path lain
+  (navbar, kartu, tombol) ditolak, begitu juga navigasi router dari kode;
+  tetap di path yang sama boleh (filter dan jangkar halaman). Tiap penolakan
+  dikirim ke backoffice (`dwf-cms:navigation-blocked`). Diuji: klik navbar
+  "Domino" dari pratinjau About tetap di `/about`.
