@@ -3,7 +3,7 @@
  * **updated** file (`xdogWlTYLSqwh2fBTmxPJi`). RULES §9.
  *
  * The federations and the hero figures are data (`getMemberFederations`,
- * `getMembershipStats`). Everything here is the page's own words.
+ * `getFederationStats`, shared with the home page). Everything here is the page's own words.
  */
 
 export const MEMBERS_COPY = {

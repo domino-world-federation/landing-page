@@ -2200,3 +2200,12 @@ sekadar tidak berisi dokumen. 28 baris dipetakan ke kosakata baru (D79).
   tetap di path yang sama boleh (filter dan jangkar halaman). Tiap penolakan
   dikirim ke backoffice (`dwf-cms:navigation-blocked`). Diuji: klik navbar
   "Domino" dari pratinjau About tetap di `/about`.
+
+- **Statistik federasi satu sumber, tombol regulasi Domino bisa dikurasi**
+  (2026-09-30). (1) Hero Federation Members kini membaca `getFederationStats`
+  — daftar yang sama dengan roda beranda; `getMembershipStats` dan
+  `MOCK_MEMBERSHIP_STATS` dihapus. Backend menyatukan dua daftarnya lewat
+  migrasi yang memilih yang paling baru disunting (di prod: daftar beranda).
+  (2) Tombol-tombol regulasi di Referee Guidelines `/domino` kini rak sendiri,
+  `domino.regulations` (maks 12), dipilih di layar "Documents per Page" seperti
+  kartu rulebook; rulebook tetap disaring keluar supaya tidak tercetak dua kali.

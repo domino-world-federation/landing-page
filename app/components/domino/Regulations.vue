@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { getResources, getSectionResources } from "~/lib/api/client"
-import { DOCUMENT_CATEGORY, DOCUMENT_SECTION } from "~/lib/api/categories"
+import { getSectionResources } from "~/lib/api/client"
+import { DOCUMENT_SECTION } from "~/lib/api/categories"
 import { REFEREE_DUTIES, REGULATIONS_COPY } from "~/content/domino/regulations"
 import { DOCUMENT_LINK_COPY } from "~/content/documents"
 
@@ -27,7 +27,7 @@ const copy = usePageCopy("domino")
  * the wireframe wrote and what the hi-fi now draws, which is the useful thing to
  * know about that first build: the copy was right, only the shape was a guess.
  *
- * The documents still come from `getResources(category)` (RULES §8) — a rulebook
+ * The documents come from the API as shelves (RULES §8) — a rulebook
  * and two regulations are files with a size and a type, not prose.
  *
  * **The featured card is now chosen, not inferred.** Both halves come from
@@ -38,10 +38,11 @@ const copy = usePageCopy("domino")
  * override it.
  *
  * The `domino.rulebook` shelf holds exactly one document (`max: 1`), and it is
- * the Official Rulebook. The two glass buttons beside it are the rest of the
- * category, minus whatever the shelf is holding — the design draws three slots
- * and the request named only the first, so the other two keep drawing
- * themselves.
+ * the Official Rulebook. **The glass buttons are a shelf of their own now**,
+ * `domino.regulations` (2026-09-30): which regulations show, and in what order,
+ * is picked on the backoffice's "Documents per Page" screen, the way the
+ * rulebook is. They used to be "the rest of the category", which nobody could
+ * choose or order.
  *
  * Curating nothing still works: an untouched shelf answers with the newest
  * document in the category, which is exactly the old behaviour.
@@ -49,7 +50,7 @@ const copy = usePageCopy("domino")
 const { data } = await useAsyncData("domino-regulations", async () => {
   const [rulebook, all] = await Promise.all([
     getSectionResources(DOCUMENT_SECTION.dominoRulebook),
-    getResources(DOCUMENT_CATEGORY.rules),
+    getSectionResources(DOCUMENT_SECTION.dominoRegulations),
   ])
 
   const featured = rulebook[0]

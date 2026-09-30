@@ -24,7 +24,6 @@ import {
   MOCK_TOURNAMENT_ALBUMS,
   MOCK_HERITAGE_MILESTONES,
   MOCK_HIGHLIGHTED_TOURNAMENT,
-  MOCK_MEMBERSHIP_STATS,
   MOCK_MEMBER_FEDERATIONS,
   MOCK_NEWS,
   MOCK_OLYMPIC_RESULTS,
@@ -144,6 +143,11 @@ export class ApiError extends Error {
   }
 }
 
+/**
+ * The federation in numbers — ONE list, read by the home page's wheel and the
+ * members hero alike (2026-09-30). They used to be two lists that had drifted
+ * apart (5 continents on one page, 6 on the other).
+ */
 export async function getFederationStats(): Promise<FederationStat[]> {
   if (useMock()) return MOCK_STATS
   return request<FederationStat[]>("/stats")
@@ -536,12 +540,6 @@ export async function getChampions(): Promise<Champion[]> {
 export async function getOlympicResults(): Promise<OlympicResult[]> {
   if (useMock()) return MOCK_OLYMPIC_RESULTS
   return request<OlympicResult[]>("/olympic-results")
-}
-
-/** The four figures across the members hero (`404:19188`). */
-export async function getMembershipStats(): Promise<FederationStat[]> {
-  if (useMock()) return MOCK_MEMBERSHIP_STATS
-  return request<FederationStat[]>("/stats?scope=members")
 }
 
 /**

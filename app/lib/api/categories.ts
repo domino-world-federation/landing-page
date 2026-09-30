@@ -61,6 +61,7 @@ export type DocumentCategory = (typeof DOCUMENT_CATEGORY)[keyof typeof DOCUMENT_
 export const DOCUMENT_SECTION = {
   homeResources: "home.resources",
   dominoRulebook: "domino.rulebook",
+  dominoRegulations: "domino.regulations",
   governanceStatutes: "governance.statutes",
   developmentLibrary: "development.library",
   developmentYouth: "development.youth",

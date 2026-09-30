@@ -48,7 +48,7 @@ import type {
  * with the second dot gold — that is notch 1, not the opening state, and it
  * renders exactly as drawn when the reader reaches it.
  *
- * `1.420` keeps the design's separator, which is the same call `MOCK_MEMBERSHIP_STATS`
+ * `1.420` keeps the design's separator, which is the same call the members hero
  * records below — printing a figure as drawn is a different act from correcting
  * a spelling, and the two pages now show the same number.
  *
@@ -635,6 +635,7 @@ export const MOCK_SECTIONS: Record<
 > = {
   "home.resources": { category: null, max: 6 },
   "domino.rulebook": { category: "Rules & Regulations", max: 1 },
+  "domino.regulations": { category: "Rules & Regulations", max: 12 },
   "governance.statutes": { category: "Governance Documents", max: 6 },
   "development.library": { category: "Development Resources", max: 6 },
   "development.youth": { category: "Development Resources", max: 1 },
@@ -1902,28 +1903,6 @@ export const MOCK_GALLERY_ALBUMS: GalleryAlbum[] = [
       },
     ],
   },
-]
-
-/**
- * The hero figures on the members page (`404:19188`).
- *
- * Kept apart from `MOCK_STATS`, which the landing page's wheel reads: these are
- * a different four about a different subject, and one list serving both would
- * mean whichever page was edited last decided what the other showed.
- *
- * TODO(design): three of the four are odd as drawn. The intro two lines above
- * says "140+ national federations" while the figure says 142; "1.420" uses a
- * decimal point where every other number on the site uses none; and "Regional"
- * and "National Federation" are labels missing their nouns. Reproduced as
- * written — they are the designer's numbers to reconcile (D44) — except the
- * separator, which is printed as the design has it rather than reformatted,
- * since changing a figure is a different act from fixing a spelling.
- */
-export const MOCK_MEMBERSHIP_STATS: FederationStat[] = [
-  { id: "ms1", label: "Continents", value: "6" },
-  { id: "ms2", label: "National Federation", value: "142" },
-  { id: "ms3", label: "Regional", value: "1.420" },
-  { id: "ms4", label: "Annual Events", value: "850+" },
 ]
 
 /**

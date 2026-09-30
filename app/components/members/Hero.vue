@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getMembershipStats } from "~/lib/api/client"
+import { getFederationStats } from "~/lib/api/client"
 import { MEMBERS_COPY } from "~/content/members"
 
 // Editable in the backoffice's page editor; the constants are the fallback.
@@ -114,9 +114,11 @@ const sphereStyle = {
   WebkitMaskComposite: "source-in",
 }
 
+// The same list the home page's wheel reads — one source for the federation's
+// numbers, edited once under Federations → Stats (2026-09-30).
 const { data: stats } = await useAsyncData(
   "members-stats",
-  () => getMembershipStats(),
+  () => getFederationStats(),
   { default: () => [] },
 )
 </script>
