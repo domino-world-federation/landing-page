@@ -8,10 +8,8 @@ import { PLAYER_MEMBERSHIP_COPY } from "~/content/player-membership"
  * **126/132** here against the landing page's 126/132 as well, so the two agree
  * — `--text-display-md` is that size exactly and is what both take.
  *
- * It is NOT `HomeJoin`, and the difference is the button: this one goes to
- * Contact where the landing page's goes to its own membership call. Reusing the
- * section would mean making its destination a prop to share four lines of
- * markup, which is the trade D57 rules against.
+ * It is NOT `HomeJoin`: since 2026-10-02 it has no button at all — the
+ * federation removed this page's "Contact us" — so it closes on its paragraph.
  */
 const COPY = PLAYER_MEMBERSHIP_COPY.cta
 
@@ -51,12 +49,5 @@ const copy = usePageCopy("player-membership")
       </MotionReveal>
     </div>
 
-    <MotionReveal
-      :y="24"
-      :delay="STAGGER * 2"
-      class="w-fit max-w-full min-w-[min(100%,13.75vw)]"
-    >
-      <UiSilverCta :href="COPY.ctaUrl"><span v-cms="'cta.cta'">{{ copy.text('cta.cta', COPY.cta) }}</span></UiSilverCta>
-    </MotionReveal>
   </section>
 </template>

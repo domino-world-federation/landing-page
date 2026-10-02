@@ -2209,3 +2209,9 @@ sekadar tidak berisi dokumen. 28 baris dipetakan ke kosakata baru (D79).
   (2) Tombol-tombol regulasi di Referee Guidelines `/domino` kini rak sendiri,
   `domino.regulations` (maks 12), dipilih di layar "Documents per Page" seperti
   kartu rulebook; rulebook tetap disaring keluar supaya tidak tercetak dua kali.
+
+- **Player Membership direvisi tim DWF** (2026-10-02). Tombol hero "Apply for
+  DWF ID" kini menggulir ke section "What is DWF ID?" (`#what-is-dwf-id`,
+  `scroll-mt` setinggi navbar) alih-alih ke `/contact`. Tombol "Contact Us" di
+  section penutup dicabut, beserta field `cta.cta`-nya di skema Editor Halaman.
+  Diuji di 1440 dan 390px.

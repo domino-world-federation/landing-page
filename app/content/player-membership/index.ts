@@ -22,12 +22,11 @@ export const PLAYER_MEMBERSHIP_COPY = {
     /** `629:28480`. The hero's gold pill. */
     cta: "Apply for DWF ID",
     /**
-     * Still `#` — there is no application form anywhere in the design or the
-     * build, and the closing section's "Contact us" is where a reader asking to
-     * apply is answered today. A destination that does not exist is worse than
-     * one that is honestly unset (D28).
+     * Scrolls to "What is DWF ID?" on this page (federation's revision,
+     * 2026-10-02): there is no application form anywhere, so the button now
+     * takes the reader to what the ID is and how to get one.
      */
-    ctaUrl: "/contact",
+    ctaUrl: "#what-is-dwf-id",
   },
 
   whatIs: {
@@ -81,9 +80,8 @@ export const PLAYER_MEMBERSHIP_COPY = {
      */
     headline: ["Ready to Join?", "Start Your Journey with DWF"],
     body: "Bring your national federation into DWF to access international competitions, official recognition, and a growing global network.",
-    /** `629:28652`. */
-    cta: "Contact us",
-    ctaUrl: "/contact",
+    // The "Contact us" button (`629:28652`) was removed at the federation's
+    // request (2026-10-02); the section closes on its paragraph.
   },
 } as const
 

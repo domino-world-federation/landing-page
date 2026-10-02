@@ -15,9 +15,12 @@ const copy = usePageCopy("player-membership")
 </script>
 
 <template>
+  <!-- `id` is the hero button's target ("Apply for DWF ID" scrolls here);
+       `scroll-mt` stops the jump below the fixed navbar. -->
   <section
+    id="what-is-dwf-id"
     aria-labelledby="what-is-dwf-id-heading"
-    class="bg-bg flex flex-col items-center gap-9 px-5 pt-16 pb-16 text-center md:px-10 lg:gap-[2.92vw] lg:px-20 lg:pt-[max(var(--nav-clearance),7.29vw)] lg:pb-[3.13vw]"
+    class="bg-bg flex scroll-mt-[var(--anchor-offset)] flex-col items-center gap-9 px-5 pt-16 pb-16 text-center md:px-10 lg:gap-[2.92vw] lg:px-20 lg:pt-[max(var(--nav-clearance),7.29vw)] lg:pb-[3.13vw]"
   >
     <MotionReveal :y="40" blur-from="10px">
       <h2
