@@ -49,6 +49,15 @@ const LOGO_W = "w-[max(150px,13.54vw)]"
 const { data: partners } = await useAsyncData("home-partners", () => getPartners(), {
   default: () => [],
 })
+
+/**
+ * Only partners with a logo: the strip is nothing but marks, and a partner
+ * without one would be an empty box. **With none at all the whole section is
+ * hidden** — the federation has no official partners yet (2026-10-05), and a
+ * heading over an empty strip announces exactly that. Uploading the first
+ * logo under Partners in the backoffice brings the section back.
+ */
+const shown = computed(() => partners.value.filter((partner) => partner.logoUrl))
 </script>
 
 <template>
@@ -70,6 +79,7 @@ const { data: partners } = await useAsyncData("home-partners", () => getPartners
        The band no longer carries the snap point itself: it shares one with the
        resource library below it, placed by the page. See the note there. -->
   <section
+    v-if="shown.length > 0"
     aria-labelledby="partners-heading"
     class="overflow-hidden pt-28 pb-[max(48px,3.65vw)] lg:pt-[max(var(--nav-clearance),7.29vw)]"
   >
@@ -100,7 +110,7 @@ const { data: partners } = await useAsyncData("home-partners", () => getPartners
                fills what it needs of the box and centres in the rest, so the
                row's rhythm is even however wide the marks are. -->
           <div
-            v-for="partner in partners"
+            v-for="partner in shown"
             :key="partner.id"
             :class="`relative shrink-0 aspect-[260/125] ${LOGO_W}`"
           >

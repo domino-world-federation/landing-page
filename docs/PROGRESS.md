@@ -2215,3 +2215,10 @@ sekadar tidak berisi dokumen. 28 baris dipetakan ke kosakata baru (D79).
   `scroll-mt` setinggi navbar) alih-alih ke `/contact`. Tombol "Contact Us" di
   section penutup dicabut, beserta field `cta.cta`-nya di skema Editor Halaman.
   Diuji di 1440 dan 390px.
+
+- **Official Partners dari backoffice, dan disembunyikan selama belum ada**
+  (2026-10-05). `getPartners` kini membaca `/api/v1/partners` (mock hanya tanpa
+  API). Partner tanpa logo tidak digambar, dan tanpa satu pun partner berlogo
+  seluruh section disembunyikan — di prod 8 partner contoh seeder tanpa logo,
+  jadi section-nya hilang sampai logo pertama diunggah. Resources (yang berbagi
+  titik snap dengan Partners) kini membawa jarak navbar sendiri dari `lg`.

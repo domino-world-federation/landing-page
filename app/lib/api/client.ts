@@ -168,8 +168,13 @@ export async function getFederationStats(): Promise<FederationStat[]> {
  * back on is one line here instead of an edit in every page that draws the
  * strip. `/api/v1/partners` is still live and still tested for that day.
  */
+/**
+ * The partner strip on the home page — managed in the backoffice under
+ * Partners (2026-10-05). It used to be the mock on every environment.
+ */
 export async function getPartners(): Promise<Partner[]> {
-  return MOCK_PARTNERS
+  if (useMock()) return MOCK_PARTNERS
+  return request<Partner[]>("/partners")
 }
 
 /**

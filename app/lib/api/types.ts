@@ -55,7 +55,9 @@ export type NewsArticle = {
 export type Partner = {
   id: string
   name: string
-  logoUrl: string
+  /** Absent until a logo is uploaded in the backoffice — such a partner is
+   *  not drawn, since the strip is nothing but logos. */
+  logoUrl?: string
   websiteUrl?: string
 }
 

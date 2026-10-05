@@ -61,7 +61,7 @@ const { data: documents } = await useAsyncData(
        No snap of its own — the page gives the pair a single stop. -->
   <section
     aria-labelledby="resources-heading"
-    class="px-5 pt-[max(64px,7.29vw)] pb-[max(64px,8.75vw)] md:px-10 lg:px-20"
+    class="px-5 pt-[max(64px,7.29vw)] pb-[max(64px,8.75vw)] md:px-10 lg:px-20 lg:pt-[max(var(--nav-clearance),7.29vw)]"
   >
     <div class="flex flex-col gap-10 lg:flex-row lg:gap-[13.96vw]">
       <!-- 356/1652 of the content box — the fraction Figma gives the left column
