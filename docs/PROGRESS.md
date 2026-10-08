@@ -2222,3 +2222,10 @@ sekadar tidak berisi dokumen. 28 baris dipetakan ke kosakata baru (D79).
   seluruh section disembunyikan — di prod 8 partner contoh seeder tanpa logo,
   jadi section-nya hilang sampai logo pertama diunggah. Resources (yang berbagi
   titik snap dengan Partners) kini membawa jarak navbar sendiri dari `lg`.
+
+- **Education & Development `/development` direvisi tim DWF** (2026-10-08).
+  Kolom kiri bukan lagi tiga tab grade (C/B/A) yang bisa diklik: kini daftar
+  bernomor 01–03 yang digambar sama dengan kolom kanan, teks biasa. Kolom kanan
+  tetap (daftar `c_levels`). Tiap kolom punya subjudul — "Development Areas" dan
+  "Learning Priorities" — yang bisa disunting di Editor Halaman. Diuji di 1440
+  dan 390px.

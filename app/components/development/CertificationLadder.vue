@@ -29,9 +29,26 @@ import type { CoachingLevel } from "~/content/development/certifications"
  * cannot own the list — it draws whatever it is handed.
  */
 defineProps<{
-  /** `cms` is each level's field prefix in the page editor (`certifications.c_levels.0`). */
-  levels: readonly (CoachingLevel & { cms?: string })[]
+  /**
+   * `cms` is each level's field prefix in the page editor
+   * (`certifications.c_levels.0`), whose fields are `marker`, `title` and
+   * `body`. `cmsKeys` overrides the key per field, for a list stored under
+   * other names — the development areas keep `name` and `scope`, and their
+   * number is the position rather than a field.
+   */
+  levels: readonly (CoachingLevel & {
+    cms?: string
+    cmsKeys?: { marker?: string; title?: string; body?: string }
+  })[]
 }>()
+
+function key(
+  level: { cms?: string; cmsKeys?: { marker?: string; title?: string; body?: string } },
+  field: "marker" | "title" | "body",
+): string | undefined {
+  if (level.cmsKeys) return level.cmsKeys[field]
+  return level.cms && `${level.cms}.${field}`
+}
 </script>
 
 <template>
@@ -68,13 +85,13 @@ defineProps<{
                  it is not the `<h4>` and not the gradient the section titles
                  carry. -->
             <p
-              v-cms="level.cms && `${level.cms}.marker`"
+              v-cms="key(level, 'marker')"
               class="font-display text-[length:var(--text-display-caption)] leading-[1.25] text-[var(--color-gold)]"
             >
               {{ level.marker }}
             </p>
             <h4
-              v-cms="level.cms && `${level.cms}.title`"
+              v-cms="key(level, 'title')"
               class="font-sans text-[length:var(--text-heading-card)] leading-[1.2] font-semibold text-white"
             >
               {{ level.title }}
@@ -85,7 +102,7 @@ defineProps<{
                (60%) and deliberately so — that column is a reference table and
                this one is a description of what the level covers. -->
           <p
-            v-cms="level.cms && `${level.cms}.body`"
+            v-cms="key(level, 'body')"
             class="font-sans text-[length:var(--text-body-sm)] leading-[1.5] text-white/40"
           >
             {{ level.body }}

@@ -12,15 +12,12 @@ export const CERTIFICATIONS_COPY = {
   eyebrow: "Professional Standards",
   heading: "Official Certifications",
   /**
-   * Names for the two halves. Neither is drawn — Figma puts the grades and the
-   * ladder side by side with no headings of their own — but both are lists a
-   * reader can land on out of context, and an unnamed list in the page outline
-   * is worse than a name the design does not print. Rendered `sr-only`.
+   * The two columns' subtitles, drawn above each since the DWF team's revision
+   * (2026-10-08) — the left column used to be three selectable grade tabs and
+   * had no heading of its own.
    */
-  gradesLabel: "Referee grades",
-  levelsLabel: "Coaching levels",
-  /** The word under each grade letter (`192:14576`). */
-  gradeWord: "Grade",
+  areasLabel: "Development Areas",
+  prioritiesLabel: "Learning Priorities",
 } as const
 
 export type CoachingLevel = {
