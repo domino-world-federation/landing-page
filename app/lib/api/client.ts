@@ -316,9 +316,20 @@ export async function getSubCommittees(): Promise<SubCommittee[]> {
   return request<SubCommittee[]>("/sub-committees")
 }
 
-export async function getFeaturedEvent(): Promise<FeaturedEvent> {
+export async function getFeaturedEvent(): Promise<FeaturedEvent | undefined> {
   if (useMock()) return MOCK_FEATURED_EVENT
-  return request<FeaturedEvent>("/tournaments/featured")
+  return present(await request<FeaturedEvent | null>("/tournaments/featured"))
+}
+
+/**
+ * The two single-event endpoints answer "nothing" with an empty body, and until
+ * 2026-10-12 that body was `{}`, not `null` — Laravel's `response()->json(null)`
+ * serialises to an empty object. `{}` is truthy, so every `v-if` that was meant
+ * to hide the block drew it with nothing in it. The backend now sends `null`;
+ * this keeps an older API (or a cached `{}`) from bringing the blank hero back.
+ */
+function present<T extends { id: string }>(value: T | null | undefined): T | undefined {
+  return value && typeof value === "object" && value.id ? value : undefined
 }
 
 /**
@@ -526,7 +537,7 @@ export async function getHighlightedTournament(): Promise<
   ShowcaseEvent | undefined
 > {
   if (useMock()) return MOCK_HIGHLIGHTED_TOURNAMENT
-  return request<ShowcaseEvent>("/tournaments/highlighted")
+  return present(await request<ShowcaseEvent | null>("/tournaments/highlighted"))
 }
 
 /**

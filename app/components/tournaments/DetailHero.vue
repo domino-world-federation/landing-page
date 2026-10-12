@@ -46,9 +46,12 @@ const action = computed(() => {
     }
   }
 
-  // `upcoming` and `closed` both land here. The reminder is the honest offer for
-  // entries that have not opened; for entries that are over it is the only
-  // thing left to offer, and the dialog says plainly that there is no list yet.
+  // Entries that are over offer nothing (DWF team, 2026-10-12): a reminder for
+  // a tournament that has shut its doors reads as a promise there will be
+  // something to be reminded of. The bar carries the dates and place alone.
+  if (props.tournament.registration === "closed") return undefined
+
+  // `upcoming` — the reminder is the honest offer for entries not yet open.
   return {
     label: COPY.notify,
     a11y: named(COPY.notifyLabel),
@@ -106,9 +109,14 @@ const notifyOpen = ref(false)
 
          The wash is Figma's own gradient to `#0E0E0E` plus a 15px backdrop blur
          — the blur is what keeps 76px of gold readable over whatever the
-         photograph happens to be doing there. -->
+         photograph happens to be doing there.
+
+         No bottom padding below `lg`: the bar sits in the flow there, and the
+         next block's own 64px top is the gap — with 40px of its own on top the
+         seam read twice as wide as every other one on the page (DWF team,
+         2026-10-12). -->
     <div
-      class="bg-[linear-gradient(180deg,rgba(48,48,48,0)_0%,rgba(14,14,14,0.5)_41%,rgba(14,14,14,1)_91%)] px-5 py-10 md:px-10 lg:absolute lg:inset-x-0 lg:bottom-0 lg:px-20 lg:py-[4.17vw] lg:backdrop-blur-[15px]"
+      class="bg-[linear-gradient(180deg,rgba(48,48,48,0)_0%,rgba(14,14,14,0.5)_41%,rgba(14,14,14,1)_91%)] px-5 pt-10 md:px-10 lg:absolute lg:inset-x-0 lg:bottom-0 lg:px-20 lg:py-[4.17vw] lg:backdrop-blur-[15px]"
     >
       <div
         class="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between lg:gap-16"
@@ -144,7 +152,7 @@ const notifyOpen = ref(false)
         <!-- 292 × 72 gold (`517:1920`). The reminder raises the dialog; the
              other two have nothing behind them and say so. -->
         <button
-          v-if="action.notify"
+          v-if="action?.notify"
           type="button"
           :aria-label="action.a11y"
           class="rounded-btn font-display bg-gold focus-visible:ring-gold flex h-18 w-full shrink-0 items-center justify-center gap-3 px-5 text-[length:var(--text-display-btn)] leading-10 text-black uppercase transition-colors hover:bg-[var(--color-gold-btn-light)] focus-visible:ring-2 focus-visible:outline-none lg:w-[292px]"
@@ -162,7 +170,7 @@ const notifyOpen = ref(false)
         </button>
 
         <TournamentsUnavailableButton
-          v-else
+          v-else-if="action"
           :notice="COPY.unavailable"
           :aria-label="action.a11y"
           class="rounded-btn font-display bg-gold focus-visible:ring-gold flex h-18 w-full items-center justify-center gap-3 px-5 text-[length:var(--text-display-btn)] leading-10 text-black uppercase transition-colors hover:bg-[var(--color-gold-btn-light)] focus-visible:ring-2 focus-visible:outline-none lg:w-[292px]"

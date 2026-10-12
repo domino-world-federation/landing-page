@@ -2229,3 +2229,13 @@ sekadar tidak berisi dokumen. 28 baris dipetakan ke kosakata baru (D79).
   tetap (daftar `c_levels`). Tiap kolom punya subjudul — "Development Areas" dan
   "Learning Priorities" — yang bisa disunting di Editor Halaman. Diuji di 1440
   dan 390px.
+
+- **Feedback tim DWF — Tournaments** (2026-10-12).
+  - Hero + Featured Event `/tournaments` kini benar-benar hilang saat tidak ada
+    turnamen yang disorot. API membalas `{}` (bukan `null`) untuk "kosong", dan
+    objek kosong truthy; `getHighlightedTournament` dan `getFeaturedEvent`
+    (countdown beranda, penyakit yang sama) kini menganggap objek tanpa `id`
+    sebagai tidak ada.
+  - Detail turnamen dengan registrasi `closed` tidak lagi menampilkan tombol
+    "Notify Me". Padding bawah info bar di bawah `lg` dibuang — jarak ke peta
+    sebelumnya 104px, kini 64px seperti seam lain. Desktop tidak berubah.
