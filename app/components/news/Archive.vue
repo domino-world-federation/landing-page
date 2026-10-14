@@ -134,8 +134,14 @@ const allHref = computed(() =>
   <section
     :id="ANCHOR"
     aria-labelledby="archive-heading"
-    class="flex scroll-mt-[var(--anchor-offset)] flex-col gap-8 bg-linear-to-b from-[#1e1e1e] to-[#0e0e0e] px-5 py-10 md:px-10 lg:gap-8 lg:px-20 lg:py-[3.125vw]"
+    class="flex scroll-mt-[var(--anchor-offset)] flex-col gap-8 bg-linear-to-b from-[#1e1e1e] to-[#0e0e0e] px-5 py-10 md:px-10 lg:gap-8 lg:px-20 lg:py-[3.125vw] [h1+&]:pt-[calc(var(--nav-clearance)+1rem)]"
   >
+    <!-- `[h1+&]` — the archive OPENS the page when no story is highlighted:
+         the featured band renders nothing, and the page's sr-only `<h1>` is
+         then this section's only predecessor. Without the bar's clearance the
+         category tabs and the search sat under the fixed navbar (DWF team,
+         2026-10-14). With a highlight the band is between them and the rule
+         never matches. -->
     <h2 id="archive-heading" class="sr-only">
       {{ NEWS_ARCHIVE_COPY.heading }}
     </h2>

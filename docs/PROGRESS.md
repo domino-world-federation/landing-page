@@ -2239,3 +2239,9 @@ sekadar tidak berisi dokumen. 28 baris dipetakan ke kosakata baru (D79).
   - Detail turnamen dengan registrasi `closed` tidak lagi menampilkan tombol
     "Notify Me". Padding bawah info bar di bawah `lg` dibuang — jarak ke peta
     sebelumnya 104px, kini 64px seperti seam lain. Desktop tidak berubah.
+
+- **News tanpa Highlight: tab kategori dan search tertutup navbar** (2026-10-14).
+  Featured band tidak tergambar saat tidak ada artikel highlight, dan Archive
+  jadi section pertama tanpa jarak navbar. Archive kini memakai `[h1+&]:pt-…`
+  — jarak navbar + 1rem hanya saat ia langsung setelah `<h1>` sr-only halaman.
+  Dengan highlight, tampilannya tidak berubah. Diuji di 1280 dan 390px.
