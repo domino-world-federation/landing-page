@@ -11,12 +11,9 @@
  * Conduct"): each clause now has a name after its number, and the bodies are the
  * federation's own wording rather than the design's.
  *
- * TODO(design): `762:1320` draws ONE photograph for the whole section — and it
- * is the pillars frame's own, since this frame is a copy of it. The repo owner
- * asked for a picture per clause, so all three are taken from the site's own
- * library rather than invented: two players at a table, a match under broadcast,
- * a hall seen down its rows. Placeholders for whatever the federation means each
- * clause to be shown as.
+ * `762:1320` draws ONE photograph for the whole section — and it is the pillars
+ * frame's own, since this frame is a copy of it. The repo owner asked for a
+ * picture per clause, and the federation supplied one for each (2026-10-20).
  *
  * TODO(design): every clause in `762:1320` carries an eyebrow above its number
  * reading "OLYMPIC STAGE" — the eyebrow from the pillars frame this was copied
@@ -44,26 +41,26 @@ export const ETHICS_CLAUSES: readonly EthicsClause[] = [
     number: "01",
     title: "Respect Others",
     body: "Treat players, opponents, coaches, officials, and everyone involved in dominoes with fairness and respect.",
-    imageUrl: "/assets/global/gallery-exhibition-match.webp",
+    imageUrl: "/assets/integrity/conduct-respect.webp",
     imageAlt:
-      "Two players facing each other across a match table, tiles laid out between them",
+      "Two players shaking hands across a match table, their tiles stood on edge in front of them",
   },
   {
     id: "fair-competition",
     number: "02",
     title: "Protect Fair Competition",
     body: "Compete honestly and reject cheating, corruption, and match manipulation.",
-    imageUrl: "/assets/global/gallery-match-broadcast.webp",
+    imageUrl: "/assets/integrity/conduct-fair-competition.webp",
     imageAlt:
-      "A match being broadcast from the hall floor, camera and monitors trained on the table",
+      "An official recording the result on a clipboard while two players wait at the table",
   },
   {
     id: "speak-up",
     number: "03",
     title: "Speak Up",
     body: "Raise concerns when something threatens the fairness or safety of the game.",
-    imageUrl: "/assets/global/gallery-playing-hall.webp",
+    imageUrl: "/assets/integrity/conduct-speak-up.webp",
     imageAlt:
-      "A tournament hall seen down its rows of tables, officials standing between them",
+      "A player raising a hand at the table to call an official, who turns to listen",
   },
 ] as const

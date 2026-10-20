@@ -108,7 +108,7 @@ useSeoMeta({
 
       <UiStickyBand
         class="lg:snap-screen"
-        src="/assets/governance/band-governance-assembly.webp"
+        src="/assets/governance/band-governance-signing.webp"
         :alt="GOVERNANCE_COPY.bandAlt"
       />
 

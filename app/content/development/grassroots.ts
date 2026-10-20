@@ -50,24 +50,24 @@ export const GRASSROOTS_CARDS: readonly GrassrootsCardCopy[] = [
     id: "plaza",
     title: "Public Plaza Play",
     body: "Installing permanent, weather-resistant domino infrastructure in urban public spaces to encourage spontaneous play.",
-    image: "/assets/development/grassroots-plaza.webp",
+    image: "/assets/development/grassroots-community.webp",
     imageAlt:
-      "An aerial view of a landscaped city plaza with curving planted beds, winding paths and circular seating",
+      "An older woman and a younger player across a green baize table, each with a row of tiles",
   },
   {
     id: "rural",
     title: "Rural Outreach Kits",
     body: "Providing standardized equipment and simplified instructional materials to remote regions with limited access.",
-    image: "/assets/development/grassroots-rural-kit.webp",
+    image: "/assets/development/grassroots-inclusive.webp",
     imageAlt:
-      "An open field case with its contents held in place by orange straps, beside the closed grey box it ships in",
+      "A player in a wheelchair at a domino table, playing opposite a partner with tiles stood on edge",
   },
   {
     id: "academy",
     title: "DWF Mobile Academy",
     body: "A free-to-use digital platform teaching the fundamentals of professional play through interactive puzzles.",
-    image: "/assets/development/grassroots-mobile-academy.webp",
+    image: "/assets/development/grassroots-youth-school.webp",
     imageAlt:
-      "Two hands holding a phone that shows a domino puzzle on a chequered board, lit by a table lamp",
+      "Two pupils at a classroom table with their tiles stood on edge, a teacher pointing between them",
   },
 ]

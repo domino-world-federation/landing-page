@@ -15,7 +15,7 @@ export const GOVERNANCE_COPY = {
   headerIntro:
     "DWF is committed to transparent governance, ethical standards, gender equality, and athlete representation in leadership and decision-making.",
   bandAlt:
-    "Delegates seated in the federation's general assembly hall during a session",
+    "Three officials at a boardroom table, two signing documents while the third reviews a page",
 
   /** `613:24895` — the white band the photograph is covered by. */
   overview: {

@@ -2245,3 +2245,14 @@ sekadar tidak berisi dokumen. 28 baris dipetakan ke kosakata baru (D79).
   jadi section pertama tanpa jarak navbar. Archive kini memakai `[h1+&]:pt-…`
   — jarak navbar + 1rem hanya saat ia langsung setelah `<h1>` sr-only halaman.
   Dengan highlight, tampilannya tidak berubah. Diuji di 1280 dan 390px.
+
+- **Foto pengganti dari tim DWF** (2026-10-20). Sepuluh tempat kini memakai foto
+  kiriman federasi, semuanya di `public/assets/<halaman>/`: tiga pilar "Why
+  Dominoes?" About (`about/pillar-*`), band di bawah header Development,
+  Governance, dan Integrity (`band-community-table`, `band-governance-signing`,
+  `band-integrity-table`), tiga kartu Grassroots Initiatives
+  (`development/grassroots-*`), dan tiga klausul "Our Standards of Conduct"
+  (`integrity/conduct-*`). Alt text ditulis ulang sesuai fotonya; TODO(design)
+  "foto placeholder" di `pillars.ts` dan `ethics.ts` dicabut. Tujuh foto lama
+  yang tidak lagi dipakai dihapus. File kiriman sudah `.webp`, jadi tidak ada
+  aslinya di `assets-source/` dan tidak dikonversi ulang.

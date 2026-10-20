@@ -5,10 +5,9 @@
  * heading replaces the rolling counter the design drew, and the claims lost
  * the small kicker line each carried above its title.
  *
- * TODO(design): `566:13542` draws ONE photograph for the whole column. The repo
- * owner asked for a picture per claim, so each is taken from the site's own
- * library — placeholders for whatever the federation means these claims to be
- * shown as. The third is a chess match and should be the first replaced.
+ * `566:13542` draws ONE photograph for the whole column. The repo owner asked
+ * for a picture per claim, and the federation supplied one for each
+ * (2026-10-20).
  */
 
 export type Pillar = {
@@ -25,25 +24,25 @@ export const PILLARS: readonly Pillar[] = [
     id: "accessible",
     title: "Accessible to All",
     body: "A set of tiles and a table are enough to begin. People of different ages, backgrounds, and abilities can take part.",
-    imageUrl: "/assets/global/olympic-rings-facade.webp",
+    imageUrl: "/assets/about/pillar-accessible.webp",
     imageAlt:
-      "The Olympic rings mounted and lit on the facade of a white building at dusk",
+      "Players young and old seated around a green baize table, each with a row of tiles in front of them",
   },
   {
     id: "connects",
     title: "A Game That Connects",
     body: "Dominoes brings people together across homes, clubs, communities, and generations.",
-    imageUrl: "/assets/global/gallery-team-delegation.webp",
+    imageUrl: "/assets/about/pillar-connects.webp",
     imageAlt:
-      "A national team delegation standing together in matching kit before a match",
+      "Four players seen from above around a green baize table, their tiles set out along each side",
   },
   {
     id: "depth",
     title: "Simple to Learn, Deep to Master",
     body: "The basics are easy to learn, while every match challenges players to think ahead, adapt, and make strategic decisions.",
-    imageUrl: "/assets/global/gallery-match-broadcast.webp",
+    imageUrl: "/assets/about/pillar-depth.webp",
     imageAlt:
-      "A match being broadcast from the hall floor, camera and monitors trained on the table",
+      "An older player gesturing to a younger one across the table, explaining the tiles laid out between them",
   },
 ] as const
 

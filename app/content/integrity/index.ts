@@ -15,7 +15,7 @@ export const INTEGRITY_COPY = {
   headerIntro:
     "Every player, coach, official, volunteer, and federation has a part in protecting fair competition. Together, we can uphold respect, honesty, and trust throughout dominoes.",
   bandAlt:
-    "A tournament hall mid-match, players seated across long rows of tables under overhead lighting",
+    "Two players at a match table with their tiles stood on edge, an official with a clipboard standing between them",
 
   principlesHeading: "Core Principles",
 

@@ -106,7 +106,7 @@ useSeoMeta({
 
       <UiStickyBand
         class="lg:snap-screen"
-        src="/assets/integrity/band-integrity-hall.webp"
+        src="/assets/integrity/band-integrity-table.webp"
         :alt="INTEGRITY_COPY.bandAlt"
       />
 

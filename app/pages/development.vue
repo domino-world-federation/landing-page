@@ -110,7 +110,7 @@ useSeoMeta({
            order, where a minimum simply takes the larger. -->
       <UiStickyBand
         class="lg:snap-screen"
-        src="/assets/development/band-classroom-session.webp"
+        src="/assets/development/band-community-table.webp"
         :alt="DEVELOPMENT_HEADER_ALT.band"
         dim
       />

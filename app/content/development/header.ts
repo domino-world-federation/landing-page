@@ -27,5 +27,5 @@ export const DEVELOPMENT_HEADER_ALT = {
    * happening — the same relationship About's and Domino's bands have to
    * theirs.
    */
-  band: "Four students at a long table in a bright modern classroom, laying out dominoes in front of them",
+  band: "Players of different ages around a green baize table in a bright room, one explaining the tiles laid out between them",
 } as const
