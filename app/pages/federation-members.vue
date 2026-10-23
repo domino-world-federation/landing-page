@@ -15,7 +15,8 @@
  * `SharpeningHeadline` — Figma gives it no `blur(7.5px)` to clear from.
  *
  * **It scrolls section by section**, like the landing page, About, Domino and
- * Tournaments. Six blocks, each a screen: the pitch, the map, the directory,
+ * Tournaments. Six blocks, each a screen (four while the map and directory are
+ * hidden, see the template): the pitch, the map, the directory,
  * what membership grants, the four-step pathway, and the closing call. That
  * suits this page better than most — it is an argument made in order, and a
  * reader who flicks past the pathway has missed the point of the page.
@@ -62,8 +63,11 @@ useSeoMeta({
 <template>
   <main class="snap-children relative z-10">
     <MembersHero />
-    <MembersMap />
-    <MembersDirectory />
+    <!-- Hidden for now, on the DWF team's call (2026-10-23): the team cannot
+         yet supply the national federations' details, and both sections are
+         lists of them. Restore the two lines below once the list exists. -->
+    <!-- <MembersMap /> -->
+    <!-- <MembersDirectory /> -->
     <MembersBenefits />
     <MembersApplicationProcess />
     <MembersCta />

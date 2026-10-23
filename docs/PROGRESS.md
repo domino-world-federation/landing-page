@@ -2256,3 +2256,18 @@ sekadar tidak berisi dokumen. 28 baris dipetakan ke kosakata baru (D79).
   "foto placeholder" di `pillars.ts` dan `ethics.ts` dicabut. Tujuh foto lama
   yang tidak lagi dipakai dihapus. File kiriman sudah `.webp`, jadi tidak ada
   aslinya di `assets-source/` dan tidak dikonversi ulang.
+
+- **Feedback tim DWF — Members dan About** (2026-10-23).
+  - `/federation-members`: World Map dan National Federation Members
+    (`MembersMap`, `MembersDirectory`) disembunyikan sementara — tim belum bisa
+    memberi detail federasi nasionalnya. Komponennya utuh; mengembalikannya
+    cukup membuka komentar dua baris di `pages/federation-members.vue`.
+  - About: section "Our Global Network" diganti "Structural Frameworks" — bagan
+    organisasi dari tim: President (emas) → General Secretary → Vice President
+    → Treasurer, bercabang ke Independent Committees, Athlete’s Commission, dan
+    Standing Committees and Commissions. Paragraf di samping judul dan caption
+    di bawah bagan dibuang (keduanya tentang federasi nasional). Kunci Editor
+    Halaman kini `frameworks.officers` (4 baris) dan `frameworks.bodies`
+    (3 baris); `intro`, `caption`, `apex_*`, `federation`, `countries`,
+    `members*` dicabut dari skema backend. Diukur muat satu layar di 1920×1080,
+    1440×900, dan 1366×768; ditumpuk di 390px.

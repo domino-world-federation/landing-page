@@ -1,39 +1,26 @@
 /**
- * Our Global Network (was Structural Frameworks) — Figma node `1097:3096`,
- * kept out of JSX for i18n (RULES §9).
+ * Structural Frameworks — Figma node `1097:3096`, kept out of JSX for i18n
+ * (RULES §9).
  *
- * The panel is the org chart the earlier placeholder (`111:3152`) held a place
- * for: the federation at the top, national federations under it, and each
- * federation's registered players and clubs under that. It is a diagram of the
- * STRUCTURE, not a directory — the design repeats one generic federation three
- * times, and so does this.
- *
- * The design labels all three "Country A", which is a card duplicated without
- * its label being touched; they read A, B, C here.
+ * The DWF team's revision (2026-10-23) puts the federation's own org chart in
+ * this section in place of "Our Global Network": four officers in a single line
+ * of command, the President at the head, and the three bodies that report to
+ * the last of them. The paragraph beside the heading and the caption under the
+ * chart went with it — both described the national federations, which cannot
+ * be listed yet.
  */
 
 export const FRAMEWORKS_COPY = {
-  heading: "Our Global Network",
-  /** Between the heading and the panel — the federation's revision
-   *  (2026-09-28); the design has nothing there. */
-  intro:
-    "DWF brings National Federations together across five continents around a shared commitment to participation, respect, and fair competition.",
+  heading: "Structural Frameworks",
 
   chart: {
-    apexShort: "DWF",
-    apexName: "Domino World Federation",
-    federation: "National Federation",
-    countries: ["Country A", "Country B", "Country C"],
-    members: "Federation Members",
-    membersDetail: "Registered Players & Clubs",
+    /** Top to bottom; the first is drawn in gold. */
+    officers: ["President", "General Secretary", "Vice President", "Treasurer"],
+    /** The row the last officer branches into, left to right. */
+    bodies: [
+      "Independent Committees",
+      "Athlete’s Commission",
+      "Standing Committees and Commissions",
+    ],
   },
-
-  /**
-   * Under the chart (`1097:3100`). Two entries because Figma breaks the line
-   * itself, centred in an 864px column; each renders as its own line.
-   */
-  caption: [
-    "Our structure ensures clear accountability from the Executive Board through",
-    "to Technical Committees and Member National Federations.",
-  ],
 } as const
