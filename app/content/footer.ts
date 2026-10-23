@@ -1,10 +1,10 @@
 /**
  * S14 copy, kept out of JSX for i18n (RULES §9).
  *
- * Wording is from Figma node `56:5159`. Several `href`s are still `#` for the
- * same reason the navbar's are: those pages do not exist. Eight are real —
- * About Us, Tournaments, News, Gallery, Terms, Privacy, Contact and FAQ. Contact is the one
- * entry Figma does not list at all; see the note beside it.
+ * Wording is from Figma node `56:5159`. Any `href` still `#` is so for the same
+ * reason the navbar's are: the page does not exist. The Resources column points
+ * at Domino, Governance and Integrity since those pages were built (2026-10-23).
+ * Contact is the one entry Figma does not list at all; see the note beside it.
  *
  * **FAQ used to point at `/#faq`**, the landing page's S11, because the FAQ
  * screen (`173:9459`) was drawn and not built — so "FAQ" in the footer of any
@@ -48,9 +48,9 @@ export const FOOTER_GROUPS: readonly FooterGroup[] = [
   {
     title: "Resources",
     links: [
-      { label: "Domino", href: "#" },
-      { label: "Governance", href: "#" },
-      { label: "Integrity", href: "#" },
+      { label: "Domino", href: "/domino" },
+      { label: "Governance", href: "/governance" },
+      { label: "Integrity", href: "/integrity" },
     ],
   },
 ] as const
